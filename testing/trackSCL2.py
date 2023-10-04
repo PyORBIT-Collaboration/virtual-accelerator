@@ -71,6 +71,36 @@ accLattice_SCL = sns_linac_factory.getLinacAccLattice(names_SCL, xml_file_name)
 
 print("Linac lattice is ready.")
 
+# -----------------------------------------------------
+# Set up Space Charge Acc Nodes
+# -----------------------------------------------------
+from orbit.space_charge.sc3d import setSC3DAccNodes, setUniformEllipsesSCAccNodes
+from orbit.space_charge.sc2p5d import setSC2p5DrbAccNodes
+from orbit.core.spacecharge import SpaceChargeCalcUnifEllipse, SpaceChargeCalc3D
+from orbit.core.spacecharge import SpaceChargeCalc2p5Drb
+
+sc_path_length_min = 0.01
+
+print("Set up Space Charge nodes. ")
+
+
+# -------------------------------------------------------------
+# set of uniformly charged ellipses Space Charge
+# -------------------------------------------------------------
+nEllipses = 1
+calcUnifEllips = SpaceChargeCalcUnifEllipse(nEllipses)
+#space_charge_nodes = setUniformEllipsesSCAccNodes(accLattice_SCL, sc_path_length_min, calcUnifEllips)
+
+#max_sc_length = 0.0
+#min_sc_length = accLattice_SCL.getLength()
+#for sc_node in space_charge_nodes:
+#    scL = sc_node.getLengthOfSC()
+#    if scL > max_sc_length:
+#        max_sc_length = scL
+#    if scL < min_sc_length:
+#        min_sc_length = scL
+#print("maximal SC length =", max_sc_length, "  min=", min_sc_length)
+
 bunch_in_tot = Bunch()
 bunch_in_tot.readBunch(bunch_file)
 bunch_in_SCL = Bunch()
@@ -98,9 +128,20 @@ bunch_test = Bunch()
 bunch_test.readBunch("bunch_in_SCL.dat")
 bunch_test.dumpBunch("bunch_test.dat")
 
+for n in range(bunch_test.getSizeGlobal()):
+    if n + 1 > 100000:
+        bunch_test.deleteParticleFast(n)
+bunch_test.compress()
+
 bunch_test.getSyncParticle().time(0.0)
+start_time = time.time()
+print("start")
 accLattice_SCL.trackDesignBunch(bunch_test)
 accLattice_SCL.trackBunch(bunch_test)
+print("end")
+end_time = time.time()
+time_taken = end_time - start_time
+print(f"Time taken: {time_taken} seconds")
 
 print(bunch_test.getSyncParticle().time(), bunch_test.getSyncParticle().beta())
 bunch_test.dumpBunch("bunch_test2.dat")
