@@ -1,21 +1,39 @@
 import sys
 import time
+from pathlib import Path
 from interface import OrbitModel
 
-model = OrbitModel("../SCL_Wizard/sns_linac.xml")
+lattice_file = Path("../SCL_Wizard/sns_linac.xml")
+model = OrbitModel(lattice_file)
+model.save_optics(Path("test.json"))
 
-# model.get_measurements("SCL_Phys:BPM32:energy")
-# model.get_settings("SCL_Mag:QH18:B")
+#model.get_settings("SCL_LLRF:FCM10a:CtlPhaseSet")
+model.get_measurements("SCL_Phys:BPM32:energy")
 
-# dict = {}
-# dict["SCL_LLRF:FCM23d:CtlPhaseSet"] = 1.9
-# dict["SCL_Mag:QH18:B"] = 1.3
-# model.update_optics(dict)
 
-# model.track()
+dict = {}
+dict["SCL_LLRF:FCM10a:CtlPhaseSet"] = 0
+model.update_optics(dict)
 
-# model.get_measurements("SCL_Phys:BPM32:energy")
-# model.get_settings("SCL_Mag:QH18:B")
+model.track()
+model.save_optics(Path("test2.json"))
+
+#model.get_settings("SCL_LLRF:FCM10a:CtlPhaseSet")
+model.get_measurements("SCL_Phys:BPM32:energy")
+
+#model.reset_optics()
+model.load_optics(Path("test.json"))
+model.track()
+
+#model.get_settings("SCL_LLRF:FCM10a:CtlPhaseSet")
+model.get_measurements("SCL_Phys:BPM32:energy")
+
+model.load_optics(Path("test2.json"))
+model.track()
+
+model.get_measurements("SCL_Phys:BPM32:energy")
+
+"""
 avg_time = 0
 for i in range(100):
     init_phase = model.get_settings("SCL_LLRF:FCM01a:CtlPhaseSet")
@@ -31,3 +49,4 @@ for i in range(100):
 
 avg_time /= 100
 print(avg_time)
+"""
