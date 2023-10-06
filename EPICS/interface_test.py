@@ -1,37 +1,50 @@
 import sys
 import time
 from pathlib import Path
-from interface import OrbitModel
+from interface2 import OrbitModel
 
 lattice_file = Path("../SCL_Wizard/sns_linac.xml")
 model = OrbitModel(lattice_file)
-model.save_optics(Path("test.json"))
 
-#model.get_settings("SCL_LLRF:FCM10a:CtlPhaseSet")
-model.get_measurements("SCL_Phys:BPM32:energy")
+print("Original")
+print(model.get_settings("SCL_Mag:QV19:B"))
+print(model.get_settings("SCL_LLRF:FCM10a:CtlPhaseSet"))
+print(model.get_measurements("SCL_Diag:BPM22:xAvg"))
+print(model.get_measurements("SCL_Phys:BPM32:energy"))
 
+dict1 = {"SCL_Mag:QV19:B": 0}
+model.update_optics(dict1)
 
-dict = {}
-dict["SCL_LLRF:FCM10a:CtlPhaseSet"] = 0
-model.update_optics(dict)
+dict2 = {"SCL_LLRF:FCM10a:CtlPhaseSet": 0}
+model.update_optics(dict2)
 
 model.track()
-model.save_optics(Path("test2.json"))
 
-#model.get_settings("SCL_LLRF:FCM10a:CtlPhaseSet")
-model.get_measurements("SCL_Phys:BPM32:energy")
+print("\n Changed")
+print(model.get_settings("SCL_Mag:QV19:B"))
+print(model.get_settings("SCL_LLRF:FCM10a:CtlPhaseSet"))
+print(model.get_measurements("SCL_Diag:BPM22:xAvg"))
+print(model.get_measurements("SCL_Phys:BPM32:energy"))
 
-#model.reset_optics()
+model.save_optics(Path("test.json"))
+
+model.reset_optics()
+model.track()
+
+print("\n Original")
+print(model.get_settings("SCL_Mag:QV19:B"))
+print(model.get_settings("SCL_LLRF:FCM10a:CtlPhaseSet"))
+print(model.get_measurements("SCL_Diag:BPM22:xAvg"))
+print(model.get_measurements("SCL_Phys:BPM32:energy"))
+
 model.load_optics(Path("test.json"))
 model.track()
 
-#model.get_settings("SCL_LLRF:FCM10a:CtlPhaseSet")
-model.get_measurements("SCL_Phys:BPM32:energy")
-
-model.load_optics(Path("test2.json"))
-model.track()
-
-model.get_measurements("SCL_Phys:BPM32:energy")
+print("\n Changed")
+print(model.get_settings("SCL_Mag:QV19:B"))
+print(model.get_settings("SCL_LLRF:FCM10a:CtlPhaseSet"))
+print(model.get_measurements("SCL_Diag:BPM22:xAvg"))
+print(model.get_measurements("SCL_Phys:BPM32:energy"))
 
 """
 avg_time = 0
