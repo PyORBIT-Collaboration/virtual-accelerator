@@ -1,7 +1,7 @@
 import sys
 import time
 from pathlib import Path
-from interface2 import OrbitModel
+from interface import OrbitModel
 
 lattice_file = Path("../SCL_Wizard/sns_linac.xml")
 model = OrbitModel(lattice_file)
