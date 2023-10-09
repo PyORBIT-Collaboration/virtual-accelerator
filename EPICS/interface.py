@@ -75,7 +75,7 @@ class OrbitModel:
                     if child_type == 'dch' or child_type == 'dcv':
                         child_name = child.getName()
                         pv_name = child_name + ":B"
-                        self.pv_dict.add_pv(pv_name, pv_type, child, 'B')
+                        self.pv_dict.add_pv(pv_name, pv_type, child, 'B', node)
 
         self.pv_dict.order_pvs()
 
@@ -168,15 +168,16 @@ class OrbitModel:
             frozen_lattice = self.accLattice
             start_pv = self.pv_dict.get_pv(self.upstream_change)
             if start_pv.get_node_type() == "RF_Cavity":
-                start_node = self.accLattice.getRF_Cavity(start_pv.get_node_name()).getRF_GapNodes()[0]
+                start_node = start_pv.get_node().getRF_GapNodes()[0]
+            elif start_pv.get_parent_node() is not None:
+                start_node = start_pv.get_parent_node()
             else:
-                start_node = self.accLattice.getNodeForName(start_pv.get_node_name())
-            print(start_pv.get_node_type())
+                start_node = start_pv.get_node()
             start_ind = frozen_lattice.getNodeIndex(start_node)
 
             # setup initial bunch
             tracked_bunch = Bunch()
-            self.bunch_dict[start_pv.get_node_name()].copyBunchTo(tracked_bunch)
+            self.bunch_dict[start_node.getName()].copyBunchTo(tracked_bunch)
             for n in range(tracked_bunch.getSizeGlobal()):
                 if n + 1 > number_of_particles:
                     tracked_bunch.deleteParticleFast(n)

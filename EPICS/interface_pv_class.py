@@ -7,15 +7,14 @@ from orbit.py_linac.lattice.LinacAccLatticeLib import RF_Cavity
 
 
 class PVDict:
-    node_types = {'markerLinacNode', 'linacQuad', 'RF_Cavity', 'dch', 'dcv'}
+    node_types = Union[Quad, MarkerLinacNode, DCorrectorV, DCorrectorH, RF_Cavity]
     pv_types = {'setting', 'readback', 'diagnostic', 'physics'}
 
     def __init__(self, acc_lattice: LinacAccLattice):
         self.acc_lattice = acc_lattice
         self.pv_dict = {}
 
-    def add_pv(self, pv_name: str, pv_type: str, node: Union[Quad, MarkerLinacNode, DCorrectorV, DCorrectorH, RF_Cavity]
-               , node_param: str):
+    def add_pv(self, pv_name: str, pv_type: str, node: node_types, node_param: str, parent_node: node_types = None):
         if pv_type not in self.pv_types:
             raise ValueError(f'Invalid input. Allowed pv types are {self.pv_types}.')
 
@@ -24,9 +23,9 @@ class PVDict:
             node_get = partial(node.getParam, node_param)
             if pv_type == 'setting':
                 node_set = partial(node.setParam, node_param)
-                new_pv = PVClass(pv_type, node, node_type, node_get, node_set)
+                new_pv = PVClass(pv_type, node, node_type, node_get, node_set, node_parent=parent_node)
             else:
-                new_pv = PVClass(pv_type, node, node_type, node_get)
+                new_pv = PVClass(pv_type, node, node_type, node_get, node_parent=parent_node)
 
         elif isinstance(node, MarkerLinacNode):
             node_type = 'markerLinacNode'
@@ -34,36 +33,36 @@ class PVDict:
             node_get = partial(bpm_node.getParam, node_param)
             if pv_type == 'setting':
                 node_set = partial(bpm_node.setParam, node_param)
-                new_pv = PVClass(pv_type, node, node_type, node_get, node_set)
+                new_pv = PVClass(pv_type, node, node_type, node_get, node_set, node_parent=parent_node)
             else:
-                new_pv = PVClass(pv_type, node, node_type, node_get)
+                new_pv = PVClass(pv_type, node, node_type, node_get, node_parent=parent_node)
 
         elif isinstance(node, Quad):
             node_type = 'linacQuad'
             node_get = partial(node.getParam, node_param)
             if pv_type == 'setting':
                 node_set = partial(node.setParam, node_param)
-                new_pv = PVClass(pv_type, node, node_type, node_get, node_set)
+                new_pv = PVClass(pv_type, node, node_type, node_get, node_set, node_parent=parent_node)
             else:
-                new_pv = PVClass(pv_type, node, node_type, node_get)
+                new_pv = PVClass(pv_type, node, node_type, node_get, node_parent=parent_node)
 
         elif isinstance(node, DCorrectorH):
             node_type = 'dch'
             node_get = partial(node.getParam, node_param)
             if pv_type == 'setting':
                 node_set = partial(node.setParam, node_param)
-                new_pv = PVClass(pv_type, node, node_type, node_get, node_set)
+                new_pv = PVClass(pv_type, node, node_type, node_get, node_set, node_parent=parent_node)
             else:
-                new_pv = PVClass(pv_type, node, node_type, node_get)
+                new_pv = PVClass(pv_type, node, node_type, node_get, node_parent=parent_node)
 
         elif isinstance(node, DCorrectorV):
             node_type = 'dcv'
             node_get = partial(node.getParam, node_param)
             if pv_type == 'setting':
                 node_set = partial(node.setParam, node_param)
-                new_pv = PVClass(pv_type, node, node_type, node_get, node_set)
+                new_pv = PVClass(pv_type, node, node_type, node_get, node_set, node_parent=parent_node)
             else:
-                new_pv = PVClass(pv_type, node, node_type, node_get)
+                new_pv = PVClass(pv_type, node, node_type, node_get, node_parent=parent_node)
 
         else:
             raise ValueError(f'Invalid input. Allowed node types are {self.node_types}.')
@@ -81,15 +80,17 @@ class PVDict:
 
 
 class PVClass:
+    node_types = Union[Quad, MarkerLinacNode, DCorrectorV, DCorrectorH, RF_Cavity]
 
-    def __init__(self, pv_type: str, node: Union[Quad, MarkerLinacNode, DCorrectorV, DCorrectorH, RF_Cavity],
-                 node_type: str, node_get: partial, node_set: partial = None):
+    def __init__(self, pv_type: str, node: node_types, node_type: str, node_get: partial,
+                 node_set: partial = None, node_parent: node_types = None):
 
         self.pv_type = pv_type
         self.node = node
         self.node_type = node_type
         self.node_get = node_get
         self.node_set = node_set
+        self.parent_node = node_parent
         self.position = self.node.getPosition()
         self.pv_value = self.node_get()
 
@@ -139,3 +140,9 @@ class PVClass:
 
     def get_position(self):
         return self.position
+
+    def get_node(self):
+        return self.node
+
+    def get_parent_node(self):
+        return self.parent_node
