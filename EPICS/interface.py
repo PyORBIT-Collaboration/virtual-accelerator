@@ -1,8 +1,10 @@
-import math
 import sys
 from datetime import datetime
+
 from typing import Optional, Union, List
 from pathlib import Path
+from functools import partial
+
 import json
 
 from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
@@ -10,7 +12,7 @@ from orbit.core.bunch import Bunch
 
 from bpm_child_node import BPMclass
 
-from interface_pv_class import PV
+from interface_pv_class import PVDict
 
 
 class OrbitModel:
@@ -25,40 +27,57 @@ class OrbitModel:
             # subsections_list = ["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4", "SCLMed", "SCLHigh", "HEBT1", "HEBT2"]
             subsections_list = ["SCLMed", "SCLHigh"]
         self.accLattice = sns_linac_factory.getLinacAccLattice(subsections_list, xml_file_name)
+        self.pv_dict = PVDict(self.accLattice)
 
-        # Set up BPMs to actually do something
-        bpm_nodes = self.accLattice.getNodesForSubstring("BPM", "drift")
-        for node in bpm_nodes:
-            node.addChildNode(BPMclass(), node.ENTRANCE)
-
-        # connect PVs to lattice nodes
-        self.pv_dict = {}
-        for node in bpm_nodes:
-            node_name = node.getName()
-            bpm_node = node.getChildNodes(node.ENTRANCE)[0]
-            pv_name = node_name + ":phaseAvg"
-            self.pv_dict[pv_name] = PV(pv_name, "diagnostic", node, bpm_node.getPhaseAvg)
-            pv_name = node_name + ":xAvg"
-            self.pv_dict[pv_name] = PV(pv_name, "diagnostic", node, bpm_node.getXAvg)
-            pv_name = node_name + ":yAvg"
-            self.pv_dict[pv_name] = PV(pv_name, "diagnostic", node, bpm_node.getYAvg)
-            pv_name = node_name.split(':')[1]
-            pv_name = "SCL_Phys:" + pv_name + ":energy"
-            self.pv_dict[pv_name] = PV(pv_name, "physics", node, bpm_node.getEnergy)
-
+        # Set up cavities with blanking and attach their PVs
         cav_nodes = self.accLattice.getRF_Cavities()
+        pv_type = 'setting'
+        blanked_key = 'blanked'
         for node in cav_nodes:
-            node_number = node.getName()[-3:]
-            pv_name = "SCL_LLRF:FCM" + node_number + ":CtlPhaseSet"
-            self.pv_dict[pv_name] = PV(pv_name, "setting", node, node.getPhase, node.setPhase)
-
-        quad_nodes = self.accLattice.getQuads()
-        for node in quad_nodes:
+            node.addParam(blanked_key, False)
             node_name = node.getName()
-            pv_name = node_name + ":B"
-            self.pv_dict[pv_name] = PV(pv_name, "setting", node, node.getField, node.setField)
+            node_number = node_name[-3:]
+            device_name = "SCL_LLRF:FCM" + node_number
+            pv_name = device_name + ":CtlPhaseSet"
+            self.pv_dict.add_pv(pv_name, pv_type, node, 'phase')
+            pv_name = device_name + ":BlnkBeam"
+            self.pv_dict.add_pv(pv_name, pv_type, node, blanked_key)
 
-        self.pv_dict = dict(sorted(self.pv_dict.items(), key=lambda item: item[1].get_position()))
+        node_types = {'markerLinacNode', 'linacQuad', 'dch', 'dcv'}
+        list_of_nodes = self.accLattice.getNodes()
+        for node in list_of_nodes:
+            node_type = node.getType()
+            # Set up BPMs to actually do something and attach their PVs
+            if node_type == 'markerLinacNode':
+                node_name = node.getName()
+                if 'BPM' in node_name:
+                    pv_type = 'diagnostic'
+                    node.addChildNode(BPMclass(), node.ENTRANCE)
+                    pv_name = node_name + ":xAvg"
+                    self.pv_dict.add_pv(pv_name, pv_type, node, 'x_avg')
+                    pv_name = node_name + ":yAvg"
+                    self.pv_dict.add_pv(pv_name, pv_type, node, 'y_avg')
+                    pv_name = node_name + ":phaseAvg"
+                    self.pv_dict.add_pv(pv_name, pv_type, node, 'phi_avg')
+                    pv_name = node_name.split(':')[1]
+                    pv_name = "SCL_Phys:" + pv_name + ":energy"
+                    self.pv_dict.add_pv(pv_name, pv_type, node, 'energy')
+
+            # Connect Quads and their dipole correctors to their PVs.
+            elif node_type == 'linacQuad':
+                pv_type = 'setting'
+                node_name = node.getName()
+                pv_name = node_name + ":B"
+                self.pv_dict.add_pv(pv_name, pv_type, node, 'field')
+                children = node.getAllChildren()
+                for child in children:
+                    child_type = child.getType()
+                    if child_type == 'dch' or child_type == 'dcv':
+                        child_name = child.getName()
+                        pv_name = child_name + ":B"
+                        self.pv_dict.add_pv(pv_name, pv_type, child, 'B')
+
+        self.pv_dict.order_pvs()
 
         # setup initial bunch
         self.bunch_in = Bunch()
@@ -112,20 +131,20 @@ class OrbitModel:
 
         # store initial settings
         self.initial_pvs = {}
-        for pv_name, pv in self.pv_dict.items():
+        for pv_name, pv in self.pv_dict.get_pv_dict().items():
             self.initial_pvs[pv_name] = pv.get_value()
 
     def get_settings(self, setting_names: Optional[Union[str, List[str]]] = None) -> dict[str, float]:
         return_dict = {}
         if setting_names is None:
-            for pv_name, pv in self.pv_dict.items():
+            for pv_name, pv in self.pv_dict.get_pv_dict().items():
                 if pv.get_pv_type() == "setting":
                     return_dict[pv_name] = pv.get_value()
         elif isinstance(setting_names, list):
             for pv_name in setting_names:
-                return_dict[pv_name] = self.pv_dict[pv_name].get_value()
+                return_dict[pv_name] = self.pv_dict.get_pv(pv_name).get_value()
         elif isinstance(setting_names, str):
-            return_dict[setting_names] = self.pv_dict[setting_names].get_value()
+            return_dict[setting_names] = self.pv_dict.get_pv(setting_names).get_value()
         return return_dict
 
     def get_measurements(self, measurement_names: Optional[Union[str, List[str]]] = None) -> dict[str, float]:
@@ -133,25 +152,26 @@ class OrbitModel:
         # for fake parameters use XXX_Phys
         return_dict = {}
         if measurement_names is None:
-            for pv_name, pv in self.pv_dict.items():
+            for pv_name, pv in self.pv_dict.get_pv_dict().items():
                 if pv.get_pv_type() == "diagnostics" or "physics":
                     return_dict[pv_name] = pv.get_value()
         elif isinstance(measurement_names, list):
             for pv_name in measurement_names:
-                return_dict[pv_name] = self.pv_dict[pv_name].get_value()
+                return_dict[pv_name] = self.pv_dict.get_pv(pv_name).get_value()
         elif isinstance(measurement_names, str):
-            return_dict[measurement_names] = self.pv_dict[measurement_names].get_value()
+            return_dict[measurement_names] = self.pv_dict.get_pv(measurement_names).get_value()
         return return_dict
 
     def track(self, number_of_particles=1000) -> dict[str, float]:
         if self.upstream_change is not None:
             # freeze optics (clone)
             frozen_lattice = self.accLattice
-            start_pv = self.pv_dict[self.upstream_change]
+            start_pv = self.pv_dict.get_pv(self.upstream_change)
             if start_pv.get_node_type() == "RF_Cavity":
                 start_node = self.accLattice.getRF_Cavity(start_pv.get_node_name()).getRF_GapNodes()[0]
             else:
                 start_node = self.accLattice.getNodeForName(start_pv.get_node_name())
+            print(start_pv.get_node_type())
             start_ind = frozen_lattice.getNodeIndex(start_node)
 
             # setup initial bunch
@@ -178,12 +198,12 @@ class OrbitModel:
         if self.upstream_change is None:
             upstream_check = self.accLattice.getLength()
         else:
-            upstream_check = self.pv_dict[self.upstream_change].get_position()
+            upstream_check = self.pv_dict.get_pv(self.upstream_change).get_position()
         temp_upstream_check = upstream_check
         upstream_name = None
         change_flag = False
         for pv_name, new_value in changed_optics.items():
-            pv = self.pv_dict[pv_name]
+            pv = self.pv_dict.get_pv(pv_name)
             if pv.get_pv_type() == "setting":
                 current_value = pv.get_value()
                 if new_value != current_value:
@@ -207,7 +227,7 @@ class OrbitModel:
             timestamp = current_time.strftime("%Y-%m-%d-%H-%M-%S")
             filename = Path(f"optics_{timestamp}.json")
         saved_optics = {}
-        for pv_name, pv in self.pv_dict.items():
+        for pv_name, pv in self.pv_dict.get_pv_dict().items():
             if pv.get_pv_type() == "setting":
                 saved_optics[pv_name] = pv.get_value()
         with open(filename, "w") as json_file:
@@ -225,7 +245,7 @@ class OrbitModel:
             timestamp = current_time.strftime("%Y-%m-%d-%H-%M-%S")
             filename = Path(f"PVs_{timestamp}.json")
         saved_optics = {}
-        for pv_name, pv in self.pv_dict.items():
+        for pv_name, pv in self.pv_dict.get_pv_dict().items():
             saved_optics[pv_name] = pv.get_value()
         with open(filename, "w") as json_file:
             json.dump(saved_optics, json_file, indent=4)
