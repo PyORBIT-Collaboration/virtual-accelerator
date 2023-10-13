@@ -2,8 +2,10 @@ import math
 
 
 class BPMclass:
-    def __init__(self):
+    def __init__(self, child_name: str):
         self.parameters = {'x_avg': 0.0,  'y_avg': 0.0, 'phi_avg': 0.0, 'energy': 0.0}
+        self.child_name = child_name
+        self.node_type = 'BPM'
 
     def trackActions(self, actionsContainer, paramsDict):
         bunch = paramsDict["bunch"]
@@ -48,3 +50,12 @@ class BPMclass:
 
     def getParamsDict(self) -> dict:
         return self.parameters
+
+    def getType(self):
+        return self.node_type
+
+    def getName(self):
+        return self.child_name
+
+    def getAllChildren(self):
+        return []
