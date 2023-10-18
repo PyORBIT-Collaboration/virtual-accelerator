@@ -1,9 +1,7 @@
 import sys
 from datetime import datetime
-
 from typing import Optional, Union, List
 from pathlib import Path
-from functools import partial
 
 import json
 
@@ -18,9 +16,9 @@ from interface_lib import nodeDict, PVDict
 class OrbitModel:
     def __init__(self, lattice_file: Path, subsections_list: List[str] = None, pv_file: Path = None):
         # read lattice
-        if subsections_list is None:
-            # subsections_list = ["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4", "SCLMed", "SCLHigh", "HEBT1", "HEBT2"]
-            subsections_list = ["SCLMed", "SCLHigh"]
+        if subsections_list is None or len(subsections_list) == 0:
+            subsections_list = ["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
+                                "SCLMed", "SCLHigh", "HEBT1", "HEBT2"]
         sns_linac_factory = SNS_LinacLatticeFactory()
         sns_linac_factory.setMaxDriftLength(0.01)
         xml_file_name = lattice_file
@@ -44,53 +42,7 @@ class OrbitModel:
         # Set up a dictionary to reference different objects within the lattice by their name.
         # This way, children nodes (correctors) and RF Cavity parameters are easy to reference.
         self.node_dict = nodeDict(self.accLattice, ignored_nodes={'drift', 'tilt', 'fringe', 'markerLinacNode'})
-        self.pv_dict = PVDict(self.node_dict, pv_file)
-
-        # Set up cavities with blanking and attach their PVs
-        cav_nodes = self.accLattice.getRF_Cavities()
-        pv_type = 'setting'
-        for node in cav_nodes:
-            node_name = node.getName()
-            node_number = node_name[-3:]
-            device_name = "SCL_LLRF:FCM" + node_number
-            pv_name = device_name + ":CtlPhaseSet"
-            self.pv_dict.add_pv(pv_name, pv_type, node_name, 'phase')
-            pv_name = device_name + ":BlnkBeam"
-            self.pv_dict.add_pv(pv_name, pv_type, node_name, blanked_key)
-
-        list_of_nodes = self.accLattice.getNodes()
-        for node in list_of_nodes:
-            node_type = node.getType()
-            # Set up BPMs to actually do something and attach their PVs
-            if node_type == 'markerLinacNode':
-                node_name = node.getName()
-                if 'BPM' in node_name:
-                    pv_type = 'diagnostic'
-                    pv_name = node_name + ":xAvg"
-                    self.pv_dict.add_pv(pv_name, pv_type, node_name, 'x_avg')
-                    pv_name = node_name + ":yAvg"
-                    self.pv_dict.add_pv(pv_name, pv_type, node_name, 'y_avg')
-                    pv_name = node_name + ":phaseAvg"
-                    self.pv_dict.add_pv(pv_name, pv_type, node_name, 'phi_avg')
-                    pv_name = node_name.split(':')[1]
-                    pv_name = "SCL_Phys:" + pv_name + ":energy"
-                    self.pv_dict.add_pv(pv_name, pv_type, node_name, 'energy')
-
-            # Connect Quads and their dipole correctors to their PVs.
-            elif node_type == 'linacQuad':
-                pv_type = 'setting'
-                node_name = node.getName()
-                pv_name = node_name + ":B"
-                self.pv_dict.add_pv(pv_name, pv_type, node_name, 'field')
-                children = node.getAllChildren()
-                for child in children:
-                    child_type = child.getType()
-                    if child_type == 'dch' or child_type == 'dcv':
-                        child_name = child.getName()
-                        pv_name = child_name + ":B"
-                        self.pv_dict.add_pv(pv_name, pv_type, child_name, 'B')
-
-        self.pv_dict.order_pvs()
+        self.pv_dict = PVDict(self.node_dict)
 
         # setup initial bunch
         self.bunch_in = Bunch()
@@ -146,61 +98,16 @@ class OrbitModel:
         # store initial settings
         self.initial_settings = {}
         for pv_name, pv_ref in self.pv_dict.get_pvref_dict().items():
-            if pv_ref.get_type() == 'setting':
+            if any('setting' for pv_type in pv_ref.get_types()):
                 self.initial_settings[pv_name] = pv_ref.get_value()
 
-    """
-    def add_device(self, device_type: str, device_name: str, node_name: str):
+    def add_pv(self, pv_name: str, pv_types: list[str], pyorbit_name: str, param_key: str) -> None:
+        self.pv_dict.add_pv(pv_name, pv_types, pyorbit_name, param_key)
 
-        cav_nodes = self.accLattice.getRF_Cavities()
-        pv_type = 'setting'
-        blanked_key = 'blanked'
-        for node in cav_nodes:
-            node.addParam(blanked_key, False)
-            node_name = node.getName()
-            node_number = node_name[-3:]
-            device_name = "SCL_LLRF:FCM" + node_number
-            pv_name = device_name + ":CtlPhaseSet"
-            self.pv_dict.add_pv(pv_name, pv_type, node, 'phase')
-            pv_name = device_name + ":BlnkBeam"
-            self.pv_dict.add_pv(pv_name, pv_type, node, blanked_key)
+    def order_pvs(self):
+        self.pv_dict.order_pvs()
 
-        node_types = {'markerLinacNode', 'linacQuad', 'dch', 'dcv'}
-        list_of_nodes = self.accLattice.getNodes()
-        for node in list_of_nodes:
-            node_type = node.getType()
-            # Set up BPMs to actually do something and attach their PVs
-            if node_type == 'markerLinacNode':
-                node_name = node.getName()
-                if 'BPM' in node_name:
-                    pv_type = 'diagnostic'
-                    node.addChildNode(BPMclass(), node.ENTRANCE)
-                    pv_name = node_name + ":xAvg"
-                    self.pv_dict.add_pv(pv_name, pv_type, node, 'x_avg')
-                    pv_name = node_name + ":yAvg"
-                    self.pv_dict.add_pv(pv_name, pv_type, node, 'y_avg')
-                    pv_name = node_name + ":phaseAvg"
-                    self.pv_dict.add_pv(pv_name, pv_type, node, 'phi_avg')
-                    pv_name = node_name.split(':')[1]
-                    pv_name = "SCL_Phys:" + pv_name + ":energy"
-                    self.pv_dict.add_pv(pv_name, pv_type, node, 'energy')
-
-            # Connect Quads and their dipole correctors to their PVs.
-            elif node_type == 'linacQuad':
-                pv_type = 'setting'
-                node_name = node.getName()
-                pv_name = node_name + ":B"
-                self.pv_dict.add_pv(pv_name, pv_type, node, 'field')
-                children = node.getAllChildren()
-                for child in children:
-                    child_type = child.getType()
-                    if child_type == 'dch' or child_type == 'dcv':
-                        child_name = child.getName()
-                        pv_name = child_name + ":B"
-                        self.pv_dict.add_pv(pv_name, pv_type, child, 'B', node)
-    """
-
-    def get_settings(self, setting_names: Optional[Union[str, List[str]]] = None) -> dict[str, float]:
+    def get_settings(self, setting_names: Optional[Union[str, List[str]]] = None) -> dict[str, ]:
         return_dict = {}
         if setting_names is None:
             for pv_name, pv_ref in self.pv_dict.get_pvref_dict().items():
@@ -213,7 +120,7 @@ class OrbitModel:
             return_dict[setting_names] = self.pv_dict.get_pv(setting_names)
         return return_dict
 
-    def get_measurements(self, measurement_names: Optional[Union[str, List[str]]] = None) -> dict[str, float]:
+    def get_measurements(self, measurement_names: Optional[Union[str, List[str]]] = None) -> dict[str, ]:
         # think about more useful parameters that are not real
         # for fake parameters use XXX_Phys
         return_dict = {}
@@ -260,7 +167,7 @@ class OrbitModel:
             print("No changes to track through.")
             # if nothing changed do not track
 
-    def update_optics(self, changed_optics: dict[str, ]) -> None:
+    def update_optics(self, changed_optics: dict[str,]) -> None:
         # update optics
         # figure out the most upstream element that changed
         # do not track here yet

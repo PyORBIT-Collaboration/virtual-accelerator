@@ -6,7 +6,9 @@ from pyorbit_server_interface import OrbitModel
 
 lattice_file = Path("../SCL_Wizard/sns_linac.xml")
 pv_file = Path("server_devices.txt")
-model = OrbitModel(lattice_file, pv_file=pv_file)
+model = OrbitModel(lattice_file, [])
+
+sys.exit()
 
 """
 print(model.get_settings("SCL_Mag:DCH00:B"))

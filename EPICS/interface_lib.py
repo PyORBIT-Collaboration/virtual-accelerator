@@ -82,7 +82,7 @@ class nodeDict:
         node_index = self.acc_lattice.getNodeIndex(location_node)
         return node_index
 
-    def get_node_paramsDict(self, node_name: str) -> dict[str, ]:
+    def get_node_paramsDict(self, node_name: str) -> dict[str,]:
         params_dict = self.node_dict[node_name].get_paramsDict()
         return params_dict
 
@@ -125,7 +125,7 @@ class nodeRefClass:
             position = self.location_node.getPosition()
         return position
 
-    def get_paramsDict(self) -> dict[str, ]:
+    def get_paramsDict(self) -> dict[str,]:
         node = self.node
         params_dict = node.getParamsDict()
         if isinstance(node, RF_Cavity) and node.getParam('blanked'):
@@ -155,23 +155,18 @@ class nodeRefClass:
 
 
 class PVDict:
-    pv_types = {'setting', 'readback', 'diagnostic', 'physics'}
+    allowed_pv_types = {'setting', 'readback', 'diagnostic', 'physics'}
 
-    def __init__(self, node_dict: nodeDict, pv_file: Path = None):
+    def __init__(self, node_dict: nodeDict):
         self.node_dict = node_dict
         self.pv_dict = {}
-        #if pv_file is not None:
-        #    with open(pv_file, "r") as f:
-        #        file = f.read().splitlines()
-        #        # filter out comments while reading the file
-        #        parameters = [i.split() for i in file if not i.strip().startswith('#')]
-        #    for pv_params in parameters:
 
-    def add_pv(self, pv_name: str, pv_type: str, node_name: str, param_key: str):
-        if pv_type not in self.pv_types:
-            raise ValueError(f'Invalid input. Allowed pv types are {self.pv_types}.')
+    def add_pv(self, pv_name: str, pv_types: list[str], node_name: str, param_key: str):
+        bad_pv_types = [pv_type for pv_type in pv_types if pv_type not in self.allowed_pv_types]
+        if bad_pv_types:
+            print("Unrecognized PV types:", ", ".join(bad_pv_types))
 
-        new_pv = PVClass(pv_type, node_name, param_key, self.node_dict)
+        new_pv = PVClass(pv_types, node_name, param_key, self.node_dict)
 
         self.pv_dict[pv_name] = new_pv
 
@@ -181,7 +176,7 @@ class PVDict:
     def get_pvref_dict(self) -> dict[str, "PVClass"]:
         return self.pv_dict
 
-    def get_pvs(self) -> dict[str, ]:
+    def get_pvs(self) -> dict[str,]:
         pv_dict = {}
         for key, pv_ref in self.pv_dict.items():
             value = pv_ref.get_value()
@@ -199,9 +194,9 @@ class PVDict:
     def set_pv(self, pv_name: str, new_value) -> None:
         self.pv_dict[pv_name].set_value(new_value)
 
-    def get_pv_type(self, pv_name: str) -> str:
-        pv_type = self.pv_dict[pv_name].get_type()
-        return pv_type
+    def get_pv_types(self, pv_name: str) -> list[str]:
+        pv_types = self.pv_dict[pv_name].get_types()
+        return pv_types
 
     def get_node_name(self, pv_name: str) -> str:
         node_name = self.pv_dict[pv_name].get_node_name()
@@ -220,11 +215,12 @@ class PVDict:
             sorted_pv_dict[key] = pv_dict[key]
         self.pv_dict = sorted_pv_dict
 
+
 class PVClass:
 
-    def __init__(self, pv_type: str, node_name: str, param_key: str, node_dict: "nodeDict"):
+    def __init__(self, pv_types: list[str], node_name: str, param_key: str, node_dict: "nodeDict"):
 
-        self.pv_type = pv_type
+        self.pv_types = pv_types
         self.param_key = param_key
         self.node_name = node_name
         self.node_dict = node_dict
@@ -234,13 +230,13 @@ class PVClass:
         return param
 
     def set_value(self, new_value) -> None:
-        if self.pv_type == 'setting':
+        if any('setting' for pv_type in self.pv_types):
             self.node_dict.set_node_param(self.node_name, self.param_key, new_value)
         else:
             print("Invalid PV type. PV type must be 'setting' to change its value.")
 
-    def get_type(self) -> str:
-        return self.pv_type
+    def get_types(self) -> list[str]:
+        return self.pv_types
 
     def get_param_key(self) -> str:
         return self.param_key
