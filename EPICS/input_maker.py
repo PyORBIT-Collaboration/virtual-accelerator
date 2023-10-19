@@ -1,4 +1,5 @@
 import json
+import sys
 from pathlib import Path
 from pyorbit_server_interface import OrbitModel
 
@@ -14,6 +15,7 @@ cavities = {}
 quads = {}
 correctors = {}
 bpms = {}
+pbpms = {}
 
 cavity_params = {"CtlPhaseSet": {"parameter_key": "phase", "pv_types": ["setting"]},
               "CtlAmpSet": {"parameter_key": "amp", "pv_types": ["setting"]},
@@ -27,8 +29,9 @@ corrector_params = {"B_set": {"parameter_key": "B", "pv_types": ["setting"]},
 
 bpm_params = {"xAvg": {"parameter_key": "x_avg", "pv_types": ["diagnostic"]},
               "yAvg": {"parameter_key": "y_avg", "pv_types": ["diagnostic"]},
-              "phaseAvg": {"parameter_key": "phi_avg", "pv_types": ["diagnostic"]},
-              "Energy": {"parameter_key": "energy", "pv_types": ["physics"]}}
+              "phaseAvg": {"parameter_key": "phi_avg", "pv_types": ["diagnostic"]}}
+
+pbpm_params = {"Energy": {"parameter_key": "energy", "pv_types": ["physics"]}}
 
 for or_name, ele_ref in model.pyorbit_dict.get_element_dictionary().items():
     if 'Cav' in or_name:
@@ -43,6 +46,8 @@ for or_name, ele_ref in model.pyorbit_dict.get_element_dictionary().items():
     elif 'BPM' in or_name:
         pv_name = or_name
         bpms[pv_name] = or_name
+        pv_name = pv_name.replace('Diag', 'Phys')
+        pbpms[pv_name] = or_name
 
 lattice = {'file_name': lattice_str, 'subsections': subsections}
 
@@ -55,7 +60,9 @@ file_dict = {
     "corrector_parameters": corrector_params,
     "correctors": correctors,
     "bpm_parameters": bpm_params,
-    "bpms": bpms
+    "bpms": bpms,
+    "pbpm_parameters": pbpm_params,
+    "pbpms": pbpms
 }
 
 with open(config_file, "w") as json_file:
