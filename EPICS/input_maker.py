@@ -4,39 +4,47 @@ from pyorbit_server_interface import OrbitModel
 
 config_file = Path("va_config.json")
 
-lattice_file = Path("sns_linac.xml")
-pv_file = Path("server_devices.txt")
-model = OrbitModel(lattice_file, ['SCLMed', 'SCLHigh'])
+lattice_str = "sns_linac.xml"
+subsections = ['SCLMed', 'SCLHigh', 'HEBT1']
+
+lattice_file = Path(lattice_str)
+model = OrbitModel(lattice_file, subsections)
 
 cavities = {}
-cavity_params = {}
 quads = {}
-quad_params = {}
 correctors = {}
-corrector_params = {}
 bpms = {}
-bpm_params = {}
-for name, pvref in model.pv_dict.get_pvref_dict().items():
-    device_name = ':'.join(name.split(':')[:2])
-    pyorbit_name = pvref.get_node_name()
-    if 'BPM' in pyorbit_name:
-        bpms[device_name] = pyorbit_name
-        bpm_params[name.split(':')[2]] = {'parameter_key': pvref.get_param_key(), 'pv_types': ['diagnostic']}
-    elif 'Q' in pyorbit_name:
-        quads[device_name] = pyorbit_name
-        quad_params[name.split(':')[2]] = {'parameter_key': pvref.get_param_key(),
-                                           'pv_types': ['setting', 'readback']}
-    elif 'DC' in pyorbit_name:
-        correctors[device_name] = pyorbit_name
-        corrector_params[name.split(':')[2]] = {'parameter_key': pvref.get_param_key(),
-                                                'pv_types': ['setting', 'readback']}
-    elif 'Cav' in pyorbit_name:
-        cavities[device_name] = pyorbit_name
-        cavity_params[name.split(':')[2]] = {'parameter_key': pvref.get_param_key(), 'pv_types': ['setting']}
-    else:
-        'Uh oh'
 
-lattice = {'file_name': 'sns_linac.xml', 'subsections': ['SCLMed', 'SCLHigh']}
+cavity_params = {"CtlPhaseSet": {"parameter_key": "phase", "pv_types": ["setting"]},
+              "CtlAmpSet": {"parameter_key": "amp", "pv_types": ["setting"]},
+              "BlnkBeam": {"parameter_key": "blanked", "pv_types": ["setting"]}}
+
+quad_params = {"B_set": {"parameter_key": "field", "pv_types": ["setting"]},
+               "B": {"parameter_key": "field", "pv_types": ["readback"]}}
+
+corrector_params = {"B_set": {"parameter_key": "B", "pv_types": ["setting"]},
+                    "B": {"parameter_key": "B", "pv_types": ["readback"]}}
+
+bpm_params = {"xAvg": {"parameter_key": "x_avg", "pv_types": ["diagnostic"]},
+              "yAvg": {"parameter_key": "y_avg", "pv_types": ["diagnostic"]},
+              "phaseAvg": {"parameter_key": "phi_avg", "pv_types": ["diagnostic"]},
+              "Energy": {"parameter_key": "energy", "pv_types": ["physics"]}}
+
+for or_name, ele_ref in model.pyorbit_dict.get_element_dictionary().items():
+    if 'Cav' in or_name:
+        pv_name = "SCL_LLRF:FCM" + or_name[-3:]
+        cavities[pv_name] = or_name
+    elif 'Q' in or_name:
+        pv_name = or_name
+        quads[pv_name] = or_name
+    elif 'DC' in or_name:
+        pv_name = or_name
+        correctors[pv_name] = or_name
+    elif 'BPM' in or_name:
+        pv_name = or_name
+        bpms[pv_name] = or_name
+
+lattice = {'file_name': lattice_str, 'subsections': subsections}
 
 file_dict = {
     "pyorbit_lattice": lattice,

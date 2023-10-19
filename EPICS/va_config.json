@@ -3,7 +3,8 @@
         "file_name": "sns_linac.xml",
         "subsections": [
             "SCLMed",
-            "SCLHigh"
+            "SCLHigh",
+            "HEBT1"
         ]
     },
     "cavity_parameters": {
@@ -113,7 +114,12 @@
         "B_set": {
             "parameter_key": "field",
             "pv_types": [
-                "setting",
+                "setting"
+            ]
+        },
+        "B": {
+            "parameter_key": "field",
+            "pv_types": [
                 "readback"
             ]
         }
@@ -185,13 +191,29 @@
         "SCL_Mag:QV31": "SCL_Mag:QV31",
         "SCL_Mag:QH32": "SCL_Mag:QH32",
         "SCL_Mag:QV32": "SCL_Mag:QV32",
-        "SCL_Mag:QH33": "SCL_Mag:QH33"
+        "SCL_Mag:QH33": "SCL_Mag:QH33",
+        "HEBT_Mag:QV01": "HEBT_Mag:QV01",
+        "HEBT_Mag:QH02": "HEBT_Mag:QH02",
+        "HEBT_Mag:QV03": "HEBT_Mag:QV03",
+        "HEBT_Mag:QH04": "HEBT_Mag:QH04",
+        "HEBT_Mag:QV05": "HEBT_Mag:QV05",
+        "HEBT_Mag:QH06": "HEBT_Mag:QH06",
+        "HEBT_Mag:QV07": "HEBT_Mag:QV07",
+        "HEBT_Mag:QH08": "HEBT_Mag:QH08",
+        "HEBT_Mag:QV09": "HEBT_Mag:QV09",
+        "HEBT_Mag:QH10": "HEBT_Mag:QH10",
+        "HEBT_Mag:QV11": "HEBT_Mag:QV11"
     },
     "corrector_parameters": {
         "B_set": {
             "parameter_key": "B",
             "pv_types": [
-                "setting",
+                "setting"
+            ]
+        },
+        "B": {
+            "parameter_key": "B",
+            "pv_types": [
                 "readback"
             ]
         }
@@ -263,7 +285,11 @@
         "SCL_Mag:DCV31": "SCL_Mag:DCV31",
         "SCL_Mag:DCH32": "SCL_Mag:DCH32",
         "SCL_Mag:DCV32": "SCL_Mag:DCV32",
-        "SCL_Mag:DCH33": "SCL_Mag:DCH33"
+        "SCL_Mag:DCH33": "SCL_Mag:DCH33",
+        "HEBT_Mag:DCV05": "HEBT_Mag:DCV05",
+        "HEBT_Mag:DCH06": "HEBT_Mag:DCH06",
+        "HEBT_Mag:DCV07": "HEBT_Mag:DCV07",
+        "HEBT_Mag:DCH08": "HEBT_Mag:DCH08"
     },
     "bpm_parameters": {
         "xAvg": {
@@ -293,72 +319,49 @@
     },
     "bpms": {
         "SCL_Diag:BPM00a": "SCL_Diag:BPM00a",
-        "SCL_Phys:BPM00a": "SCL_Diag:BPM00a",
         "SCL_Diag:BPM00b": "SCL_Diag:BPM00b",
-        "SCL_Phys:BPM00b": "SCL_Diag:BPM00b",
         "SCL_Diag:BPM01": "SCL_Diag:BPM01",
-        "SCL_Phys:BPM01": "SCL_Diag:BPM01",
         "SCL_Diag:BPM02": "SCL_Diag:BPM02",
-        "SCL_Phys:BPM02": "SCL_Diag:BPM02",
         "SCL_Diag:BPM03": "SCL_Diag:BPM03",
-        "SCL_Phys:BPM03": "SCL_Diag:BPM03",
         "SCL_Diag:BPM04": "SCL_Diag:BPM04",
-        "SCL_Phys:BPM04": "SCL_Diag:BPM04",
         "SCL_Diag:BPM05": "SCL_Diag:BPM05",
-        "SCL_Phys:BPM05": "SCL_Diag:BPM05",
         "SCL_Diag:BPM06": "SCL_Diag:BPM06",
-        "SCL_Phys:BPM06": "SCL_Diag:BPM06",
         "SCL_Diag:BPM07": "SCL_Diag:BPM07",
-        "SCL_Phys:BPM07": "SCL_Diag:BPM07",
         "SCL_Diag:BPM08": "SCL_Diag:BPM08",
-        "SCL_Phys:BPM08": "SCL_Diag:BPM08",
         "SCL_Diag:BPM09": "SCL_Diag:BPM09",
-        "SCL_Phys:BPM09": "SCL_Diag:BPM09",
         "SCL_Diag:BPM10": "SCL_Diag:BPM10",
-        "SCL_Phys:BPM10": "SCL_Diag:BPM10",
         "SCL_Diag:BPM11": "SCL_Diag:BPM11",
-        "SCL_Phys:BPM11": "SCL_Diag:BPM11",
         "SCL_Diag:BPM12": "SCL_Diag:BPM12",
-        "SCL_Phys:BPM12": "SCL_Diag:BPM12",
         "SCL_Diag:BPM13": "SCL_Diag:BPM13",
-        "SCL_Phys:BPM13": "SCL_Diag:BPM13",
         "SCL_Diag:BPM14": "SCL_Diag:BPM14",
-        "SCL_Phys:BPM14": "SCL_Diag:BPM14",
         "SCL_Diag:BPM15": "SCL_Diag:BPM15",
-        "SCL_Phys:BPM15": "SCL_Diag:BPM15",
         "SCL_Diag:BPM16": "SCL_Diag:BPM16",
-        "SCL_Phys:BPM16": "SCL_Diag:BPM16",
         "SCL_Diag:BPM17": "SCL_Diag:BPM17",
-        "SCL_Phys:BPM17": "SCL_Diag:BPM17",
         "SCL_Diag:BPM18": "SCL_Diag:BPM18",
-        "SCL_Phys:BPM18": "SCL_Diag:BPM18",
         "SCL_Diag:BPM19": "SCL_Diag:BPM19",
-        "SCL_Phys:BPM19": "SCL_Diag:BPM19",
         "SCL_Diag:BPM20": "SCL_Diag:BPM20",
-        "SCL_Phys:BPM20": "SCL_Diag:BPM20",
         "SCL_Diag:BPM21": "SCL_Diag:BPM21",
-        "SCL_Phys:BPM21": "SCL_Diag:BPM21",
         "SCL_Diag:BPM22": "SCL_Diag:BPM22",
-        "SCL_Phys:BPM22": "SCL_Diag:BPM22",
         "SCL_Diag:BPM23": "SCL_Diag:BPM23",
-        "SCL_Phys:BPM23": "SCL_Diag:BPM23",
         "SCL_Diag:BPM24": "SCL_Diag:BPM24",
-        "SCL_Phys:BPM24": "SCL_Diag:BPM24",
         "SCL_Diag:BPM25": "SCL_Diag:BPM25",
-        "SCL_Phys:BPM25": "SCL_Diag:BPM25",
         "SCL_Diag:BPM26": "SCL_Diag:BPM26",
-        "SCL_Phys:BPM26": "SCL_Diag:BPM26",
         "SCL_Diag:BPM27": "SCL_Diag:BPM27",
-        "SCL_Phys:BPM27": "SCL_Diag:BPM27",
         "SCL_Diag:BPM28": "SCL_Diag:BPM28",
-        "SCL_Phys:BPM28": "SCL_Diag:BPM28",
         "SCL_Diag:BPM29": "SCL_Diag:BPM29",
-        "SCL_Phys:BPM29": "SCL_Diag:BPM29",
         "SCL_Diag:BPM30": "SCL_Diag:BPM30",
-        "SCL_Phys:BPM30": "SCL_Diag:BPM30",
         "SCL_Diag:BPM31": "SCL_Diag:BPM31",
-        "SCL_Phys:BPM31": "SCL_Diag:BPM31",
         "SCL_Diag:BPM32": "SCL_Diag:BPM32",
-        "SCL_Phys:BPM32": "SCL_Diag:BPM32"
+        "HEBT_Diag:BPM01": "HEBT_Diag:BPM01",
+        "HEBT_Diag:BPM02": "HEBT_Diag:BPM02",
+        "HEBT_Diag:BPM03": "HEBT_Diag:BPM03",
+        "HEBT_Diag:BPM04": "HEBT_Diag:BPM04",
+        "HEBT_Diag:BPM05": "HEBT_Diag:BPM05",
+        "HEBT_Diag:BPM06": "HEBT_Diag:BPM06",
+        "HEBT_Diag:BPM07": "HEBT_Diag:BPM07",
+        "HEBT_Diag:BPM08": "HEBT_Diag:BPM08",
+        "HEBT_Diag:BPM09": "HEBT_Diag:BPM09",
+        "HEBT_Diag:BPM10": "HEBT_Diag:BPM10",
+        "HEBT_Diag:BPM11": "HEBT_Diag:BPM11"
     }
 }

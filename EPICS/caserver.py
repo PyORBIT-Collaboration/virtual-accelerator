@@ -4,28 +4,16 @@ import json
 import sys
 from pathlib import Path
 from time import sleep
+import argparse
 
 sys.path.append('../../../SNS_CA_Server/caserver')
 from castst import Server, epics_now, not_ctrlc
-import argparse
 from devices import BLM, BCM, BPM, Magnet, Cavity, PBPM, genPV
 
 from pyorbit_server_interface import OrbitModel
 
 # update rate in Hz
 REP_RATE = 5.0
-
-
-# A function to parse BLMs and attributes from file
-# Returns a list of lines (split into sublists)
-
-def read_file(file):
-    with open(file, "r") as f:
-        file = f.read().splitlines()
-        # filter out comments while reading the file
-        parameters = [i.split() for i in file if not i.strip().startswith('#')]
-        return parameters
-
 
 if __name__ == '__main__':
     # Set a default prefix if unspecified at server initialization
@@ -75,7 +63,6 @@ if __name__ == '__main__':
             init_values.append(model.get_measurements(pv_name)[pv_name])
         all_devices.append(server.add_device(Magnet(device_name, *init_values)))
 
-
     for device_name, pyorbit_name in corrs.items():
         init_values = []
         for pv_param_name, pv_info in corr_params.items():
@@ -97,7 +84,7 @@ if __name__ == '__main__':
 
     server.start()
     print(f"Server started.")
-    print(f"Devices in use: {[p.name for p in all_devices]}")
+    #print(f"Devices in use: {[p.name for p in all_devices]}")
 
     # Our new data acquisition routine
     while not_ctrlc():
