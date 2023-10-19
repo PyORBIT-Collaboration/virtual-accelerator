@@ -1,3 +1,4 @@
+import copy
 import sys
 from datetime import datetime
 from typing import Optional, Union, List
@@ -10,7 +11,7 @@ from orbit.core.bunch import Bunch
 
 from bpm_child_node import BPMclass
 
-from interface_lib import nodeDict, PVDict
+from interface_lib import PyorbitLibrary, PVLibrary
 
 
 class OrbitModel:
@@ -23,7 +24,7 @@ class OrbitModel:
         sns_linac_factory.setMaxDriftLength(0.01)
         xml_file_name = lattice_file
         self.accLattice = sns_linac_factory.getLinacAccLattice(subsections_list, xml_file_name)
-        self.pv_dict = PVDict(self.accLattice)
+        self.pv_dict = PVLibrary(self.accLattice)
 
         cav_nodes = self.accLattice.getRF_Cavities()
         blanked_key = 'blanked'
@@ -41,8 +42,9 @@ class OrbitModel:
 
         # Set up a dictionary to reference different objects within the lattice by their name.
         # This way, children nodes (correctors) and RF Cavity parameters are easy to reference.
-        self.node_dict = nodeDict(self.accLattice, ignored_nodes={'drift', 'tilt', 'fringe', 'markerLinacNode'})
-        self.pv_dict = PVDict(self.node_dict)
+        self.pyorbit_dict = PyorbitLibrary(self.accLattice,
+                                           ignored_nodes={'drift', 'tilt', 'fringe', 'markerLinacNode'})
+        self.pv_dict = PVLibrary(self.pyorbit_dict)
 
         # setup initial bunch
         self.bunch_in = Bunch()
@@ -97,21 +99,20 @@ class OrbitModel:
 
         # store initial settings
         self.initial_settings = {}
-        for pv_name, pv_ref in self.pv_dict.get_pvref_dict().items():
-            if any('setting' for pv_type in pv_ref.get_types()):
-                self.initial_settings[pv_name] = pv_ref.get_value()
 
     def add_pv(self, pv_name: str, pv_types: list[str], pyorbit_name: str, param_key: str) -> None:
         self.pv_dict.add_pv(pv_name, pv_types, pyorbit_name, param_key)
+        if 'setting' in pv_types:
+            self.initial_settings[pv_name] = self.pyorbit_dict.get_element_parameter(pyorbit_name, param_key)
 
     def order_pvs(self):
         self.pv_dict.order_pvs()
 
-    def get_settings(self, setting_names: Optional[Union[str, List[str]]] = None) -> dict[str, ]:
+    def get_settings(self, setting_names: Optional[Union[str, List[str]]] = None) -> dict[str,]:
         return_dict = {}
         if setting_names is None:
-            for pv_name, pv_ref in self.pv_dict.get_pvref_dict().items():
-                if pv_ref.get_type() == "setting":
+            for pv_name, pv_ref in self.pv_dict.get_pv_dictionary().items():
+                if 'setting' in pv_ref.get_types():
                     return_dict[pv_name] = pv_ref.get_value()
         elif isinstance(setting_names, list):
             for pv_name in setting_names:
@@ -120,13 +121,14 @@ class OrbitModel:
             return_dict[setting_names] = self.pv_dict.get_pv(setting_names)
         return return_dict
 
-    def get_measurements(self, measurement_names: Optional[Union[str, List[str]]] = None) -> dict[str, ]:
+    def get_measurements(self, measurement_names: Optional[Union[str, List[str]]] = None) -> dict[str,]:
         # think about more useful parameters that are not real
         # for fake parameters use XXX_Phys
         return_dict = {}
         if measurement_names is None:
-            for pv_name, pv_ref in self.pv_dict.get_pvref_dict().items():
-                if pv_ref.get_type() == "diagnostics" or "physics":
+            for pv_name, pv_ref in self.pv_dict.get_pv_dictionary().items():
+                pv_types = pv_ref.get_types()
+                if 'diagnostic' in pv_types or 'physics' in pv_types:
                     return_dict[pv_name] = pv_ref.get_value()
         elif isinstance(measurement_names, list):
             for pv_name in measurement_names:
@@ -135,12 +137,13 @@ class OrbitModel:
             return_dict[measurement_names] = self.pv_dict.get_pv(measurement_names)
         return return_dict
 
-    def track(self, number_of_particles=1000) -> dict[str, float]:
+    def track(self, number_of_particles=1000) -> dict[str,]:
         if self.upstream_change is not None:
             # freeze optics (clone)
-            start_node_name = self.pv_dict.get_node_name(self.upstream_change)
-            start_ind = self.node_dict.get_node_index(start_node_name)
-            start_bunch_name = self.node_dict.get_location_node_name(start_node_name)
+            start_element_name = self.pv_dict.get_pyorbit_name(self.upstream_change)
+            start_ind = self.pyorbit_dict.get_element_index(start_element_name)
+            start_bunch_name = self.pyorbit_dict.get_location_node(start_element_name).getName()
+            # frozen_lattice = copy.deepcopy(self.accLattice)
             frozen_lattice = self.accLattice
             bunch_dict = self.bunch_dict
 
@@ -151,21 +154,27 @@ class OrbitModel:
                 for n in range(tracked_bunch.getSizeGlobal()):
                     if n + 1 > number_of_particles:
                         tracked_bunch.deleteParticleFast(n)
+                tracked_bunch.compress()
+                print("Tracking bunch...")
+                frozen_lattice.trackBunch(tracked_bunch, index_start=start_ind)
+                print("Bunch tracked")
+
             else:
                 self.bunch_dict['initial_bunch'].copyBunchTo(tracked_bunch)
                 for n in range(tracked_bunch.getSizeGlobal()):
                     if n + 1 > number_of_particles:
                         tracked_bunch.deleteParticleFast(n)
-            tracked_bunch.compress()
+                tracked_bunch.compress()
+                print("Tracking bunch...")
+                frozen_lattice.trackBunch(tracked_bunch)
+                print("Bunch tracked")
 
-            # and track new setup
-            # frozen_lattice.trackDesignBunch(tracked_bunch, index_start=start_ind)
-            frozen_lattice.trackBunch(tracked_bunch, index_start=start_ind)
             self.upstream_change = None
+            return self.pv_dict.get_pvs()
 
         else:
-            print("No changes to track through.")
-            # if nothing changed do not track
+            # print("No changes to track through.")
+            return {}
 
     def update_optics(self, changed_optics: dict[str,]) -> None:
         # update optics
@@ -174,25 +183,25 @@ class OrbitModel:
         if self.upstream_change is None:
             upstream_check = float('inf')
         else:
-            upstream_node = self.pv_dict.get_node_name(self.upstream_change)
-            upstream_check = self.node_dict.get_node_index(upstream_node)
+            upstream_element = self.pv_dict.get_pyorbit_name(self.upstream_change)
+            upstream_check = self.pyorbit_dict.get_element_index(upstream_element)
         temp_upstream_check = upstream_check
         upstream_name = None
         change_flag = False
         pv_dict = self.pv_dict
-        node_dict = self.node_dict
+        pyorbit_dict = self.pyorbit_dict
         for pv_name, new_value in changed_optics.items():
-            pv_type = pv_dict.get_pv_type(pv_name)
-            current_value = pv_dict.get_pv(pv_name)
-            if pv_type == "setting" and new_value != current_value:
-                pv_dict.set_pv(pv_name, new_value)
-                change_flag = True
-                node_name = pv_dict.get_node_name(pv_name)
-                pv_index = node_dict.get_node_index(node_name)
-                if pv_index < temp_upstream_check:
-                    temp_upstream_check = pv_index
-                    upstream_name = pv_name
-                print(f'New value of {pv_name} is {new_value}')
+            if pv_name in pv_dict.get_pv_dictionary().keys():
+                current_value = pv_dict.get_pv(pv_name)
+                if 'setting' in pv_dict.get_pv_types(pv_name) and new_value != current_value:
+                    pv_dict.set_pv(pv_name, new_value)
+                    change_flag = True
+                    element_name = pv_dict.get_pyorbit_name(pv_name)
+                    pv_index = pyorbit_dict.get_element_index(element_name)
+                    if pv_index < temp_upstream_check:
+                        temp_upstream_check = pv_index
+                        upstream_name = pv_name
+                    print(f'New value of {pv_name} is {new_value}')
         if change_flag is True and 0 < temp_upstream_check < upstream_check:
             self.upstream_change = upstream_name
 
@@ -206,8 +215,8 @@ class OrbitModel:
             timestamp = current_time.strftime("%Y-%m-%d-%H-%M-%S")
             filename = Path(f"optics_{timestamp}.json")
         saved_optics = {}
-        for pv_name, pv_ref in self.pv_dict.get_pvref_dict().items():
-            if pv_ref.get_type() == "setting":
+        for pv_name, pv_ref in self.pv_dict.get_pv_dictionary().items():
+            if 'setting' in pv_ref.get_types():
                 saved_optics[pv_name] = pv_ref.get_value()
         with open(filename, "w") as json_file:
             json.dump(saved_optics, json_file, indent=4)
@@ -224,7 +233,7 @@ class OrbitModel:
             timestamp = current_time.strftime("%Y-%m-%d-%H-%M-%S")
             filename = Path(f"PVs_{timestamp}.json")
         saved_optics = {}
-        for pv_name, pv_ref in self.pv_dict.get_pvref_dict().items():
+        for pv_name, pv_ref in self.pv_dict.get_pvs().items():
             saved_optics[pv_name] = pv_ref.get_value()
         with open(filename, "w") as json_file:
             json.dump(saved_optics, json_file, indent=4)

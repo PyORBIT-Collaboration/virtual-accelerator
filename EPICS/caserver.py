@@ -4,24 +4,27 @@ import json
 import sys
 from pathlib import Path
 from time import sleep
+
+sys.path.append('../../../SNS_CA_Server/caserver')
 from castst import Server, epics_now, not_ctrlc
 import argparse
-from devices import BLM, BCM, BPM, Magnet, Cavity, genPV
+from devices import BLM, BCM, BPM, Magnet, Cavity, PBPM, genPV
 
 from pyorbit_server_interface import OrbitModel
 
 # update rate in Hz
 REP_RATE = 5.0
 
+
 # A function to parse BLMs and attributes from file
 # Returns a list of lines (split into sublists)
 
-# def read_file(file):
-#    with open(file, "r") as f:
-#        file = f.read().splitlines()
-#        # filter out comments while reading the file
-#        parameters = [i.split() for i in file if not i.strip().startswith('#')]
-#        return parameters
+def read_file(file):
+    with open(file, "r") as f:
+        file = f.read().splitlines()
+        # filter out comments while reading the file
+        parameters = [i.split() for i in file if not i.strip().startswith('#')]
+        return parameters
 
 
 if __name__ == '__main__':
@@ -54,7 +57,6 @@ if __name__ == '__main__':
 
     server = Server(prefix)
     all_devices = []
-    device_types = {'Cavity', 'Magnet', 'BLM', 'BCM', 'BPM', 'genPV'}
 
     for device_name, pyorbit_name in cavs.items():
         init_values = []
@@ -62,7 +64,7 @@ if __name__ == '__main__':
             pv_name = device_name + ':' + pv_param_name
             model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
             init_values.append(model.get_measurements(pv_name)[pv_name])
-        print(init_values)
+        init_values = [init_values[0], 1.0]
         all_devices.append(server.add_device(Cavity(device_name, *init_values)))
 
     for device_name, pyorbit_name in quads.items():
@@ -71,7 +73,8 @@ if __name__ == '__main__':
             pv_name = device_name + ':' + pv_param_name
             model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
             init_values.append(model.get_measurements(pv_name)[pv_name])
-        all_devices.append(server.add_device(Cavity(device_name, *init_values)))
+        all_devices.append(server.add_device(Magnet(device_name, *init_values)))
+
 
     for device_name, pyorbit_name in corrs.items():
         init_values = []
@@ -79,7 +82,7 @@ if __name__ == '__main__':
             pv_name = device_name + ':' + pv_param_name
             model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
             init_values.append(model.get_measurements(pv_name)[pv_name])
-        all_devices.append(server.add_device(Cavity(device_name, *init_values)))
+        all_devices.append(server.add_device(Magnet(device_name, *init_values)))
 
     for device_name, pyorbit_name in bpms.items():
         init_values = []
@@ -87,51 +90,24 @@ if __name__ == '__main__':
             pv_name = device_name + ':' + pv_param_name
             model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
             init_values.append(model.get_measurements(pv_name)[pv_name])
-        all_devices.append(server.add_device(Cavity(device_name, *init_values)))
+        all_devices.append(server.add_device(BPM(device_name)))
+        all_devices.append(server.add_device(PBPM(device_name)))
 
     model.order_pvs()
 
-    print(model.pv_dict.get_pvs())
-
-    sys.exit()
-
-    server = Server(prefix)
-    all_devices = []
-
-    # Dynamically create device objects and add them to the server. Append to list for iterability
-    device_types = {'Cavity', 'Magnet', 'BLM', 'BCM', 'BPM', 'genPV'}
-    print("Devices in use:")
-    for parameters in mixed_devices:
-        all_devices.append(server.add_device(globals()[parameters[0]](*parameters[1:])))
-
     server.start()
-    print(f"Server started. \n"
-          f"{server}")
-    # Now that our server is started, we can initialize our problem space with given i.c.
-    # Is there a way to abstract this into the Device class somehow? Or automatic upon creation?
-
-    sys.exit()
-
-    for d in all_devices:
-        d.initialize()
-
-    blms = [item for item in all_devices if type(item).__name__ == 'BLM']
-    cavs = [item for item in all_devices if type(item).__name__ == 'Cavity']
-    all_devices = list(set(all_devices) - set(blms) - set(cavs))
+    print(f"Server started.")
+    print(f"Devices in use: {[p.name for p in all_devices]}")
 
     # Our new data acquisition routine
     while not_ctrlc():
         now = epics_now()
-        phases_buffer = []
-        for c in cavs:
-            phases_buffer.append(c.update_value())
-        for d in all_devices:
-            d.update_value()
-        for b in blms:
-            # BLM data is synchronized by forcing a timestamp
-            # Loss signal is only impacted by first two CCL phases, but pass them all to be generic
-            # Can modify formula to have other dependencies
-            b.calc_loss(*phases_buffer, ts=now)
+
+        new_params = server.get_params()
+        model.update_optics(new_params)
+        model.track()
+        new_measurements = model.get_measurements()
+        server.set_params(new_measurements)
 
         server.update()
         sleep(1.0 / REP_RATE)

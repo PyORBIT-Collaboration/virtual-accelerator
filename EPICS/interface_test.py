@@ -1,10 +1,9 @@
 import sys
 import time
 from pathlib import Path
-#from interface import OrbitModel
 from pyorbit_server_interface import OrbitModel
 
-lattice_file = Path("../SCL_Wizard/sns_linac.xml")
+lattice_file = Path("sns_linac.xml")
 pv_file = Path("server_devices.txt")
 model = OrbitModel(lattice_file, [])
 

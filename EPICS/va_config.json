@@ -13,6 +13,12 @@
                 "setting"
             ]
         },
+        "CtlAmpSet": {
+            "parameter_key": "amp",
+            "pv_types": [
+                "setting"
+            ]
+        },
         "BlnkBeam": {
             "parameter_key": "blanked",
             "pv_types": [
@@ -104,7 +110,7 @@
         "SCL_LLRF:FCM23d": "SCL:Cav23d"
     },
     "quadrupole_parameters": {
-        "B": {
+        "B_set": {
             "parameter_key": "field",
             "pv_types": [
                 "setting",
@@ -182,7 +188,7 @@
         "SCL_Mag:QH33": "SCL_Mag:QH33"
     },
     "corrector_parameters": {
-        "B": {
+        "B_set": {
             "parameter_key": "B",
             "pv_types": [
                 "setting",
@@ -278,10 +284,10 @@
                 "diagnostic"
             ]
         },
-        "energy": {
+        "Energy": {
             "parameter_key": "energy",
             "pv_types": [
-                "diagnostic"
+                "physics"
             ]
         }
     },
