@@ -91,6 +91,9 @@ if __name__ == '__main__':
 
     model.order_pvs()
 
+    bunch_file = Path('../SCL_Wizard/SCL_in.dat')
+    model.load_initial_bunch(bunch_file, number_of_particls=1000)
+
     server.start()
     print(f"Server started.")
     #print(f"Devices in use: {[p.name for p in all_devices]}")

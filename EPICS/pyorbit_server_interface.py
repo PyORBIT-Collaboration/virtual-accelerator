@@ -1,4 +1,5 @@
 import copy
+import math
 import sys
 from datetime import datetime
 from typing import Optional, Union, List
@@ -7,7 +8,10 @@ from pathlib import Path
 import json
 
 from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
+
 from orbit.core.bunch import Bunch
+from orbit.bunch_generators import TwissContainer, GaussDist3D
+from sns_linac_bunch_generator import SNS_Linac_BunchGenerator
 
 from bpm_child_node import BPMclass
 
@@ -46,22 +50,8 @@ class OrbitModel:
                                            ignored_nodes={'drift', 'tilt', 'fringe', 'markerLinacNode'})
         self.pv_dict = PVLibrary(self.pyorbit_dict)
 
-        # setup initial bunch
-        self.bunch_in = Bunch()
-        bunch_file = "../SCL_Wizard/SCL_in.dat"
-        self.bunch_in.readBunch(bunch_file)
-        self.bunch_in.getSyncParticle().time(0.0)
-        init_tracked_bunch = Bunch()
-        self.bunch_in.copyBunchTo(init_tracked_bunch)
-        for n in range(init_tracked_bunch.getSizeGlobal()):
-            if n + 1 > 1000:
-                init_tracked_bunch.deleteParticleFast(n)
-        init_tracked_bunch.compress()
-
         # set up dictionary of bunches and the childnode to populate it
         self.bunch_dict = {'initial_bunch': Bunch()}
-        self.bunch_in.copyBunchTo(self.bunch_dict['initial_bunch'])
-
         class BunchCopy:
             def trackActions(actionsContainer, paramsDict):
                 bunch = paramsDict["bunch"]
@@ -92,13 +82,40 @@ class OrbitModel:
                     self.bunch_dict[node_name] = Bunch()
                     node.addChildNode(BunchCopy, node.ENTRANCE)
 
-        # run design particle
-        self.accLattice.trackDesignBunch(init_tracked_bunch)
-        self.accLattice.trackBunch(init_tracked_bunch)
+        # Set up variable to track where the most upstream change is located.
         self.upstream_change = None
-
         # store initial settings
         self.initial_settings = {}
+
+    def generate_initial_bunch(self, particle_number: int, kinetic_energy: float, beam_current: float,
+                               twiss_x: TwissContainer, twiss_y: TwissContainer, twiss_z: TwissContainer):
+
+        bunch_gen = SNS_Linac_BunchGenerator(twiss_x, twiss_y, twiss_z)
+        bunch_gen.setKinEnergy(kinetic_energy)
+        bunch_gen.setBeamCurrent(beam_current)
+
+        initial_bunch = bunch_gen.getBunch(nParticles=particle_number, distributorClass=GaussDist3D)
+        initial_bunch.getSyncParticle().time(0.0)
+        initial_bunch.copyBunchTo(self.bunch_dict['initial_bunch'])
+
+        self.accLattice.trackDesignBunch(initial_bunch)
+        self.accLattice.trackBunch(initial_bunch)
+        self.upstream_change = None
+
+    def load_initial_bunch(self, bunch_file: Path, number_of_particls: int = None):
+        initial_bunch = Bunch()
+        initial_bunch.readBunch(str(bunch_file))
+        initial_bunch.getSyncParticle().time(0.0)
+        if number_of_particls is not None:
+            for n in range(initial_bunch.getSizeGlobal()):
+                if n + 1 > number_of_particls:
+                    initial_bunch.deleteParticleFast(n)
+            initial_bunch.compress()
+        initial_bunch.copyBunchTo(self.bunch_dict['initial_bunch'])
+
+        self.accLattice.trackDesignBunch(initial_bunch)
+        self.accLattice.trackBunch(initial_bunch)
+        self.upstream_change = None
 
     def add_pv(self, pv_name: str, pv_types: list[str], pyorbit_name: str, param_key: str) -> None:
         self.pv_dict.add_pv(pv_name, pv_types, pyorbit_name, param_key)
@@ -121,7 +138,7 @@ class OrbitModel:
             return_dict[setting_names] = self.pv_dict.get_pv(setting_names)
         return return_dict
 
-    def get_measurements(self, measurement_names: Optional[Union[str, List[str]]] = None) -> dict[str,]:
+    def get_measurements(self, measurement_names: Optional[Union[str, List[str]]] = None) -> dict[str, ]:
         # think about more useful parameters that are not real
         # for fake parameters use XXX_Phys
         return_dict = {}
@@ -137,8 +154,15 @@ class OrbitModel:
             return_dict[measurement_names] = self.pv_dict.get_pv(measurement_names)
         return return_dict
 
-    def track(self, number_of_particles=1000) -> dict[str,]:
-        if self.upstream_change is not None:
+    def track(self, number_of_particles=1000) -> dict[str, ]:
+        if self.bunch_dict['initial_bunch'].getSizeGlobal() == 0:
+            print('Create initial bunch in order to start tracking.')
+
+        elif self.upstream_change is None:
+            # print("No changes to track through.")
+            pass
+
+        else:
             # freeze optics (clone)
             start_element_name = self.pv_dict.get_pyorbit_name(self.upstream_change)
             start_ind = self.pyorbit_dict.get_element_index(start_element_name)
@@ -171,10 +195,6 @@ class OrbitModel:
 
             self.upstream_change = None
             return self.pv_dict.get_pvs()
-
-        else:
-            # print("No changes to track through.")
-            return {}
 
     def update_optics(self, changed_optics: dict[str,]) -> None:
         # update optics

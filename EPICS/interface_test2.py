@@ -1,6 +1,10 @@
+import math
 import sys
 import time
 from pathlib import Path
+
+from orbit.bunch_generators import TwissContainer
+
 from pyorbit_server_interface import OrbitModel
 
 # Channel access server used to generate fake PV signals analogous to accelerator components.
@@ -15,19 +19,7 @@ from devices import BLM, BCM, BPM, Magnet, Cavity, genPV
 
 from pyorbit_server_interface import OrbitModel
 
-
-
-# Set a default prefix if unspecified at server initialization
-parser = argparse.ArgumentParser(description='Run CA server')
-parser.add_argument('--prefix', '-p', default='test', type=str, help='Prefix for PVs')
-parser.add_argument('--file', '-f', default='va_config.json', type=str,
-                    help='Pathname of pv file. Relative to Server/')
-
-args = parser.parse_args()
-prefix = args.prefix + ':'
-print(f'Using prefix: {args.prefix}.')
-
-with open(args.file, "r") as json_file:
+with open('va_config.json', "r") as json_file:
     input_dicts = json.load(json_file)
 
 lattice = input_dicts['pyorbit_lattice']
@@ -39,50 +31,95 @@ corr_params = input_dicts["corrector_parameters"]
 corrs = input_dicts["correctors"]
 bpm_params = input_dicts["bpm_parameters"]
 bpms = input_dicts["bpms"]
+pbpm_params = input_dicts["pbpm_parameters"]
+pbpms = input_dicts["pbpms"]
 
 lattice_file = Path(lattice['file_name'])
 subsections = lattice['subsections']
 model = OrbitModel(lattice_file, subsections)
-
-server = Server(prefix)
-all_devices = []
-device_types = {'Cavity', 'Magnet', 'BLM', 'BCM', 'BPM', 'genPV'}
 
 for device_name, pyorbit_name in cavs.items():
     init_values = []
     for pv_param_name, pv_info in cav_params.items():
         pv_name = device_name + ':' + pv_param_name
         model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
-        init_values.append(model.get_measurements(pv_name)[pv_name])
-    #all_devices.append(server.add_device(Cavity(device_name, *init_values)))
 
 for device_name, pyorbit_name in quads.items():
     init_values = []
     for pv_param_name, pv_info in quad_params.items():
         pv_name = device_name + ':' + pv_param_name
         model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
-        init_values.append(model.get_measurements(pv_name)[pv_name])
-    #all_devices.append(server.add_device(Cavity(device_name, *init_values)))
 
 for device_name, pyorbit_name in corrs.items():
     init_values = []
     for pv_param_name, pv_info in corr_params.items():
         pv_name = device_name + ':' + pv_param_name
         model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
-        init_values.append(model.get_measurements(pv_name)[pv_name])
-    #all_devices.append(server.add_device(Cavity(device_name, *init_values)))
 
 for device_name, pyorbit_name in bpms.items():
     init_values = []
     for pv_param_name, pv_info in bpm_params.items():
         pv_name = device_name + ':' + pv_param_name
         model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
-        init_values.append(model.get_measurements(pv_name)[pv_name])
-    #all_devices.append(server.add_device(Cavity(device_name, *init_values)))
+
+    for device_name, pyorbit_name in pbpms.items():
+        init_values = []
+        for pv_param_name, pv_info in pbpm_params.items():
+            pv_name = device_name + ':' + pv_param_name
+            model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
 
 model.order_pvs()
 
+"""
+number_particles = 1000
+kinetic_energy = 0.0025  # in [GeV]
+beam_current = 38.0 # set the beam peak current in mA
 
+mass = 0.939294  # in [GeV]
+gamma = (mass + kinetic_energy) / mass
+beta = math.sqrt(gamma * gamma - 1.0) / gamma
+
+# ------ emittances are normalized - transverse by gamma*beta and long. by gamma**3*beta
+(alphaX, betaX, emittX) = (-1.9620, 0.1831, 0.21)
+(alphaY, betaY, emittY) = (1.7681, 0.1620, 0.21)
+(alphaZ, betaZ, emittZ) = (0.0196, 0.5844, 0.24153)
+
+alphaZ = -alphaZ
+
+# ---make emittances un-normalized XAL units [m*rad]
+emittX = 1.0e-6 * emittX / (gamma * beta)
+emittY = 1.0e-6 * emittY / (gamma * beta)
+emittZ = 1.0e-6 * emittZ / (gamma**3 * beta)
+
+# ---- long. size in mm
+sizeZ = math.sqrt(emittZ * betaZ) * 1.0e3
+
+# ---- transform to pyORBIT emittance[GeV*m]
+emittZ = emittZ * gamma**3 * beta**2 * mass
+betaZ = betaZ / (gamma**3 * beta**2 * mass)
+
+twissX = TwissContainer(alphaX, betaX, emittX)
+twissY = TwissContainer(alphaY, betaY, emittY)
+twissZ = TwissContainer(alphaZ, betaZ, emittZ)
+
+model.generate_initial_bunch(number_particles, kinetic_energy, beam_current, twissX, twissY, twissZ)
+"""
+
+bunch_file = Path('../SCL_Wizard/SCL_in.dat')
+model.load_initial_bunch(bunch_file, number_of_particls=1000)
+
+print(model.get_measurements('SCL_Phys:BPM32:Energy'))
+dict1 = {}
+#dict1["SCL_LLRF:FCM01a:CtlAmpSet"] = 0.0
+dict1["SCL_LLRF:FCM12a:CtlAmpSet"] = 0.0
+model.update_optics(dict1)
+model.track()
+print(model.get_measurements('SCL_Phys:BPM32:Energy'))
+#print(model.pv_dict.get_pv_ref("SCL_LLRF:FCM01a:CtlAmpSet").element_ref.get_element().getParamsDict()['Amp'])
+dict1 = {"SCL_LLRF:FCM12a:CtlAmpSet": 1.0}
+model.update_optics(dict1)
+model.track()
+print(model.get_measurements('SCL_Phys:BPM32:Energy'))
 
 
 """
@@ -160,7 +197,7 @@ print(model.get_measurements("SCL_Diag:BPM32:xAvg"))
 print(model.get_measurements("SCL_Phys:BPM32:Energy"))
 
 
-"""
+
 avg_time = 0
 for i in range(100):
     #init_phase = model.get_settings("SCL_LLRF:FCM01a:CtlPhaseSet")["SCL_LLRF:FCM01a:CtlPhaseSet"]
@@ -179,3 +216,4 @@ for i in range(100):
 avg_time /= 100
 print(avg_time)
 
+"""
