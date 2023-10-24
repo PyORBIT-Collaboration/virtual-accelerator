@@ -1,4 +1,6 @@
 import math
+from typing import Dict
+from orbit.core.bunch import Bunch
 
 
 class BPMclass:
@@ -59,3 +61,17 @@ class BPMclass:
 
     def getAllChildren(self):
         return []
+
+
+class BunchCopyClass:
+    def __init__(self, pyorbit_name: str, bunch_dict: Dict[str, Bunch]):
+        self.pyorbit_name = pyorbit_name
+        self.bunch_dict = bunch_dict
+        self.node_type = 'bunch_saver'
+    def trackActions(self, actionsContainer, paramsDict):
+        bunch = paramsDict["bunch"]
+        part_num = bunch.getSizeGlobal()
+        if part_num > 0:
+            node = paramsDict["parentNode"]
+            bunch.copyBunchTo(self.bunch_dict[self.pyorbit_name])
+            # self.bunch_dict[node_name].getSyncParticle().time(0.0)

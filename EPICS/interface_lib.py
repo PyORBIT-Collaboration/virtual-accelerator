@@ -7,7 +7,7 @@ from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 from orbit.py_linac.lattice.LinacAccNodes import Quad, MarkerLinacNode, DCorrectorV, DCorrectorH
 from orbit.py_linac.lattice.LinacRfGapNodes import BaseRF_Gap
 from orbit.py_linac.lattice.LinacAccLatticeLib import RF_Cavity
-from bpm_child_node import BPMclass
+from server_child_nodes import BPMclass
 
 
 class PyorbitElementTypes:
@@ -17,46 +17,55 @@ class PyorbitElementTypes:
 
 
 class PyorbitLibrary:
+    node_classes = Union[Quad, BaseRF_Gap, MarkerLinacNode]
+    cavity_classes = RF_Cavity
+    child_classes = Union[DCorrectorV, DCorrectorH, BPMclass]
 
-    def __init__(self, acc_lattice: LinacAccLattice, ignored_nodes: set = None):
-        self.acc_lattice = acc_lattice
+
+    def __init__(self, acc_lattice: LinacAccLattice, ignored_nodes=None):
+        if ignored_nodes is None:
+            ignored_nodes = set()
+        ignored_nodes |= {'baserfgap', 'drift', 'tilt', 'fringe', 'markerLinacNode'}
+        unique_elements = set()
 
         # Set up a dictionary to reference different objects within the lattice by their name.
         # This way, children nodes (correctors) and RF Cavity parameters are easy to reference.
-        unique_elements = set()
-        if ignored_nodes is None:
-            ignored_nodes = {'drift', 'tilt', 'fringe', 'markerLinacNode'}
+
+        self.acc_lattice = acc_lattice
+        element_dict_hint = Dict[str, PyorbitElement]
+        element_dict: element_dict_hint = {}
+
+        def add_child_nodes(ancestor_node, children_nodes, element_dictionary):
+            for child in children_nodes:
+                child_type = child.getType()
+                if not any(substring in child_type for substring in ignored_nodes):
+                    child_name = child.getName()
+                    if child_name not in unique_elements:
+                        unique_elements.add(child_name)
+                        element_dictionary[child_name] = PyorbitChild(child, ancestor_node)
+                grandchildren = child.getAllChildren()
+                if len(grandchildren) > 0:
+                    add_child_nodes(ancestor_node, grandchildren, element_dictionary)
+
         list_of_nodes = self.acc_lattice.getNodes()
+        for node in list_of_nodes:
+            node_type = node.getType()
+            if not any(substring in node_type for substring in ignored_nodes):
+                element_name = node.getName()
+                if element_name not in unique_elements:
+                    unique_elements.add(element_name)
+                    element_dict[element_name] = PyorbitNode(node)
+            children = node.getAllChildren()
+            if len(children) > 0:
+                add_child_nodes(node, children, element_dict)
 
-        def create_pyorbit_dictionary(node_list, node_dict=None, level=0, location_node=None):
-            if node_dict is None:
-                node_dict_hint = Dict[str, PyorbitElement]
-                node_dict: node_dict_hint = {}
-            for node in node_list:
-                node_type = node.getType()
-                if level == 0:
-                    location_node = node
-                if not any(substring in node_type for substring in ignored_nodes):
-                    if node.getType() == 'baserfgap':
-                        node_ref = node.getRF_Cavity()
-                    else:
-                        node_ref = node
-                    element_name = node_ref.getName()
-                    if element_name not in unique_elements:
-                        unique_elements.add(element_name)
-                        if level == 0:
-                            if location_node.getType() == 'baserfgap':
-                                node_dict[element_name] = PyorbitCavity(node_ref)
-                            else:
-                                node_dict[element_name] = PyorbitNode(node_ref)
-                        else:
-                            node_dict[element_name] = PyorbitChild(node_ref, location_node)
-                children = node.getAllChildren()
-                if len(children) > 0:
-                    create_pyorbit_dictionary(children, node_dict, level + 1, location_node)
-            return node_dict
+        list_of_cavities = self.acc_lattice.getRF_Cavities()
+        for cavity in list_of_cavities:
+            element_name = cavity.getName()
+            unique_elements.add(element_name)
+            element_dict[element_name] = PyorbitCavity(cavity)
 
-        self.pyorbit_dictionary = create_pyorbit_dictionary(list_of_nodes)
+        self.pyorbit_dictionary = element_dict
 
     def get_element_reference(self, pyorbit_name: str) -> "PyorbitElement":
         return self.pyorbit_dictionary[pyorbit_name]
@@ -64,7 +73,7 @@ class PyorbitLibrary:
     def get_element_dictionary(self) -> dict[str, "PyorbitElement"]:
         return self.pyorbit_dictionary
 
-    def get_element(self, pyorbit_name: str):
+    def get_element(self, pyorbit_name: str) -> Union[node_classes, cavity_classes, child_classes]:
         element = self.pyorbit_dictionary[pyorbit_name].get_element()
         return element
 
@@ -72,17 +81,13 @@ class PyorbitLibrary:
         position = self.pyorbit_dictionary[pyorbit_name].get_position()
         return position
 
-    def get_location_node(self, pyorbit_name: str):
-        element_ref = self.pyorbit_dictionary[pyorbit_name]
-        if isinstance(element_ref, PyorbitNode):
-            location_node = element_ref.get_element()
-        elif isinstance(element_ref, PyorbitCavity):
-            location_node = element_ref.get_first_node()
-        elif isinstance(element_ref, PyorbitChild):
-            location_node = element_ref.get_parent_node()
-        else:
-            location_node = element_ref.get_element()
+    def get_location_node(self, pyorbit_name: str) -> node_classes:
+        location_node = self.pyorbit_dictionary[pyorbit_name].get_tracking_node()
         return location_node
+
+    def get_location_name(self, pyorbit_name: str) -> str:
+        location_node_name = self.get_location_node(pyorbit_name).getName()
+        return location_node_name
 
     def get_element_index(self, pyorbit_name: str) -> int:
         location_node = self.get_location_node(pyorbit_name)
@@ -111,6 +116,9 @@ class PyorbitElement:
         self.params_dict_override = element.getParamsDict()
 
     def get_element(self):
+        return self.element
+
+    def get_tracking_node(self):
         return self.element
 
     def get_name(self) -> str:
@@ -147,6 +155,9 @@ class PyorbitNode(PyorbitElement):
         self.params_dict_override = node.getParamsDict()
 
     def get_element(self) -> node_types:
+        return self.node
+
+    def get_tracking_node(self) -> node_types:
         return self.node
 
     def get_name(self) -> str:
@@ -190,6 +201,10 @@ class PyorbitCavity(PyorbitElement):
         first_node = self.cavity.getRF_GapNodes()[0]
         return first_node
 
+    def get_tracking_node(self) -> rf_gap_type:
+        first_node = self.get_first_node()
+        return first_node
+
     def get_position(self) -> float:
         position = self.cavity.getRF_GapNodes()[0].getPosition()
         return position
@@ -226,24 +241,27 @@ class PyorbitChild(PyorbitElement):
     child_types = PyorbitElementTypes.child_classes
     node_types = PyorbitElementTypes.node_classes
 
-    def __init__(self, child: child_types, parent_node: node_types):
+    def __init__(self, child: child_types, ancestor_node: node_types):
         super().__init__(child)
         self.child = child
-        self.parent_node = parent_node
+        self.ancestor_node = ancestor_node
         self.params_dict_override = child.getParamsDict()
 
     def get_element(self) -> child_types:
         return self.child
 
-    def get_parent_node(self) -> node_types:
-        return self.parent_node
+    def get_ancestor_node(self) -> node_types:
+        return self.ancestor_node
+
+    def get_tracking_node(self) -> node_types:
+        return self.ancestor_node
 
     def get_name(self) -> str:
         name = self.child.getName()
         return name
 
     def get_position(self) -> float:
-        position = self.parent_node.getPosition()
+        position = self.ancestor_node.getPosition()
         return position
 
     def get_parameter_dict(self) -> dict[str,]:

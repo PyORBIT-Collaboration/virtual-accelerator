@@ -13,13 +13,13 @@ from orbit.core.bunch import Bunch
 from orbit.bunch_generators import TwissContainer, GaussDist3D
 from sns_linac_bunch_generator import SNS_Linac_BunchGenerator
 
-from bpm_child_node import BPMclass
+from server_child_nodes import BPMclass, BunchCopyClass
 
 from interface_lib import PyorbitLibrary, PVLibrary
 
 
 class OrbitModel:
-    def __init__(self, lattice_file: Path, subsections_list: List[str] = None, pv_file: Path = None):
+    def __init__(self, lattice_file: Path, subsections_list: List[str] = None):
         # read lattice
         if subsections_list is None or len(subsections_list) == 0:
             subsections_list = ["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
@@ -46,12 +46,12 @@ class OrbitModel:
 
         # Set up a dictionary to reference different objects within the lattice by their name.
         # This way, children nodes (correctors) and RF Cavity parameters are easy to reference.
-        self.pyorbit_dict = PyorbitLibrary(self.accLattice,
-                                           ignored_nodes={'drift', 'tilt', 'fringe', 'markerLinacNode'})
+        self.pyorbit_dict = PyorbitLibrary(self.accLattice)
         self.pv_dict = PVLibrary(self.pyorbit_dict)
 
         # set up dictionary of bunches and the childnode to populate it
         self.bunch_dict = {'initial_bunch': Bunch()}
+        """
         class BunchCopy:
             def trackActions(actionsContainer, paramsDict):
                 bunch = paramsDict["bunch"]
@@ -81,6 +81,7 @@ class OrbitModel:
                     node_name = node.getName()
                     self.bunch_dict[node_name] = Bunch()
                     node.addChildNode(BunchCopy, node.ENTRANCE)
+        """
 
         # Set up variable to track where the most upstream change is located.
         self.upstream_change = None
@@ -120,7 +121,14 @@ class OrbitModel:
     def add_pv(self, pv_name: str, pv_types: list[str], pyorbit_name: str, param_key: str) -> None:
         self.pv_dict.add_pv(pv_name, pv_types, pyorbit_name, param_key)
         if 'setting' in pv_types:
-            self.initial_settings[pv_name] = self.pyorbit_dict.get_element_parameter(pyorbit_name, param_key)
+            element = self.pyorbit_dict.get_element_reference(pyorbit_name)
+            self.initial_settings[pv_name] = element.get_parameter(param_key)
+
+            location_node = element.get_tracking_node()
+            location_name = location_node.getName()
+            if location_name not in self.bunch_dict:
+                self.bunch_dict[location_name] = Bunch()
+                location_node.addChildNode(BunchCopyClass(location_name, self.bunch_dict), location_node.ENTRANCE)
 
     def order_pvs(self):
         self.pv_dict.order_pvs()
@@ -164,22 +172,21 @@ class OrbitModel:
 
         else:
             # freeze optics (clone)
-            start_element_name = self.pv_dict.get_pyorbit_name(self.upstream_change)
-            start_ind = self.pyorbit_dict.get_element_index(start_element_name)
-            start_bunch_name = self.pyorbit_dict.get_location_node(start_element_name).getName()
             # frozen_lattice = copy.deepcopy(self.accLattice)
             frozen_lattice = self.accLattice
-            bunch_dict = self.bunch_dict
+            start_node_name = self.upstream_change
+            start_node = frozen_lattice.getNodeForName(start_node_name)
+            start_ind = frozen_lattice.getNodeIndex(start_node)
 
             # setup initial bunch
             tracked_bunch = Bunch()
-            if start_bunch_name in bunch_dict:
-                self.bunch_dict[start_bunch_name].copyBunchTo(tracked_bunch)
+            if start_node_name in self.bunch_dict:
+                self.bunch_dict[start_node_name].copyBunchTo(tracked_bunch)
                 for n in range(tracked_bunch.getSizeGlobal()):
                     if n + 1 > number_of_particles:
                         tracked_bunch.deleteParticleFast(n)
                 tracked_bunch.compress()
-                print("Tracking bunch...")
+                print("Tracking bunch from " + start_node_name + "...")
                 frozen_lattice.trackBunch(tracked_bunch, index_start=start_ind)
                 print("Bunch tracked")
 
@@ -189,7 +196,7 @@ class OrbitModel:
                     if n + 1 > number_of_particles:
                         tracked_bunch.deleteParticleFast(n)
                 tracked_bunch.compress()
-                print("Tracking bunch...")
+                print("Tracking bunch from start...")
                 frozen_lattice.trackBunch(tracked_bunch)
                 print("Bunch tracked")
 
@@ -203,8 +210,8 @@ class OrbitModel:
         if self.upstream_change is None:
             upstream_check = float('inf')
         else:
-            upstream_element = self.pv_dict.get_pyorbit_name(self.upstream_change)
-            upstream_check = self.pyorbit_dict.get_element_index(upstream_element)
+            upstream_change = self.upstream_change
+            upstream_check = self.pyorbit_dict.get_element_index(upstream_change)
         temp_upstream_check = upstream_check
         upstream_name = None
         change_flag = False
@@ -220,7 +227,7 @@ class OrbitModel:
                     pv_index = pyorbit_dict.get_element_index(element_name)
                     if pv_index < temp_upstream_check:
                         temp_upstream_check = pv_index
-                        upstream_name = pv_name
+                        upstream_name = pyorbit_dict.get_location_name(element_name)
                     print(f'New value of {pv_name} is {new_value}')
         if change_flag is True and 0 < temp_upstream_check < upstream_check:
             self.upstream_change = upstream_name
