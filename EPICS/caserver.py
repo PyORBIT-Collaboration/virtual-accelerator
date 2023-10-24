@@ -81,13 +81,13 @@ if __name__ == '__main__':
             init_values.append(model.get_measurements(pv_name)[pv_name])
         all_devices.append(server.add_device(BPM(device_name)))
 
-        for device_name, pyorbit_name in pbpms.items():
-            init_values = []
-            for pv_param_name, pv_info in pbpm_params.items():
-                pv_name = device_name + ':' + pv_param_name
-                model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
-                init_values.append(model.get_measurements(pv_name)[pv_name])
-            all_devices.append(server.add_device(PBPM(device_name)))
+    for device_name, pyorbit_name in pbpms.items():
+        init_values = []
+        for pv_param_name, pv_info in pbpm_params.items():
+            pv_name = device_name + ':' + pv_param_name
+            model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
+            init_values.append(model.get_measurements(pv_name)[pv_name])
+        all_devices.append(server.add_device(PBPM(device_name)))
 
     model.order_pvs()
 
