@@ -84,7 +84,7 @@ class OrbitModel:
         """
 
         # Set up variable to track where the most upstream change is located.
-        self.upstream_change = None
+        self.current_changes = set()
         # store initial settings
         self.initial_settings = {}
 
@@ -101,7 +101,7 @@ class OrbitModel:
 
         self.accLattice.trackDesignBunch(initial_bunch)
         self.accLattice.trackBunch(initial_bunch)
-        self.upstream_change = None
+        self.current_changes = set()
 
     def load_initial_bunch(self, bunch_file: Path, number_of_particls: int = None):
         initial_bunch = Bunch()
@@ -116,7 +116,7 @@ class OrbitModel:
 
         self.accLattice.trackDesignBunch(initial_bunch)
         self.accLattice.trackBunch(initial_bunch)
-        self.upstream_change = None
+        self.current_changes = set()
 
     def add_pv(self, pv_name: str, pv_types: list[str], pyorbit_name: str, param_key: str) -> None:
         self.pv_dict.add_pv(pv_name, pv_types, pyorbit_name, param_key)
@@ -125,10 +125,10 @@ class OrbitModel:
             self.initial_settings[pv_name] = element.get_parameter(param_key)
 
             location_node = element.get_tracking_node()
-            location_name = location_node.getName()
-            if location_name not in self.bunch_dict:
-                self.bunch_dict[location_name] = Bunch()
-                location_node.addChildNode(BunchCopyClass(location_name, self.bunch_dict), location_node.ENTRANCE)
+            element_name = element.get_name()
+            if element_name not in self.bunch_dict:
+                self.bunch_dict[element_name] = Bunch()
+                location_node.addChildNode(BunchCopyClass(element_name, self.bunch_dict), location_node.ENTRANCE)
 
     def order_pvs(self):
         self.pv_dict.order_pvs()
@@ -146,7 +146,7 @@ class OrbitModel:
             return_dict[setting_names] = self.pv_dict.get_pv(setting_names)
         return return_dict
 
-    def get_measurements(self, measurement_names: Optional[Union[str, List[str]]] = None) -> dict[str, ]:
+    def get_measurements(self, measurement_names: Optional[Union[str, List[str]]] = None) -> dict[str,]:
         # think about more useful parameters that are not real
         # for fake parameters use XXX_Phys
         return_dict = {}
@@ -162,11 +162,11 @@ class OrbitModel:
             return_dict[measurement_names] = self.pv_dict.get_pv(measurement_names)
         return return_dict
 
-    def track(self, number_of_particles=1000) -> dict[str, ]:
+    def track(self, number_of_particles=1000) -> dict[str,]:
         if self.bunch_dict['initial_bunch'].getSizeGlobal() == 0:
             print('Create initial bunch in order to start tracking.')
 
-        elif self.upstream_change is None:
+        elif not self.current_changes:
             # print("No changes to track through.")
             pass
 
@@ -174,63 +174,55 @@ class OrbitModel:
             # freeze optics (clone)
             # frozen_lattice = copy.deepcopy(self.accLattice)
             frozen_lattice = self.accLattice
-            start_node_name = self.upstream_change
-            start_node = frozen_lattice.getNodeForName(start_node_name)
-            start_ind = frozen_lattice.getNodeIndex(start_node)
+            frozen_changes = self.current_changes
+            tracked_bunch = Bunch()
+
+            upstream_index = float('inf')
+            upstream_name = None
+            rf_flag = False
+            for element_name in frozen_changes:
+                ind_check = self.pyorbit_dict.get_element_index(element_name)
+                if self.pyorbit_dict.get_location_node(element_name).isRFGap():
+                    rf_flag = True
+                if ind_check < upstream_index:
+                    upstream_index = ind_check
+                    upstream_name = element_name
 
             # setup initial bunch
-            tracked_bunch = Bunch()
-            if start_node_name in self.bunch_dict:
-                self.bunch_dict[start_node_name].copyBunchTo(tracked_bunch)
-                for n in range(tracked_bunch.getSizeGlobal()):
-                    if n + 1 > number_of_particles:
-                        tracked_bunch.deleteParticleFast(n)
-                tracked_bunch.compress()
-                print("Tracking bunch from " + start_node_name + "...")
-                frozen_lattice.trackBunch(tracked_bunch, index_start=start_ind)
-                print("Bunch tracked")
-
+            if upstream_name in self.bunch_dict:
+                self.bunch_dict[upstream_name].copyBunchTo(tracked_bunch)
+                print("Tracking bunch from " + upstream_name + "...")
             else:
+                upstream_index = -1
                 self.bunch_dict['initial_bunch'].copyBunchTo(tracked_bunch)
-                for n in range(tracked_bunch.getSizeGlobal()):
-                    if n + 1 > number_of_particles:
-                        tracked_bunch.deleteParticleFast(n)
-                tracked_bunch.compress()
                 print("Tracking bunch from start...")
-                frozen_lattice.trackBunch(tracked_bunch)
-                print("Bunch tracked")
 
-            self.upstream_change = None
+            for n in range(tracked_bunch.getSizeGlobal()):
+                if n + 1 > number_of_particles:
+                    tracked_bunch.deleteParticleFast(n)
+            tracked_bunch.compress()
+
+            if rf_flag:
+                frozen_lattice.trackDesignBunch(tracked_bunch, index_start=upstream_index)
+            frozen_lattice.trackBunch(tracked_bunch, index_start=upstream_index)
+            print("Bunch tracked")
+
+            self.current_changes = set()
             return self.pv_dict.get_pvs()
 
-    def update_optics(self, changed_optics: dict[str,]) -> None:
+    def update_optics(self, changed_optics: dict[str, ]) -> None:
         # update optics
-        # figure out the most upstream element that changed
+        # Keep track of changed elements
         # do not track here yet
-        if self.upstream_change is None:
-            upstream_check = float('inf')
-        else:
-            upstream_change = self.upstream_change
-            upstream_check = self.pyorbit_dict.get_element_index(upstream_change)
-        temp_upstream_check = upstream_check
-        upstream_name = None
-        change_flag = False
         pv_dict = self.pv_dict
-        pyorbit_dict = self.pyorbit_dict
         for pv_name, new_value in changed_optics.items():
             if pv_name in pv_dict.get_pv_dictionary().keys():
                 current_value = pv_dict.get_pv(pv_name)
                 if 'setting' in pv_dict.get_pv_types(pv_name) and new_value != current_value:
                     pv_dict.set_pv(pv_name, new_value)
-                    change_flag = True
                     element_name = pv_dict.get_pyorbit_name(pv_name)
-                    pv_index = pyorbit_dict.get_element_index(element_name)
-                    if pv_index < temp_upstream_check:
-                        temp_upstream_check = pv_index
-                        upstream_name = pyorbit_dict.get_location_name(element_name)
+                    self.current_changes.add(element_name)
                     print(f'New value of {pv_name} is {new_value}')
-        if change_flag is True and 0 < temp_upstream_check < upstream_check:
-            self.upstream_change = upstream_name
 
     def reset_optics(self) -> None:
         self.update_optics(self.initial_settings)
