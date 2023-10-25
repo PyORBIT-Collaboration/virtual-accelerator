@@ -209,9 +209,9 @@ class PyorbitCavity(PyorbitElement):
         position = self.cavity.getRF_GapNodes()[0].getPosition()
         return position
 
-    def get_parameter_dict(self) -> dict[str,]:
+    def get_parameter_dict(self) -> dict[str, ]:
         params_dict = self.cavity.getParamsDict()
-        if params_dict['blanked']:
+        if params_dict['blanked'] != 0:
             params_dict['amp'] = self.params_dict_override['amp']
         return params_dict
 
@@ -219,12 +219,12 @@ class PyorbitCavity(PyorbitElement):
         cavity = self.cavity
         cavity.setParamsDict(new_params)
         self.params_dict_override = new_params
-        if cavity.getParam('blanked'):
+        if cavity.getParam('blanked') != 0:
             cavity.setAmp(0.0)
 
     def get_parameter(self, param_key: str):
         cavity = self.cavity
-        if param_key == 'amp' and cavity.getParam('blanked'):
+        if param_key == 'amp' and cavity.getParam('blanked') != 0:
             param = self.params_dict_override[param_key]
         else:
             param = cavity.getParam(param_key)
@@ -233,7 +233,7 @@ class PyorbitCavity(PyorbitElement):
     def set_parameter(self, param_key: str, new_param) -> None:
         cavity = self.cavity
         cavity.setParam(param_key, new_param)
-        if cavity.getParam('blanked'):
+        if cavity.getParam('blanked') != 0:
             cavity.setAmp(0.0)
 
 
@@ -289,14 +289,14 @@ class PVLibrary:
         pv_dict_hint = Dict[str, PVReference]
         self.pv_dict: pv_dict_hint = {}
 
-    def add_pv(self, pv_name: str, pv_types: list[str], pyorbit_name: str, param_key: str):
-        bad_pv_types = [pv_type for pv_type in pv_types if pv_type not in self.allowed_pv_types]
-        if bad_pv_types:
-            print("Unrecognized PV types:", ", ".join(bad_pv_types))
-        pyorbit_element = self.pyorbit_library.get_element_reference(pyorbit_name)
-        new_pv = PVReference(pv_types, pyorbit_element, param_key)
-
-        self.pv_dict[pv_name] = new_pv
+    def add_pv(self, pv_name: str, pv_type: str, pyorbit_name: str, param_key: str):
+        if pv_type not in self.allowed_pv_types:
+            print('"' + pv_type + '" is not a recognized PV type.')
+            # Need to check if element and key exist
+        else:
+            pyorbit_element = self.pyorbit_library.get_element_reference(pyorbit_name)
+            new_pv = PVReference(pv_type, pyorbit_element, param_key)
+            self.pv_dict[pv_name] = new_pv
 
     def get_pv_ref(self, pv_name: str) -> "PVReference":
         return self.pv_dict[pv_name]
@@ -322,9 +322,9 @@ class PVLibrary:
     def set_pv(self, pv_name: str, new_value) -> None:
         self.pv_dict[pv_name].set_value(new_value)
 
-    def get_pv_types(self, pv_name: str) -> list[str]:
-        pv_types = self.pv_dict[pv_name].get_types()
-        return pv_types
+    def get_pv_type(self, pv_name: str) -> str:
+        pv_type = self.pv_dict[pv_name].get_type()
+        return pv_type
 
     def get_pyorbit_name(self, pv_name: str) -> str:
         element_name = self.pv_dict[pv_name].get_pyorbit_element_name()
@@ -346,9 +346,9 @@ class PVLibrary:
 
 class PVReference:
 
-    def __init__(self, pv_types: list[str], element_ref: "PyorbitElement", param_key: str):
+    def __init__(self, pv_type: str, element_ref: "PyorbitElement", param_key: str):
 
-        self.pv_types = pv_types
+        self.pv_type = pv_type
         self.param_key = param_key
         self.element_ref = element_ref
 
@@ -357,13 +357,13 @@ class PVReference:
         return param
 
     def set_value(self, new_value) -> None:
-        if 'setting' in self.pv_types:
+        if self.pv_type == 'setting':
             self.element_ref.set_parameter(self.param_key, new_value)
         else:
             print("Invalid PV type. PV type must include 'setting' to change its value.")
 
-    def get_types(self) -> list[str]:
-        return self.pv_types
+    def get_type(self) -> str:
+        return self.pv_type
 
     def get_param_key(self) -> str:
         return self.param_key

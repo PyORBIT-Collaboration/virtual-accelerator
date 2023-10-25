@@ -33,7 +33,7 @@ class OrbitModel:
         cav_nodes = self.accLattice.getRF_Cavities()
         blanked_key = 'blanked'
         for node in cav_nodes:
-            node.addParam(blanked_key, False)
+            node.addParam(blanked_key, 0)
 
         list_of_nodes = self.accLattice.getNodes()
         for node in list_of_nodes:
@@ -49,40 +49,8 @@ class OrbitModel:
         self.pyorbit_dict = PyorbitLibrary(self.accLattice)
         self.pv_dict = PVLibrary(self.pyorbit_dict)
 
-        # set up dictionary of bunches and the childnode to populate it
+        # set up dictionary of bunches
         self.bunch_dict = {'initial_bunch': Bunch()}
-        """
-        class BunchCopy:
-            def trackActions(actionsContainer, paramsDict):
-                bunch = paramsDict["bunch"]
-                part_num = bunch.getSizeGlobal()
-                if part_num > 0:
-                    node = paramsDict["parentNode"]
-                    if node.getType() == "baserfgap":
-                        node_name = node.getRF_Cavity().getName()
-                        bunch.copyBunchTo(self.bunch_dict[node_name])
-                        # self.bunch_dict[node_name].getSyncParticle().time(0.0)
-                    else:
-                        node_name = node.getName()
-                        bunch.copyBunchTo(self.bunch_dict[node_name])
-                        # self.bunch_dict[node_name].getSyncParticle().time(0.0)
-
-        for node in self.accLattice.getNodes():
-            node_type = node.getType()
-            if "drift" not in node_type and "marker" not in node_type:
-                if node_type == "baserfgap":
-                    rf_node = node.getRF_Cavity()
-                    node_name = rf_node.getName()
-                    if node_name not in self.bunch_dict:
-                        self.bunch_dict[node_name] = Bunch()
-                        rf_entrance_node = rf_node.getRF_GapNodes()[0]
-                        rf_entrance_node.addChildNode(BunchCopy, rf_entrance_node.ENTRANCE)
-                else:
-                    node_name = node.getName()
-                    self.bunch_dict[node_name] = Bunch()
-                    node.addChildNode(BunchCopy, node.ENTRANCE)
-        """
-
         # Set up variable to track where the most upstream change is located.
         self.current_changes = set()
         # store initial settings
@@ -96,9 +64,9 @@ class OrbitModel:
         bunch_gen.setBeamCurrent(beam_current)
 
         initial_bunch = bunch_gen.getBunch(nParticles=particle_number, distributorClass=GaussDist3D)
-        initial_bunch.getSyncParticle().time(0.0)
         initial_bunch.copyBunchTo(self.bunch_dict['initial_bunch'])
 
+        initial_bunch.getSyncParticle().time(0.0)
         self.accLattice.trackDesignBunch(initial_bunch)
         self.accLattice.trackBunch(initial_bunch)
         self.current_changes = set()
@@ -106,7 +74,6 @@ class OrbitModel:
     def load_initial_bunch(self, bunch_file: Path, number_of_particls: int = None):
         initial_bunch = Bunch()
         initial_bunch.readBunch(str(bunch_file))
-        initial_bunch.getSyncParticle().time(0.0)
         if number_of_particls is not None:
             for n in range(initial_bunch.getSizeGlobal()):
                 if n + 1 > number_of_particls:
@@ -114,13 +81,14 @@ class OrbitModel:
             initial_bunch.compress()
         initial_bunch.copyBunchTo(self.bunch_dict['initial_bunch'])
 
+        initial_bunch.getSyncParticle().time(0.0)
         self.accLattice.trackDesignBunch(initial_bunch)
         self.accLattice.trackBunch(initial_bunch)
         self.current_changes = set()
 
-    def add_pv(self, pv_name: str, pv_types: list[str], pyorbit_name: str, param_key: str) -> None:
-        self.pv_dict.add_pv(pv_name, pv_types, pyorbit_name, param_key)
-        if 'setting' in pv_types:
+    def add_pv(self, pv_name: str, pv_type: str, pyorbit_name: str, param_key: str) -> None:
+        self.pv_dict.add_pv(pv_name, pv_type, pyorbit_name, param_key)
+        if pv_type == 'setting':
             element = self.pyorbit_dict.get_element_reference(pyorbit_name)
             self.initial_settings[pv_name] = element.get_parameter(param_key)
 
@@ -152,8 +120,8 @@ class OrbitModel:
         return_dict = {}
         if measurement_names is None:
             for pv_name, pv_ref in self.pv_dict.get_pv_dictionary().items():
-                pv_types = pv_ref.get_types()
-                if 'diagnostic' in pv_types or 'physics' in pv_types:
+                pv_type = pv_ref.get_type()
+                if pv_type == 'diagnostic' or 'physics':
                     return_dict[pv_name] = pv_ref.get_value()
         elif isinstance(measurement_names, list):
             for pv_name in measurement_names:
@@ -203,6 +171,7 @@ class OrbitModel:
             tracked_bunch.compress()
 
             if rf_flag:
+                tracked_bunch.getSyncParticle().time(0.0)
                 frozen_lattice.trackDesignBunch(tracked_bunch, index_start=upstream_index)
             frozen_lattice.trackBunch(tracked_bunch, index_start=upstream_index)
             print("Bunch tracked")
@@ -218,7 +187,7 @@ class OrbitModel:
         for pv_name, new_value in changed_optics.items():
             if pv_name in pv_dict.get_pv_dictionary().keys():
                 current_value = pv_dict.get_pv(pv_name)
-                if 'setting' in pv_dict.get_pv_types(pv_name) and new_value != current_value:
+                if pv_dict.get_pv_type(pv_name) == 'setting' and new_value != current_value:
                     pv_dict.set_pv(pv_name, new_value)
                     element_name = pv_dict.get_pyorbit_name(pv_name)
                     self.current_changes.add(element_name)

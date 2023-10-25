@@ -7,7 +7,7 @@ from time import sleep
 import argparse
 
 sys.path.append('../../../SNS_CA_Server/caserver')
-from castst import Server, epics_now, not_ctrlc
+from castst import Server, epics_now, not_ctrlc, Device
 from devices import BLM, BCM, BPM, Magnet, Cavity, PBPM, genPV
 
 from pyorbit_server_interface import OrbitModel
@@ -29,65 +29,30 @@ if __name__ == '__main__':
     with open(args.file, "r") as json_file:
         input_dicts = json.load(json_file)
 
-    lattice = input_dicts['pyorbit_lattice']
-    cav_params = input_dicts["cavity_parameters"]
-    cavs = input_dicts["cavities"]
-    quad_params = input_dicts["quadrupole_parameters"]
-    quads = input_dicts["quadrupoles"]
-    corr_params = input_dicts["corrector_parameters"]
-    corrs = input_dicts["correctors"]
-    bpm_params = input_dicts["bpm_parameters"]
-    bpms = input_dicts["bpms"]
-    pbpm_params = input_dicts["pbpm_parameters"]
-    pbpms = input_dicts["pbpms"]
+    lattice = input_dicts['Pyorbit_Lattice']
+    devices_dict = input_dicts['Devices']
 
     lattice_file = Path(lattice['file_name'])
     subsections = lattice['subsections']
     model = OrbitModel(lattice_file, subsections)
 
     server = Server(prefix)
-    all_devices = []
 
-    for device_name, pyorbit_name in cavs.items():
-        init_values = []
-        for pv_param_name, pv_info in cav_params.items():
-            pv_name = device_name + ':' + pv_param_name
-            model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
-            init_values.append(model.get_measurements(pv_name)[pv_name])
-        init_values = [init_values[0], 1.0]
-        all_devices.append(server.add_device(Cavity(device_name, *init_values)))
-
-    for device_name, pyorbit_name in quads.items():
-        init_values = []
-        for pv_param_name, pv_info in quad_params.items():
-            pv_name = device_name + ':' + pv_param_name
-            model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
-            init_values.append(model.get_measurements(pv_name)[pv_name])
-        all_devices.append(server.add_device(Magnet(device_name, *init_values)))
-
-    for device_name, pyorbit_name in corrs.items():
-        init_values = []
-        for pv_param_name, pv_info in corr_params.items():
-            pv_name = device_name + ':' + pv_param_name
-            model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
-            init_values.append(model.get_measurements(pv_name)[pv_name])
-        all_devices.append(server.add_device(Magnet(device_name, *init_values)))
-
-    for device_name, pyorbit_name in bpms.items():
-        init_values = []
-        for pv_param_name, pv_info in bpm_params.items():
-            pv_name = device_name + ':' + pv_param_name
-            model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
-            init_values.append(model.get_measurements(pv_name)[pv_name])
-        all_devices.append(server.add_device(BPM(device_name)))
-
-    for device_name, pyorbit_name in pbpms.items():
-        init_values = []
-        for pv_param_name, pv_info in pbpm_params.items():
-            pv_name = device_name + ':' + pv_param_name
-            model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
-            init_values.append(model.get_measurements(pv_name)[pv_name])
-        all_devices.append(server.add_device(PBPM(device_name)))
+    for device_type, device_dict in devices_dict.items():
+        params_dict = device_dict['parameters']
+        devices = device_dict['devices']
+        for device_name, pyorbit_name in devices.items():
+            server_device = Device(device_name)
+            for pv_param_name, pv_info in params_dict.items():
+                pv_name = device_name + ':' + pv_param_name
+                pv_type = pv_info['pv_type']
+                model.add_pv(pv_name, pv_type, pyorbit_name, pv_info['parameter_key'])
+                if pv_type == 'setting':
+                    initial_value = model.get_settings(pv_name)[pv_name]
+                    server_device.register_setting(pv_param_name, {'prec': 4}, initial_value)
+                else:
+                    server_device.register_measurement(pv_param_name, {'prec': 4})
+            server.add_device(server_device)
 
     model.order_pvs()
 
@@ -96,7 +61,6 @@ if __name__ == '__main__':
 
     server.start()
     print(f"Server started.")
-    #print(f"Devices in use: {[p.name for p in all_devices]}")
 
     # Our new data acquisition routine
     while not_ctrlc():

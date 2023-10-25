@@ -42,31 +42,31 @@ for device_name, pyorbit_name in cavs.items():
     init_values = []
     for pv_param_name, pv_info in cav_params.items():
         pv_name = device_name + ':' + pv_param_name
-        model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
+        model.add_pv(pv_name, pv_info['pv_type'], pyorbit_name, pv_info['parameter_key'])
 
 for device_name, pyorbit_name in quads.items():
     init_values = []
     for pv_param_name, pv_info in quad_params.items():
         pv_name = device_name + ':' + pv_param_name
-        model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
+        model.add_pv(pv_name, pv_info['pv_type'], pyorbit_name, pv_info['parameter_key'])
 
 for device_name, pyorbit_name in corrs.items():
     init_values = []
     for pv_param_name, pv_info in corr_params.items():
         pv_name = device_name + ':' + pv_param_name
-        model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
+        model.add_pv(pv_name, pv_info['pv_type'], pyorbit_name, pv_info['parameter_key'])
 
 for device_name, pyorbit_name in bpms.items():
     init_values = []
     for pv_param_name, pv_info in bpm_params.items():
         pv_name = device_name + ':' + pv_param_name
-        model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
+        model.add_pv(pv_name, pv_info['pv_type'], pyorbit_name, pv_info['parameter_key'])
 
     for device_name, pyorbit_name in pbpms.items():
         init_values = []
         for pv_param_name, pv_info in pbpm_params.items():
             pv_name = device_name + ':' + pv_param_name
-            model.add_pv(pv_name, pv_info['pv_types'], pyorbit_name, pv_info['parameter_key'])
+            model.add_pv(pv_name, pv_info['pv_type'], pyorbit_name, pv_info['parameter_key'])
 
 model.order_pvs()
 
@@ -108,6 +108,34 @@ model.generate_initial_bunch(number_particles, kinetic_energy, beam_current, twi
 bunch_file = Path('../SCL_Wizard/SCL_in.dat')
 model.load_initial_bunch(bunch_file, number_of_particls=1000)
 
+print(model.get_measurements('SCL_Phys:BPM11:Beta'))
+dict1 = {}
+dict1["SCL_LLRF:FCM01a:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM01b:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM01c:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM02a:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM02b:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM02c:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM03a:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM03b:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM03c:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM04a:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM04b:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM04c:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM05a:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM05b:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM05c:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM06a:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM06b:BlnkBeam"] = 1
+dict1["SCL_LLRF:FCM06c:BlnkBeam"] = 1
+
+model.update_optics(dict1)
+model.track()
+print(model.get_measurements('SCL_Phys:BPM11:Beta'))
+
+
+
+"""
 print(model.get_measurements('SCL_Phys:BPM32:Energy'))
 dict1 = {}
 #dict1["SCL_LLRF:FCM01a:CtlAmpSet"] = 0.0
@@ -121,8 +149,6 @@ model.update_optics(dict1)
 model.track()
 print(model.get_measurements('SCL_Phys:BPM32:Energy'))
 
-
-"""
 print(model.get_settings("SCL_Mag:DCH00:B"))
 print(model.get_measurements("SCL_Diag:BPM32:xAvg"))
 
