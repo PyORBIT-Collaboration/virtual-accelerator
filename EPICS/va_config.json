@@ -12,7 +12,8 @@
             "parameters": {
                 "CtlPhaseSet": {
                     "parameter_key": "phase",
-                    "pv_type": "setting"
+                    "pv_type": "setting",
+                    "phase_off_set": 0.001
                 },
                 "CtlAmpSet": {
                     "parameter_key": "amp",
@@ -115,7 +116,8 @@
                 },
                 "B": {
                     "parameter_key": "field",
-                    "pv_type": "readback"
+                    "pv_type": "readback",
+                    "noise": 0.0001
                 }
             },
             "devices": {
@@ -207,7 +209,8 @@
                 },
                 "B": {
                     "parameter_key": "B",
-                    "pv_type": "readback"
+                    "pv_type": "readback",
+                    "noise": 0.0001
                 }
             },
             "devices": {
@@ -288,15 +291,19 @@
             "parameters": {
                 "xAvg": {
                     "parameter_key": "x_avg",
-                    "pv_type": "diagnostic"
+                    "pv_type": "diagnostic",
+                    "noise": 1e-07
                 },
                 "yAvg": {
                     "parameter_key": "y_avg",
-                    "pv_type": "diagnostic"
+                    "pv_type": "diagnostic",
+                    "noise": 1e-07
                 },
                 "phaseAvg": {
                     "parameter_key": "phi_avg",
-                    "pv_type": "diagnostic"
+                    "pv_type": "diagnostic",
+                    "noise": 0.001,
+                    "phase_off_set": 0.001
                 }
             },
             "devices": {

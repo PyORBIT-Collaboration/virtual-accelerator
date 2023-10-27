@@ -2,18 +2,17 @@
 # The main body of the script instantiates PVs from a file passed by command line argument.
 import json
 import sys
+import time
 from pathlib import Path
-from time import sleep
 import argparse
 
 sys.path.append('../../../SNS_CA_Server/caserver')
-from castst import Server, epics_now, not_ctrlc, Device
-from devices import BLM, BCM, BPM, Magnet, Cavity, PBPM, genPV
+from castst import Server, epics_now, not_ctrlc, Device, AbsNoise, PhaseT
 
 from pyorbit_server_interface import OrbitModel
 
 # update rate in Hz
-REP_RATE = 5.0
+REP_RATE = 1.0
 
 if __name__ == '__main__':
     # Set a default prefix if unspecified at server initialization
@@ -47,12 +46,27 @@ if __name__ == '__main__':
                 pv_name = device_name + ':' + pv_param_name
                 pv_type = pv_info['pv_type']
                 model.add_pv(pv_name, pv_type, pyorbit_name, pv_info['parameter_key'])
+
+                if 'noise' in pv_info:
+                    noise = AbsNoise(noise=pv_info['noise'])
+                else:
+                    noise = None
+                if 'phase_off_set' in pv_info:
+                    off_set = PhaseT(offset=pv_info['phase_off_set'])
+                else:
+                    off_set = None
+
                 if pv_type == 'setting':
                     initial_value = model.get_settings(pv_name)[pv_name]
-                    server_device.register_setting(pv_param_name, {'prec': 4}, initial_value)
-                else:
-                    server_device.register_measurement(pv_param_name, {'prec': 4})
-            server.add_device(server_device)
+                    if off_set is not None:
+                        initial_value = off_set.raw(initial_value)
+                    server_device.register_setting(pv_param_name, {'prec': 4}, initial_value,
+                                                   transform=off_set)
+                elif pv_type == 'diagnostic' or pv_type == 'readback' or pv_type == 'physics':
+                    server_device.register_measurement(pv_param_name, {'prec': 4},
+                                                       noise=noise, transform=off_set)
+
+                server.add_device(server_device)
 
     model.order_pvs()
 
@@ -64,15 +78,19 @@ if __name__ == '__main__':
 
     # Our new data acquisition routine
     while not_ctrlc():
+        loop_start_time = time.time()
+        server.update()
+
         now = epics_now()
 
-        new_params = server.get_params()
+        new_params = server.get_settings()
         model.update_optics(new_params)
         model.track()
         new_measurements = model.get_measurements()
-        server.set_params(new_measurements)
+        server.update_measurements(new_measurements)
 
-        server.update()
-        sleep(1.0 / REP_RATE)
+        loop_time_taken = time.time() - loop_start_time
+        sleep_time = max(0.0, REP_RATE - loop_time_taken)
+        time.sleep(sleep_time)
 
     print('Exiting. Thank you for using our epics server!')

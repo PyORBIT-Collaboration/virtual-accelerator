@@ -11,19 +11,19 @@ subsections = ['SCLMed', 'SCLHigh', 'HEBT1']
 lattice_file = Path(lattice_str)
 model = OrbitModel(lattice_file, subsections)
 
-cavity_params = {"CtlPhaseSet": {"parameter_key": "phase", "pv_type": "setting"},
+cavity_params = {"CtlPhaseSet": {"parameter_key": "phase", "pv_type": "setting", "phase_off_set": 0.001},
                  "CtlAmpSet": {"parameter_key": "amp", "pv_type": "setting"},
                  "BlnkBeam": {"parameter_key": "blanked", "pv_type": "setting"}}
 
 quad_params = {"B_set": {"parameter_key": "field", "pv_type": "setting"},
-               "B": {"parameter_key": "field", "pv_type": "readback"}}
+               "B": {"parameter_key": "field", "pv_type": "readback", "noise": 0.0001}}
 
 corrector_params = {"B_set": {"parameter_key": "B", "pv_type": "setting"},
-                    "B": {"parameter_key": "B", "pv_type": "readback"}}
+                    "B": {"parameter_key": "B", "pv_type": "readback", "noise": 0.0001}}
 
-bpm_params = {"xAvg": {"parameter_key": "x_avg", "pv_type": "diagnostic"},
-              "yAvg": {"parameter_key": "y_avg", "pv_type": "diagnostic"},
-              "phaseAvg": {"parameter_key": "phi_avg", "pv_type": "diagnostic"}}
+bpm_params = {"xAvg": {"parameter_key": "x_avg", "pv_type": "diagnostic", "noise": 1e-7},
+              "yAvg": {"parameter_key": "y_avg", "pv_type": "diagnostic", "noise": 1e-7},
+              "phaseAvg": {"parameter_key": "phi_avg", "pv_type": "diagnostic", "noise": 0.001, "phase_off_set": 0.001}}
 
 pbpm_params = {"Energy": {"parameter_key": "energy", "pv_type": "physics"},
                "Beta": {"parameter_key": "beta", "pv_type": "physics"}}

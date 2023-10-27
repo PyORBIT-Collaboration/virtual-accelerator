@@ -1,6 +1,3 @@
-import copy
-import math
-import sys
 from datetime import datetime
 from typing import Optional, Union, List
 from pathlib import Path
@@ -114,14 +111,14 @@ class OrbitModel:
             return_dict[setting_names] = self.pv_dict.get_pv(setting_names)
         return return_dict
 
-    def get_measurements(self, measurement_names: Optional[Union[str, List[str]]] = None) -> dict[str,]:
+    def get_measurements(self, measurement_names: Optional[Union[str, List[str]]] = None) -> dict[str, ]:
         # think about more useful parameters that are not real
         # for fake parameters use XXX_Phys
         return_dict = {}
         if measurement_names is None:
             for pv_name, pv_ref in self.pv_dict.get_pv_dictionary().items():
                 pv_type = pv_ref.get_type()
-                if pv_type == 'diagnostic' or 'physics':
+                if pv_type == 'readback' or pv_type == 'diagnostic' or pv_type == 'physics':
                     return_dict[pv_name] = pv_ref.get_value()
         elif isinstance(measurement_names, list):
             for pv_name in measurement_names:
@@ -187,11 +184,11 @@ class OrbitModel:
         for pv_name, new_value in changed_optics.items():
             if pv_name in pv_dict.get_pv_dictionary().keys():
                 current_value = pv_dict.get_pv(pv_name)
-                if pv_dict.get_pv_type(pv_name) == 'setting' and new_value != current_value:
+                if pv_dict.get_pv_type(pv_name) == 'setting' and abs(new_value - current_value) > 1e-12:
                     pv_dict.set_pv(pv_name, new_value)
                     element_name = pv_dict.get_pyorbit_name(pv_name)
                     self.current_changes.add(element_name)
-                    print(f'New value of {pv_name} is {new_value}')
+                    print(f'Value of {pv_name} changed from {current_value} to {new_value}')
 
     def reset_optics(self) -> None:
         self.update_optics(self.initial_settings)
