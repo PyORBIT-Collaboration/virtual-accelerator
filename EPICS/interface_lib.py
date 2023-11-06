@@ -327,6 +327,10 @@ class PVLibrary:
         element_name = self.pv_dict[pv_name].get_pyorbit_element_name()
         return element_name
 
+    def get_pyorbit_reference(self, pv_name: str) -> "PyorbitElement":
+        element_ref = self.pv_dict[pv_name].get_pyorbit_element_ref()
+        return element_ref
+
     def order_pvs(self):
         pv_dict = self.pv_dict
         temp_dict = {}
@@ -368,3 +372,6 @@ class PVReference:
     def get_pyorbit_element_name(self) -> str:
         pyorbit_name = self.element_ref.get_name()
         return pyorbit_name
+
+    def get_pyorbit_element_ref(self) -> "PyorbitElement":
+        return self.element_ref

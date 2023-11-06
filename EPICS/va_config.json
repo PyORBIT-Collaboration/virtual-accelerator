@@ -12,8 +12,7 @@
             "parameters": {
                 "CtlPhaseSet": {
                     "parameter_key": "phase",
-                    "pv_type": "setting",
-                    "phase_off_set": 0.001
+                    "pv_type": "setting"
                 },
                 "CtlAmpSet": {
                     "parameter_key": "amp",
@@ -25,87 +24,897 @@
                 }
             },
             "devices": {
-                "SCL_LLRF:FCM01a": "SCL:Cav01a",
-                "SCL_LLRF:FCM01b": "SCL:Cav01b",
-                "SCL_LLRF:FCM01c": "SCL:Cav01c",
-                "SCL_LLRF:FCM02a": "SCL:Cav02a",
-                "SCL_LLRF:FCM02b": "SCL:Cav02b",
-                "SCL_LLRF:FCM02c": "SCL:Cav02c",
-                "SCL_LLRF:FCM03a": "SCL:Cav03a",
-                "SCL_LLRF:FCM03b": "SCL:Cav03b",
-                "SCL_LLRF:FCM03c": "SCL:Cav03c",
-                "SCL_LLRF:FCM04a": "SCL:Cav04a",
-                "SCL_LLRF:FCM04b": "SCL:Cav04b",
-                "SCL_LLRF:FCM04c": "SCL:Cav04c",
-                "SCL_LLRF:FCM05a": "SCL:Cav05a",
-                "SCL_LLRF:FCM05b": "SCL:Cav05b",
-                "SCL_LLRF:FCM05c": "SCL:Cav05c",
-                "SCL_LLRF:FCM06a": "SCL:Cav06a",
-                "SCL_LLRF:FCM06b": "SCL:Cav06b",
-                "SCL_LLRF:FCM06c": "SCL:Cav06c",
-                "SCL_LLRF:FCM07a": "SCL:Cav07a",
-                "SCL_LLRF:FCM07b": "SCL:Cav07b",
-                "SCL_LLRF:FCM07c": "SCL:Cav07c",
-                "SCL_LLRF:FCM08a": "SCL:Cav08a",
-                "SCL_LLRF:FCM08b": "SCL:Cav08b",
-                "SCL_LLRF:FCM08c": "SCL:Cav08c",
-                "SCL_LLRF:FCM09a": "SCL:Cav09a",
-                "SCL_LLRF:FCM09b": "SCL:Cav09b",
-                "SCL_LLRF:FCM09c": "SCL:Cav09c",
-                "SCL_LLRF:FCM10a": "SCL:Cav10a",
-                "SCL_LLRF:FCM10b": "SCL:Cav10b",
-                "SCL_LLRF:FCM10c": "SCL:Cav10c",
-                "SCL_LLRF:FCM11a": "SCL:Cav11a",
-                "SCL_LLRF:FCM11b": "SCL:Cav11b",
-                "SCL_LLRF:FCM11c": "SCL:Cav11c",
-                "SCL_LLRF:FCM12a": "SCL:Cav12a",
-                "SCL_LLRF:FCM12b": "SCL:Cav12b",
-                "SCL_LLRF:FCM12c": "SCL:Cav12c",
-                "SCL_LLRF:FCM12d": "SCL:Cav12d",
-                "SCL_LLRF:FCM13a": "SCL:Cav13a",
-                "SCL_LLRF:FCM13b": "SCL:Cav13b",
-                "SCL_LLRF:FCM13c": "SCL:Cav13c",
-                "SCL_LLRF:FCM13d": "SCL:Cav13d",
-                "SCL_LLRF:FCM14a": "SCL:Cav14a",
-                "SCL_LLRF:FCM14b": "SCL:Cav14b",
-                "SCL_LLRF:FCM14c": "SCL:Cav14c",
-                "SCL_LLRF:FCM14d": "SCL:Cav14d",
-                "SCL_LLRF:FCM15a": "SCL:Cav15a",
-                "SCL_LLRF:FCM15b": "SCL:Cav15b",
-                "SCL_LLRF:FCM15c": "SCL:Cav15c",
-                "SCL_LLRF:FCM15d": "SCL:Cav15d",
-                "SCL_LLRF:FCM16a": "SCL:Cav16a",
-                "SCL_LLRF:FCM16b": "SCL:Cav16b",
-                "SCL_LLRF:FCM16c": "SCL:Cav16c",
-                "SCL_LLRF:FCM16d": "SCL:Cav16d",
-                "SCL_LLRF:FCM17a": "SCL:Cav17a",
-                "SCL_LLRF:FCM17b": "SCL:Cav17b",
-                "SCL_LLRF:FCM17c": "SCL:Cav17c",
-                "SCL_LLRF:FCM17d": "SCL:Cav17d",
-                "SCL_LLRF:FCM18a": "SCL:Cav18a",
-                "SCL_LLRF:FCM18b": "SCL:Cav18b",
-                "SCL_LLRF:FCM18c": "SCL:Cav18c",
-                "SCL_LLRF:FCM18d": "SCL:Cav18d",
-                "SCL_LLRF:FCM19a": "SCL:Cav19a",
-                "SCL_LLRF:FCM19b": "SCL:Cav19b",
-                "SCL_LLRF:FCM19c": "SCL:Cav19c",
-                "SCL_LLRF:FCM19d": "SCL:Cav19d",
-                "SCL_LLRF:FCM20a": "SCL:Cav20a",
-                "SCL_LLRF:FCM20b": "SCL:Cav20b",
-                "SCL_LLRF:FCM20c": "SCL:Cav20c",
-                "SCL_LLRF:FCM20d": "SCL:Cav20d",
-                "SCL_LLRF:FCM21a": "SCL:Cav21a",
-                "SCL_LLRF:FCM21b": "SCL:Cav21b",
-                "SCL_LLRF:FCM21c": "SCL:Cav21c",
-                "SCL_LLRF:FCM21d": "SCL:Cav21d",
-                "SCL_LLRF:FCM22a": "SCL:Cav22a",
-                "SCL_LLRF:FCM22b": "SCL:Cav22b",
-                "SCL_LLRF:FCM22c": "SCL:Cav22c",
-                "SCL_LLRF:FCM22d": "SCL:Cav22d",
-                "SCL_LLRF:FCM23a": "SCL:Cav23a",
-                "SCL_LLRF:FCM23b": "SCL:Cav23b",
-                "SCL_LLRF:FCM23c": "SCL:Cav23c",
-                "SCL_LLRF:FCM23d": "SCL:Cav23d"
+                "SCL_LLRF:FCM01a": {
+                    "pyorbit_name": "SCL:Cav01a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -163.6781333703819
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM01b": {
+                    "pyorbit_name": "SCL:Cav01b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -163.1343323867396
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM01c": {
+                    "pyorbit_name": "SCL:Cav01c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 88.89674280566106
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM02a": {
+                    "pyorbit_name": "SCL:Cav02a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -127.26303551595457
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM02b": {
+                    "pyorbit_name": "SCL:Cav02b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -126.13559451733788
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM02c": {
+                    "pyorbit_name": "SCL:Cav02c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -120.32017490006825
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM03a": {
+                    "pyorbit_name": "SCL:Cav03a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -80.72993440690735
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM03b": {
+                    "pyorbit_name": "SCL:Cav03b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -86.99356964712044
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM03c": {
+                    "pyorbit_name": "SCL:Cav03c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -140.4210225115287
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM04a": {
+                    "pyorbit_name": "SCL:Cav04a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -68.97402707945622
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM04b": {
+                    "pyorbit_name": "SCL:Cav04b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -144.70054913690498
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM04c": {
+                    "pyorbit_name": "SCL:Cav04c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -23.785881705513944
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM05a": {
+                    "pyorbit_name": "SCL:Cav05a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -24.528175222390733
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM05b": {
+                    "pyorbit_name": "SCL:Cav05b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 70.97546951914678
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM05c": {
+                    "pyorbit_name": "SCL:Cav05c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 116.76447460824578
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM06a": {
+                    "pyorbit_name": "SCL:Cav06a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -11.144812344624594
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM06b": {
+                    "pyorbit_name": "SCL:Cav06b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 124.47725833654336
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM06c": {
+                    "pyorbit_name": "SCL:Cav06c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -6.540047469557364
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM07a": {
+                    "pyorbit_name": "SCL:Cav07a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 140.1880008239308
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM07b": {
+                    "pyorbit_name": "SCL:Cav07b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -143.56265334376158
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM07c": {
+                    "pyorbit_name": "SCL:Cav07c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -112.32053317533259
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM08a": {
+                    "pyorbit_name": "SCL:Cav08a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 81.66303613489137
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM08b": {
+                    "pyorbit_name": "SCL:Cav08b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 21.464321211690255
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM08c": {
+                    "pyorbit_name": "SCL:Cav08c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -13.403969325673323
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM09a": {
+                    "pyorbit_name": "SCL:Cav09a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -46.57180201950459
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM09b": {
+                    "pyorbit_name": "SCL:Cav09b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 148.80104729363626
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM09c": {
+                    "pyorbit_name": "SCL:Cav09c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -117.5625271024663
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM10a": {
+                    "pyorbit_name": "SCL:Cav10a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -150.60735050247348
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM10b": {
+                    "pyorbit_name": "SCL:Cav10b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 98.98145151118352
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM10c": {
+                    "pyorbit_name": "SCL:Cav10c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -112.55635099816111
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM11a": {
+                    "pyorbit_name": "SCL:Cav11a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 50.1724635991712
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM11b": {
+                    "pyorbit_name": "SCL:Cav11b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 28.200756044489307
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM11c": {
+                    "pyorbit_name": "SCL:Cav11c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 56.51092581458994
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM12a": {
+                    "pyorbit_name": "SCL:Cav12a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -136.80914307259718
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM12b": {
+                    "pyorbit_name": "SCL:Cav12b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 137.43968422448228
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM12c": {
+                    "pyorbit_name": "SCL:Cav12c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 69.29423165202648
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM12d": {
+                    "pyorbit_name": "SCL:Cav12d",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 81.96239968361427
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM13a": {
+                    "pyorbit_name": "SCL:Cav13a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -40.43522928473247
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM13b": {
+                    "pyorbit_name": "SCL:Cav13b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 68.51932788926933
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM13c": {
+                    "pyorbit_name": "SCL:Cav13c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -20.85155056748551
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM13d": {
+                    "pyorbit_name": "SCL:Cav13d",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -83.32758943022792
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM14a": {
+                    "pyorbit_name": "SCL:Cav14a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -77.37947397840018
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM14b": {
+                    "pyorbit_name": "SCL:Cav14b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -79.2857728747201
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM14c": {
+                    "pyorbit_name": "SCL:Cav14c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 16.328976857914252
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM14d": {
+                    "pyorbit_name": "SCL:Cav14d",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 83.32661423286501
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM15a": {
+                    "pyorbit_name": "SCL:Cav15a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -179.5198164207019
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM15b": {
+                    "pyorbit_name": "SCL:Cav15b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -17.11485050624212
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM15c": {
+                    "pyorbit_name": "SCL:Cav15c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -41.76446521636889
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM15d": {
+                    "pyorbit_name": "SCL:Cav15d",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -150.71850644390855
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM16a": {
+                    "pyorbit_name": "SCL:Cav16a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -6.525793348883049
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM16b": {
+                    "pyorbit_name": "SCL:Cav16b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -50.59065674479576
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM16c": {
+                    "pyorbit_name": "SCL:Cav16c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 77.11569118776255
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM16d": {
+                    "pyorbit_name": "SCL:Cav16d",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -115.44216844392486
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM17a": {
+                    "pyorbit_name": "SCL:Cav17a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 7.425754368491635
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM17b": {
+                    "pyorbit_name": "SCL:Cav17b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -104.10225164711984
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM17c": {
+                    "pyorbit_name": "SCL:Cav17c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -16.78997400756316
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM17d": {
+                    "pyorbit_name": "SCL:Cav17d",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -130.71515920555032
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM18a": {
+                    "pyorbit_name": "SCL:Cav18a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -8.433261957125202
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM18b": {
+                    "pyorbit_name": "SCL:Cav18b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -18.344468214556997
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM18c": {
+                    "pyorbit_name": "SCL:Cav18c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -107.34180265472949
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM18d": {
+                    "pyorbit_name": "SCL:Cav18d",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -148.55448374673438
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM19a": {
+                    "pyorbit_name": "SCL:Cav19a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 63.54751242525551
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM19b": {
+                    "pyorbit_name": "SCL:Cav19b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 97.49355631895492
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM19c": {
+                    "pyorbit_name": "SCL:Cav19c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 43.1711193558369
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM19d": {
+                    "pyorbit_name": "SCL:Cav19d",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -3.3588342477538546
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM20a": {
+                    "pyorbit_name": "SCL:Cav20a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 107.40112089782016
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM20b": {
+                    "pyorbit_name": "SCL:Cav20b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 47.34172572332115
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM20c": {
+                    "pyorbit_name": "SCL:Cav20c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 72.29835954192973
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM20d": {
+                    "pyorbit_name": "SCL:Cav20d",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 45.83443768380623
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM21a": {
+                    "pyorbit_name": "SCL:Cav21a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -78.33775994370042
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM21b": {
+                    "pyorbit_name": "SCL:Cav21b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -28.283962915182904
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM21c": {
+                    "pyorbit_name": "SCL:Cav21c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 97.25194623240282
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM21d": {
+                    "pyorbit_name": "SCL:Cav21d",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 22.225431956029542
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM22a": {
+                    "pyorbit_name": "SCL:Cav22a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -19.177829622694198
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM22b": {
+                    "pyorbit_name": "SCL:Cav22b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 141.17202490292502
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM22c": {
+                    "pyorbit_name": "SCL:Cav22c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -90.73503332230354
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM22d": {
+                    "pyorbit_name": "SCL:Cav22d",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -146.35471127003268
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM23a": {
+                    "pyorbit_name": "SCL:Cav23a",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -64.3788893054524
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM23b": {
+                    "pyorbit_name": "SCL:Cav23b",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -152.13555668941723
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM23c": {
+                    "pyorbit_name": "SCL:Cav23c",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": -31.966701589758152
+                        }
+                    }
+                },
+                "SCL_LLRF:FCM23d": {
+                    "pyorbit_name": "SCL:Cav23d",
+                    "override": {
+                        "CtlAmpSet": {
+                            "linear_offset": 14.9339
+                        },
+                        "CtlPhaseSet": {
+                            "phase_offset": 107.00348775911553
+                        }
+                    }
+                }
             }
         },
         "Quadrupoles": {
@@ -121,84 +930,240 @@
                 }
             },
             "devices": {
-                "SCL_Mag:QH00": "SCL_Mag:QH00",
-                "SCL_Mag:QV00": "SCL_Mag:QV00",
-                "SCL_Mag:QH01": "SCL_Mag:QH01",
-                "SCL_Mag:QV01": "SCL_Mag:QV01",
-                "SCL_Mag:QH02": "SCL_Mag:QH02",
-                "SCL_Mag:QV02": "SCL_Mag:QV02",
-                "SCL_Mag:QH03": "SCL_Mag:QH03",
-                "SCL_Mag:QV03": "SCL_Mag:QV03",
-                "SCL_Mag:QH04": "SCL_Mag:QH04",
-                "SCL_Mag:QV04": "SCL_Mag:QV04",
-                "SCL_Mag:QH05": "SCL_Mag:QH05",
-                "SCL_Mag:QV05": "SCL_Mag:QV05",
-                "SCL_Mag:QH06": "SCL_Mag:QH06",
-                "SCL_Mag:QV06": "SCL_Mag:QV06",
-                "SCL_Mag:QH07": "SCL_Mag:QH07",
-                "SCL_Mag:QV07": "SCL_Mag:QV07",
-                "SCL_Mag:QH08": "SCL_Mag:QH08",
-                "SCL_Mag:QV08": "SCL_Mag:QV08",
-                "SCL_Mag:QH09": "SCL_Mag:QH09",
-                "SCL_Mag:QV09": "SCL_Mag:QV09",
-                "SCL_Mag:QH10": "SCL_Mag:QH10",
-                "SCL_Mag:QV10": "SCL_Mag:QV10",
-                "SCL_Mag:QH11": "SCL_Mag:QH11",
-                "SCL_Mag:QV11": "SCL_Mag:QV11",
-                "SCL_Mag:QH12": "SCL_Mag:QH12",
-                "SCL_Mag:QV12": "SCL_Mag:QV12",
-                "SCL_Mag:QH13": "SCL_Mag:QH13",
-                "SCL_Mag:QV13": "SCL_Mag:QV13",
-                "SCL_Mag:QH14": "SCL_Mag:QH14",
-                "SCL_Mag:QV14": "SCL_Mag:QV14",
-                "SCL_Mag:QH15": "SCL_Mag:QH15",
-                "SCL_Mag:QV15": "SCL_Mag:QV15",
-                "SCL_Mag:QH16": "SCL_Mag:QH16",
-                "SCL_Mag:QV16": "SCL_Mag:QV16",
-                "SCL_Mag:QH17": "SCL_Mag:QH17",
-                "SCL_Mag:QV17": "SCL_Mag:QV17",
-                "SCL_Mag:QH18": "SCL_Mag:QH18",
-                "SCL_Mag:QV18": "SCL_Mag:QV18",
-                "SCL_Mag:QH19": "SCL_Mag:QH19",
-                "SCL_Mag:QV19": "SCL_Mag:QV19",
-                "SCL_Mag:QH20": "SCL_Mag:QH20",
-                "SCL_Mag:QV20": "SCL_Mag:QV20",
-                "SCL_Mag:QH21": "SCL_Mag:QH21",
-                "SCL_Mag:QV21": "SCL_Mag:QV21",
-                "SCL_Mag:QH22": "SCL_Mag:QH22",
-                "SCL_Mag:QV22": "SCL_Mag:QV22",
-                "SCL_Mag:QH23": "SCL_Mag:QH23",
-                "SCL_Mag:QV23": "SCL_Mag:QV23",
-                "SCL_Mag:QH24": "SCL_Mag:QH24",
-                "SCL_Mag:QV24": "SCL_Mag:QV24",
-                "SCL_Mag:QH25": "SCL_Mag:QH25",
-                "SCL_Mag:QV25": "SCL_Mag:QV25",
-                "SCL_Mag:QH26": "SCL_Mag:QH26",
-                "SCL_Mag:QV26": "SCL_Mag:QV26",
-                "SCL_Mag:QH27": "SCL_Mag:QH27",
-                "SCL_Mag:QV27": "SCL_Mag:QV27",
-                "SCL_Mag:QH28": "SCL_Mag:QH28",
-                "SCL_Mag:QV28": "SCL_Mag:QV28",
-                "SCL_Mag:QH29": "SCL_Mag:QH29",
-                "SCL_Mag:QV29": "SCL_Mag:QV29",
-                "SCL_Mag:QH30": "SCL_Mag:QH30",
-                "SCL_Mag:QV30": "SCL_Mag:QV30",
-                "SCL_Mag:QH31": "SCL_Mag:QH31",
-                "SCL_Mag:QV31": "SCL_Mag:QV31",
-                "SCL_Mag:QH32": "SCL_Mag:QH32",
-                "SCL_Mag:QV32": "SCL_Mag:QV32",
-                "SCL_Mag:QH33": "SCL_Mag:QH33",
-                "HEBT_Mag:QV01": "HEBT_Mag:QV01",
-                "HEBT_Mag:QH02": "HEBT_Mag:QH02",
-                "HEBT_Mag:QV03": "HEBT_Mag:QV03",
-                "HEBT_Mag:QH04": "HEBT_Mag:QH04",
-                "HEBT_Mag:QV05": "HEBT_Mag:QV05",
-                "HEBT_Mag:QH06": "HEBT_Mag:QH06",
-                "HEBT_Mag:QV07": "HEBT_Mag:QV07",
-                "HEBT_Mag:QH08": "HEBT_Mag:QH08",
-                "HEBT_Mag:QV09": "HEBT_Mag:QV09",
-                "HEBT_Mag:QH10": "HEBT_Mag:QH10",
-                "HEBT_Mag:QV11": "HEBT_Mag:QV11"
+                "SCL_Mag:QH00": {
+                    "pyorbit_name": "SCL_Mag:QH00"
+                },
+                "SCL_Mag:QV00": {
+                    "pyorbit_name": "SCL_Mag:QV00"
+                },
+                "SCL_Mag:QH01": {
+                    "pyorbit_name": "SCL_Mag:QH01"
+                },
+                "SCL_Mag:QV01": {
+                    "pyorbit_name": "SCL_Mag:QV01"
+                },
+                "SCL_Mag:QH02": {
+                    "pyorbit_name": "SCL_Mag:QH02"
+                },
+                "SCL_Mag:QV02": {
+                    "pyorbit_name": "SCL_Mag:QV02"
+                },
+                "SCL_Mag:QH03": {
+                    "pyorbit_name": "SCL_Mag:QH03"
+                },
+                "SCL_Mag:QV03": {
+                    "pyorbit_name": "SCL_Mag:QV03"
+                },
+                "SCL_Mag:QH04": {
+                    "pyorbit_name": "SCL_Mag:QH04"
+                },
+                "SCL_Mag:QV04": {
+                    "pyorbit_name": "SCL_Mag:QV04"
+                },
+                "SCL_Mag:QH05": {
+                    "pyorbit_name": "SCL_Mag:QH05"
+                },
+                "SCL_Mag:QV05": {
+                    "pyorbit_name": "SCL_Mag:QV05"
+                },
+                "SCL_Mag:QH06": {
+                    "pyorbit_name": "SCL_Mag:QH06"
+                },
+                "SCL_Mag:QV06": {
+                    "pyorbit_name": "SCL_Mag:QV06"
+                },
+                "SCL_Mag:QH07": {
+                    "pyorbit_name": "SCL_Mag:QH07"
+                },
+                "SCL_Mag:QV07": {
+                    "pyorbit_name": "SCL_Mag:QV07"
+                },
+                "SCL_Mag:QH08": {
+                    "pyorbit_name": "SCL_Mag:QH08"
+                },
+                "SCL_Mag:QV08": {
+                    "pyorbit_name": "SCL_Mag:QV08"
+                },
+                "SCL_Mag:QH09": {
+                    "pyorbit_name": "SCL_Mag:QH09"
+                },
+                "SCL_Mag:QV09": {
+                    "pyorbit_name": "SCL_Mag:QV09"
+                },
+                "SCL_Mag:QH10": {
+                    "pyorbit_name": "SCL_Mag:QH10"
+                },
+                "SCL_Mag:QV10": {
+                    "pyorbit_name": "SCL_Mag:QV10"
+                },
+                "SCL_Mag:QH11": {
+                    "pyorbit_name": "SCL_Mag:QH11"
+                },
+                "SCL_Mag:QV11": {
+                    "pyorbit_name": "SCL_Mag:QV11"
+                },
+                "SCL_Mag:QH12": {
+                    "pyorbit_name": "SCL_Mag:QH12"
+                },
+                "SCL_Mag:QV12": {
+                    "pyorbit_name": "SCL_Mag:QV12"
+                },
+                "SCL_Mag:QH13": {
+                    "pyorbit_name": "SCL_Mag:QH13"
+                },
+                "SCL_Mag:QV13": {
+                    "pyorbit_name": "SCL_Mag:QV13"
+                },
+                "SCL_Mag:QH14": {
+                    "pyorbit_name": "SCL_Mag:QH14"
+                },
+                "SCL_Mag:QV14": {
+                    "pyorbit_name": "SCL_Mag:QV14"
+                },
+                "SCL_Mag:QH15": {
+                    "pyorbit_name": "SCL_Mag:QH15"
+                },
+                "SCL_Mag:QV15": {
+                    "pyorbit_name": "SCL_Mag:QV15"
+                },
+                "SCL_Mag:QH16": {
+                    "pyorbit_name": "SCL_Mag:QH16"
+                },
+                "SCL_Mag:QV16": {
+                    "pyorbit_name": "SCL_Mag:QV16"
+                },
+                "SCL_Mag:QH17": {
+                    "pyorbit_name": "SCL_Mag:QH17"
+                },
+                "SCL_Mag:QV17": {
+                    "pyorbit_name": "SCL_Mag:QV17"
+                },
+                "SCL_Mag:QH18": {
+                    "pyorbit_name": "SCL_Mag:QH18"
+                },
+                "SCL_Mag:QV18": {
+                    "pyorbit_name": "SCL_Mag:QV18"
+                },
+                "SCL_Mag:QH19": {
+                    "pyorbit_name": "SCL_Mag:QH19"
+                },
+                "SCL_Mag:QV19": {
+                    "pyorbit_name": "SCL_Mag:QV19"
+                },
+                "SCL_Mag:QH20": {
+                    "pyorbit_name": "SCL_Mag:QH20"
+                },
+                "SCL_Mag:QV20": {
+                    "pyorbit_name": "SCL_Mag:QV20"
+                },
+                "SCL_Mag:QH21": {
+                    "pyorbit_name": "SCL_Mag:QH21"
+                },
+                "SCL_Mag:QV21": {
+                    "pyorbit_name": "SCL_Mag:QV21"
+                },
+                "SCL_Mag:QH22": {
+                    "pyorbit_name": "SCL_Mag:QH22"
+                },
+                "SCL_Mag:QV22": {
+                    "pyorbit_name": "SCL_Mag:QV22"
+                },
+                "SCL_Mag:QH23": {
+                    "pyorbit_name": "SCL_Mag:QH23"
+                },
+                "SCL_Mag:QV23": {
+                    "pyorbit_name": "SCL_Mag:QV23"
+                },
+                "SCL_Mag:QH24": {
+                    "pyorbit_name": "SCL_Mag:QH24"
+                },
+                "SCL_Mag:QV24": {
+                    "pyorbit_name": "SCL_Mag:QV24"
+                },
+                "SCL_Mag:QH25": {
+                    "pyorbit_name": "SCL_Mag:QH25"
+                },
+                "SCL_Mag:QV25": {
+                    "pyorbit_name": "SCL_Mag:QV25"
+                },
+                "SCL_Mag:QH26": {
+                    "pyorbit_name": "SCL_Mag:QH26"
+                },
+                "SCL_Mag:QV26": {
+                    "pyorbit_name": "SCL_Mag:QV26"
+                },
+                "SCL_Mag:QH27": {
+                    "pyorbit_name": "SCL_Mag:QH27"
+                },
+                "SCL_Mag:QV27": {
+                    "pyorbit_name": "SCL_Mag:QV27"
+                },
+                "SCL_Mag:QH28": {
+                    "pyorbit_name": "SCL_Mag:QH28"
+                },
+                "SCL_Mag:QV28": {
+                    "pyorbit_name": "SCL_Mag:QV28"
+                },
+                "SCL_Mag:QH29": {
+                    "pyorbit_name": "SCL_Mag:QH29"
+                },
+                "SCL_Mag:QV29": {
+                    "pyorbit_name": "SCL_Mag:QV29"
+                },
+                "SCL_Mag:QH30": {
+                    "pyorbit_name": "SCL_Mag:QH30"
+                },
+                "SCL_Mag:QV30": {
+                    "pyorbit_name": "SCL_Mag:QV30"
+                },
+                "SCL_Mag:QH31": {
+                    "pyorbit_name": "SCL_Mag:QH31"
+                },
+                "SCL_Mag:QV31": {
+                    "pyorbit_name": "SCL_Mag:QV31"
+                },
+                "SCL_Mag:QH32": {
+                    "pyorbit_name": "SCL_Mag:QH32"
+                },
+                "SCL_Mag:QV32": {
+                    "pyorbit_name": "SCL_Mag:QV32"
+                },
+                "SCL_Mag:QH33": {
+                    "pyorbit_name": "SCL_Mag:QH33"
+                },
+                "HEBT_Mag:QV01": {
+                    "pyorbit_name": "HEBT_Mag:QV01"
+                },
+                "HEBT_Mag:QH02": {
+                    "pyorbit_name": "HEBT_Mag:QH02"
+                },
+                "HEBT_Mag:QV03": {
+                    "pyorbit_name": "HEBT_Mag:QV03"
+                },
+                "HEBT_Mag:QH04": {
+                    "pyorbit_name": "HEBT_Mag:QH04"
+                },
+                "HEBT_Mag:QV05": {
+                    "pyorbit_name": "HEBT_Mag:QV05"
+                },
+                "HEBT_Mag:QH06": {
+                    "pyorbit_name": "HEBT_Mag:QH06"
+                },
+                "HEBT_Mag:QV07": {
+                    "pyorbit_name": "HEBT_Mag:QV07"
+                },
+                "HEBT_Mag:QH08": {
+                    "pyorbit_name": "HEBT_Mag:QH08"
+                },
+                "HEBT_Mag:QV09": {
+                    "pyorbit_name": "HEBT_Mag:QV09"
+                },
+                "HEBT_Mag:QH10": {
+                    "pyorbit_name": "HEBT_Mag:QH10"
+                },
+                "HEBT_Mag:QV11": {
+                    "pyorbit_name": "HEBT_Mag:QV11"
+                }
             }
         },
         "Correctors": {
@@ -214,77 +1179,219 @@
                 }
             },
             "devices": {
-                "SCL_Mag:DCH00": "SCL_Mag:DCH00",
-                "SCL_Mag:DCV00": "SCL_Mag:DCV00",
-                "SCL_Mag:DCH01": "SCL_Mag:DCH01",
-                "SCL_Mag:DCV01": "SCL_Mag:DCV01",
-                "SCL_Mag:DCH02": "SCL_Mag:DCH02",
-                "SCL_Mag:DCV02": "SCL_Mag:DCV02",
-                "SCL_Mag:DCH03": "SCL_Mag:DCH03",
-                "SCL_Mag:DCV03": "SCL_Mag:DCV03",
-                "SCL_Mag:DCH04": "SCL_Mag:DCH04",
-                "SCL_Mag:DCV04": "SCL_Mag:DCV04",
-                "SCL_Mag:DCH05": "SCL_Mag:DCH05",
-                "SCL_Mag:DCV05": "SCL_Mag:DCV05",
-                "SCL_Mag:DCH06": "SCL_Mag:DCH06",
-                "SCL_Mag:DCV06": "SCL_Mag:DCV06",
-                "SCL_Mag:DCH07": "SCL_Mag:DCH07",
-                "SCL_Mag:DCV07": "SCL_Mag:DCV07",
-                "SCL_Mag:DCH08": "SCL_Mag:DCH08",
-                "SCL_Mag:DCV08": "SCL_Mag:DCV08",
-                "SCL_Mag:DCH09": "SCL_Mag:DCH09",
-                "SCL_Mag:DCV09": "SCL_Mag:DCV09",
-                "SCL_Mag:DCH10": "SCL_Mag:DCH10",
-                "SCL_Mag:DCV10": "SCL_Mag:DCV10",
-                "SCL_Mag:DCH11": "SCL_Mag:DCH11",
-                "SCL_Mag:DCV11": "SCL_Mag:DCV11",
-                "SCL_Mag:DCH12": "SCL_Mag:DCH12",
-                "SCL_Mag:DCV12": "SCL_Mag:DCV12",
-                "SCL_Mag:DCH13": "SCL_Mag:DCH13",
-                "SCL_Mag:DCV13": "SCL_Mag:DCV13",
-                "SCL_Mag:DCH14": "SCL_Mag:DCH14",
-                "SCL_Mag:DCV14": "SCL_Mag:DCV14",
-                "SCL_Mag:DCH15": "SCL_Mag:DCH15",
-                "SCL_Mag:DCV15": "SCL_Mag:DCV15",
-                "SCL_Mag:DCH16": "SCL_Mag:DCH16",
-                "SCL_Mag:DCV16": "SCL_Mag:DCV16",
-                "SCL_Mag:DCH17": "SCL_Mag:DCH17",
-                "SCL_Mag:DCV17": "SCL_Mag:DCV17",
-                "SCL_Mag:DCH18": "SCL_Mag:DCH18",
-                "SCL_Mag:DCV18": "SCL_Mag:DCV18",
-                "SCL_Mag:DCH19": "SCL_Mag:DCH19",
-                "SCL_Mag:DCV19": "SCL_Mag:DCV19",
-                "SCL_Mag:DCH20": "SCL_Mag:DCH20",
-                "SCL_Mag:DCV20": "SCL_Mag:DCV20",
-                "SCL_Mag:DCH21": "SCL_Mag:DCH21",
-                "SCL_Mag:DCV21": "SCL_Mag:DCV21",
-                "SCL_Mag:DCH22": "SCL_Mag:DCH22",
-                "SCL_Mag:DCV22": "SCL_Mag:DCV22",
-                "SCL_Mag:DCH23": "SCL_Mag:DCH23",
-                "SCL_Mag:DCV23": "SCL_Mag:DCV23",
-                "SCL_Mag:DCH24": "SCL_Mag:DCH24",
-                "SCL_Mag:DCV24": "SCL_Mag:DCV24",
-                "SCL_Mag:DCH25": "SCL_Mag:DCH25",
-                "SCL_Mag:DCV25": "SCL_Mag:DCV25",
-                "SCL_Mag:DCH26": "SCL_Mag:DCH26",
-                "SCL_Mag:DCV26": "SCL_Mag:DCV26",
-                "SCL_Mag:DCH27": "SCL_Mag:DCH27",
-                "SCL_Mag:DCV27": "SCL_Mag:DCV27",
-                "SCL_Mag:DCH28": "SCL_Mag:DCH28",
-                "SCL_Mag:DCV28": "SCL_Mag:DCV28",
-                "SCL_Mag:DCH29": "SCL_Mag:DCH29",
-                "SCL_Mag:DCV29": "SCL_Mag:DCV29",
-                "SCL_Mag:DCH30": "SCL_Mag:DCH30",
-                "SCL_Mag:DCV30": "SCL_Mag:DCV30",
-                "SCL_Mag:DCH31": "SCL_Mag:DCH31",
-                "SCL_Mag:DCV31": "SCL_Mag:DCV31",
-                "SCL_Mag:DCH32": "SCL_Mag:DCH32",
-                "SCL_Mag:DCV32": "SCL_Mag:DCV32",
-                "SCL_Mag:DCH33": "SCL_Mag:DCH33",
-                "HEBT_Mag:DCV05": "HEBT_Mag:DCV05",
-                "HEBT_Mag:DCH06": "HEBT_Mag:DCH06",
-                "HEBT_Mag:DCV07": "HEBT_Mag:DCV07",
-                "HEBT_Mag:DCH08": "HEBT_Mag:DCH08"
+                "SCL_Mag:DCH00": {
+                    "pyorbit_name": "SCL_Mag:DCH00"
+                },
+                "SCL_Mag:DCV00": {
+                    "pyorbit_name": "SCL_Mag:DCV00"
+                },
+                "SCL_Mag:DCH01": {
+                    "pyorbit_name": "SCL_Mag:DCH01"
+                },
+                "SCL_Mag:DCV01": {
+                    "pyorbit_name": "SCL_Mag:DCV01"
+                },
+                "SCL_Mag:DCH02": {
+                    "pyorbit_name": "SCL_Mag:DCH02"
+                },
+                "SCL_Mag:DCV02": {
+                    "pyorbit_name": "SCL_Mag:DCV02"
+                },
+                "SCL_Mag:DCH03": {
+                    "pyorbit_name": "SCL_Mag:DCH03"
+                },
+                "SCL_Mag:DCV03": {
+                    "pyorbit_name": "SCL_Mag:DCV03"
+                },
+                "SCL_Mag:DCH04": {
+                    "pyorbit_name": "SCL_Mag:DCH04"
+                },
+                "SCL_Mag:DCV04": {
+                    "pyorbit_name": "SCL_Mag:DCV04"
+                },
+                "SCL_Mag:DCH05": {
+                    "pyorbit_name": "SCL_Mag:DCH05"
+                },
+                "SCL_Mag:DCV05": {
+                    "pyorbit_name": "SCL_Mag:DCV05"
+                },
+                "SCL_Mag:DCH06": {
+                    "pyorbit_name": "SCL_Mag:DCH06"
+                },
+                "SCL_Mag:DCV06": {
+                    "pyorbit_name": "SCL_Mag:DCV06"
+                },
+                "SCL_Mag:DCH07": {
+                    "pyorbit_name": "SCL_Mag:DCH07"
+                },
+                "SCL_Mag:DCV07": {
+                    "pyorbit_name": "SCL_Mag:DCV07"
+                },
+                "SCL_Mag:DCH08": {
+                    "pyorbit_name": "SCL_Mag:DCH08"
+                },
+                "SCL_Mag:DCV08": {
+                    "pyorbit_name": "SCL_Mag:DCV08"
+                },
+                "SCL_Mag:DCH09": {
+                    "pyorbit_name": "SCL_Mag:DCH09"
+                },
+                "SCL_Mag:DCV09": {
+                    "pyorbit_name": "SCL_Mag:DCV09"
+                },
+                "SCL_Mag:DCH10": {
+                    "pyorbit_name": "SCL_Mag:DCH10"
+                },
+                "SCL_Mag:DCV10": {
+                    "pyorbit_name": "SCL_Mag:DCV10"
+                },
+                "SCL_Mag:DCH11": {
+                    "pyorbit_name": "SCL_Mag:DCH11"
+                },
+                "SCL_Mag:DCV11": {
+                    "pyorbit_name": "SCL_Mag:DCV11"
+                },
+                "SCL_Mag:DCH12": {
+                    "pyorbit_name": "SCL_Mag:DCH12"
+                },
+                "SCL_Mag:DCV12": {
+                    "pyorbit_name": "SCL_Mag:DCV12"
+                },
+                "SCL_Mag:DCH13": {
+                    "pyorbit_name": "SCL_Mag:DCH13"
+                },
+                "SCL_Mag:DCV13": {
+                    "pyorbit_name": "SCL_Mag:DCV13"
+                },
+                "SCL_Mag:DCH14": {
+                    "pyorbit_name": "SCL_Mag:DCH14"
+                },
+                "SCL_Mag:DCV14": {
+                    "pyorbit_name": "SCL_Mag:DCV14"
+                },
+                "SCL_Mag:DCH15": {
+                    "pyorbit_name": "SCL_Mag:DCH15"
+                },
+                "SCL_Mag:DCV15": {
+                    "pyorbit_name": "SCL_Mag:DCV15"
+                },
+                "SCL_Mag:DCH16": {
+                    "pyorbit_name": "SCL_Mag:DCH16"
+                },
+                "SCL_Mag:DCV16": {
+                    "pyorbit_name": "SCL_Mag:DCV16"
+                },
+                "SCL_Mag:DCH17": {
+                    "pyorbit_name": "SCL_Mag:DCH17"
+                },
+                "SCL_Mag:DCV17": {
+                    "pyorbit_name": "SCL_Mag:DCV17"
+                },
+                "SCL_Mag:DCH18": {
+                    "pyorbit_name": "SCL_Mag:DCH18"
+                },
+                "SCL_Mag:DCV18": {
+                    "pyorbit_name": "SCL_Mag:DCV18"
+                },
+                "SCL_Mag:DCH19": {
+                    "pyorbit_name": "SCL_Mag:DCH19"
+                },
+                "SCL_Mag:DCV19": {
+                    "pyorbit_name": "SCL_Mag:DCV19"
+                },
+                "SCL_Mag:DCH20": {
+                    "pyorbit_name": "SCL_Mag:DCH20"
+                },
+                "SCL_Mag:DCV20": {
+                    "pyorbit_name": "SCL_Mag:DCV20"
+                },
+                "SCL_Mag:DCH21": {
+                    "pyorbit_name": "SCL_Mag:DCH21"
+                },
+                "SCL_Mag:DCV21": {
+                    "pyorbit_name": "SCL_Mag:DCV21"
+                },
+                "SCL_Mag:DCH22": {
+                    "pyorbit_name": "SCL_Mag:DCH22"
+                },
+                "SCL_Mag:DCV22": {
+                    "pyorbit_name": "SCL_Mag:DCV22"
+                },
+                "SCL_Mag:DCH23": {
+                    "pyorbit_name": "SCL_Mag:DCH23"
+                },
+                "SCL_Mag:DCV23": {
+                    "pyorbit_name": "SCL_Mag:DCV23"
+                },
+                "SCL_Mag:DCH24": {
+                    "pyorbit_name": "SCL_Mag:DCH24"
+                },
+                "SCL_Mag:DCV24": {
+                    "pyorbit_name": "SCL_Mag:DCV24"
+                },
+                "SCL_Mag:DCH25": {
+                    "pyorbit_name": "SCL_Mag:DCH25"
+                },
+                "SCL_Mag:DCV25": {
+                    "pyorbit_name": "SCL_Mag:DCV25"
+                },
+                "SCL_Mag:DCH26": {
+                    "pyorbit_name": "SCL_Mag:DCH26"
+                },
+                "SCL_Mag:DCV26": {
+                    "pyorbit_name": "SCL_Mag:DCV26"
+                },
+                "SCL_Mag:DCH27": {
+                    "pyorbit_name": "SCL_Mag:DCH27"
+                },
+                "SCL_Mag:DCV27": {
+                    "pyorbit_name": "SCL_Mag:DCV27"
+                },
+                "SCL_Mag:DCH28": {
+                    "pyorbit_name": "SCL_Mag:DCH28"
+                },
+                "SCL_Mag:DCV28": {
+                    "pyorbit_name": "SCL_Mag:DCV28"
+                },
+                "SCL_Mag:DCH29": {
+                    "pyorbit_name": "SCL_Mag:DCH29"
+                },
+                "SCL_Mag:DCV29": {
+                    "pyorbit_name": "SCL_Mag:DCV29"
+                },
+                "SCL_Mag:DCH30": {
+                    "pyorbit_name": "SCL_Mag:DCH30"
+                },
+                "SCL_Mag:DCV30": {
+                    "pyorbit_name": "SCL_Mag:DCV30"
+                },
+                "SCL_Mag:DCH31": {
+                    "pyorbit_name": "SCL_Mag:DCH31"
+                },
+                "SCL_Mag:DCV31": {
+                    "pyorbit_name": "SCL_Mag:DCV31"
+                },
+                "SCL_Mag:DCH32": {
+                    "pyorbit_name": "SCL_Mag:DCH32"
+                },
+                "SCL_Mag:DCV32": {
+                    "pyorbit_name": "SCL_Mag:DCV32"
+                },
+                "SCL_Mag:DCH33": {
+                    "pyorbit_name": "SCL_Mag:DCH33"
+                },
+                "HEBT_Mag:DCV05": {
+                    "pyorbit_name": "HEBT_Mag:DCV05"
+                },
+                "HEBT_Mag:DCH06": {
+                    "pyorbit_name": "HEBT_Mag:DCH06"
+                },
+                "HEBT_Mag:DCV07": {
+                    "pyorbit_name": "HEBT_Mag:DCV07"
+                },
+                "HEBT_Mag:DCH08": {
+                    "pyorbit_name": "HEBT_Mag:DCH08"
+                }
             }
         },
         "BPMs": {
@@ -302,56 +1409,370 @@
                 "phaseAvg": {
                     "parameter_key": "phi_avg",
                     "pv_type": "diagnostic",
-                    "noise": 0.001,
-                    "phase_off_set": 0.001
+                    "noise": 0.001
                 }
             },
             "devices": {
-                "SCL_Diag:BPM00a": "SCL_Diag:BPM00a",
-                "SCL_Diag:BPM00b": "SCL_Diag:BPM00b",
-                "SCL_Diag:BPM01": "SCL_Diag:BPM01",
-                "SCL_Diag:BPM02": "SCL_Diag:BPM02",
-                "SCL_Diag:BPM03": "SCL_Diag:BPM03",
-                "SCL_Diag:BPM04": "SCL_Diag:BPM04",
-                "SCL_Diag:BPM05": "SCL_Diag:BPM05",
-                "SCL_Diag:BPM06": "SCL_Diag:BPM06",
-                "SCL_Diag:BPM07": "SCL_Diag:BPM07",
-                "SCL_Diag:BPM08": "SCL_Diag:BPM08",
-                "SCL_Diag:BPM09": "SCL_Diag:BPM09",
-                "SCL_Diag:BPM10": "SCL_Diag:BPM10",
-                "SCL_Diag:BPM11": "SCL_Diag:BPM11",
-                "SCL_Diag:BPM12": "SCL_Diag:BPM12",
-                "SCL_Diag:BPM13": "SCL_Diag:BPM13",
-                "SCL_Diag:BPM14": "SCL_Diag:BPM14",
-                "SCL_Diag:BPM15": "SCL_Diag:BPM15",
-                "SCL_Diag:BPM16": "SCL_Diag:BPM16",
-                "SCL_Diag:BPM17": "SCL_Diag:BPM17",
-                "SCL_Diag:BPM18": "SCL_Diag:BPM18",
-                "SCL_Diag:BPM19": "SCL_Diag:BPM19",
-                "SCL_Diag:BPM20": "SCL_Diag:BPM20",
-                "SCL_Diag:BPM21": "SCL_Diag:BPM21",
-                "SCL_Diag:BPM22": "SCL_Diag:BPM22",
-                "SCL_Diag:BPM23": "SCL_Diag:BPM23",
-                "SCL_Diag:BPM24": "SCL_Diag:BPM24",
-                "SCL_Diag:BPM25": "SCL_Diag:BPM25",
-                "SCL_Diag:BPM26": "SCL_Diag:BPM26",
-                "SCL_Diag:BPM27": "SCL_Diag:BPM27",
-                "SCL_Diag:BPM28": "SCL_Diag:BPM28",
-                "SCL_Diag:BPM29": "SCL_Diag:BPM29",
-                "SCL_Diag:BPM30": "SCL_Diag:BPM30",
-                "SCL_Diag:BPM31": "SCL_Diag:BPM31",
-                "SCL_Diag:BPM32": "SCL_Diag:BPM32",
-                "HEBT_Diag:BPM01": "HEBT_Diag:BPM01",
-                "HEBT_Diag:BPM02": "HEBT_Diag:BPM02",
-                "HEBT_Diag:BPM03": "HEBT_Diag:BPM03",
-                "HEBT_Diag:BPM04": "HEBT_Diag:BPM04",
-                "HEBT_Diag:BPM05": "HEBT_Diag:BPM05",
-                "HEBT_Diag:BPM06": "HEBT_Diag:BPM06",
-                "HEBT_Diag:BPM07": "HEBT_Diag:BPM07",
-                "HEBT_Diag:BPM08": "HEBT_Diag:BPM08",
-                "HEBT_Diag:BPM09": "HEBT_Diag:BPM09",
-                "HEBT_Diag:BPM10": "HEBT_Diag:BPM10",
-                "HEBT_Diag:BPM11": "HEBT_Diag:BPM11"
+                "SCL_Diag:BPM00a": {
+                    "pyorbit_name": "SCL_Diag:BPM00a",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 109.74095489200313
+                        }
+                    }
+                },
+                "SCL_Diag:BPM00b": {
+                    "pyorbit_name": "SCL_Diag:BPM00b",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -103.03973121694868
+                        }
+                    }
+                },
+                "SCL_Diag:BPM01": {
+                    "pyorbit_name": "SCL_Diag:BPM01",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 67.92212288398343
+                        }
+                    }
+                },
+                "SCL_Diag:BPM02": {
+                    "pyorbit_name": "SCL_Diag:BPM02",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -66.32118099436205
+                        }
+                    }
+                },
+                "SCL_Diag:BPM03": {
+                    "pyorbit_name": "SCL_Diag:BPM03",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 35.20559365546728
+                        }
+                    }
+                },
+                "SCL_Diag:BPM04": {
+                    "pyorbit_name": "SCL_Diag:BPM04",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -140.65866319984426
+                        }
+                    }
+                },
+                "SCL_Diag:BPM05": {
+                    "pyorbit_name": "SCL_Diag:BPM05",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 11.017300241996736
+                        }
+                    }
+                },
+                "SCL_Diag:BPM06": {
+                    "pyorbit_name": "SCL_Diag:BPM06",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -170.67522655384818
+                        }
+                    }
+                },
+                "SCL_Diag:BPM07": {
+                    "pyorbit_name": "SCL_Diag:BPM07",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -103.81806163454314
+                        }
+                    }
+                },
+                "SCL_Diag:BPM08": {
+                    "pyorbit_name": "SCL_Diag:BPM08",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -152.64496570371503
+                        }
+                    }
+                },
+                "SCL_Diag:BPM09": {
+                    "pyorbit_name": "SCL_Diag:BPM09",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -51.28268415825408
+                        }
+                    }
+                },
+                "SCL_Diag:BPM10": {
+                    "pyorbit_name": "SCL_Diag:BPM10",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 124.007771430603
+                        }
+                    }
+                },
+                "SCL_Diag:BPM11": {
+                    "pyorbit_name": "SCL_Diag:BPM11",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 27.2329131676793
+                        }
+                    }
+                },
+                "SCL_Diag:BPM12": {
+                    "pyorbit_name": "SCL_Diag:BPM12",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 94.85721717308724
+                        }
+                    }
+                },
+                "SCL_Diag:BPM13": {
+                    "pyorbit_name": "SCL_Diag:BPM13",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -112.3007149978487
+                        }
+                    }
+                },
+                "SCL_Diag:BPM14": {
+                    "pyorbit_name": "SCL_Diag:BPM14",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -55.670732460163556
+                        }
+                    }
+                },
+                "SCL_Diag:BPM15": {
+                    "pyorbit_name": "SCL_Diag:BPM15",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -38.36272191308103
+                        }
+                    }
+                },
+                "SCL_Diag:BPM16": {
+                    "pyorbit_name": "SCL_Diag:BPM16",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -104.80807845196405
+                        }
+                    }
+                },
+                "SCL_Diag:BPM17": {
+                    "pyorbit_name": "SCL_Diag:BPM17",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 160.3131389013744
+                        }
+                    }
+                },
+                "SCL_Diag:BPM18": {
+                    "pyorbit_name": "SCL_Diag:BPM18",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 124.34647935745612
+                        }
+                    }
+                },
+                "SCL_Diag:BPM19": {
+                    "pyorbit_name": "SCL_Diag:BPM19",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -25.751381935043547
+                        }
+                    }
+                },
+                "SCL_Diag:BPM20": {
+                    "pyorbit_name": "SCL_Diag:BPM20",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -48.71433512902316
+                        }
+                    }
+                },
+                "SCL_Diag:BPM21": {
+                    "pyorbit_name": "SCL_Diag:BPM21",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -114.2740956262593
+                        }
+                    }
+                },
+                "SCL_Diag:BPM22": {
+                    "pyorbit_name": "SCL_Diag:BPM22",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -92.36618554266359
+                        }
+                    }
+                },
+                "SCL_Diag:BPM23": {
+                    "pyorbit_name": "SCL_Diag:BPM23",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -30.804538715262684
+                        }
+                    }
+                },
+                "SCL_Diag:BPM24": {
+                    "pyorbit_name": "SCL_Diag:BPM24",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -12.976338567885923
+                        }
+                    }
+                },
+                "SCL_Diag:BPM25": {
+                    "pyorbit_name": "SCL_Diag:BPM25",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -29.04281334385256
+                        }
+                    }
+                },
+                "SCL_Diag:BPM26": {
+                    "pyorbit_name": "SCL_Diag:BPM26",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -148.85773187367172
+                        }
+                    }
+                },
+                "SCL_Diag:BPM27": {
+                    "pyorbit_name": "SCL_Diag:BPM27",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -177.3729974899845
+                        }
+                    }
+                },
+                "SCL_Diag:BPM28": {
+                    "pyorbit_name": "SCL_Diag:BPM28",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -171.06537339351183
+                        }
+                    }
+                },
+                "SCL_Diag:BPM29": {
+                    "pyorbit_name": "SCL_Diag:BPM29",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 40.365294564073544
+                        }
+                    }
+                },
+                "SCL_Diag:BPM30": {
+                    "pyorbit_name": "SCL_Diag:BPM30",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -122.09258859106681
+                        }
+                    }
+                },
+                "SCL_Diag:BPM31": {
+                    "pyorbit_name": "SCL_Diag:BPM31",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -156.58542122624252
+                        }
+                    }
+                },
+                "SCL_Diag:BPM32": {
+                    "pyorbit_name": "SCL_Diag:BPM32",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 158.12805752830056
+                        }
+                    }
+                },
+                "HEBT_Diag:BPM01": {
+                    "pyorbit_name": "HEBT_Diag:BPM01",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 162.26553454438164
+                        }
+                    }
+                },
+                "HEBT_Diag:BPM02": {
+                    "pyorbit_name": "HEBT_Diag:BPM02",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -151.5927650663183
+                        }
+                    }
+                },
+                "HEBT_Diag:BPM03": {
+                    "pyorbit_name": "HEBT_Diag:BPM03",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 82.28632807782884
+                        }
+                    }
+                },
+                "HEBT_Diag:BPM04": {
+                    "pyorbit_name": "HEBT_Diag:BPM04",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -8.378118184485889
+                        }
+                    }
+                },
+                "HEBT_Diag:BPM05": {
+                    "pyorbit_name": "HEBT_Diag:BPM05",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 139.48890035417816
+                        }
+                    }
+                },
+                "HEBT_Diag:BPM06": {
+                    "pyorbit_name": "HEBT_Diag:BPM06",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 67.70570081183679
+                        }
+                    }
+                },
+                "HEBT_Diag:BPM07": {
+                    "pyorbit_name": "HEBT_Diag:BPM07",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": 175.88006336534667
+                        }
+                    }
+                },
+                "HEBT_Diag:BPM08": {
+                    "pyorbit_name": "HEBT_Diag:BPM08",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -90.94801863288221
+                        }
+                    }
+                },
+                "HEBT_Diag:BPM09": {
+                    "pyorbit_name": "HEBT_Diag:BPM09",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -62.547588752181014
+                        }
+                    }
+                },
+                "HEBT_Diag:BPM10": {
+                    "pyorbit_name": "HEBT_Diag:BPM10",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -146.145212296757
+                        }
+                    }
+                },
+                "HEBT_Diag:BPM11": {
+                    "pyorbit_name": "HEBT_Diag:BPM11",
+                    "override": {
+                        "phaseAvg": {
+                            "phase_offset": -86.17850046096697
+                        }
+                    }
+                }
             }
         },
         "PBPMs": {
@@ -366,51 +1787,141 @@
                 }
             },
             "devices": {
-                "SCL_Phys:BPM00a": "SCL_Diag:BPM00a",
-                "SCL_Phys:BPM00b": "SCL_Diag:BPM00b",
-                "SCL_Phys:BPM01": "SCL_Diag:BPM01",
-                "SCL_Phys:BPM02": "SCL_Diag:BPM02",
-                "SCL_Phys:BPM03": "SCL_Diag:BPM03",
-                "SCL_Phys:BPM04": "SCL_Diag:BPM04",
-                "SCL_Phys:BPM05": "SCL_Diag:BPM05",
-                "SCL_Phys:BPM06": "SCL_Diag:BPM06",
-                "SCL_Phys:BPM07": "SCL_Diag:BPM07",
-                "SCL_Phys:BPM08": "SCL_Diag:BPM08",
-                "SCL_Phys:BPM09": "SCL_Diag:BPM09",
-                "SCL_Phys:BPM10": "SCL_Diag:BPM10",
-                "SCL_Phys:BPM11": "SCL_Diag:BPM11",
-                "SCL_Phys:BPM12": "SCL_Diag:BPM12",
-                "SCL_Phys:BPM13": "SCL_Diag:BPM13",
-                "SCL_Phys:BPM14": "SCL_Diag:BPM14",
-                "SCL_Phys:BPM15": "SCL_Diag:BPM15",
-                "SCL_Phys:BPM16": "SCL_Diag:BPM16",
-                "SCL_Phys:BPM17": "SCL_Diag:BPM17",
-                "SCL_Phys:BPM18": "SCL_Diag:BPM18",
-                "SCL_Phys:BPM19": "SCL_Diag:BPM19",
-                "SCL_Phys:BPM20": "SCL_Diag:BPM20",
-                "SCL_Phys:BPM21": "SCL_Diag:BPM21",
-                "SCL_Phys:BPM22": "SCL_Diag:BPM22",
-                "SCL_Phys:BPM23": "SCL_Diag:BPM23",
-                "SCL_Phys:BPM24": "SCL_Diag:BPM24",
-                "SCL_Phys:BPM25": "SCL_Diag:BPM25",
-                "SCL_Phys:BPM26": "SCL_Diag:BPM26",
-                "SCL_Phys:BPM27": "SCL_Diag:BPM27",
-                "SCL_Phys:BPM28": "SCL_Diag:BPM28",
-                "SCL_Phys:BPM29": "SCL_Diag:BPM29",
-                "SCL_Phys:BPM30": "SCL_Diag:BPM30",
-                "SCL_Phys:BPM31": "SCL_Diag:BPM31",
-                "SCL_Phys:BPM32": "SCL_Diag:BPM32",
-                "HEBT_Phys:BPM01": "HEBT_Diag:BPM01",
-                "HEBT_Phys:BPM02": "HEBT_Diag:BPM02",
-                "HEBT_Phys:BPM03": "HEBT_Diag:BPM03",
-                "HEBT_Phys:BPM04": "HEBT_Diag:BPM04",
-                "HEBT_Phys:BPM05": "HEBT_Diag:BPM05",
-                "HEBT_Phys:BPM06": "HEBT_Diag:BPM06",
-                "HEBT_Phys:BPM07": "HEBT_Diag:BPM07",
-                "HEBT_Phys:BPM08": "HEBT_Diag:BPM08",
-                "HEBT_Phys:BPM09": "HEBT_Diag:BPM09",
-                "HEBT_Phys:BPM10": "HEBT_Diag:BPM10",
-                "HEBT_Phys:BPM11": "HEBT_Diag:BPM11"
+                "SCL_Phys:BPM00a": {
+                    "pyorbit_name": "SCL_Diag:BPM00a"
+                },
+                "SCL_Phys:BPM00b": {
+                    "pyorbit_name": "SCL_Diag:BPM00b"
+                },
+                "SCL_Phys:BPM01": {
+                    "pyorbit_name": "SCL_Diag:BPM01"
+                },
+                "SCL_Phys:BPM02": {
+                    "pyorbit_name": "SCL_Diag:BPM02"
+                },
+                "SCL_Phys:BPM03": {
+                    "pyorbit_name": "SCL_Diag:BPM03"
+                },
+                "SCL_Phys:BPM04": {
+                    "pyorbit_name": "SCL_Diag:BPM04"
+                },
+                "SCL_Phys:BPM05": {
+                    "pyorbit_name": "SCL_Diag:BPM05"
+                },
+                "SCL_Phys:BPM06": {
+                    "pyorbit_name": "SCL_Diag:BPM06"
+                },
+                "SCL_Phys:BPM07": {
+                    "pyorbit_name": "SCL_Diag:BPM07"
+                },
+                "SCL_Phys:BPM08": {
+                    "pyorbit_name": "SCL_Diag:BPM08"
+                },
+                "SCL_Phys:BPM09": {
+                    "pyorbit_name": "SCL_Diag:BPM09"
+                },
+                "SCL_Phys:BPM10": {
+                    "pyorbit_name": "SCL_Diag:BPM10"
+                },
+                "SCL_Phys:BPM11": {
+                    "pyorbit_name": "SCL_Diag:BPM11"
+                },
+                "SCL_Phys:BPM12": {
+                    "pyorbit_name": "SCL_Diag:BPM12"
+                },
+                "SCL_Phys:BPM13": {
+                    "pyorbit_name": "SCL_Diag:BPM13"
+                },
+                "SCL_Phys:BPM14": {
+                    "pyorbit_name": "SCL_Diag:BPM14"
+                },
+                "SCL_Phys:BPM15": {
+                    "pyorbit_name": "SCL_Diag:BPM15"
+                },
+                "SCL_Phys:BPM16": {
+                    "pyorbit_name": "SCL_Diag:BPM16"
+                },
+                "SCL_Phys:BPM17": {
+                    "pyorbit_name": "SCL_Diag:BPM17"
+                },
+                "SCL_Phys:BPM18": {
+                    "pyorbit_name": "SCL_Diag:BPM18"
+                },
+                "SCL_Phys:BPM19": {
+                    "pyorbit_name": "SCL_Diag:BPM19"
+                },
+                "SCL_Phys:BPM20": {
+                    "pyorbit_name": "SCL_Diag:BPM20"
+                },
+                "SCL_Phys:BPM21": {
+                    "pyorbit_name": "SCL_Diag:BPM21"
+                },
+                "SCL_Phys:BPM22": {
+                    "pyorbit_name": "SCL_Diag:BPM22"
+                },
+                "SCL_Phys:BPM23": {
+                    "pyorbit_name": "SCL_Diag:BPM23"
+                },
+                "SCL_Phys:BPM24": {
+                    "pyorbit_name": "SCL_Diag:BPM24"
+                },
+                "SCL_Phys:BPM25": {
+                    "pyorbit_name": "SCL_Diag:BPM25"
+                },
+                "SCL_Phys:BPM26": {
+                    "pyorbit_name": "SCL_Diag:BPM26"
+                },
+                "SCL_Phys:BPM27": {
+                    "pyorbit_name": "SCL_Diag:BPM27"
+                },
+                "SCL_Phys:BPM28": {
+                    "pyorbit_name": "SCL_Diag:BPM28"
+                },
+                "SCL_Phys:BPM29": {
+                    "pyorbit_name": "SCL_Diag:BPM29"
+                },
+                "SCL_Phys:BPM30": {
+                    "pyorbit_name": "SCL_Diag:BPM30"
+                },
+                "SCL_Phys:BPM31": {
+                    "pyorbit_name": "SCL_Diag:BPM31"
+                },
+                "SCL_Phys:BPM32": {
+                    "pyorbit_name": "SCL_Diag:BPM32"
+                },
+                "HEBT_Phys:BPM01": {
+                    "pyorbit_name": "HEBT_Diag:BPM01"
+                },
+                "HEBT_Phys:BPM02": {
+                    "pyorbit_name": "HEBT_Diag:BPM02"
+                },
+                "HEBT_Phys:BPM03": {
+                    "pyorbit_name": "HEBT_Diag:BPM03"
+                },
+                "HEBT_Phys:BPM04": {
+                    "pyorbit_name": "HEBT_Diag:BPM04"
+                },
+                "HEBT_Phys:BPM05": {
+                    "pyorbit_name": "HEBT_Diag:BPM05"
+                },
+                "HEBT_Phys:BPM06": {
+                    "pyorbit_name": "HEBT_Diag:BPM06"
+                },
+                "HEBT_Phys:BPM07": {
+                    "pyorbit_name": "HEBT_Diag:BPM07"
+                },
+                "HEBT_Phys:BPM08": {
+                    "pyorbit_name": "HEBT_Diag:BPM08"
+                },
+                "HEBT_Phys:BPM09": {
+                    "pyorbit_name": "HEBT_Diag:BPM09"
+                },
+                "HEBT_Phys:BPM10": {
+                    "pyorbit_name": "HEBT_Diag:BPM10"
+                },
+                "HEBT_Phys:BPM11": {
+                    "pyorbit_name": "HEBT_Diag:BPM11"
+                }
             }
         }
     }

@@ -7,7 +7,7 @@ from pathlib import Path
 import argparse
 
 sys.path.append('../../../SNS_CA_Server/caserver')
-from castst import Server, epics_now, not_ctrlc, Device, AbsNoise, PhaseT
+from castst import Server, epics_now, not_ctrlc, Device, AbsNoise, PhaseT, LinearT
 
 from pyorbit_server_interface import OrbitModel
 
@@ -40,7 +40,8 @@ if __name__ == '__main__':
     for device_type, device_dict in devices_dict.items():
         params_dict = device_dict['parameters']
         devices = device_dict['devices']
-        for device_name, pyorbit_name in devices.items():
+        for device_name, device_info in devices.items():
+            pyorbit_name = device_info['pyorbit_name']
             server_device = Device(device_name)
             for pv_param_name, pv_info in params_dict.items():
                 pv_name = device_name + ':' + pv_param_name
@@ -51,10 +52,20 @@ if __name__ == '__main__':
                     noise = AbsNoise(noise=pv_info['noise'])
                 else:
                     noise = None
+
                 if 'phase_off_set' in pv_info:
-                    off_set = PhaseT(offset=pv_info['phase_off_set'])
+                    off_set = PhaseT(offset=pv_info['phase_offset'])
+                elif 'linear_offset' in pv_info:
+                    off_set = LinearT(scaler=pv_info['linear_offset'])
                 else:
                     off_set = None
+
+                if 'override' in device_info and pv_param_name in device_info['override']:
+                    for or_param, or_value in device_info['override'][pv_param_name].items():
+                        if or_param == 'phase_offset':
+                            off_set = PhaseT(offset=or_value)
+                        elif or_param == 'linear_offset':
+                            off_set = LinearT(scaler=or_value)
 
                 if pv_type == 'setting':
                     initial_value = model.get_settings(pv_name)[pv_name]
@@ -62,6 +73,7 @@ if __name__ == '__main__':
                         initial_value = off_set.raw(initial_value)
                     server_device.register_setting(pv_param_name, {'prec': 4}, initial_value,
                                                    transform=off_set)
+
                 elif pv_type == 'diagnostic' or pv_type == 'readback' or pv_type == 'physics':
                     server_device.register_measurement(pv_param_name, {'prec': 4},
                                                        noise=noise, transform=off_set)

@@ -111,7 +111,7 @@ class OrbitModel:
             return_dict[setting_names] = self.pv_dict.get_pv(setting_names)
         return return_dict
 
-    def get_measurements(self, measurement_names: Optional[Union[str, List[str]]] = None) -> dict[str, ]:
+    def get_measurements(self, measurement_names: Optional[Union[str, List[str]]] = None) -> dict[str,]:
         # think about more useful parameters that are not real
         # for fake parameters use XXX_Phys
         return_dict = {}
@@ -167,28 +167,31 @@ class OrbitModel:
                     tracked_bunch.deleteParticleFast(n)
             tracked_bunch.compress()
 
-            if rf_flag:
-                tracked_bunch.getSyncParticle().time(0.0)
-                frozen_lattice.trackDesignBunch(tracked_bunch, index_start=upstream_index)
+            # if rf_flag:
+            #    tracked_bunch.getSyncParticle().time(0.0)
+            #    frozen_lattice.trackDesignBunch(tracked_bunch, index_start=upstream_index)
             frozen_lattice.trackBunch(tracked_bunch, index_start=upstream_index)
             print("Bunch tracked")
 
             self.current_changes = set()
             return self.pv_dict.get_pvs()
 
-    def update_optics(self, changed_optics: dict[str, ]) -> None:
+    def update_optics(self, changed_optics: dict[str,]) -> None:
         # update optics
         # Keep track of changed elements
         # do not track here yet
         pv_dict = self.pv_dict
         for pv_name, new_value in changed_optics.items():
             if pv_name in pv_dict.get_pv_dictionary().keys():
-                current_value = pv_dict.get_pv(pv_name)
-                if pv_dict.get_pv_type(pv_name) == 'setting' and abs(new_value - current_value) > 1e-12:
-                    pv_dict.set_pv(pv_name, new_value)
-                    element_name = pv_dict.get_pyorbit_name(pv_name)
-                    self.current_changes.add(element_name)
-                    print(f'Value of {pv_name} changed from {current_value} to {new_value}')
+                pv_ref = pv_dict.get_pv_ref(pv_name)
+                current_value = pv_ref.get_value()
+                if pv_ref.get_type() == 'setting' and abs(new_value - current_value) > 1e-12:
+                    if not (pv_ref.get_param_key() == 'amp' and pv_ref.get_pyorbit_element_ref().get_parameter_dict()[
+                        'blanked'] != 0):
+                        pv_dict.set_pv(pv_name, new_value)
+                        element_name = pv_dict.get_pyorbit_name(pv_name)
+                        self.current_changes.add(element_name)
+                        print(f'Value of {pv_name} changed from {current_value} to {new_value}')
 
     def reset_optics(self) -> None:
         self.update_optics(self.initial_settings)
