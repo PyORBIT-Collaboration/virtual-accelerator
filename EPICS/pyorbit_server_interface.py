@@ -10,6 +10,9 @@ from orbit.core.bunch import Bunch
 from orbit.bunch_generators import TwissContainer, GaussDist3D
 from sns_linac_bunch_generator import SNS_Linac_BunchGenerator
 
+from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice
+from orbit.py_linac.lattice_modifications import Add_rfgap_apertures_to_lattice
+
 from server_child_nodes import BPMclass, BunchCopyClass
 
 from interface_lib import PyorbitLibrary, PVLibrary
@@ -25,6 +28,9 @@ class OrbitModel:
         sns_linac_factory.setMaxDriftLength(0.01)
         xml_file_name = lattice_file
         self.accLattice = sns_linac_factory.getLinacAccLattice(subsections_list, xml_file_name)
+        Add_quad_apertures_to_lattice(self.accLattice)
+        Add_rfgap_apertures_to_lattice(self.accLattice)
+
         self.pv_dict = PVLibrary(self.accLattice)
 
         cav_nodes = self.accLattice.getRF_Cavities()
@@ -68,12 +74,12 @@ class OrbitModel:
         self.accLattice.trackBunch(initial_bunch)
         self.current_changes = set()
 
-    def load_initial_bunch(self, bunch_file: Path, number_of_particls: int = None):
+    def load_initial_bunch(self, bunch_file: Path, number_of_particles: int = None):
         initial_bunch = Bunch()
         initial_bunch.readBunch(str(bunch_file))
-        if number_of_particls is not None:
+        if number_of_particles is not None:
             for n in range(initial_bunch.getSizeGlobal()):
-                if n + 1 > number_of_particls:
+                if n + 1 > number_of_particles:
                     initial_bunch.deleteParticleFast(n)
             initial_bunch.compress()
         initial_bunch.copyBunchTo(self.bunch_dict['initial_bunch'])

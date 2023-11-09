@@ -5,7 +5,7 @@ from orbit.core.bunch import Bunch
 
 class BPMclass:
     def __init__(self, child_name: str):
-        self.parameters = {'x_avg': 0.0,  'y_avg': 0.0, 'phi_avg': 0.0, 'energy': 0.0, 'beta': 0.0}
+        self.parameters = {'x_avg': 0.0, 'y_avg': 0.0, 'phi_avg': 0.0, 'energy': 0.0, 'beta': 0.0}
         self.child_name = child_name
         self.node_type = 'BPM'
 
@@ -35,7 +35,7 @@ class BPMclass:
             self.parameters['phi_avg'] = phi_avg
             self.parameters['energy'] = sync_energy
             self.parameters['beta'] = sync_beta
-            #print(BPM_name + " : " + str(x_avg))
+            # print(BPM_name + " : " + str(x_avg))
 
     def getPhaseAvg(self):
         return self.parameters['phi_avg']
@@ -73,6 +73,7 @@ class BunchCopyClass:
         self.pyorbit_name = pyorbit_name
         self.bunch_dict = bunch_dict
         self.node_type = 'bunch_saver'
+
     def trackActions(self, actionsContainer, paramsDict):
         bunch = paramsDict["bunch"]
         part_num = bunch.getSizeGlobal()
