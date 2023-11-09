@@ -36,6 +36,12 @@ class BPMclass:
             self.parameters['energy'] = sync_energy
             self.parameters['beta'] = sync_beta
             # print(BPM_name + " : " + str(x_avg))
+        else:
+            self.parameters['x_avg'] = 0.0
+            self.parameters['y_avg'] = 0.0
+            self.parameters['phi_avg'] = 0.0
+            self.parameters['energy'] = 0.0
+            self.parameters['beta'] = 0.0
 
     def getPhaseAvg(self):
         return self.parameters['phi_avg']
