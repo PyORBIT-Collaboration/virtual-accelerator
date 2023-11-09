@@ -35,7 +35,8 @@ if __name__ == '__main__':
     subsections = lattice['subsections']
     model = OrbitModel(lattice_file, subsections)
 
-    server = Server(prefix)
+    # server = Server(prefix)
+    server = Server()
 
     for device_type, device_dict in devices_dict.items():
         params_dict = device_dict['parameters']
