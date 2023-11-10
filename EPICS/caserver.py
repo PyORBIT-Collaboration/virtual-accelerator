@@ -17,13 +17,13 @@ REP_RATE = 1.0
 if __name__ == '__main__':
     # Set a default prefix if unspecified at server initialization
     parser = argparse.ArgumentParser(description='Run CA server')
-    parser.add_argument('--prefix', '-p', default='test', type=str, help='Prefix for PVs')
+    #parser.add_argument('--prefix', '-p', default='test', type=str, help='Prefix for PVs')
     parser.add_argument('--file', '-f', default='va_config.json', type=str,
                         help='Pathname of pv file. Relative to Server/')
 
     args = parser.parse_args()
-    prefix = args.prefix + ':'
-    print(f'Using prefix: {args.prefix}.')
+    # prefix = args.prefix + ':'
+    # print(f'Using prefix: {args.prefix}.')
 
     with open(args.file, "r") as json_file:
         input_dicts = json.load(json_file)
@@ -35,8 +35,8 @@ if __name__ == '__main__':
     subsections = lattice['subsections']
     model = OrbitModel(lattice_file, subsections)
 
-    server = Server(prefix)
-    # server = Server()
+    # server = Server(prefix)
+    server = Server()
 
     for device_type, device_dict in devices_dict.items():
         params_dict = device_dict['parameters']

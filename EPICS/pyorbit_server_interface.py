@@ -31,8 +31,6 @@ class OrbitModel:
         Add_quad_apertures_to_lattice(self.accLattice)
         Add_rfgap_apertures_to_lattice(self.accLattice)
 
-        self.pv_dict = PVLibrary(self.accLattice)
-
         cav_nodes = self.accLattice.getRF_Cavities()
         blanked_key = 'blanked'
         for node in cav_nodes:

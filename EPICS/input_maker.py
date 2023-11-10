@@ -16,10 +16,10 @@ cavity_params = {"CtlPhaseSet": {"parameter_key": "phase", "pv_type": "setting"}
                  "CtlAmpSet": {"parameter_key": "amp", "pv_type": "setting"},
                  "BlnkBeam": {"parameter_key": "blanked", "pv_type": "setting"}}
 
-quad_params = {"B_set": {"parameter_key": "dB/dr", "pv_type": "setting"},
+quad_params = {"B_Set": {"parameter_key": "dB/dr", "pv_type": "setting"},
                "B": {"parameter_key": "dB/dr", "pv_type": "readback", "noise": 0.0001}}
 
-corrector_params = {"B_set": {"parameter_key": "B", "pv_type": "setting"},
+corrector_params = {"B_Set": {"parameter_key": "B", "pv_type": "setting"},
                     "B": {"parameter_key": "B", "pv_type": "readback", "noise": 0.0001}}
 
 bpm_params = {"xAvg": {"parameter_key": "x_avg", "pv_type": "diagnostic", "noise": 1e-7},

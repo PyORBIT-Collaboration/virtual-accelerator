@@ -18,11 +18,10 @@ class PyorbitLibrary:
     cavity_classes = RF_Cavity
     child_classes = Union[DCorrectorV, DCorrectorH, BPMclass]
 
-
     def __init__(self, acc_lattice: LinacAccLattice, ignored_nodes=None):
         if ignored_nodes is None:
             ignored_nodes = set()
-        ignored_nodes |= {'baserfgap', 'drift', 'tilt', 'fringe', 'markerLinacNode'}
+        ignored_nodes |= {'baserfgap', 'drift', 'tilt', 'fringe', 'markerLinacNode', 'baseLinacNode'}
         unique_elements = set()
 
         # Set up a dictionary to reference different objects within the lattice by their name.
@@ -206,7 +205,7 @@ class PyorbitCavity(PyorbitElement):
         position = self.cavity.getRF_GapNodes()[0].getPosition()
         return position
 
-    def get_parameter_dict(self) -> dict[str, ]:
+    def get_parameter_dict(self) -> dict[str,]:
         params_dict = self.cavity.getParamsDict()
         if params_dict['blanked'] != 0:
             params_dict['amp'] = self.params_dict_override['amp']
