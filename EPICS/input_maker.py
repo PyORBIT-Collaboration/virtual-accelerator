@@ -41,10 +41,12 @@ for or_name, ele_ref in model.pyorbit_dict.get_element_dictionary().items():
         devices['Cavities']['devices'][pv_name] = {'pyorbit_name': or_name, 'override':
             {"CtlAmpSet": {"linear_offset": 14.9339}, "CtlPhaseSet": {"phase_offset": (2 * random() - 1) * 180}}}
     elif 'Q' in or_name:
-        pv_name = or_name
+        split_name = or_name.split(':')
+        pv_name = f"{split_name[0]}:PS_{split_name[1]}"
         devices['Quadrupoles']['devices'][pv_name] = {'pyorbit_name': or_name}
     elif 'DC' in or_name:
-        pv_name = or_name
+        split_name = or_name.split(':')
+        pv_name = f"{split_name[0]}:PS_{split_name[1]}"
         devices['Correctors']['devices'][pv_name] = {'pyorbit_name': or_name}
     elif 'BPM' in or_name:
         pv_name = or_name
