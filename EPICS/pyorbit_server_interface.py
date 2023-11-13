@@ -1,10 +1,11 @@
+import sys
 from datetime import datetime
 from typing import Optional, Union, List
 from pathlib import Path
 
 import json
 
-from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
+from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 
 from orbit.core.bunch import Bunch
 from orbit.bunch_generators import TwissContainer, GaussDist3D
@@ -19,17 +20,8 @@ from interface_lib import PyorbitLibrary, PVLibrary
 
 
 class OrbitModel:
-    def __init__(self, lattice_file: Path, subsections_list: List[str] = None):
-        # read lattice
-        if subsections_list is None or len(subsections_list) == 0:
-            subsections_list = ["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
-                                "SCLMed", "SCLHigh", "HEBT1", "HEBT2"]
-        sns_linac_factory = SNS_LinacLatticeFactory()
-        sns_linac_factory.setMaxDriftLength(0.01)
-        xml_file_name = lattice_file
-        self.accLattice = sns_linac_factory.getLinacAccLattice(subsections_list, xml_file_name)
-        Add_quad_apertures_to_lattice(self.accLattice)
-        Add_rfgap_apertures_to_lattice(self.accLattice)
+    def __init__(self, input_lattice: LinacAccLattice):
+        self.accLattice = input_lattice
 
         cav_nodes = self.accLattice.getRF_Cavities()
         blanked_key = 'blanked'

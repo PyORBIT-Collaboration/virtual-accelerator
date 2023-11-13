@@ -6,6 +6,9 @@ import time
 from pathlib import Path
 import argparse
 
+from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
+from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
+
 sys.path.append('../../../SNS_CA_Server/caserver')
 from castst import Server, epics_now, not_ctrlc, Device, AbsNoise, PhaseT, LinearT
 
@@ -33,7 +36,13 @@ if __name__ == '__main__':
 
     lattice_file = Path(lattice['file_name'])
     subsections = lattice['subsections']
-    model = OrbitModel(lattice_file, subsections)
+    sns_linac_factory = SNS_LinacLatticeFactory()
+    sns_linac_factory.setMaxDriftLength(0.01)
+    model_lattice = sns_linac_factory.getLinacAccLattice(subsections, lattice_file)
+    Add_quad_apertures_to_lattice(model_lattice)
+    Add_rfgap_apertures_to_lattice(model_lattice)
+
+    model = OrbitModel(model_lattice)
 
     # server = Server(prefix)
     server = Server()
