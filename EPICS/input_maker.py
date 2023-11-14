@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 from random import random
 
+from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
+
 from pyorbit_server_interface import OrbitModel
 
 config_file = Path("va_config.json")
@@ -9,8 +11,11 @@ config_file = Path("va_config.json")
 lattice_str = "sns_linac.xml"
 subsections = ['SCLMed', 'SCLHigh', 'HEBT1']
 
-lattice_file = Path(lattice_str)
-model = OrbitModel(lattice_file, subsections)
+sns_linac_factory = SNS_LinacLatticeFactory()
+sns_linac_factory.setMaxDriftLength(0.01)
+model_lattice = sns_linac_factory.getLinacAccLattice(subsections, lattice_str)
+
+model = OrbitModel(model_lattice)
 
 cavity_params = {"CtlPhaseSet": {"parameter_key": "phase", "pv_type": "setting"},
                  "CtlAmpSet": {"parameter_key": "amp", "pv_type": "setting"},
@@ -39,7 +44,7 @@ for or_name, ele_ref in model.pyorbit_dict.get_element_dictionary().items():
     if 'Cav' in or_name:
         pv_name = "SCL_LLRF:FCM" + or_name[-3:]
         devices['Cavities']['devices'][pv_name] = {'pyorbit_name': or_name, 'override':
-            {"CtlAmpSet": {"linear_offset": 14.9339}, "CtlPhaseSet": {"phase_offset": (2 * random() - 1) * 180}}}
+            {"CtlPhaseSet": {"phase_offset": (2 * random() - 1) * 180}}}
     elif 'Q' in or_name:
         split_name = or_name.split(':')
         pv_name = f"{split_name[0]}:PS_{split_name[1]}"

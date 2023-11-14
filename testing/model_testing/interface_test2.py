@@ -19,7 +19,7 @@ from devices import BLM, BCM, BPM, Magnet, Cavity, genPV
 
 from pyorbit_server_interface import OrbitModel
 
-with open('va_config.json', "r") as json_file:
+with open('../../EPICS/va_config.json', "r") as json_file:
     input_dicts = json.load(json_file)
 
 lattice = input_dicts['pyorbit_lattice']
@@ -105,8 +105,8 @@ twissZ = TwissContainer(alphaZ, betaZ, emittZ)
 model.generate_initial_bunch(number_particles, kinetic_energy, beam_current, twissX, twissY, twissZ)
 """
 
-bunch_file = Path('../SCL_Wizard/SCL_in.dat')
-model.load_initial_bunch(bunch_file, number_of_particls=1000)
+bunch_file = Path('../../SCL_Wizard/SCL_in.dat')
+model.load_initial_bunch(bunch_file, number_of_particles=1000)
 
 print(model.get_measurements('SCL_Phys:BPM11:Beta'))
 dict1 = {}

@@ -1,6 +1,7 @@
 # Channel access server used to generate fake PV signals analogous to accelerator components.
 # The main body of the script instantiates PVs from a file passed by command line argument.
 import json
+import math
 import sys
 import time
 from pathlib import Path
@@ -9,8 +10,7 @@ import argparse
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
 from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
 
-sys.path.append('../../../SNS_CA_Server/caserver')
-from castst import Server, epics_now, not_ctrlc, Device, AbsNoise, PhaseT, LinearT
+from ca_server import Server, epics_now, not_ctrlc, Device, AbsNoise, PhaseT, LinearT, PhaseTInv
 
 from pyorbit_server_interface import OrbitModel
 
@@ -64,7 +64,7 @@ if __name__ == '__main__':
                     noise = None
 
                 if 'phase_off_set' in pv_info:
-                    off_set = PhaseT(offset=pv_info['phase_offset'])
+                    off_set = PhaseTInv(offset=pv_info['phase_offset'], scaler=180/math.pi)
                 elif 'linear_offset' in pv_info:
                     off_set = LinearT(scaler=pv_info['linear_offset'])
                 else:
@@ -73,7 +73,7 @@ if __name__ == '__main__':
                 if 'override' in device_info and pv_param_name in device_info['override']:
                     for or_param, or_value in device_info['override'][pv_param_name].items():
                         if or_param == 'phase_offset':
-                            off_set = PhaseT(offset=or_value)
+                            off_set = PhaseTInv(offset=or_value, scaler=180/math.pi)
                         elif or_param == 'linear_offset':
                             off_set = LinearT(scaler=or_value)
 

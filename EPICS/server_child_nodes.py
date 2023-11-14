@@ -17,7 +17,7 @@ class BPMclass:
             BPM_name = paramsDict["parentNode"].getName()
             sync_part = bunch.getSyncParticle()
             sync_beta = sync_part.beta()
-            phase_coeff = 360.0 / (sync_beta * 2.99792458e8 / rf_freq)
+            phase_coeff = 2 * math.pi / (sync_beta * 2.99792458e8 / rf_freq)
             sync_phase = (sync_part.time() * rf_freq * 2 * math.pi) % (2 * math.pi) - math.pi
             sync_energy = sync_part.kinEnergy()
             x_avg, y_avg, z_avg = 0, 0, 0

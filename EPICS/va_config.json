@@ -27,891 +27,648 @@
                 "SCL_LLRF:FCM01a": {
                     "pyorbit_name": "SCL:Cav01a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 131.67175997501806
+                            "phase_offset": -118.90280684468716
                         }
                     }
                 },
                 "SCL_LLRF:FCM01b": {
                     "pyorbit_name": "SCL:Cav01b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 110.14171436870429
+                            "phase_offset": -147.15960361459415
                         }
                     }
                 },
                 "SCL_LLRF:FCM01c": {
                     "pyorbit_name": "SCL:Cav01c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -67.36120527365884
+                            "phase_offset": 56.24061526481859
                         }
                     }
                 },
                 "SCL_LLRF:FCM02a": {
                     "pyorbit_name": "SCL:Cav02a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 133.63516371872282
+                            "phase_offset": -30.801305649685148
                         }
                     }
                 },
                 "SCL_LLRF:FCM02b": {
                     "pyorbit_name": "SCL:Cav02b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 51.52478872044545
+                            "phase_offset": -7.52412530717169
                         }
                     }
                 },
                 "SCL_LLRF:FCM02c": {
                     "pyorbit_name": "SCL:Cav02c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 129.71780498240395
+                            "phase_offset": 9.445887513079594
                         }
                     }
                 },
                 "SCL_LLRF:FCM03a": {
                     "pyorbit_name": "SCL:Cav03a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -95.32147676230888
+                            "phase_offset": 57.33994393379894
                         }
                     }
                 },
                 "SCL_LLRF:FCM03b": {
                     "pyorbit_name": "SCL:Cav03b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -16.487919712646935
+                            "phase_offset": -162.69024959293338
                         }
                     }
                 },
                 "SCL_LLRF:FCM03c": {
                     "pyorbit_name": "SCL:Cav03c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 10.138325702956475
+                            "phase_offset": 2.709304830984096
                         }
                     }
                 },
                 "SCL_LLRF:FCM04a": {
                     "pyorbit_name": "SCL:Cav04a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 33.724564594418965
+                            "phase_offset": 8.297347488466599
                         }
                     }
                 },
                 "SCL_LLRF:FCM04b": {
                     "pyorbit_name": "SCL:Cav04b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -0.413047882971016
+                            "phase_offset": -29.948856349508297
                         }
                     }
                 },
                 "SCL_LLRF:FCM04c": {
                     "pyorbit_name": "SCL:Cav04c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -57.95879764806819
+                            "phase_offset": -128.68712212362922
                         }
                     }
                 },
                 "SCL_LLRF:FCM05a": {
                     "pyorbit_name": "SCL:Cav05a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 104.66210086566822
+                            "phase_offset": 117.55898524042198
                         }
                     }
                 },
                 "SCL_LLRF:FCM05b": {
                     "pyorbit_name": "SCL:Cav05b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 152.77187484628746
+                            "phase_offset": 9.809913803617928
                         }
                     }
                 },
                 "SCL_LLRF:FCM05c": {
                     "pyorbit_name": "SCL:Cav05c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -137.52653803563257
+                            "phase_offset": -117.03202784257356
                         }
                     }
                 },
                 "SCL_LLRF:FCM06a": {
                     "pyorbit_name": "SCL:Cav06a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 81.49796394669475
+                            "phase_offset": -153.6494690598998
                         }
                     }
                 },
                 "SCL_LLRF:FCM06b": {
                     "pyorbit_name": "SCL:Cav06b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -63.585583370117384
+                            "phase_offset": 177.18703397479658
                         }
                     }
                 },
                 "SCL_LLRF:FCM06c": {
                     "pyorbit_name": "SCL:Cav06c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -49.888711634915325
+                            "phase_offset": -160.6888145449496
                         }
                     }
                 },
                 "SCL_LLRF:FCM07a": {
                     "pyorbit_name": "SCL:Cav07a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 152.4609209485372
+                            "phase_offset": -97.88374146718733
                         }
                     }
                 },
                 "SCL_LLRF:FCM07b": {
                     "pyorbit_name": "SCL:Cav07b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 41.20049388659615
+                            "phase_offset": 128.36399822960195
                         }
                     }
                 },
                 "SCL_LLRF:FCM07c": {
                     "pyorbit_name": "SCL:Cav07c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 55.357610222833806
+                            "phase_offset": 73.42000096499478
                         }
                     }
                 },
                 "SCL_LLRF:FCM08a": {
                     "pyorbit_name": "SCL:Cav08a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -7.916008148167402
+                            "phase_offset": -167.84232081741595
                         }
                     }
                 },
                 "SCL_LLRF:FCM08b": {
                     "pyorbit_name": "SCL:Cav08b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 30.397589742931068
+                            "phase_offset": 39.046083877363614
                         }
                     }
                 },
                 "SCL_LLRF:FCM08c": {
                     "pyorbit_name": "SCL:Cav08c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 43.79456904938303
+                            "phase_offset": -76.90397319370827
                         }
                     }
                 },
                 "SCL_LLRF:FCM09a": {
                     "pyorbit_name": "SCL:Cav09a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -52.11809691220561
+                            "phase_offset": 36.4943309793797
                         }
                     }
                 },
                 "SCL_LLRF:FCM09b": {
                     "pyorbit_name": "SCL:Cav09b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -77.02262432481716
+                            "phase_offset": -63.27120624809412
                         }
                     }
                 },
                 "SCL_LLRF:FCM09c": {
                     "pyorbit_name": "SCL:Cav09c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 54.6371977122749
+                            "phase_offset": 35.84123795793838
                         }
                     }
                 },
                 "SCL_LLRF:FCM10a": {
                     "pyorbit_name": "SCL:Cav10a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -119.14262910806352
+                            "phase_offset": 131.44788196757344
                         }
                     }
                 },
                 "SCL_LLRF:FCM10b": {
                     "pyorbit_name": "SCL:Cav10b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -103.71791754910743
+                            "phase_offset": 178.086397251945
                         }
                     }
                 },
                 "SCL_LLRF:FCM10c": {
                     "pyorbit_name": "SCL:Cav10c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 20.3103032591412
+                            "phase_offset": -31.899526454233353
                         }
                     }
                 },
                 "SCL_LLRF:FCM11a": {
                     "pyorbit_name": "SCL:Cav11a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 62.25236705935326
+                            "phase_offset": -110.26451401636457
                         }
                     }
                 },
                 "SCL_LLRF:FCM11b": {
                     "pyorbit_name": "SCL:Cav11b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -20.067959985606777
+                            "phase_offset": -178.64470669886157
                         }
                     }
                 },
                 "SCL_LLRF:FCM11c": {
                     "pyorbit_name": "SCL:Cav11c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -25.81389969463715
+                            "phase_offset": 155.02447008868833
                         }
                     }
                 },
                 "SCL_LLRF:FCM12a": {
                     "pyorbit_name": "SCL:Cav12a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 39.995208686602105
+                            "phase_offset": 157.0754279478533
                         }
                     }
                 },
                 "SCL_LLRF:FCM12b": {
                     "pyorbit_name": "SCL:Cav12b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 117.30161952715869
+                            "phase_offset": -18.998590276916705
                         }
                     }
                 },
                 "SCL_LLRF:FCM12c": {
                     "pyorbit_name": "SCL:Cav12c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -100.82481676750176
+                            "phase_offset": 23.77669979630451
                         }
                     }
                 },
                 "SCL_LLRF:FCM12d": {
                     "pyorbit_name": "SCL:Cav12d",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 86.29592653285287
+                            "phase_offset": -1.1940078033517532
                         }
                     }
                 },
                 "SCL_LLRF:FCM13a": {
                     "pyorbit_name": "SCL:Cav13a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 103.62614723749026
+                            "phase_offset": -176.84454296468053
                         }
                     }
                 },
                 "SCL_LLRF:FCM13b": {
                     "pyorbit_name": "SCL:Cav13b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 131.59064005683666
+                            "phase_offset": -67.21734293428663
                         }
                     }
                 },
                 "SCL_LLRF:FCM13c": {
                     "pyorbit_name": "SCL:Cav13c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -6.07945399326296
+                            "phase_offset": 3.155580914038678
                         }
                     }
                 },
                 "SCL_LLRF:FCM13d": {
                     "pyorbit_name": "SCL:Cav13d",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -80.1266880982128
+                            "phase_offset": 132.7697947595076
                         }
                     }
                 },
                 "SCL_LLRF:FCM14a": {
                     "pyorbit_name": "SCL:Cav14a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 112.62501015838811
+                            "phase_offset": -175.59194450723297
                         }
                     }
                 },
                 "SCL_LLRF:FCM14b": {
                     "pyorbit_name": "SCL:Cav14b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 53.989089786972514
+                            "phase_offset": 135.13216884425503
                         }
                     }
                 },
                 "SCL_LLRF:FCM14c": {
                     "pyorbit_name": "SCL:Cav14c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -67.44860898415004
+                            "phase_offset": 20.97921376776144
                         }
                     }
                 },
                 "SCL_LLRF:FCM14d": {
                     "pyorbit_name": "SCL:Cav14d",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -25.96233160068469
+                            "phase_offset": -19.845494861589337
                         }
                     }
                 },
                 "SCL_LLRF:FCM15a": {
                     "pyorbit_name": "SCL:Cav15a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 168.2314181733095
+                            "phase_offset": -34.93357710898252
                         }
                     }
                 },
                 "SCL_LLRF:FCM15b": {
                     "pyorbit_name": "SCL:Cav15b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -168.01904674794065
+                            "phase_offset": 25.15693610009805
                         }
                     }
                 },
                 "SCL_LLRF:FCM15c": {
                     "pyorbit_name": "SCL:Cav15c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 130.3657731844478
+                            "phase_offset": -15.984518657259738
                         }
                     }
                 },
                 "SCL_LLRF:FCM15d": {
                     "pyorbit_name": "SCL:Cav15d",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -7.501571135181928
+                            "phase_offset": -24.677713585610036
                         }
                     }
                 },
                 "SCL_LLRF:FCM16a": {
                     "pyorbit_name": "SCL:Cav16a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 51.75032028488999
+                            "phase_offset": -85.66255516124137
                         }
                     }
                 },
                 "SCL_LLRF:FCM16b": {
                     "pyorbit_name": "SCL:Cav16b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 116.90503654772353
+                            "phase_offset": -164.65462878177755
                         }
                     }
                 },
                 "SCL_LLRF:FCM16c": {
                     "pyorbit_name": "SCL:Cav16c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -173.56499010701427
+                            "phase_offset": -149.6826226240965
                         }
                     }
                 },
                 "SCL_LLRF:FCM16d": {
                     "pyorbit_name": "SCL:Cav16d",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 146.322858120722
+                            "phase_offset": -11.10921218543182
                         }
                     }
                 },
                 "SCL_LLRF:FCM17a": {
                     "pyorbit_name": "SCL:Cav17a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 162.65451594401623
+                            "phase_offset": 102.70881521162724
                         }
                     }
                 },
                 "SCL_LLRF:FCM17b": {
                     "pyorbit_name": "SCL:Cav17b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 77.9744335878234
+                            "phase_offset": -178.6417504911433
                         }
                     }
                 },
                 "SCL_LLRF:FCM17c": {
                     "pyorbit_name": "SCL:Cav17c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 84.37053943344672
+                            "phase_offset": 15.91693562489947
                         }
                     }
                 },
                 "SCL_LLRF:FCM17d": {
                     "pyorbit_name": "SCL:Cav17d",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -73.52969387931465
+                            "phase_offset": -112.21582455075097
                         }
                     }
                 },
                 "SCL_LLRF:FCM18a": {
                     "pyorbit_name": "SCL:Cav18a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -129.76444417665502
+                            "phase_offset": -88.74202835939646
                         }
                     }
                 },
                 "SCL_LLRF:FCM18b": {
                     "pyorbit_name": "SCL:Cav18b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 51.22736685597978
+                            "phase_offset": 29.727572352982833
                         }
                     }
                 },
                 "SCL_LLRF:FCM18c": {
                     "pyorbit_name": "SCL:Cav18c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -176.49907622978697
+                            "phase_offset": -91.26700451319745
                         }
                     }
                 },
                 "SCL_LLRF:FCM18d": {
                     "pyorbit_name": "SCL:Cav18d",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -28.481585814872787
+                            "phase_offset": 82.6347176181811
                         }
                     }
                 },
                 "SCL_LLRF:FCM19a": {
                     "pyorbit_name": "SCL:Cav19a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -63.21403693480979
+                            "phase_offset": -158.73268474695914
                         }
                     }
                 },
                 "SCL_LLRF:FCM19b": {
                     "pyorbit_name": "SCL:Cav19b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -92.0556422240003
+                            "phase_offset": -68.60945918847575
                         }
                     }
                 },
                 "SCL_LLRF:FCM19c": {
                     "pyorbit_name": "SCL:Cav19c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -114.08491700840136
+                            "phase_offset": 76.79545805056537
                         }
                     }
                 },
                 "SCL_LLRF:FCM19d": {
                     "pyorbit_name": "SCL:Cav19d",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -135.33764012043326
+                            "phase_offset": -142.4734164358069
                         }
                     }
                 },
                 "SCL_LLRF:FCM20a": {
                     "pyorbit_name": "SCL:Cav20a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 32.333343623273386
+                            "phase_offset": -122.10356628439058
                         }
                     }
                 },
                 "SCL_LLRF:FCM20b": {
                     "pyorbit_name": "SCL:Cav20b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 19.262706623636532
+                            "phase_offset": 27.76209045272841
                         }
                     }
                 },
                 "SCL_LLRF:FCM20c": {
                     "pyorbit_name": "SCL:Cav20c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 70.46143126222519
+                            "phase_offset": 139.35221949474123
                         }
                     }
                 },
                 "SCL_LLRF:FCM20d": {
                     "pyorbit_name": "SCL:Cav20d",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -60.82193878790191
+                            "phase_offset": -149.9771178563317
                         }
                     }
                 },
                 "SCL_LLRF:FCM21a": {
                     "pyorbit_name": "SCL:Cav21a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 55.7072783442393
+                            "phase_offset": 174.8528223598026
                         }
                     }
                 },
                 "SCL_LLRF:FCM21b": {
                     "pyorbit_name": "SCL:Cav21b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 38.71165078463403
+                            "phase_offset": -59.565867083236064
                         }
                     }
                 },
                 "SCL_LLRF:FCM21c": {
                     "pyorbit_name": "SCL:Cav21c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -171.06221614712774
+                            "phase_offset": 15.428323108687877
                         }
                     }
                 },
                 "SCL_LLRF:FCM21d": {
                     "pyorbit_name": "SCL:Cav21d",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 131.05603025259592
+                            "phase_offset": 176.13646116841892
                         }
                     }
                 },
                 "SCL_LLRF:FCM22a": {
                     "pyorbit_name": "SCL:Cav22a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -58.884275498955
+                            "phase_offset": 162.27509014503994
                         }
                     }
                 },
                 "SCL_LLRF:FCM22b": {
                     "pyorbit_name": "SCL:Cav22b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -64.56689578509807
+                            "phase_offset": 177.56133458876036
                         }
                     }
                 },
                 "SCL_LLRF:FCM22c": {
                     "pyorbit_name": "SCL:Cav22c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -72.74708226054157
+                            "phase_offset": -139.89282832914498
                         }
                     }
                 },
                 "SCL_LLRF:FCM22d": {
                     "pyorbit_name": "SCL:Cav22d",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 76.36023626837935
+                            "phase_offset": -78.46802295595077
                         }
                     }
                 },
                 "SCL_LLRF:FCM23a": {
                     "pyorbit_name": "SCL:Cav23a",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -74.87059132857759
+                            "phase_offset": 39.318455323182185
                         }
                     }
                 },
                 "SCL_LLRF:FCM23b": {
                     "pyorbit_name": "SCL:Cav23b",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -138.2486908520526
+                            "phase_offset": 140.46378236268922
                         }
                     }
                 },
                 "SCL_LLRF:FCM23c": {
                     "pyorbit_name": "SCL:Cav23c",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": -107.76039380187899
+                            "phase_offset": 29.7934695635724
                         }
                     }
                 },
                 "SCL_LLRF:FCM23d": {
                     "pyorbit_name": "SCL:Cav23d",
                     "override": {
-                        "CtlAmpSet": {
-                            "linear_offset": 14.9339
-                        },
                         "CtlPhaseSet": {
-                            "phase_offset": 93.94641384518799
+                            "phase_offset": -40.118384513374096
                         }
                     }
                 }
@@ -1417,7 +1174,7 @@
                     "pyorbit_name": "SCL_Diag:BPM00a",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 82.98138712299624
+                            "phase_offset": 99.21397692895277
                         }
                     }
                 },
@@ -1425,7 +1182,7 @@
                     "pyorbit_name": "SCL_Diag:BPM00b",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -4.031460949119063
+                            "phase_offset": -140.00064253229255
                         }
                     }
                 },
@@ -1433,7 +1190,7 @@
                     "pyorbit_name": "SCL_Diag:BPM01",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 36.90358377541812
+                            "phase_offset": 136.15264207420918
                         }
                     }
                 },
@@ -1441,7 +1198,7 @@
                     "pyorbit_name": "SCL_Diag:BPM02",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -14.23748936599727
+                            "phase_offset": -6.7346874503500365
                         }
                     }
                 },
@@ -1449,7 +1206,7 @@
                     "pyorbit_name": "SCL_Diag:BPM03",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -118.48713964767751
+                            "phase_offset": -179.25430442129408
                         }
                     }
                 },
@@ -1457,7 +1214,7 @@
                     "pyorbit_name": "SCL_Diag:BPM04",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -140.2260958342504
+                            "phase_offset": 34.60879126503092
                         }
                     }
                 },
@@ -1465,7 +1222,7 @@
                     "pyorbit_name": "SCL_Diag:BPM05",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 48.87082178120658
+                            "phase_offset": -157.6490968096232
                         }
                     }
                 },
@@ -1473,7 +1230,7 @@
                     "pyorbit_name": "SCL_Diag:BPM06",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 114.74211753285235
+                            "phase_offset": 22.946970768491475
                         }
                     }
                 },
@@ -1481,7 +1238,7 @@
                     "pyorbit_name": "SCL_Diag:BPM07",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 135.21428700992638
+                            "phase_offset": 60.45394320508735
                         }
                     }
                 },
@@ -1489,7 +1246,7 @@
                     "pyorbit_name": "SCL_Diag:BPM08",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 146.64138045338663
+                            "phase_offset": -70.52049927320006
                         }
                     }
                 },
@@ -1497,7 +1254,7 @@
                     "pyorbit_name": "SCL_Diag:BPM09",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 147.4228408004551
+                            "phase_offset": -72.55636141824348
                         }
                     }
                 },
@@ -1505,7 +1262,7 @@
                     "pyorbit_name": "SCL_Diag:BPM10",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -170.33347932494095
+                            "phase_offset": -68.72813080721507
                         }
                     }
                 },
@@ -1513,7 +1270,7 @@
                     "pyorbit_name": "SCL_Diag:BPM11",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -102.9697403659017
+                            "phase_offset": 13.611456041001881
                         }
                     }
                 },
@@ -1521,7 +1278,7 @@
                     "pyorbit_name": "SCL_Diag:BPM12",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -166.97495172352544
+                            "phase_offset": -129.21119726165347
                         }
                     }
                 },
@@ -1529,7 +1286,7 @@
                     "pyorbit_name": "SCL_Diag:BPM13",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -98.05545156139952
+                            "phase_offset": -34.439003640212206
                         }
                     }
                 },
@@ -1537,7 +1294,7 @@
                     "pyorbit_name": "SCL_Diag:BPM14",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -159.4220480461219
+                            "phase_offset": -139.6942198783092
                         }
                     }
                 },
@@ -1545,7 +1302,7 @@
                     "pyorbit_name": "SCL_Diag:BPM15",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -166.14632616689653
+                            "phase_offset": 123.14544658787275
                         }
                     }
                 },
@@ -1553,7 +1310,7 @@
                     "pyorbit_name": "SCL_Diag:BPM16",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 171.61149710240463
+                            "phase_offset": 145.65242223560608
                         }
                     }
                 },
@@ -1561,7 +1318,7 @@
                     "pyorbit_name": "SCL_Diag:BPM17",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -145.39806631962156
+                            "phase_offset": -43.962106337081096
                         }
                     }
                 },
@@ -1569,7 +1326,7 @@
                     "pyorbit_name": "SCL_Diag:BPM18",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 17.40132924134272
+                            "phase_offset": -132.64770582014427
                         }
                     }
                 },
@@ -1577,7 +1334,7 @@
                     "pyorbit_name": "SCL_Diag:BPM19",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 109.95992172764846
+                            "phase_offset": -75.12897257710395
                         }
                     }
                 },
@@ -1585,7 +1342,7 @@
                     "pyorbit_name": "SCL_Diag:BPM20",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 30.213358307304038
+                            "phase_offset": -115.4052365458974
                         }
                     }
                 },
@@ -1593,7 +1350,7 @@
                     "pyorbit_name": "SCL_Diag:BPM21",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 129.1533381290257
+                            "phase_offset": 160.59527566867737
                         }
                     }
                 },
@@ -1601,7 +1358,7 @@
                     "pyorbit_name": "SCL_Diag:BPM22",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -45.70499635626451
+                            "phase_offset": -179.0506852159668
                         }
                     }
                 },
@@ -1609,7 +1366,7 @@
                     "pyorbit_name": "SCL_Diag:BPM23",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 85.11538123209954
+                            "phase_offset": 164.1555372692915
                         }
                     }
                 },
@@ -1617,7 +1374,7 @@
                     "pyorbit_name": "SCL_Diag:BPM24",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 143.29615987591518
+                            "phase_offset": -14.470187108555642
                         }
                     }
                 },
@@ -1625,7 +1382,7 @@
                     "pyorbit_name": "SCL_Diag:BPM25",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 83.5333865970367
+                            "phase_offset": -151.88033257096708
                         }
                     }
                 },
@@ -1633,7 +1390,7 @@
                     "pyorbit_name": "SCL_Diag:BPM26",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 129.1979943245914
+                            "phase_offset": 84.1300017682316
                         }
                     }
                 },
@@ -1641,7 +1398,7 @@
                     "pyorbit_name": "SCL_Diag:BPM27",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -36.98872437109398
+                            "phase_offset": 129.58856197202124
                         }
                     }
                 },
@@ -1649,7 +1406,7 @@
                     "pyorbit_name": "SCL_Diag:BPM28",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 44.18632648479742
+                            "phase_offset": 111.92314671877075
                         }
                     }
                 },
@@ -1657,7 +1414,7 @@
                     "pyorbit_name": "SCL_Diag:BPM29",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -35.649750554497565
+                            "phase_offset": 46.991424912354475
                         }
                     }
                 },
@@ -1665,7 +1422,7 @@
                     "pyorbit_name": "SCL_Diag:BPM30",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -49.07953506002195
+                            "phase_offset": 27.973492666969662
                         }
                     }
                 },
@@ -1673,7 +1430,7 @@
                     "pyorbit_name": "SCL_Diag:BPM31",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 28.564200263418165
+                            "phase_offset": -40.306825600033285
                         }
                     }
                 },
@@ -1681,7 +1438,7 @@
                     "pyorbit_name": "SCL_Diag:BPM32",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 71.14391324449487
+                            "phase_offset": -22.096872847278846
                         }
                     }
                 },
@@ -1689,7 +1446,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM01",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 85.403360541049
+                            "phase_offset": -174.50914185976572
                         }
                     }
                 },
@@ -1697,7 +1454,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM02",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 1.2426714394413896
+                            "phase_offset": -47.48337686860005
                         }
                     }
                 },
@@ -1705,7 +1462,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM03",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 86.33337647432147
+                            "phase_offset": 147.60216575093844
                         }
                     }
                 },
@@ -1713,7 +1470,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM04",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -46.28709738205606
+                            "phase_offset": 154.23733505811705
                         }
                     }
                 },
@@ -1721,7 +1478,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM05",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -139.76712979966464
+                            "phase_offset": 172.2631169843147
                         }
                     }
                 },
@@ -1729,7 +1486,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM06",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 50.58763678344129
+                            "phase_offset": 54.89415106670597
                         }
                     }
                 },
@@ -1737,7 +1494,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM07",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -39.097761567141404
+                            "phase_offset": -41.06938931336397
                         }
                     }
                 },
@@ -1745,7 +1502,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM08",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -125.8100016023859
+                            "phase_offset": -173.303909279822
                         }
                     }
                 },
@@ -1753,7 +1510,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM09",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 73.99387612285688
+                            "phase_offset": -17.51299852193491
                         }
                     }
                 },
@@ -1761,7 +1518,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM10",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -39.779746596800074
+                            "phase_offset": -103.27647075925171
                         }
                     }
                 },
@@ -1769,7 +1526,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM11",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -126.918335619754
+                            "phase_offset": 1.0941275458572886
                         }
                     }
                 }
