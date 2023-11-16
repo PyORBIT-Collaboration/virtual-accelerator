@@ -11,6 +11,7 @@ from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, 
 from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
 
 from ca_server import Server, epics_now, not_ctrlc, Device, AbsNoise, PhaseT, LinearT, PhaseTInv
+from virtual_devices import Cavity
 
 from pyorbit_server_interface import OrbitModel
 
@@ -50,6 +51,12 @@ if __name__ == '__main__':
     for device_type, device_dict in devices_dict.items():
         params_dict = device_dict['parameters']
         devices = device_dict['devices']
+        if device_type == "Cavities":
+            for pv_name, device_info in devices.items():
+                pyorbit_name = device_info['pyorbit_name']
+                rf_device = Cavity(pv_name, model.pyorbit_dict.get_element_reference(pyorbit_name))
+                sys.exit()
+
         for device_name, device_info in devices.items():
             pyorbit_name = device_info['pyorbit_name']
             server_device = Device(device_name)
@@ -92,7 +99,7 @@ if __name__ == '__main__':
 
     model.order_pvs()
 
-    bunch_file = Path('../SCL_Wizard/SCL_in.dat')
+    bunch_file = Path('SCL_in.dat')
     model.load_initial_bunch(bunch_file, number_of_particles=1000)
 
     server.start()

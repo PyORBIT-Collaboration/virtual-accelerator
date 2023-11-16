@@ -1,13 +1,51 @@
 import sys
 import time
 from pathlib import Path
+
+from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
+from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
+from orbit.core.bunch import Bunch
+
 from pyorbit_server_interface import OrbitModel
 
 lattice_file = Path("../../EPICS/sns_linac.xml")
-pv_file = Path("server_devices.txt")
-model = OrbitModel(lattice_file, [])
+sns_linac_factory = SNS_LinacLatticeFactory()
+sns_linac_factory.setMaxDriftLength(0.01)
+model_lattice = sns_linac_factory.getLinacAccLattice(["SCLMed"], lattice_file)
+Add_quad_apertures_to_lattice(model_lattice)
+Add_rfgap_apertures_to_lattice(model_lattice)
 
-sys.exit()
+bunch_in = Bunch()
+bunch_in.readBunch('SCL_in.dat')
+for n in range(bunch_in.getSizeGlobal()):
+    if n + 1 > 1000:
+        bunch_in.deleteParticleFast(n)
+bunch_in.compress()
+
+model = OrbitModel(model_lattice, bunch_in)
+# model.set_initial_bunch(initial_bunch)
+
+# print(model.pyorbit_dict.get_element('SCL:Cav01a').getParamsDict())
+# print(model.pyorbit_dict.get_element('SCL_Mag:DCH00').getParamsDict())
+# print(model.pyorbit_dict.get_element('SCL_Mag:QV01').getParamsDict())
+# print(model.pyorbit_dict.get_element('SCL_Diag:BPM01').getParamsDict())
+
+new_op = {}
+new_op['SCL_Mag:QV01'] = {'dB/dr': 0.001}
+new_op['SCL:Cav11a'] = {'phase': 0.001}
+model.update_optics(new_op)
+model.track()
+
+# print(model.get_measurements(['SCL_Mag:QV01', 'SCL_Diag:BPM01']))
+# print(model.get_settings())
+
+model.save_optics()
+
+model.reset_optics()
+model.track()
+
+model.load_optics("test.dat")
+model.track()
 
 """
 print(model.get_settings("SCL_Mag:DCH00:B"))
@@ -84,6 +122,7 @@ print(model.get_measurements("SCL_Diag:BPM32:xAvg"))
 print(model.get_measurements("SCL_Phys:BPM32:energy"))
 
 """
+"""
 avg_time = 0
 for i in range(100):
     #init_phase = model.get_settings("SCL_LLRF:FCM01a:CtlPhaseSet")["SCL_LLRF:FCM01a:CtlPhaseSet"]
@@ -101,3 +140,4 @@ for i in range(100):
 
 avg_time /= 100
 print(avg_time)
+"""

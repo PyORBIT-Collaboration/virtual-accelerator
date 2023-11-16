@@ -12,10 +12,6 @@ from pyorbit_server_interface import OrbitModel
 import json
 import sys
 from pathlib import Path
-from time import sleep
-from castst import Server, epics_now, not_ctrlc
-import argparse
-from devices import BLM, BCM, BPM, Magnet, Cavity, genPV
 
 from pyorbit_server_interface import OrbitModel
 
