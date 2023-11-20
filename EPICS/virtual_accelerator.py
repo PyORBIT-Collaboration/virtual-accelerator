@@ -7,11 +7,12 @@ import time
 from pathlib import Path
 import argparse
 
+from orbit.core.bunch import Bunch
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
 from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
 
 from ca_server import Server, epics_now, not_ctrlc, Device, AbsNoise, PhaseT, LinearT, PhaseTInv
-from virtual_devices import Cavity
+from virtual_devices import Cavity, BPM, Quadrupole, Corrector
 
 from pyorbit_server_interface import OrbitModel
 
@@ -21,7 +22,7 @@ REP_RATE = 1.0
 if __name__ == '__main__':
     # Set a default prefix if unspecified at server initialization
     parser = argparse.ArgumentParser(description='Run CA server')
-    #parser.add_argument('--prefix', '-p', default='test', type=str, help='Prefix for PVs')
+    # parser.add_argument('--prefix', '-p', default='test', type=str, help='Prefix for PVs')
     parser.add_argument('--file', '-f', default='va_config.json', type=str,
                         help='Pathname of pv file. Relative to Server/')
 
@@ -43,7 +44,14 @@ if __name__ == '__main__':
     Add_quad_apertures_to_lattice(model_lattice)
     Add_rfgap_apertures_to_lattice(model_lattice)
 
-    model = OrbitModel(model_lattice)
+    bunch_in = Bunch()
+    bunch_in.readBunch('SCL_in.dat')
+    for n in range(bunch_in.getSizeGlobal()):
+        if n + 1 > 1000:
+            bunch_in.deleteParticleFast(n)
+    bunch_in.compress()
+
+    model = OrbitModel(model_lattice, bunch_in)
 
     # server = Server(prefix)
     server = Server()
@@ -54,53 +62,29 @@ if __name__ == '__main__':
         if device_type == "Cavities":
             for pv_name, device_info in devices.items():
                 pyorbit_name = device_info['pyorbit_name']
-                rf_device = Cavity(pv_name, model.pyorbit_dict.get_element_reference(pyorbit_name))
-                sys.exit()
+                initial_settings = model.get_settings(pyorbit_name)[pyorbit_name]
+                rf_device = Cavity(pv_name, pyorbit_name, initial_settings)
+                server.add_device(rf_device)
 
-        for device_name, device_info in devices.items():
-            pyorbit_name = device_info['pyorbit_name']
-            server_device = Device(device_name)
-            for pv_param_name, pv_info in params_dict.items():
-                pv_name = device_name + ':' + pv_param_name
-                pv_type = pv_info['pv_type']
-                model.add_pv(pv_name, pv_type, pyorbit_name, pv_info['parameter_key'])
+        if device_type == "Quadrupoles":
+            for pv_name, device_info in devices.items():
+                pyorbit_name = device_info['pyorbit_name']
+                initial_settings = model.get_settings(pyorbit_name)[pyorbit_name]
+                quad_device = Quadrupole(pv_name, pyorbit_name, initial_settings)
+                server.add_device(quad_device)
 
-                if 'noise' in pv_info:
-                    noise = AbsNoise(noise=pv_info['noise'])
-                else:
-                    noise = None
+        if device_type == "Correctors":
+            for pv_name, device_info in devices.items():
+                pyorbit_name = device_info['pyorbit_name']
+                initial_settings = model.get_settings(pyorbit_name)[pyorbit_name]
+                corrector_device = Corrector(pv_name, pyorbit_name, initial_settings)
+                server.add_device(corrector_device)
 
-                if 'phase_off_set' in pv_info:
-                    off_set = PhaseTInv(offset=pv_info['phase_offset'], scaler=180/math.pi)
-                elif 'linear_offset' in pv_info:
-                    off_set = LinearT(scaler=pv_info['linear_offset'])
-                else:
-                    off_set = None
-
-                if 'override' in device_info and pv_param_name in device_info['override']:
-                    for or_param, or_value in device_info['override'][pv_param_name].items():
-                        if or_param == 'phase_offset':
-                            off_set = PhaseTInv(offset=or_value, scaler=180/math.pi)
-                        elif or_param == 'linear_offset':
-                            off_set = LinearT(scaler=or_value)
-
-                if pv_type == 'setting':
-                    initial_value = model.get_settings(pv_name)[pv_name]
-                    if off_set is not None:
-                        initial_value = off_set.raw(initial_value)
-                    server_device.register_setting(pv_param_name, {'prec': 4}, initial_value,
-                                                   transform=off_set)
-
-                elif pv_type == 'diagnostic' or pv_type == 'readback' or pv_type == 'physics':
-                    server_device.register_measurement(pv_param_name, {'prec': 4},
-                                                       noise=noise, transform=off_set)
-
-                server.add_device(server_device)
-
-    model.order_pvs()
-
-    bunch_file = Path('SCL_in.dat')
-    model.load_initial_bunch(bunch_file, number_of_particles=1000)
+        if device_type == "BPMs":
+            for pv_name, device_info in devices.items():
+                pyorbit_name = device_info['pyorbit_name']
+                bpm_device = BPM(pv_name, pyorbit_name)
+                server.add_device(bpm_device)
 
     server.start()
     print(f"Server started.")
@@ -113,6 +97,7 @@ if __name__ == '__main__':
         now = epics_now()
 
         new_params = server.get_settings()
+        server.update_readbacks()
         model.update_optics(new_params)
         model.track()
         new_measurements = model.get_measurements()

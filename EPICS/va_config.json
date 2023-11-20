@@ -28,7 +28,7 @@
                     "pyorbit_name": "SCL:Cav01a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -118.90280684468716
+                            "phase_offset": -58.62426037865756
                         }
                     }
                 },
@@ -36,7 +36,7 @@
                     "pyorbit_name": "SCL:Cav01b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -147.15960361459415
+                            "phase_offset": -50.00976646727593
                         }
                     }
                 },
@@ -44,7 +44,7 @@
                     "pyorbit_name": "SCL:Cav01c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 56.24061526481859
+                            "phase_offset": -156.5318360102807
                         }
                     }
                 },
@@ -52,7 +52,7 @@
                     "pyorbit_name": "SCL:Cav02a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -30.801305649685148
+                            "phase_offset": -113.94169965072476
                         }
                     }
                 },
@@ -60,7 +60,7 @@
                     "pyorbit_name": "SCL:Cav02b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -7.52412530717169
+                            "phase_offset": -119.5712824949902
                         }
                     }
                 },
@@ -68,7 +68,7 @@
                     "pyorbit_name": "SCL:Cav02c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 9.445887513079594
+                            "phase_offset": -157.97365339907128
                         }
                     }
                 },
@@ -76,7 +76,7 @@
                     "pyorbit_name": "SCL:Cav03a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 57.33994393379894
+                            "phase_offset": 30.39573011460062
                         }
                     }
                 },
@@ -84,7 +84,7 @@
                     "pyorbit_name": "SCL:Cav03b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -162.69024959293338
+                            "phase_offset": 47.877726517482316
                         }
                     }
                 },
@@ -92,7 +92,7 @@
                     "pyorbit_name": "SCL:Cav03c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 2.709304830984096
+                            "phase_offset": -164.48592243456105
                         }
                     }
                 },
@@ -100,7 +100,7 @@
                     "pyorbit_name": "SCL:Cav04a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 8.297347488466599
+                            "phase_offset": -65.81218386080027
                         }
                     }
                 },
@@ -108,7 +108,7 @@
                     "pyorbit_name": "SCL:Cav04b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -29.948856349508297
+                            "phase_offset": 145.22151607446446
                         }
                     }
                 },
@@ -116,7 +116,7 @@
                     "pyorbit_name": "SCL:Cav04c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -128.68712212362922
+                            "phase_offset": -75.6900560190999
                         }
                     }
                 },
@@ -124,7 +124,7 @@
                     "pyorbit_name": "SCL:Cav05a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 117.55898524042198
+                            "phase_offset": -60.44942675674368
                         }
                     }
                 },
@@ -132,7 +132,7 @@
                     "pyorbit_name": "SCL:Cav05b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 9.809913803617928
+                            "phase_offset": -116.61260302458503
                         }
                     }
                 },
@@ -140,7 +140,7 @@
                     "pyorbit_name": "SCL:Cav05c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -117.03202784257356
+                            "phase_offset": -90.50111154542122
                         }
                     }
                 },
@@ -148,7 +148,7 @@
                     "pyorbit_name": "SCL:Cav06a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -153.6494690598998
+                            "phase_offset": -149.55707058903633
                         }
                     }
                 },
@@ -156,7 +156,7 @@
                     "pyorbit_name": "SCL:Cav06b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 177.18703397479658
+                            "phase_offset": -16.11562549282643
                         }
                     }
                 },
@@ -164,7 +164,7 @@
                     "pyorbit_name": "SCL:Cav06c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -160.6888145449496
+                            "phase_offset": 110.00290910406069
                         }
                     }
                 },
@@ -172,7 +172,7 @@
                     "pyorbit_name": "SCL:Cav07a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -97.88374146718733
+                            "phase_offset": 57.002168428827936
                         }
                     }
                 },
@@ -180,7 +180,7 @@
                     "pyorbit_name": "SCL:Cav07b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 128.36399822960195
+                            "phase_offset": -73.93210790746313
                         }
                     }
                 },
@@ -188,7 +188,7 @@
                     "pyorbit_name": "SCL:Cav07c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 73.42000096499478
+                            "phase_offset": 178.11287323972644
                         }
                     }
                 },
@@ -196,7 +196,7 @@
                     "pyorbit_name": "SCL:Cav08a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -167.84232081741595
+                            "phase_offset": 134.94025723127578
                         }
                     }
                 },
@@ -204,7 +204,7 @@
                     "pyorbit_name": "SCL:Cav08b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 39.046083877363614
+                            "phase_offset": 99.27536075498043
                         }
                     }
                 },
@@ -212,7 +212,7 @@
                     "pyorbit_name": "SCL:Cav08c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -76.90397319370827
+                            "phase_offset": -40.88785550549268
                         }
                     }
                 },
@@ -220,7 +220,7 @@
                     "pyorbit_name": "SCL:Cav09a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 36.4943309793797
+                            "phase_offset": 136.7053296064853
                         }
                     }
                 },
@@ -228,7 +228,7 @@
                     "pyorbit_name": "SCL:Cav09b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -63.27120624809412
+                            "phase_offset": 69.77341612317055
                         }
                     }
                 },
@@ -236,7 +236,7 @@
                     "pyorbit_name": "SCL:Cav09c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 35.84123795793838
+                            "phase_offset": 21.67913319250988
                         }
                     }
                 },
@@ -244,7 +244,7 @@
                     "pyorbit_name": "SCL:Cav10a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 131.44788196757344
+                            "phase_offset": -21.50526890024387
                         }
                     }
                 },
@@ -252,7 +252,7 @@
                     "pyorbit_name": "SCL:Cav10b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 178.086397251945
+                            "phase_offset": -110.943267713435
                         }
                     }
                 },
@@ -260,7 +260,7 @@
                     "pyorbit_name": "SCL:Cav10c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -31.899526454233353
+                            "phase_offset": -7.013935570512362
                         }
                     }
                 },
@@ -268,7 +268,7 @@
                     "pyorbit_name": "SCL:Cav11a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -110.26451401636457
+                            "phase_offset": 66.7504447152097
                         }
                     }
                 },
@@ -276,7 +276,7 @@
                     "pyorbit_name": "SCL:Cav11b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -178.64470669886157
+                            "phase_offset": 107.58947299267842
                         }
                     }
                 },
@@ -284,7 +284,7 @@
                     "pyorbit_name": "SCL:Cav11c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 155.02447008868833
+                            "phase_offset": -109.78506246562559
                         }
                     }
                 },
@@ -292,7 +292,7 @@
                     "pyorbit_name": "SCL:Cav12a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 157.0754279478533
+                            "phase_offset": 111.74862672238265
                         }
                     }
                 },
@@ -300,7 +300,7 @@
                     "pyorbit_name": "SCL:Cav12b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -18.998590276916705
+                            "phase_offset": -65.96532756435893
                         }
                     }
                 },
@@ -308,7 +308,7 @@
                     "pyorbit_name": "SCL:Cav12c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 23.77669979630451
+                            "phase_offset": -20.752117705878064
                         }
                     }
                 },
@@ -316,7 +316,7 @@
                     "pyorbit_name": "SCL:Cav12d",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -1.1940078033517532
+                            "phase_offset": 137.6966005226829
                         }
                     }
                 },
@@ -324,7 +324,7 @@
                     "pyorbit_name": "SCL:Cav13a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -176.84454296468053
+                            "phase_offset": 11.51218859733083
                         }
                     }
                 },
@@ -332,7 +332,7 @@
                     "pyorbit_name": "SCL:Cav13b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -67.21734293428663
+                            "phase_offset": -161.59240514041196
                         }
                     }
                 },
@@ -340,7 +340,7 @@
                     "pyorbit_name": "SCL:Cav13c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 3.155580914038678
+                            "phase_offset": -15.356735238934537
                         }
                     }
                 },
@@ -348,7 +348,7 @@
                     "pyorbit_name": "SCL:Cav13d",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 132.7697947595076
+                            "phase_offset": -177.49881439532658
                         }
                     }
                 },
@@ -356,7 +356,7 @@
                     "pyorbit_name": "SCL:Cav14a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -175.59194450723297
+                            "phase_offset": 32.80470717815859
                         }
                     }
                 },
@@ -364,7 +364,7 @@
                     "pyorbit_name": "SCL:Cav14b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 135.13216884425503
+                            "phase_offset": 171.9447331763951
                         }
                     }
                 },
@@ -372,7 +372,7 @@
                     "pyorbit_name": "SCL:Cav14c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 20.97921376776144
+                            "phase_offset": 55.33274892799864
                         }
                     }
                 },
@@ -380,7 +380,7 @@
                     "pyorbit_name": "SCL:Cav14d",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -19.845494861589337
+                            "phase_offset": 124.8232088710212
                         }
                     }
                 },
@@ -388,7 +388,7 @@
                     "pyorbit_name": "SCL:Cav15a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -34.93357710898252
+                            "phase_offset": -1.1291914866188835
                         }
                     }
                 },
@@ -396,7 +396,7 @@
                     "pyorbit_name": "SCL:Cav15b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 25.15693610009805
+                            "phase_offset": 153.5856286754303
                         }
                     }
                 },
@@ -404,7 +404,7 @@
                     "pyorbit_name": "SCL:Cav15c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -15.984518657259738
+                            "phase_offset": 24.057048783696892
                         }
                     }
                 },
@@ -412,7 +412,7 @@
                     "pyorbit_name": "SCL:Cav15d",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -24.677713585610036
+                            "phase_offset": -15.126655227043315
                         }
                     }
                 },
@@ -420,7 +420,7 @@
                     "pyorbit_name": "SCL:Cav16a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -85.66255516124137
+                            "phase_offset": -129.0609996690033
                         }
                     }
                 },
@@ -428,7 +428,7 @@
                     "pyorbit_name": "SCL:Cav16b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -164.65462878177755
+                            "phase_offset": 166.40702413992042
                         }
                     }
                 },
@@ -436,7 +436,7 @@
                     "pyorbit_name": "SCL:Cav16c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -149.6826226240965
+                            "phase_offset": -114.32104775830477
                         }
                     }
                 },
@@ -444,7 +444,7 @@
                     "pyorbit_name": "SCL:Cav16d",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -11.10921218543182
+                            "phase_offset": 154.71466856991924
                         }
                     }
                 },
@@ -452,7 +452,7 @@
                     "pyorbit_name": "SCL:Cav17a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 102.70881521162724
+                            "phase_offset": 94.91796014110254
                         }
                     }
                 },
@@ -460,7 +460,7 @@
                     "pyorbit_name": "SCL:Cav17b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -178.6417504911433
+                            "phase_offset": 70.83265714996821
                         }
                     }
                 },
@@ -468,7 +468,7 @@
                     "pyorbit_name": "SCL:Cav17c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 15.91693562489947
+                            "phase_offset": -172.30056105966187
                         }
                     }
                 },
@@ -476,7 +476,7 @@
                     "pyorbit_name": "SCL:Cav17d",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -112.21582455075097
+                            "phase_offset": 63.45964393156557
                         }
                     }
                 },
@@ -484,7 +484,7 @@
                     "pyorbit_name": "SCL:Cav18a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -88.74202835939646
+                            "phase_offset": -102.53979900826309
                         }
                     }
                 },
@@ -492,7 +492,7 @@
                     "pyorbit_name": "SCL:Cav18b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 29.727572352982833
+                            "phase_offset": 8.547537947667369
                         }
                     }
                 },
@@ -500,7 +500,7 @@
                     "pyorbit_name": "SCL:Cav18c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -91.26700451319745
+                            "phase_offset": 87.51482534696311
                         }
                     }
                 },
@@ -508,7 +508,7 @@
                     "pyorbit_name": "SCL:Cav18d",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 82.6347176181811
+                            "phase_offset": -149.62663368616847
                         }
                     }
                 },
@@ -516,7 +516,7 @@
                     "pyorbit_name": "SCL:Cav19a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -158.73268474695914
+                            "phase_offset": -178.56636766826276
                         }
                     }
                 },
@@ -524,7 +524,7 @@
                     "pyorbit_name": "SCL:Cav19b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -68.60945918847575
+                            "phase_offset": 91.96853169149853
                         }
                     }
                 },
@@ -532,7 +532,7 @@
                     "pyorbit_name": "SCL:Cav19c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 76.79545805056537
+                            "phase_offset": 151.89984767122985
                         }
                     }
                 },
@@ -540,7 +540,7 @@
                     "pyorbit_name": "SCL:Cav19d",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -142.4734164358069
+                            "phase_offset": 165.9911107103056
                         }
                     }
                 },
@@ -548,7 +548,7 @@
                     "pyorbit_name": "SCL:Cav20a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -122.10356628439058
+                            "phase_offset": 173.50751465900944
                         }
                     }
                 },
@@ -556,7 +556,7 @@
                     "pyorbit_name": "SCL:Cav20b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 27.76209045272841
+                            "phase_offset": -147.1911362332183
                         }
                     }
                 },
@@ -564,7 +564,7 @@
                     "pyorbit_name": "SCL:Cav20c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 139.35221949474123
+                            "phase_offset": 161.4058843313314
                         }
                     }
                 },
@@ -572,7 +572,7 @@
                     "pyorbit_name": "SCL:Cav20d",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -149.9771178563317
+                            "phase_offset": -84.38861936787244
                         }
                     }
                 },
@@ -580,7 +580,7 @@
                     "pyorbit_name": "SCL:Cav21a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 174.8528223598026
+                            "phase_offset": 141.02604695139183
                         }
                     }
                 },
@@ -588,7 +588,7 @@
                     "pyorbit_name": "SCL:Cav21b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -59.565867083236064
+                            "phase_offset": -164.81155987531193
                         }
                     }
                 },
@@ -596,7 +596,7 @@
                     "pyorbit_name": "SCL:Cav21c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 15.428323108687877
+                            "phase_offset": 34.50279754447895
                         }
                     }
                 },
@@ -604,7 +604,7 @@
                     "pyorbit_name": "SCL:Cav21d",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 176.13646116841892
+                            "phase_offset": 87.62825690093977
                         }
                     }
                 },
@@ -612,7 +612,7 @@
                     "pyorbit_name": "SCL:Cav22a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 162.27509014503994
+                            "phase_offset": -17.202016962699748
                         }
                     }
                 },
@@ -620,7 +620,7 @@
                     "pyorbit_name": "SCL:Cav22b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 177.56133458876036
+                            "phase_offset": 49.46836759813726
                         }
                     }
                 },
@@ -628,7 +628,7 @@
                     "pyorbit_name": "SCL:Cav22c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -139.89282832914498
+                            "phase_offset": 83.52351756308768
                         }
                     }
                 },
@@ -636,7 +636,7 @@
                     "pyorbit_name": "SCL:Cav22d",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -78.46802295595077
+                            "phase_offset": -69.22538868129934
                         }
                     }
                 },
@@ -644,7 +644,7 @@
                     "pyorbit_name": "SCL:Cav23a",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 39.318455323182185
+                            "phase_offset": 143.38856824174613
                         }
                     }
                 },
@@ -652,7 +652,7 @@
                     "pyorbit_name": "SCL:Cav23b",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 140.46378236268922
+                            "phase_offset": 78.51019618768969
                         }
                     }
                 },
@@ -660,7 +660,7 @@
                     "pyorbit_name": "SCL:Cav23c",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": 29.7934695635724
+                            "phase_offset": 127.05443292502682
                         }
                     }
                 },
@@ -668,7 +668,7 @@
                     "pyorbit_name": "SCL:Cav23d",
                     "override": {
                         "CtlPhaseSet": {
-                            "phase_offset": -40.118384513374096
+                            "phase_offset": 130.96028706930827
                         }
                     }
                 }
@@ -1174,7 +1174,7 @@
                     "pyorbit_name": "SCL_Diag:BPM00a",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 99.21397692895277
+                            "phase_offset": -1.0300707832138833
                         }
                     }
                 },
@@ -1182,7 +1182,7 @@
                     "pyorbit_name": "SCL_Diag:BPM00b",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -140.00064253229255
+                            "phase_offset": -37.51509472724302
                         }
                     }
                 },
@@ -1190,7 +1190,7 @@
                     "pyorbit_name": "SCL_Diag:BPM01",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 136.15264207420918
+                            "phase_offset": 53.64063423959513
                         }
                     }
                 },
@@ -1198,7 +1198,7 @@
                     "pyorbit_name": "SCL_Diag:BPM02",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -6.7346874503500365
+                            "phase_offset": 68.76910036771159
                         }
                     }
                 },
@@ -1206,7 +1206,7 @@
                     "pyorbit_name": "SCL_Diag:BPM03",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -179.25430442129408
+                            "phase_offset": 94.27655502735315
                         }
                     }
                 },
@@ -1214,7 +1214,7 @@
                     "pyorbit_name": "SCL_Diag:BPM04",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 34.60879126503092
+                            "phase_offset": -34.895990476573104
                         }
                     }
                 },
@@ -1222,7 +1222,7 @@
                     "pyorbit_name": "SCL_Diag:BPM05",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -157.6490968096232
+                            "phase_offset": -7.656632319800876
                         }
                     }
                 },
@@ -1230,7 +1230,7 @@
                     "pyorbit_name": "SCL_Diag:BPM06",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 22.946970768491475
+                            "phase_offset": 47.897745737779246
                         }
                     }
                 },
@@ -1238,7 +1238,7 @@
                     "pyorbit_name": "SCL_Diag:BPM07",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 60.45394320508735
+                            "phase_offset": 71.50556530507289
                         }
                     }
                 },
@@ -1246,7 +1246,7 @@
                     "pyorbit_name": "SCL_Diag:BPM08",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -70.52049927320006
+                            "phase_offset": 121.72277334214203
                         }
                     }
                 },
@@ -1254,7 +1254,7 @@
                     "pyorbit_name": "SCL_Diag:BPM09",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -72.55636141824348
+                            "phase_offset": 35.70716093832689
                         }
                     }
                 },
@@ -1262,7 +1262,7 @@
                     "pyorbit_name": "SCL_Diag:BPM10",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -68.72813080721507
+                            "phase_offset": -23.31608498883528
                         }
                     }
                 },
@@ -1270,7 +1270,7 @@
                     "pyorbit_name": "SCL_Diag:BPM11",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 13.611456041001881
+                            "phase_offset": -28.787623689090076
                         }
                     }
                 },
@@ -1278,7 +1278,7 @@
                     "pyorbit_name": "SCL_Diag:BPM12",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -129.21119726165347
+                            "phase_offset": -109.47362961075832
                         }
                     }
                 },
@@ -1286,7 +1286,7 @@
                     "pyorbit_name": "SCL_Diag:BPM13",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -34.439003640212206
+                            "phase_offset": -89.30220736970232
                         }
                     }
                 },
@@ -1294,7 +1294,7 @@
                     "pyorbit_name": "SCL_Diag:BPM14",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -139.6942198783092
+                            "phase_offset": -46.10876880237123
                         }
                     }
                 },
@@ -1302,7 +1302,7 @@
                     "pyorbit_name": "SCL_Diag:BPM15",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 123.14544658787275
+                            "phase_offset": 76.37321216462117
                         }
                     }
                 },
@@ -1310,7 +1310,7 @@
                     "pyorbit_name": "SCL_Diag:BPM16",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 145.65242223560608
+                            "phase_offset": -4.902492917424137
                         }
                     }
                 },
@@ -1318,7 +1318,7 @@
                     "pyorbit_name": "SCL_Diag:BPM17",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -43.962106337081096
+                            "phase_offset": 49.41167019690465
                         }
                     }
                 },
@@ -1326,7 +1326,7 @@
                     "pyorbit_name": "SCL_Diag:BPM18",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -132.64770582014427
+                            "phase_offset": 0.7148749117338227
                         }
                     }
                 },
@@ -1334,7 +1334,7 @@
                     "pyorbit_name": "SCL_Diag:BPM19",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -75.12897257710395
+                            "phase_offset": -20.613854258232102
                         }
                     }
                 },
@@ -1342,7 +1342,7 @@
                     "pyorbit_name": "SCL_Diag:BPM20",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -115.4052365458974
+                            "phase_offset": 88.45045262506306
                         }
                     }
                 },
@@ -1350,7 +1350,7 @@
                     "pyorbit_name": "SCL_Diag:BPM21",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 160.59527566867737
+                            "phase_offset": -127.13077315622728
                         }
                     }
                 },
@@ -1358,7 +1358,7 @@
                     "pyorbit_name": "SCL_Diag:BPM22",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -179.0506852159668
+                            "phase_offset": 29.448671362155622
                         }
                     }
                 },
@@ -1366,7 +1366,7 @@
                     "pyorbit_name": "SCL_Diag:BPM23",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 164.1555372692915
+                            "phase_offset": -68.93294349823977
                         }
                     }
                 },
@@ -1374,7 +1374,7 @@
                     "pyorbit_name": "SCL_Diag:BPM24",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -14.470187108555642
+                            "phase_offset": -178.8099799037274
                         }
                     }
                 },
@@ -1382,7 +1382,7 @@
                     "pyorbit_name": "SCL_Diag:BPM25",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -151.88033257096708
+                            "phase_offset": 3.170151496682103
                         }
                     }
                 },
@@ -1390,7 +1390,7 @@
                     "pyorbit_name": "SCL_Diag:BPM26",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 84.1300017682316
+                            "phase_offset": 58.12089682182514
                         }
                     }
                 },
@@ -1398,7 +1398,7 @@
                     "pyorbit_name": "SCL_Diag:BPM27",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 129.58856197202124
+                            "phase_offset": -64.33664129829732
                         }
                     }
                 },
@@ -1406,7 +1406,7 @@
                     "pyorbit_name": "SCL_Diag:BPM28",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 111.92314671877075
+                            "phase_offset": -86.45062231958367
                         }
                     }
                 },
@@ -1414,7 +1414,7 @@
                     "pyorbit_name": "SCL_Diag:BPM29",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 46.991424912354475
+                            "phase_offset": 104.63614994455709
                         }
                     }
                 },
@@ -1422,7 +1422,7 @@
                     "pyorbit_name": "SCL_Diag:BPM30",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 27.973492666969662
+                            "phase_offset": 121.77116676111574
                         }
                     }
                 },
@@ -1430,7 +1430,7 @@
                     "pyorbit_name": "SCL_Diag:BPM31",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -40.306825600033285
+                            "phase_offset": 125.87726262854426
                         }
                     }
                 },
@@ -1438,7 +1438,7 @@
                     "pyorbit_name": "SCL_Diag:BPM32",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -22.096872847278846
+                            "phase_offset": -75.21015622124861
                         }
                     }
                 },
@@ -1446,7 +1446,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM01",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -174.50914185976572
+                            "phase_offset": 101.89521274996915
                         }
                     }
                 },
@@ -1454,7 +1454,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM02",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -47.48337686860005
+                            "phase_offset": 3.6604937445068364
                         }
                     }
                 },
@@ -1462,7 +1462,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM03",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 147.60216575093844
+                            "phase_offset": 164.74996077217133
                         }
                     }
                 },
@@ -1470,7 +1470,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM04",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 154.23733505811705
+                            "phase_offset": -154.6636480030475
                         }
                     }
                 },
@@ -1478,7 +1478,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM05",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 172.2631169843147
+                            "phase_offset": 135.53270854413904
                         }
                     }
                 },
@@ -1486,7 +1486,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM06",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 54.89415106670597
+                            "phase_offset": 30.712698390473214
                         }
                     }
                 },
@@ -1494,7 +1494,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM07",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -41.06938931336397
+                            "phase_offset": -80.16166870646101
                         }
                     }
                 },
@@ -1502,7 +1502,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM08",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -173.303909279822
+                            "phase_offset": 91.97305544302375
                         }
                     }
                 },
@@ -1510,7 +1510,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM09",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -17.51299852193491
+                            "phase_offset": -158.43900161733958
                         }
                     }
                 },
@@ -1518,7 +1518,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM10",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": -103.27647075925171
+                            "phase_offset": 116.58230312682268
                         }
                     }
                 },
@@ -1526,7 +1526,7 @@
                     "pyorbit_name": "HEBT_Diag:BPM11",
                     "override": {
                         "phaseAvg": {
-                            "phase_offset": 1.0941275458572886
+                            "phase_offset": -10.1989277187291
                         }
                     }
                 }

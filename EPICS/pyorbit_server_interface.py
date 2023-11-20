@@ -14,11 +14,6 @@ class OrbitModel:
     def __init__(self, input_lattice: LinacAccLattice, input_bunch: Bunch = None):
         self.accLattice = input_lattice
 
-        cav_nodes = self.accLattice.getRF_Cavities()
-        blanked_key = 'blanked'
-        for node in cav_nodes:
-            node.addParam(blanked_key, 0)
-
         list_of_nodes = self.accLattice.getNodes()
         for node in list_of_nodes:
             node_type = node.getType()
