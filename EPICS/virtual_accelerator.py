@@ -30,14 +30,8 @@ if __name__ == '__main__':
     # prefix = args.prefix + ':'
     # print(f'Using prefix: {args.prefix}.')
 
-    with open(args.file, "r") as json_file:
-        input_dicts = json.load(json_file)
-
-    lattice = input_dicts['Pyorbit_Lattice']
-    devices_dict = input_dicts['Devices']
-
-    lattice_file = Path(lattice['file_name'])
-    subsections = lattice['subsections']
+    lattice_file = 'sns_linac.xml'
+    subsections = ['SCLMed', 'SCLHigh', 'HEBT1']
     sns_linac_factory = SNS_LinacLatticeFactory()
     sns_linac_factory.setMaxDriftLength(0.01)
     model_lattice = sns_linac_factory.getLinacAccLattice(subsections, lattice_file)
@@ -56,40 +50,36 @@ if __name__ == '__main__':
     # server = Server(prefix)
     server = Server()
 
-    for device_type, device_dict in devices_dict.items():
-        params_dict = device_dict['parameters']
-        devices = device_dict['devices']
+    with open(args.file, "r") as json_file:
+        devices_dict = json.load(json_file)
+
+    for device_type, devices in devices_dict.items():
         if device_type == "Cavities":
-            for pv_name, device_info in devices.items():
-                pyorbit_name = device_info['pyorbit_name']
-                initial_settings = model.get_settings(pyorbit_name)[pyorbit_name]
-                rf_device = Cavity(pv_name, pyorbit_name, initial_settings)
+            for pv_name, model_name in devices.items():
+                initial_settings = model.get_settings(model_name)[model_name]
+                rf_device = Cavity(pv_name, model_name, initial_settings)
                 server.add_device(rf_device)
 
         if device_type == "Quadrupoles":
-            for pv_name, device_info in devices.items():
-                pyorbit_name = device_info['pyorbit_name']
-                initial_settings = model.get_settings(pyorbit_name)[pyorbit_name]
-                quad_device = Quadrupole(pv_name, pyorbit_name, initial_settings)
+            for pv_name, model_name in devices.items():
+                initial_settings = model.get_settings(model_name)[model_name]
+                quad_device = Quadrupole(pv_name, model_name, initial_settings)
                 server.add_device(quad_device)
 
         if device_type == "Correctors":
-            for pv_name, device_info in devices.items():
-                pyorbit_name = device_info['pyorbit_name']
-                initial_settings = model.get_settings(pyorbit_name)[pyorbit_name]
-                corrector_device = Corrector(pv_name, pyorbit_name, initial_settings)
+            for pv_name, model_name in devices.items():
+                initial_settings = model.get_settings(model_name)[model_name]
+                corrector_device = Corrector(pv_name, model_name, initial_settings)
                 server.add_device(corrector_device)
 
         if device_type == "BPMs":
-            for pv_name, device_info in devices.items():
-                pyorbit_name = device_info['pyorbit_name']
-                bpm_device = BPM(pv_name, pyorbit_name)
+            for pv_name, model_name in devices.items():
+                bpm_device = BPM(pv_name, model_name)
                 server.add_device(bpm_device)
 
         if device_type == "PBPMs":
-            for pv_name, device_info in devices.items():
-                pyorbit_name = device_info['pyorbit_name']
-                pbpm_device = pBPM(pv_name, pyorbit_name)
+            for pv_name, model_name in devices.items():
+                pbpm_device = pBPM(pv_name, model_name)
                 server.add_device(pbpm_device)
 
     server.start()
