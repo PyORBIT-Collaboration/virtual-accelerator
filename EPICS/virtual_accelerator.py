@@ -12,7 +12,7 @@ from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, 
 from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
 
 from ca_server import Server, epics_now, not_ctrlc, Device, AbsNoise, PhaseT, LinearT, PhaseTInv
-from virtual_devices import Cavity, BPM, Quadrupole, Corrector
+from virtual_devices import Cavity, BPM, Quadrupole, Corrector, pBPM
 
 from pyorbit_server_interface import OrbitModel
 
@@ -85,6 +85,12 @@ if __name__ == '__main__':
                 pyorbit_name = device_info['pyorbit_name']
                 bpm_device = BPM(pv_name, pyorbit_name)
                 server.add_device(bpm_device)
+
+        if device_type == "PBPMs":
+            for pv_name, device_info in devices.items():
+                pyorbit_name = device_info['pyorbit_name']
+                pbpm_device = pBPM(pv_name, pyorbit_name)
+                server.add_device(pbpm_device)
 
     server.start()
     print(f"Server started.")

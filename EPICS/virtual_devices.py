@@ -176,6 +176,32 @@ class BPM(Device):
             self.setParam(reason, noise.add_noise(transform.raw(value)))
 
 
+class pBPM(Device):
+    # Here is the only place we have raw PV suffix.
+    # So if it's changed you need to modify one line
+    energy_pv = 'Energy'
+    beta_pv = 'Beta'
+
+    energy_key = 'energy'
+    beta_key = 'beta'
+
+    def __init__(self, pv_name: str, model_name: str):
+        super().__init__(pv_name, model_name)
+
+        self.register_measurement(pBPM.energy_pv)
+        self.register_measurement(pBPM.beta_pv)
+
+    def update_measurement(self, model_key, value):
+        reason = None
+        if model_key == pBPM.energy_key:
+            reason = pBPM.energy_pv
+        if model_key == pBPM.beta_key:
+            reason = pBPM.beta_pv
+        if reason is not None:
+            *_, transform, noise = self.measurements[reason]
+            self.setParam(reason, noise.add_noise(transform.raw(value)))
+
+
 class Droid(Device):
     # Here is the only place we have raw PV suffix.
     # So if it's changed you need to modify one line
