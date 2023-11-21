@@ -113,4 +113,4 @@ if __name__ == '__main__':
         sleep_time = max(0.0, REP_RATE - loop_time_taken)
         time.sleep(sleep_time)
 
-    print('Exiting. Thank you for using our epics server!')
+    print('Exiting. Thank you for using our virtual accelerator!')

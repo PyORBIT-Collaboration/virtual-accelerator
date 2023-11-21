@@ -242,8 +242,9 @@ class Server:
         self.pv_db = self.pv_db | pvs
         self.measurement_map = self.measurement_map | mmap
 
+        device_name = device.name
         model_name = device.model_name
-        self.model_map = self.model_map | {model_name: device}
+        self.model_map = self.model_map | {device_name: model_name}
 
         device.server = self
         self.devices.append(device)
@@ -281,10 +282,13 @@ class Server:
         return result
 
     def update_measurements(self, measurements):
-        for model_device, model_params in measurements.items():
-            device = self.model_map[model_device]
-            for model_key, value in model_params.items():
-                device.update_measurement(model_key, value)
+        for device in self.devices:
+            device_name = device.name
+            model_name = self.model_map[device_name]
+            if model_name in measurements:
+                model_params = measurements[model_name]
+                for model_key, value in model_params.items():
+                    device.update_measurement(model_key, value)
 
     def update_readbacks(self):
         for device in self.devices:
