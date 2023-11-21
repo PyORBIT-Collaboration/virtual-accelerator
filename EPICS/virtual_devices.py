@@ -5,7 +5,6 @@ import argparse
 from datetime import datetime, timedelta
 
 from ca_server import Server, Device, AbsNoise, LinearT, PhaseT, not_ctrlc, PhaseTInv
-from interface_lib import PyorbitElement
 
 PRINT_DELTA = timedelta(seconds=1)
 RESET_DELTA = timedelta(seconds=5)

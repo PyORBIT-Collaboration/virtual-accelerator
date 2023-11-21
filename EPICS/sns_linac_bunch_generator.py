@@ -77,7 +77,7 @@ class SNS_Linac_BunchGenerator:
         """
         self.beam_current = current
 
-    def getBunch(self, nParticles=0, distributorClass=WaterBagDist3D, cut_off=-1.0):
+    def getBunch(self, nParticles=0, distributorClass=GaussDist3D, cut_off=-1.0):
         """
         Returns the pyORBIT bunch with particular number of particles.
         """

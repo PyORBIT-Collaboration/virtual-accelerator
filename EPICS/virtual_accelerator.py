@@ -1,10 +1,7 @@
 # Channel access server used to generate fake PV signals analogous to accelerator components.
 # The main body of the script instantiates PVs from a file passed by command line argument.
 import json
-import math
-import sys
 import time
-from pathlib import Path
 import argparse
 
 from orbit.core.bunch import Bunch
