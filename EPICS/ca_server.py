@@ -134,8 +134,13 @@ class AbsNoise(Noise):
 
 class Device:
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, pv_name, model_name=None):
+        self.name = pv_name
+        if model_name is None:
+            self.model_name = pv_name
+        else:
+            self.model_name = model_name
+
         self.server = None
         self.__db_dictionary__ = {}
 
@@ -164,6 +169,13 @@ class Device:
     def get_setting(self, reason):
         *_, transform, _ = self.settings[reason]
         return transform.real(self.getParam(reason))
+
+    def get_settings(self):
+        params_dict = {}
+        for setting in self.settings:
+            param_input_dict = self.get_setting(setting)
+            params_dict = params_dict | param_input_dict
+        return params_dict
 
     def update_measurement(self, reason, value):
         *_, transform, noise = self.measurements[reason]
@@ -210,6 +222,8 @@ class Server:
         self.measurement_map = {}
         self.devices = []
 
+        self.model_map = {}
+
     def _CA_events(self, server):
         while True:
             server.process(0.1)
@@ -227,6 +241,10 @@ class Server:
         pvs, mmap = device.build_db()
         self.pv_db = self.pv_db | pvs
         self.measurement_map = self.measurement_map | mmap
+
+        device_name = device.name
+        model_name = device.model_name
+        self.model_map = self.model_map | {device_name: model_name}
 
         device.server = self
         self.devices.append(device)
@@ -260,13 +278,21 @@ class Server:
     def get_settings(self):
         result = {}
         for device in self.devices:
-            result = result | {f'{device.name}:{k}': device.get_setting(k) for k in device.settings}
+            result = result | {device.model_name: device.get_settings()}
         return result
 
     def update_measurements(self, measurements):
-        for k, v in measurements.items():
-            device, reason = self.measurement_map[k]
-            device.update_measurement(reason, v)
+        for device in self.devices:
+            device_name = device.name
+            model_name = self.model_map[device_name]
+            if model_name in measurements:
+                model_params = measurements[model_name]
+                for model_key, value in model_params.items():
+                    device.update_measurement(model_key, value)
+
+    def update_readbacks(self):
+        for device in self.devices:
+            device.update_readbacks()
 
     def set_params(self, values: dict, timestamp=None):
         for k, v in values.items():

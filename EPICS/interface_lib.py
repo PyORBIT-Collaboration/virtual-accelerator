@@ -8,15 +8,162 @@ from server_child_nodes import BPMclass
 
 
 class PyorbitElementTypes:
+    # Class check definitions
+    optic_classes = (Quad, RF_Cavity, MarkerLinacNode, DCorrectorV, DCorrectorH)
+    diagnostic_classes = (MarkerLinacNode, BPMclass)
+
+    # Parameters for model to pass
+    quad_params = ['dB/dr']
+    corrector_params = ['B']
+    cavity_params = ['phase', 'amp']
+    bpm_params = ['x_avg', 'y_avg', 'phi_avg', 'energy', 'beta']
+
+    # Dictionary to keep the above parameters with their designated classes
+    param_ref_dict = {Quad: quad_params, RF_Cavity: cavity_params, DCorrectorV: corrector_params,
+                      DCorrectorH: corrector_params, BPMclass: bpm_params}
+
+    # Type hint definitions
     node_classes = Union[Quad, BaseRF_Gap, MarkerLinacNode]
     cavity_classes = RF_Cavity
     child_classes = Union[DCorrectorV, DCorrectorH, BPMclass]
+
+    # type_hint for all classes
+    pyorbit_classes = Union[node_classes, child_classes, cavity_classes]
+
+
+class PyorbitElement:
+
+    def __init__(self, element):
+        self.element = element
+        self.params_dict_override = element.getParamsDict()
+
+        if isinstance(element, PyorbitElementTypes.optic_classes):
+            self.is_optic_bool = True
+        elif isinstance(element, PyorbitElementTypes.diagnostic_classes):
+            self.is_optic_bool = False
+        else:
+            print("Element isn't defined as optic or diagnostic.")
+
+    def get_name(self) -> str:
+        name = self.element.getName()
+        return name
+
+    def get_parameter_dict(self) -> dict[str,]:
+        element = self.element
+        element_class = type(element)
+        modeled_params = PyorbitElementTypes.param_ref_dict[element_class]
+        params_out_dict = {key: element.getParamsDict()[key] for key in modeled_params}
+        return params_out_dict
+
+    def set_parameter_dict(self, new_params: dict) -> None:
+        element = self.element
+        element_class = type(element)
+        modeled_params = PyorbitElementTypes.param_ref_dict[element_class]
+        new_params_fixed = {key: new_params[key] for key in modeled_params}
+        element.setParamsDict(new_params_fixed)
+
+        bad_params = set(new_params.keys()) - set(modeled_params)
+        if bad_params:
+            print(f'The following parameters are not in the "{element_class.__name__}" model: {", ".join(bad_params)}.')
+
+    def get_parameter(self, param_key: str):
+        element = self.element
+        element_class = type(element)
+        modeled_params = PyorbitElementTypes.param_ref_dict[element_class]
+        if param_key in modeled_params:
+            param = element.getParam(param_key)
+            return param
+        else:
+            print(f'The key "{param_key}" is not in the "{element_class.__name__}" model.')
+
+    def set_parameter(self, param_key: str, new_param) -> None:
+        element = self.element
+        element_class = type(element)
+        modeled_params = PyorbitElementTypes.param_ref_dict[element_class]
+        if param_key in modeled_params:
+            element.setParam(param_key, new_param)
+        else:
+            print(f'The key "{param_key}" is not in the "{element_class.__name__}" model.')
+
+    def is_optic(self) -> bool:
+        return self.is_optic_bool
+
+
+class PyorbitNode(PyorbitElement):
+    node_types = PyorbitElementTypes.node_classes
+
+    def __init__(self, node: node_types):
+        super().__init__(node)
+        self.node = node
+        self.params_dict_override = node.getParamsDict()
+
+    def get_element(self) -> node_types:
+        return self.node
+
+    def get_position(self) -> float:
+        position = self.node.getPosition()
+        return position
+
+    def get_tracking_node(self) -> node_types:
+        return self.node
+
+
+class PyorbitCavity(PyorbitElement):
+    cavity_type = PyorbitElementTypes.cavity_classes
+    rf_gap_type = PyorbitElementTypes.node_classes
+
+    def __init__(self, cavity: cavity_type):
+        super().__init__(cavity)
+        self.cavity = cavity
+        self.params_dict_override = cavity.getParamsDict()
+
+    def get_element(self) -> cavity_type:
+        return self.cavity
+
+    def get_first_node(self) -> rf_gap_type:
+        first_node = self.cavity.getRF_GapNodes()[0]
+        return first_node
+
+    def get_tracking_node(self) -> rf_gap_type:
+        first_node = self.get_first_node()
+        return first_node
+
+    def get_position(self) -> float:
+        position = self.cavity.getRF_GapNodes()[0].getPosition()
+        return position
+
+
+class PyorbitChild(PyorbitElement):
+    child_types = PyorbitElementTypes.child_classes
+    node_types = PyorbitElementTypes.node_classes
+
+    def __init__(self, child: child_types, ancestor_node: node_types):
+        super().__init__(child)
+        self.child = child
+        self.ancestor_node = ancestor_node
+        self.params_dict_override = child.getParamsDict()
+
+    def get_element(self) -> child_types:
+        return self.child
+
+    def get_ancestor_node(self) -> node_types:
+        return self.ancestor_node
+
+    def get_tracking_node(self) -> node_types:
+        return self.ancestor_node
+
+    def get_position(self) -> float:
+        position = self.ancestor_node.getPosition()
+        return position
 
 
 class PyorbitLibrary:
-    node_classes = Union[Quad, BaseRF_Gap, MarkerLinacNode]
-    cavity_classes = RF_Cavity
-    child_classes = Union[DCorrectorV, DCorrectorH, BPMclass]
+    node_classes = PyorbitElementTypes.node_classes
+    cavity_classes = PyorbitElementTypes.cavity_classes
+    child_classes = PyorbitElementTypes.child_classes
+    pyorbit_classes = PyorbitElementTypes.pyorbit_classes
+
+    element_ref_hint = Union[PyorbitNode, PyorbitCavity, PyorbitChild]
 
     def __init__(self, acc_lattice: LinacAccLattice, ignored_nodes=None):
         if ignored_nodes is None:
@@ -28,7 +175,7 @@ class PyorbitLibrary:
         # This way, children nodes (correctors) and RF Cavity parameters are easy to reference.
 
         self.acc_lattice = acc_lattice
-        element_dict_hint = Dict[str, PyorbitElement]
+        element_dict_hint = Dict[str, self.element_ref_hint]
         element_dict: element_dict_hint = {}
 
         def add_child_nodes(ancestor_node, children_nodes, element_dictionary):
@@ -63,13 +210,16 @@ class PyorbitLibrary:
 
         self.pyorbit_dictionary = element_dict
 
-    def get_element_reference(self, pyorbit_name: str) -> "PyorbitElement":
+    def get_element_names(self) -> list[str]:
+        return list(self.pyorbit_dictionary.keys())
+
+    def get_element_reference(self, pyorbit_name: str) -> element_ref_hint:
         return self.pyorbit_dictionary[pyorbit_name]
 
-    def get_element_dictionary(self) -> dict[str, "PyorbitElement"]:
+    def get_element_dictionary(self) -> dict[str, element_ref_hint]:
         return self.pyorbit_dictionary
 
-    def get_element(self, pyorbit_name: str) -> Union[node_classes, cavity_classes, child_classes]:
+    def get_element(self, pyorbit_name: str) -> pyorbit_classes:
         element = self.pyorbit_dictionary[pyorbit_name].get_element()
         return element
 
@@ -90,7 +240,7 @@ class PyorbitLibrary:
         element_index = self.acc_lattice.getNodeIndex(location_node)
         return element_index
 
-    def get_element_parameters(self, pyorbit_name: str) -> dict[str,]:
+    def get_element_parameters(self, pyorbit_name: str) -> dict[str, ]:
         params_dict = self.pyorbit_dictionary[pyorbit_name].get_parameter_dict()
         return params_dict
 
@@ -103,274 +253,3 @@ class PyorbitLibrary:
 
     def set_element_parameter(self, pyorbit_name: str, param_key: str, new_param) -> None:
         self.pyorbit_dictionary[pyorbit_name].set_parameter(param_key, new_param)
-
-
-class PyorbitElement:
-
-    def __init__(self, element):
-        self.element = element
-        self.params_dict_override = element.getParamsDict()
-
-    def get_element(self):
-        return self.element
-
-    def get_tracking_node(self):
-        return self.element
-
-    def get_name(self) -> str:
-        name = self.element.getName()
-        return name
-
-    def get_position(self) -> float:
-        position = self.element.getPosition()
-        return position
-
-    def get_parameter_dict(self) -> dict[str,]:
-        params_dict = self.element.getParamsDict()
-        return params_dict
-
-    def set_parameter_dict(self, new_params: dict) -> None:
-        element = self.element
-        element.setParamsDict(new_params)
-        self.params_dict_override = new_params
-
-    def get_parameter(self, param_key: str):
-        param = self.element.getParam(param_key)
-        return param
-
-    def set_parameter(self, param_key: str, new_param) -> None:
-        self.element.setParam(param_key, new_param)
-
-
-class PyorbitNode(PyorbitElement):
-    node_types = PyorbitElementTypes.node_classes
-
-    def __init__(self, node: node_types):
-        super().__init__(node)
-        self.node = node
-        self.params_dict_override = node.getParamsDict()
-
-    def get_element(self) -> node_types:
-        return self.node
-
-    def get_tracking_node(self) -> node_types:
-        return self.node
-
-    def get_name(self) -> str:
-        name = self.node.getName()
-        return name
-
-    def get_position(self) -> float:
-        position = self.node.getPosition()
-        return position
-
-    def get_parameter_dict(self) -> dict[str,]:
-        params_dict = self.node.getParamsDict()
-        return params_dict
-
-    def set_parameter_dict(self, new_params: dict) -> None:
-        node = self.node
-        node.setParamsDict(new_params)
-        self.params_dict_override = new_params
-
-    def get_parameter(self, param_key: str):
-        param = self.node.getParam(param_key)
-        return param
-
-    def set_parameter(self, param_key: str, new_param) -> None:
-        self.node.setParam(param_key, new_param)
-
-
-class PyorbitCavity(PyorbitElement):
-    cavity_type = PyorbitElementTypes.cavity_classes
-    rf_gap_type = PyorbitElementTypes.node_classes
-
-    def __init__(self, cavity: cavity_type):
-        super().__init__(cavity)
-        self.cavity = cavity
-        self.params_dict_override = cavity.getParamsDict()
-
-    def get_element(self) -> cavity_type:
-        return self.cavity
-
-    def get_first_node(self) -> rf_gap_type:
-        first_node = self.cavity.getRF_GapNodes()[0]
-        return first_node
-
-    def get_tracking_node(self) -> rf_gap_type:
-        first_node = self.get_first_node()
-        return first_node
-
-    def get_position(self) -> float:
-        position = self.cavity.getRF_GapNodes()[0].getPosition()
-        return position
-
-    def get_parameter_dict(self) -> dict[str,]:
-        params_dict = self.cavity.getParamsDict()
-        if params_dict['blanked'] != 0:
-            params_dict['amp'] = self.params_dict_override['amp']
-        return params_dict
-
-    def set_parameter_dict(self, new_params: dict) -> None:
-        cavity = self.cavity
-        cavity.setParamsDict(new_params)
-        self.params_dict_override = new_params
-        if cavity.getParam('blanked') != 0:
-            cavity.setAmp(0.0)
-
-    def get_parameter(self, param_key: str):
-        cavity = self.cavity
-        if param_key == 'amp' and cavity.getParam('blanked') != 0:
-            param = self.params_dict_override[param_key]
-        else:
-            param = cavity.getParam(param_key)
-        return param
-
-    def set_parameter(self, param_key: str, new_param) -> None:
-        cavity = self.cavity
-        cavity.setParam(param_key, new_param)
-        if cavity.getParam('blanked') != 0:
-            cavity.setAmp(0.0)
-
-
-class PyorbitChild(PyorbitElement):
-    child_types = PyorbitElementTypes.child_classes
-    node_types = PyorbitElementTypes.node_classes
-
-    def __init__(self, child: child_types, ancestor_node: node_types):
-        super().__init__(child)
-        self.child = child
-        self.ancestor_node = ancestor_node
-        self.params_dict_override = child.getParamsDict()
-
-    def get_element(self) -> child_types:
-        return self.child
-
-    def get_ancestor_node(self) -> node_types:
-        return self.ancestor_node
-
-    def get_tracking_node(self) -> node_types:
-        return self.ancestor_node
-
-    def get_name(self) -> str:
-        name = self.child.getName()
-        return name
-
-    def get_position(self) -> float:
-        position = self.ancestor_node.getPosition()
-        return position
-
-    def get_parameter_dict(self) -> dict[str,]:
-        params_dict = self.child.getParamsDict()
-        return params_dict
-
-    def set_parameter_dict(self, new_params: dict) -> None:
-        child = self.child
-        child.setParamsDict(new_params)
-        self.params_dict_override = new_params
-
-    def get_parameter(self, param_key: str):
-        param = self.child.getParam(param_key)
-        return param
-
-    def set_parameter(self, param_key: str, new_param) -> None:
-        self.child.setParam(param_key, new_param)
-
-
-class PVLibrary:
-    allowed_pv_types = {'setting', 'readback', 'diagnostic', 'physics'}
-
-    def __init__(self, pyorbit_element_library: PyorbitLibrary):
-        self.pyorbit_library = pyorbit_element_library
-        pv_dict_hint = Dict[str, PVReference]
-        self.pv_dict: pv_dict_hint = {}
-
-    def add_pv(self, pv_name: str, pv_type: str, pyorbit_name: str, param_key: str):
-        if pv_type not in self.allowed_pv_types:
-            print('"' + pv_type + '" is not a recognized PV type.')
-            # Need to check if element and key exist
-        else:
-            pyorbit_element = self.pyorbit_library.get_element_reference(pyorbit_name)
-            new_pv = PVReference(pv_type, pyorbit_element, param_key)
-            self.pv_dict[pv_name] = new_pv
-
-    def get_pv_ref(self, pv_name: str) -> "PVReference":
-        return self.pv_dict[pv_name]
-
-    def get_pv_dictionary(self) -> dict[str, "PVReference"]:
-        return self.pv_dict
-
-    def get_pvs(self) -> dict[str,]:
-        pv_dict = {}
-        for key, pv_ref in self.pv_dict.items():
-            value = pv_ref.get_value()
-            pv_dict[key] = value
-        return pv_dict
-
-    def set_pvs(self, new_values: dict) -> None:
-        for key, new_value in new_values.items():
-            self.pv_dict[key].set_value(new_value)
-
-    def get_pv(self, pv_name: str):
-        value = self.pv_dict[pv_name].get_value()
-        return value
-
-    def set_pv(self, pv_name: str, new_value) -> None:
-        self.pv_dict[pv_name].set_value(new_value)
-
-    def get_pv_type(self, pv_name: str) -> str:
-        pv_type = self.pv_dict[pv_name].get_type()
-        return pv_type
-
-    def get_pyorbit_name(self, pv_name: str) -> str:
-        element_name = self.pv_dict[pv_name].get_pyorbit_element_name()
-        return element_name
-
-    def get_pyorbit_reference(self, pv_name: str) -> "PyorbitElement":
-        element_ref = self.pv_dict[pv_name].get_pyorbit_element_ref()
-        return element_ref
-
-    def order_pvs(self):
-        pv_dict = self.pv_dict
-        temp_dict = {}
-        for key, pv_ref in pv_dict.items():
-            element_name = pv_ref.get_pyorbit_element_name()
-            index = self.pyorbit_library.get_element_index(element_name)
-            temp_dict[key] = index
-        temp_dict = dict(sorted(temp_dict.items(), key=lambda item: item[1]))
-        sorted_pv_dict = {}
-        for key, position in temp_dict.items():
-            sorted_pv_dict[key] = pv_dict[key]
-        self.pv_dict = sorted_pv_dict
-
-
-class PVReference:
-
-    def __init__(self, pv_type: str, element_ref: "PyorbitElement", param_key: str):
-
-        self.pv_type = pv_type
-        self.param_key = param_key
-        self.element_ref = element_ref
-
-    def get_value(self):
-        param = self.element_ref.get_parameter(self.param_key)
-        return param
-
-    def set_value(self, new_value) -> None:
-        if self.pv_type == 'setting':
-            self.element_ref.set_parameter(self.param_key, new_value)
-        else:
-            print("Invalid PV type. PV type must include 'setting' to change its value.")
-
-    def get_type(self) -> str:
-        return self.pv_type
-
-    def get_param_key(self) -> str:
-        return self.param_key
-
-    def get_pyorbit_element_name(self) -> str:
-        pyorbit_name = self.element_ref.get_name()
-        return pyorbit_name
-
-    def get_pyorbit_element_ref(self) -> "PyorbitElement":
-        return self.element_ref
