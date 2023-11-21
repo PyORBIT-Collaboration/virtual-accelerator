@@ -11,7 +11,7 @@ from orbit.core.bunch import Bunch
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
 from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
 
-from ca_server import Server, epics_now, not_ctrlc, Device, AbsNoise, PhaseT, LinearT, PhaseTInv
+from ca_server import Server, epics_now, not_ctrlc
 from virtual_devices import Cavity, BPM, Quadrupole, Corrector, pBPM
 
 from pyorbit_server_interface import OrbitModel
@@ -53,10 +53,14 @@ if __name__ == '__main__':
     with open(args.file, "r") as json_file:
         devices_dict = json.load(json_file)
 
+    with open('va_offsets.json', "r") as json_file:
+        offset_dict = json.load(json_file)
+
     for device_type, devices in devices_dict.items():
         if device_type == "Cavities":
             for pv_name, model_name in devices.items():
                 initial_settings = model.get_settings(model_name)[model_name]
+                phase_offset = offset_dict[pv_name]
                 rf_device = Cavity(pv_name, model_name, initial_settings)
                 server.add_device(rf_device)
 
@@ -74,7 +78,8 @@ if __name__ == '__main__':
 
         if device_type == "BPMs":
             for pv_name, model_name in devices.items():
-                bpm_device = BPM(pv_name, model_name)
+                phase_offset = offset_dict[pv_name]
+                bpm_device = BPM(pv_name, model_name, phase_offset)
                 server.add_device(bpm_device)
 
         if device_type == "PBPMs":

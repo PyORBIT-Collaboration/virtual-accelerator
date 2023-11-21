@@ -97,7 +97,7 @@ class Cavity(Device):
     phase_key = 'phase'
     amp_key = 'amp'
 
-    def __init__(self, pv_name: str, model_name: str, initial_dict=None):
+    def __init__(self, pv_name: str, model_name: str, initial_dict=None, phase_offset=None):
         super().__init__(pv_name, model_name)
         self.model_name = model_name
 
@@ -108,12 +108,13 @@ class Cavity(Device):
             initial_phase = 180
             initial_amp = 1.0
 
-        rand_offset = (2 * random() - 1) * 180
-        phase_offset = PhaseTInv(offset=rand_offset, scaler=180 / math.pi)
-        initial_phase = phase_offset.raw(initial_phase)
+        if phase_offset is None:
+            phase_offset = (2 * random() - 1) * 180
+        offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
+        initial_phase = offset_transform.raw(initial_phase)
 
         # enum setting with default and no transforms
-        self.register_setting(Cavity.phase_pv, default=initial_phase, transform=phase_offset)
+        self.register_setting(Cavity.phase_pv, default=initial_phase, transform=offset_transform)
         self.register_setting(Cavity.amp_pv, default=initial_amp)
         self.register_setting(Cavity.blank_pv, default=0.0)
 
@@ -150,18 +151,19 @@ class BPM(Device):
     y_key = 'y_avg'
     phase_key = 'phi_avg'
 
-    def __init__(self, pv_name: str, model_name: str):
+    def __init__(self, pv_name: str, model_name: str, phase_offset=None):
         super().__init__(pv_name, model_name)
 
         xy_noise = AbsNoise(noise=1e-8)
         phase_noise = AbsNoise(noise=1e-4)
 
-        rand_offset = (2 * random() - 1) * 180
-        phase_offset = PhaseTInv(offset=rand_offset, scaler=180 / math.pi)
+        if phase_offset is None:
+            phase_offset = (2 * random() - 1) * 180
+        offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
 
         self.register_measurement(BPM.x_pv, noise=xy_noise)
         self.register_measurement(BPM.y_pv, noise=xy_noise)
-        self.register_measurement(BPM.phase_pv, noise=phase_noise, transform=phase_offset)
+        self.register_measurement(BPM.phase_pv, noise=phase_noise, transform=offset_transform)
 
     def update_measurement(self, model_key, value):
         reason = None
