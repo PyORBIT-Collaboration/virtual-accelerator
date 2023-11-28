@@ -75,9 +75,7 @@ if __name__ == '__main__':
 
         if device_type == "Wire_Scanners":
             for pv_name, model_name in devices.items():
-                initial_settings = model.get_settings(model_name)[model_name]
-                initial_settings = initial_settings | {'wire_position': -10}
-                ws_device = WireScanner(pv_name, model_name, initial_settings)
+                ws_device = WireScanner(pv_name, model_name)
                 server.add_device(ws_device)
 
         if device_type == "BPMs":

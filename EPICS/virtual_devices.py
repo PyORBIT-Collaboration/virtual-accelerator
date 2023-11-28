@@ -1,15 +1,10 @@
+import time
 import math
 from random import randint, random
-from time import sleep
-import argparse
-from datetime import datetime, timedelta
 
 import numpy as np
 
-from ca_server import Server, Device, AbsNoise, LinearT, PhaseT, not_ctrlc, PhaseTInv
-
-PRINT_DELTA = timedelta(seconds=1)
-RESET_DELTA = timedelta(seconds=5)
+from ca_server import Device, AbsNoise, LinearT, PhaseT, not_ctrlc, PhaseTInv
 
 
 class Quadrupole(Device):
@@ -187,25 +182,57 @@ class WireScanner(Device):
     # Here is the only place we have raw PV suffix.
     # So if it's changed you need to modify one line
     current_pv = 'Current'
-    position_pv = 'Position'
+    position_pv = 'Position_Set'
+    position_readback_pv = 'Position'
+    speed_pv = 'Speed_Set'
 
     x_key = 'x_histogram'
     y_key = 'y_histogram'
     position_key = 'wire_position'
+    speed_key = 'wire_speed'
 
     def __init__(self, pv_name: str, model_name: str, initial_dict=None):
         super().__init__(pv_name, model_name)
 
         if initial_dict is not None:
             initial_position = initial_dict[WireScanner.position_key]
+            initial_speed = initial_dict[WireScanner.speed_key]
         else:
             initial_position = -10
+            initial_speed = 0.001  # m/s
 
-        xy_noise = AbsNoise(noise=1e-8)
+        self.last_wire_pos = initial_position
+        self.last_wire_time = time.time()
+        self.wire_speed = initial_speed
+
+        xy_noise = AbsNoise(noise=1e-9)
 
         self.register_measurement(WireScanner.current_pv, noise=xy_noise)
 
-        self.register_setting(WireScanner.position_pv, default=initial_position)
+        self.register_setting(WireScanner.speed_pv, default=initial_speed)
+        self.register_setting(WireScanner.position_pv, default=initial_position,
+                              reason_rb=WireScanner.position_readback_pv)
+
+    def get_wire_position(self):
+        last_pos = self.last_wire_pos
+        last_time = self.last_wire_time
+        wire_speed = self.get_setting(WireScanner.speed_pv)[WireScanner.speed_key]
+        pos_goal = self.get_setting(WireScanner.position_pv)[WireScanner.position_key]
+        direction = np.sign(pos_goal - last_pos)
+        current_time = time.time()
+
+        wire_pos = direction * wire_speed * (current_time - last_time) + last_pos
+        if last_pos == pos_goal:
+            wire_pos = pos_goal
+        elif direction < 0 and wire_pos < pos_goal:
+            wire_pos = pos_goal
+        elif direction > 0 and wire_pos > pos_goal:
+            wire_pos = pos_goal
+
+        self.last_wire_time = current_time
+        self.last_wire_pos = wire_pos
+
+        return wire_pos
 
     def get_setting(self, reason):
         *_, transform, _ = self.settings[reason]
@@ -213,10 +240,23 @@ class WireScanner(Device):
         if reason == WireScanner.position_pv:
             model_value = transform.real(self.getParam(reason))
             model_dict[WireScanner.position_key] = model_value
-            return model_dict
+        if reason == WireScanner.speed_pv:
+            model_value = transform.real(self.getParam(reason))
+            model_dict[WireScanner.speed_key] = model_value
+        return model_dict
+
+    def update_readback(self, reason):
+        value = None
+        if reason == WireScanner.position_pv:
+            value = WireScanner.get_wire_position(self)
+
+        if value is not None:
+            *_, reason_rb, transform, noise = self.settings[reason]
+            self.setParam(reason_rb, transform.raw(noise.add_noise(value)))
 
     def update_measurement(self, model_key, model_value):
-        wire_pos = self.get_setting(WireScanner.position_pv)[WireScanner.position_key]
+        wire_pos = WireScanner.get_wire_position(self)
+
         reason = None
         virtual_value = None
         if model_key == WireScanner.x_key:
