@@ -17,7 +17,7 @@ class PyorbitElementTypes:
     corrector_params = ['B']
     cavity_params = ['phase', 'amp']
     bpm_params = ['x_avg', 'y_avg', 'phi_avg', 'energy', 'beta']
-    ws_params = ['x_positions', 'y_positions', 'wire_thickness']
+    ws_params = ['x_histogram', 'y_histogram']
 
     # Dictionary to keep the above parameters with their designated classes
     param_ref_dict = {Quad: quad_params, RF_Cavity: cavity_params, DCorrectorV: corrector_params,

@@ -4,6 +4,8 @@ from time import sleep
 import argparse
 from datetime import datetime, timedelta
 
+import numpy as np
+
 from ca_server import Server, Device, AbsNoise, LinearT, PhaseT, not_ctrlc, PhaseTInv
 
 PRINT_DELTA = timedelta(seconds=1)
@@ -187,22 +189,17 @@ class WireScanner(Device):
     current_pv = 'Current'
     position_pv = 'Position'
 
-    x_key = 'x_positions'
-    y_key = 'y_positions'
+    x_key = 'x_histogram'
+    y_key = 'y_histogram'
     position_key = 'wire_position'
-    thick_key = 'wire_thickness'
 
     def __init__(self, pv_name: str, model_name: str, initial_dict=None):
         super().__init__(pv_name, model_name)
 
         if initial_dict is not None:
             initial_position = initial_dict[WireScanner.position_key]
-            wire_thickness = initial_dict[WireScanner.thick_key]
         else:
             initial_position = -10
-            wire_thickness = 10e-6
-
-        self.wire_thickness = wire_thickness
 
         xy_noise = AbsNoise(noise=1e-8)
 
@@ -220,22 +217,14 @@ class WireScanner(Device):
 
     def update_measurement(self, model_key, model_value):
         wire_pos = self.get_setting(WireScanner.position_pv)[WireScanner.position_key]
-        wire_thick = self.wire_thickness
         reason = None
         virtual_value = None
-
         if model_key == WireScanner.x_key:
-            virtual_value = 0
-            for part_pos in model_value:
-                if abs(part_pos - wire_pos) <= wire_thick:
-                    virtual_value += 1
+            virtual_value = np.interp(wire_pos, model_value[:, 0], model_value[:, 1])
             reason = WireScanner.current_pv
 
         if model_key == WireScanner.y_key:
-            virtual_value = 0
-            for part_pos in model_value:
-                if abs(part_pos - wire_pos) <= wire_thick:
-                    virtual_value += 1
+            virtual_value = np.interp(wire_pos, model_value[:, 0], model_value[:, 1])
             reason = WireScanner.current_pv
 
         if reason is not None:

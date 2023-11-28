@@ -23,7 +23,7 @@ class OrbitModel:
                 if 'BPM' in node_name:
                     node.addChildNode(BPMclass(node_name), node.ENTRANCE)
                 if 'WS' in node_name:
-                    node.addChildNode(WSclass(node_name, 10e-6), node.ENTRANCE)
+                    node.addChildNode(WSclass(node_name), node.ENTRANCE)
 
         # Set up a dictionary to reference different objects within the lattice by their name.
         # This way, children nodes (correctors) and RF Cavity parameters are easy to reference.
