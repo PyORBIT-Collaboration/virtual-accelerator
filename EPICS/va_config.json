@@ -235,6 +235,14 @@
         "HEBT_Mag:PS_DCV07": "HEBT_Mag:DCV07",
         "HEBT_Mag:PS_DCH08": "HEBT_Mag:DCH08"
     },
+    "Wire_Scanners": {
+        "SCL_Diag:WS00": "SCL_Diag:WS00",
+        "HEBT_Diag:WS01": "HEBT_Diag:WS01",
+        "HEBT_Diag:WS02": "HEBT_Diag:WS02",
+        "HEBT_Diag:WS03": "HEBT_Diag:WS03",
+        "HEBT_Diag:WS04": "HEBT_Diag:WS04",
+        "HEBT_Diag:WS09": "HEBT_Diag:WS09"
+    },
     "BPMs": {
         "SCL_Diag:BPM00a": "SCL_Diag:BPM00a",
         "SCL_Diag:BPM00b": "SCL_Diag:BPM00b",

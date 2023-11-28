@@ -1,5 +1,7 @@
 import math
 from typing import Dict
+
+import numpy as np
 from orbit.core.bunch import Bunch
 
 
@@ -57,6 +59,54 @@ class BPMclass:
 
     def getBeta(self):
         return self.parameters['beta']
+
+    def getParam(self, param: str):
+        return self.parameters[param]
+
+    def getParamsDict(self) -> dict:
+        return self.parameters
+
+    def getType(self):
+        return self.node_type
+
+    def getName(self):
+        return self.child_name
+
+    def getAllChildren(self):
+        return []
+
+
+class WSclass:
+    def __init__(self, child_name: str, wire_thickness: float):
+        self.parameters = {'x_positions': np.zeros(0), 'y_positions': np.zeros(0), 'wire_thickness': wire_thickness}
+        self.child_name = child_name
+        self.node_type = 'WireScanner'
+
+    def trackActions(self, actionsContainer, paramsDict):
+        bunch = paramsDict["bunch"]
+        part_num = bunch.getSizeGlobal()
+        x_array = np.zeros(part_num)
+        y_array = np.zeros(part_num)
+        if part_num > 0:
+            WS_name = paramsDict["parentNode"].getName()
+            sync_part = bunch.getSyncParticle()
+            sync_beta = sync_part.beta()
+            sync_energy = sync_part.kinEnergy()
+            for n in range(part_num):
+                x, y, z = bunch.x(n), bunch.y(n), bunch.z(n)
+                x_array[n] = x
+                y_array[n] = y
+            self.parameters['x_positions'] = x_array
+            self.parameters['y_positions'] = y_array
+
+    def getXPositions(self):
+        return self.parameters['x_positions']
+
+    def getYPositions(self):
+        return self.parameters['y_positions']
+
+    def getWireThickness(self):
+        return self.parameters['wire_thickness']
 
     def getParam(self, param: str):
         return self.parameters[param]

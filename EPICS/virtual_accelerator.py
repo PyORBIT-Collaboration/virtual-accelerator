@@ -9,7 +9,7 @@ from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, 
 from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
 
 from ca_server import Server, epics_now, not_ctrlc
-from virtual_devices import Cavity, BPM, Quadrupole, Corrector, pBPM
+from virtual_devices import Cavity, BPM, Quadrupole, Corrector, pBPM, WireScanner
 
 from pyorbit_server_interface import OrbitModel
 
@@ -72,6 +72,13 @@ if __name__ == '__main__':
                 initial_settings = model.get_settings(model_name)[model_name]
                 corrector_device = Corrector(pv_name, model_name, initial_settings)
                 server.add_device(corrector_device)
+
+        if device_type == "Wire_Scanners":
+            for pv_name, model_name in devices.items():
+                initial_settings = model.get_settings(model_name)[model_name]
+                initial_settings = initial_settings | {'wire_position': -10}
+                ws_device = WireScanner(pv_name, model_name, initial_settings)
+                server.add_device(ws_device)
 
         if device_type == "BPMs":
             for pv_name, model_name in devices.items():

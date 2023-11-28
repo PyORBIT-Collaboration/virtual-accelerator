@@ -21,6 +21,7 @@ model = OrbitModel(model_lattice)
 devices = {'Cavities': {},
            'Quadrupoles': {},
            'Correctors': {},
+           'Wire_Scanners': {},
            'BPMs': {},
            'PBPMs': {}, }
 
@@ -39,6 +40,9 @@ for or_name, ele_ref in model.pyorbit_dict.get_element_dictionary().items():
         split_name = or_name.split(':')
         pv_name = f"{split_name[0]}:PS_{split_name[1]}"
         devices['Correctors'][pv_name] = or_name
+    elif 'WS' in or_name:
+        pv_name = or_name
+        devices['Wire_Scanners'][pv_name] = or_name
     elif 'BPM' in or_name:
         pv_name = or_name
         devices['BPMs'][pv_name] = or_name
