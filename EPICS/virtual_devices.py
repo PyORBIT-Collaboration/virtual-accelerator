@@ -1,13 +1,10 @@
+import time
 import math
 from random import randint, random
-from time import sleep
-import argparse
-from datetime import datetime, timedelta
 
-from ca_server import Server, Device, AbsNoise, LinearT, PhaseT, not_ctrlc, PhaseTInv
+import numpy as np
 
-PRINT_DELTA = timedelta(seconds=1)
-RESET_DELTA = timedelta(seconds=5)
+from ca_server import Device, AbsNoise, LinearT, PhaseT, not_ctrlc, PhaseTInv
 
 
 class Quadrupole(Device):
@@ -164,20 +161,118 @@ class BPM(Device):
         self.register_measurement(BPM.y_pv, noise=xy_noise)
         self.register_measurement(BPM.phase_pv, noise=phase_noise, transform=offset_transform)
 
-    def update_measurement(self, model_key, value):
+    def update_measurement(self, model_key, model_value):
         reason = None
+        virtual_value = None
         if model_key == BPM.x_key:
             reason = BPM.x_pv
+            virtual_value = model_value
         if model_key == BPM.y_key:
             reason = BPM.y_pv
+            virtual_value = model_value
         if model_key == BPM.phase_key:
             reason = BPM.phase_pv
+            virtual_value = model_value
         if reason is not None:
             *_, transform, noise = self.measurements[reason]
-            self.setParam(reason, noise.add_noise(transform.raw(value)))
+            self.setParam(reason, noise.add_noise(transform.raw(virtual_value)))
 
 
-class pBPM(Device):
+class WireScanner(Device):
+    # Here is the only place we have raw PV suffix.
+    # So if it's changed you need to modify one line
+    current_pv = 'Current'
+    position_pv = 'Position_Set'
+    position_readback_pv = 'Position'
+    speed_pv = 'Speed_Set'
+
+    x_key = 'x_histogram'
+    y_key = 'y_histogram'
+    position_key = 'wire_position'
+    speed_key = 'wire_speed'
+
+    def __init__(self, pv_name: str, model_name: str, initial_dict=None):
+        super().__init__(pv_name, model_name)
+
+        if initial_dict is not None:
+            initial_position = initial_dict[WireScanner.position_key]
+            initial_speed = initial_dict[WireScanner.speed_key]
+        else:
+            initial_position = -10
+            initial_speed = 0.001  # m/s
+
+        self.last_wire_pos = initial_position
+        self.last_wire_time = time.time()
+        self.wire_speed = initial_speed
+
+        xy_noise = AbsNoise(noise=1e-9)
+
+        self.register_measurement(WireScanner.current_pv, noise=xy_noise)
+
+        self.register_setting(WireScanner.speed_pv, default=initial_speed)
+        self.register_setting(WireScanner.position_pv, default=initial_position,
+                              reason_rb=WireScanner.position_readback_pv)
+
+    def get_wire_position(self):
+        last_pos = self.last_wire_pos
+        last_time = self.last_wire_time
+        wire_speed = self.get_setting(WireScanner.speed_pv)[WireScanner.speed_key]
+        pos_goal = self.get_setting(WireScanner.position_pv)[WireScanner.position_key]
+        direction = np.sign(pos_goal - last_pos)
+        current_time = time.time()
+
+        wire_pos = direction * wire_speed * (current_time - last_time) + last_pos
+        if last_pos == pos_goal:
+            wire_pos = pos_goal
+        elif direction < 0 and wire_pos < pos_goal:
+            wire_pos = pos_goal
+        elif direction > 0 and wire_pos > pos_goal:
+            wire_pos = pos_goal
+
+        self.last_wire_time = current_time
+        self.last_wire_pos = wire_pos
+
+        return wire_pos
+
+    def get_setting(self, reason):
+        *_, transform, _ = self.settings[reason]
+        model_dict = {}
+        if reason == WireScanner.position_pv:
+            model_value = transform.real(self.getParam(reason))
+            model_dict[WireScanner.position_key] = model_value
+        if reason == WireScanner.speed_pv:
+            model_value = transform.real(self.getParam(reason))
+            model_dict[WireScanner.speed_key] = model_value
+        return model_dict
+
+    def update_readback(self, reason):
+        value = None
+        if reason == WireScanner.position_pv:
+            value = WireScanner.get_wire_position(self)
+
+        if value is not None:
+            *_, reason_rb, transform, noise = self.settings[reason]
+            self.setParam(reason_rb, transform.raw(noise.add_noise(value)))
+
+    def update_measurement(self, model_key, model_value):
+        wire_pos = WireScanner.get_wire_position(self)
+
+        reason = None
+        virtual_value = None
+        if model_key == WireScanner.x_key:
+            virtual_value = np.interp(wire_pos, model_value[:, 0], model_value[:, 1])
+            reason = WireScanner.current_pv
+
+        if model_key == WireScanner.y_key:
+            virtual_value = np.interp(wire_pos, model_value[:, 0], model_value[:, 1])
+            reason = WireScanner.current_pv
+
+        if reason is not None:
+            *_, transform, noise = self.measurements[reason]
+            self.setParam(reason, noise.add_noise(transform.raw(virtual_value)))
+
+
+class PBPM(Device):
     # Here is the only place we have raw PV suffix.
     # So if it's changed you need to modify one line
     energy_pv = 'Energy'
@@ -189,130 +284,15 @@ class pBPM(Device):
     def __init__(self, pv_name: str, model_name: str):
         super().__init__(pv_name, model_name)
 
-        self.register_measurement(pBPM.energy_pv)
-        self.register_measurement(pBPM.beta_pv)
+        self.register_measurement(PBPM.energy_pv)
+        self.register_measurement(PBPM.beta_pv)
 
     def update_measurement(self, model_key, value):
         reason = None
-        if model_key == pBPM.energy_key:
-            reason = pBPM.energy_pv
-        if model_key == pBPM.beta_key:
-            reason = pBPM.beta_pv
+        if model_key == PBPM.energy_key:
+            reason = PBPM.energy_pv
+        if model_key == PBPM.beta_key:
+            reason = PBPM.beta_pv
         if reason is not None:
             *_, transform, noise = self.measurements[reason]
             self.setParam(reason, noise.add_noise(transform.raw(value)))
-
-
-class Droid(Device):
-    # Here is the only place we have raw PV suffix.
-    # So if it's changed you need to modify one line
-    BEEP = 'BeepFrequency'
-    LED = 'LED'
-
-    def __init__(self, name):
-        super().__init__(name)
-        # simplest measurement PV, definition is omitted => will be float
-        self.register_measurement(Droid.BEEP)
-        # enum setting with default and no transforms
-        self.register_setting(Droid.LED, {'type': 'enum', 'enums': ['OFF', 'ON']}, default=1)
-
-    def change_beeping_tone(self, new_frequency):
-        self.update_measurement(Droid.BEEP, new_frequency)
-
-
-class Jedi(Device):
-    COOL = 'Midichlorian'
-    BEARING = 'Bearing'
-    HAPPY = 'Happiness'
-
-    def __init__(self, name, initial_level=100, offset=0):
-        super().__init__(name)
-
-        # register setting without  readback but still with an offset
-        self.register_setting(Jedi.COOL, default=initial_level,
-                              transform=LinearT(offset=offset))
-
-        # register setting with a readback and noise for it
-        self.register_setting(Jedi.BEARING, default=180,
-                              transform=PhaseT(offset=80),
-                              reason_rb=Jedi.BEARING + 'Rb',
-                              noise=AbsNoise(1.0))
-
-        # There is no default HAPPY since it's a measurement
-        self.register_measurement(Jedi.HAPPY)
-
-    def get_level(self):
-        return self.get_setting(Jedi.COOL)
-
-    def happiness(self, value):
-        self.update_measurement(Jedi.HAPPY, value)
-
-
-parser = argparse.ArgumentParser(description='Run CA server')
-parser.add_argument('--prefix', '-p', default='example', type=str,
-                    help='Prefix for PVs')
-args = parser.parse_args()
-prefix = args.prefix + ':'
-
-if __name__ == '__main__':
-    server = Server(prefix)
-    yoda = server.add_device(Jedi('Yoda', 314, offset=30))
-    r2d2 = server.add_device(Droid('R2D2'))
-
-    # create another jedi indirectly
-    # the first element of the list is the class name (type)
-    # the rest elements are arguments for corresponding constructor (name, initial_level)
-    parameters = ['Jedi', 'Windu', 2718, 10]
-    windu = globals()[parameters[0]](*parameters[1:])
-    server.add_device(windu)
-
-    all_devices = [yoda, windu, r2d2]
-
-    print(server)
-    server.start()
-    # We can stop here, as a functional CA server is running and serving PVs for yoda, windu and r2d2.
-    # Client can caget, caput and camonitor their PVs.
-    # There is no interactions between them though.
-    # We can add it right here because the server.start() call was not blocking.
-
-    last_print = datetime.now()
-    last_reset = datetime.now()
-    while not_ctrlc():
-
-        # printout all PVs
-        # with period DELTA
-        now = datetime.now()
-        if now - last_print > PRINT_DELTA:
-            # server.get_params() gives all possible PVs
-            print(f'Params: {server.get_params()}')
-            last_print = now
-            for d in all_devices:
-                d.update_readbacks()
-
-        # reset all devices with another period
-        # uses gets all setting from the server in generic way
-        if now - last_reset > RESET_DELTA:
-            print(f'Setting before reset {server.get_settings()}')
-            for d in all_devices:
-                d.reset()
-            print(f'Setting after reset {server.get_settings()}')
-            last_reset = now
-
-        # In this loop we shouldn't care about EPICS specifics anymore.
-        # We will just call functions of our specific devices: r2d2 and yoda.
-
-        # So the beeping frequency is random but depends on Yoda's coolness
-        # it is set with helper user-friendly functions
-        r2d2.change_beeping_tone(randint(0, yoda.get_level()))
-        yoda.happiness(randint(0, 100))
-
-        # Windu's happiness is set with server's generic function
-        server.update_measurements({f'{windu.name}:{Jedi.HAPPY}': randint(0, 100) - 50})
-
-        # next line is still needed to update all clients with new values
-        server.update()
-        sleep(0.1)
-
-    server.stop()
-
-    print("Exiting... May the Force be with you!")

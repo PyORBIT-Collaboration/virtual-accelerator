@@ -4,23 +4,24 @@ from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 from orbit.py_linac.lattice.LinacAccNodes import Quad, MarkerLinacNode, DCorrectorV, DCorrectorH
 from orbit.py_linac.lattice.LinacRfGapNodes import BaseRF_Gap
 from orbit.py_linac.lattice.LinacAccLatticeLib import RF_Cavity
-from server_child_nodes import BPMclass
+from server_child_nodes import BPMclass, WSclass
 
 
 class PyorbitElementTypes:
     # Class check definitions
-    optic_classes = (Quad, RF_Cavity, MarkerLinacNode, DCorrectorV, DCorrectorH)
-    diagnostic_classes = (MarkerLinacNode, BPMclass)
+    optic_classes = (Quad, RF_Cavity, DCorrectorV, DCorrectorH)
+    diagnostic_classes = (MarkerLinacNode, BPMclass, WSclass)
 
     # Parameters for model to pass
     quad_params = ['dB/dr']
     corrector_params = ['B']
     cavity_params = ['phase', 'amp']
     bpm_params = ['x_avg', 'y_avg', 'phi_avg', 'energy', 'beta']
+    ws_params = ['x_histogram', 'y_histogram']
 
     # Dictionary to keep the above parameters with their designated classes
     param_ref_dict = {Quad: quad_params, RF_Cavity: cavity_params, DCorrectorV: corrector_params,
-                      DCorrectorH: corrector_params, BPMclass: bpm_params}
+                      DCorrectorH: corrector_params, BPMclass: bpm_params, WSclass: ws_params}
 
     # Type hint definitions
     node_classes = Union[Quad, BaseRF_Gap, MarkerLinacNode]
@@ -42,13 +43,14 @@ class PyorbitElement:
         elif isinstance(element, PyorbitElementTypes.diagnostic_classes):
             self.is_optic_bool = False
         else:
-            print("Element isn't defined as optic or diagnostic.")
+            name = element.getName()
+            print(f'Element "{name}" is not defined as optic or diagnostic.')
 
     def get_name(self) -> str:
         name = self.element.getName()
         return name
 
-    def get_parameter_dict(self) -> dict[str,]:
+    def get_parameter_dict(self) -> dict[str, ]:
         element = self.element
         element_class = type(element)
         modeled_params = PyorbitElementTypes.param_ref_dict[element_class]

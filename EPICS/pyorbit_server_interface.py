@@ -7,7 +7,7 @@ from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 from orbit.core.bunch import Bunch
 
 from interface_lib import PyorbitLibrary
-from server_child_nodes import BPMclass, BunchCopyClass
+from server_child_nodes import BPMclass, WSclass, BunchCopyClass
 
 
 class OrbitModel:
@@ -22,6 +22,8 @@ class OrbitModel:
                 node_name = node.getName()
                 if 'BPM' in node_name:
                     node.addChildNode(BPMclass(node_name), node.ENTRANCE)
+                if 'WS' in node_name:
+                    node.addChildNode(WSclass(node_name), node.ENTRANCE)
 
         # Set up a dictionary to reference different objects within the lattice by their name.
         # This way, children nodes (correctors) and RF Cavity parameters are easy to reference.
