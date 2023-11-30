@@ -15,8 +15,8 @@ class Quadrupole(Device):
 
     field_key = 'dB/dr'
 
-    def __init__(self, pv_name: str, model_name: str, initial_dict=None):
-        super().__init__(pv_name, model_name)
+    def __init__(self, name: str, model_name: str, initial_dict=None):
+        super().__init__(name, model_name)
         self.model_name = model_name
 
         if initial_dict is not None:
@@ -53,8 +53,8 @@ class Corrector(Device):
 
     field_key = 'B'
 
-    def __init__(self, pv_name: str, model_name: str, initial_dict=None):
-        super().__init__(pv_name, model_name)
+    def __init__(self, name: str, model_name: str, initial_dict=None):
+        super().__init__(name, model_name)
         self.model_name = model_name
 
         if initial_dict is not None:
@@ -93,8 +93,8 @@ class Cavity(Device):
     phase_key = 'phase'
     amp_key = 'amp'
 
-    def __init__(self, pv_name: str, model_name: str, initial_dict=None, phase_offset=None):
-        super().__init__(pv_name, model_name)
+    def __init__(self, name: str, model_name: str, initial_dict=None, phase_offset=None):
+        super().__init__(name, model_name)
         self.model_name = model_name
 
         if initial_dict is not None:
@@ -147,8 +147,8 @@ class BPM(Device):
     y_key = 'y_avg'
     phase_key = 'phi_avg'
 
-    def __init__(self, pv_name: str, model_name: str, phase_offset=None):
-        super().__init__(pv_name, model_name)
+    def __init__(self, name: str, model_name: str, phase_offset=None):
+        super().__init__(name, model_name)
 
         xy_noise = AbsNoise(noise=1e-8)
         phase_noise = AbsNoise(noise=1e-4)
@@ -191,8 +191,8 @@ class WireScanner(Device):
     position_key = 'wire_position'
     speed_key = 'wire_speed'
 
-    def __init__(self, pv_name: str, model_name: str, initial_dict=None):
-        super().__init__(pv_name, model_name)
+    def __init__(self, name: str, model_name: str, initial_dict=None):
+        super().__init__(name, model_name)
 
         if initial_dict is not None:
             initial_position = initial_dict[WireScanner.position_key]
@@ -281,8 +281,8 @@ class PBPM(Device):
     energy_key = 'energy'
     beta_key = 'beta'
 
-    def __init__(self, pv_name: str, model_name: str):
-        super().__init__(pv_name, model_name)
+    def __init__(self, name: str, model_name: str):
+        super().__init__(name, model_name)
 
         self.register_measurement(PBPM.energy_pv)
         self.register_measurement(PBPM.beta_pv)

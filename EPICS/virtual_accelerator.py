@@ -55,38 +55,38 @@ if __name__ == '__main__':
 
     for device_type, devices in devices_dict.items():
         if device_type == "Cavities":
-            for pv_name, model_name in devices.items():
+            for name, model_name in devices.items():
                 initial_settings = model.get_settings(model_name)[model_name]
-                phase_offset = offset_dict[pv_name]
-                rf_device = Cavity(pv_name, model_name, initial_settings)
+                phase_offset = offset_dict[name]
+                rf_device = Cavity(name, model_name, initial_settings)
                 server.add_device(rf_device)
 
         if device_type == "Quadrupoles":
-            for pv_name, model_name in devices.items():
+            for name, model_name in devices.items():
                 initial_settings = model.get_settings(model_name)[model_name]
-                quad_device = Quadrupole(pv_name, model_name, initial_settings)
+                quad_device = Quadrupole(name, model_name, initial_settings)
                 server.add_device(quad_device)
 
         if device_type == "Correctors":
-            for pv_name, model_name in devices.items():
+            for name, model_name in devices.items():
                 initial_settings = model.get_settings(model_name)[model_name]
-                corrector_device = Corrector(pv_name, model_name, initial_settings)
+                corrector_device = Corrector(name, model_name, initial_settings)
                 server.add_device(corrector_device)
 
         if device_type == "Wire_Scanners":
-            for pv_name, model_name in devices.items():
-                ws_device = WireScanner(pv_name, model_name)
+            for name, model_name in devices.items():
+                ws_device = WireScanner(name, model_name)
                 server.add_device(ws_device)
 
         if device_type == "BPMs":
-            for pv_name, model_name in devices.items():
-                phase_offset = offset_dict[pv_name]
-                bpm_device = BPM(pv_name, model_name, phase_offset)
+            for name, model_name in devices.items():
+                phase_offset = offset_dict[name]
+                bpm_device = BPM(name, model_name, phase_offset)
                 server.add_device(bpm_device)
 
         if device_type == "PBPMs":
-            for pv_name, model_name in devices.items():
-                pbpm_device = PBPM(pv_name, model_name)
+            for name, model_name in devices.items():
+                pbpm_device = PBPM(name, model_name)
                 server.add_device(pbpm_device)
 
     server.start()

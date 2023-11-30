@@ -10,10 +10,30 @@ from interface_lib import PyorbitLibrary
 from server_child_nodes import BPMclass, WSclass, BunchCopyClass
 
 
-class OrbitModel:
-    def __init__(self, input_lattice: LinacAccLattice, input_bunch: Bunch = None):
-        self.accLattice = input_lattice
+class Model:
+    def __init__(self):
+        pass
 
+    def get_measurements(self) -> dict[str, dict[str,]]:
+        # Output values from the model. This needs to return a dictionary with the model name of the element as a key
+        # to a dictionary of the element's parameters.
+        pass
+
+    def track(self):
+        # update values within your model
+        pass
+
+    def update_optics(self, changed_optics: dict[str, dict[str,]]) -> None:
+        # Take external values and update the model. Needs an input of a dictionary with the model name of the element
+        # as a key to a dictionary of the element's parameters with their new values.
+        pass
+
+
+class OrbitModel(Model):
+    def __init__(self, input_lattice: LinacAccLattice, input_bunch: Bunch = None):
+        super().__init__()
+
+        self.accLattice = input_lattice
         list_of_nodes = self.accLattice.getNodes()
         for node in list_of_nodes:
             node_type = node.getType()
@@ -203,5 +223,5 @@ class OrbitModel:
             json.dump(saved_diagnostics, json_file, indent=4)
 
 
-class BrandonModel(OrbitModel):
+class BrandonModel(Model):
     pass
