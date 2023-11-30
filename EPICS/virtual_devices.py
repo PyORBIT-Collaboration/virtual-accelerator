@@ -272,7 +272,7 @@ class WireScanner(Device):
             self.setParam(reason, noise.add_noise(transform.raw(virtual_value)))
 
 
-class pBPM(Device):
+class PBPM(Device):
     # Here is the only place we have raw PV suffix.
     # So if it's changed you need to modify one line
     energy_pv = 'Energy'
@@ -284,15 +284,15 @@ class pBPM(Device):
     def __init__(self, pv_name: str, model_name: str):
         super().__init__(pv_name, model_name)
 
-        self.register_measurement(pBPM.energy_pv)
-        self.register_measurement(pBPM.beta_pv)
+        self.register_measurement(PBPM.energy_pv)
+        self.register_measurement(PBPM.beta_pv)
 
     def update_measurement(self, model_key, value):
         reason = None
-        if model_key == pBPM.energy_key:
-            reason = pBPM.energy_pv
-        if model_key == pBPM.beta_key:
-            reason = pBPM.beta_pv
+        if model_key == PBPM.energy_key:
+            reason = PBPM.energy_pv
+        if model_key == PBPM.beta_key:
+            reason = PBPM.beta_pv
         if reason is not None:
             *_, transform, noise = self.measurements[reason]
             self.setParam(reason, noise.add_noise(transform.raw(value)))
