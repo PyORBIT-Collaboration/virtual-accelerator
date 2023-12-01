@@ -14,16 +14,16 @@ class Model:
     def __init__(self):
         pass
 
-    def get_measurements(self) -> dict[str, dict[str,]]:
+    def get_measurements(self) -> dict[str, dict[str, ]]:
         # Output values from the model. This needs to return a dictionary with the model name of the element as a key
         # to a dictionary of the element's parameters.
-        pass
+        return {}
 
-    def track(self):
+    def track(self) -> None:
         # update values within your model
         pass
 
-    def update_optics(self, changed_optics: dict[str, dict[str,]]) -> None:
+    def update_optics(self, changed_optics: dict[str, dict[str, ]]) -> None:
         # Take external values and update the model. Needs an input of a dictionary with the model name of the element
         # as a key to a dictionary of the element's parameters with their new values.
         pass
