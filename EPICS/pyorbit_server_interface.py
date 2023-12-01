@@ -224,4 +224,5 @@ class OrbitModel(Model):
 
 
 class BrandonModel(Model):
-    pass
+    def __init__(self):
+        super().__init__()

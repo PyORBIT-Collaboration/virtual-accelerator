@@ -167,12 +167,13 @@ class BPM(Device):
         if model_key == BPM.x_key:
             reason = BPM.x_pv
             virtual_value = model_value
-        if model_key == BPM.y_key:
+        elif model_key == BPM.y_key:
             reason = BPM.y_pv
             virtual_value = model_value
-        if model_key == BPM.phase_key:
+        elif model_key == BPM.phase_key:
             reason = BPM.phase_pv
             virtual_value = model_value
+
         if reason is not None:
             *_, transform, noise = self.measurements[reason]
             self.setParam(reason, noise.add_noise(transform.raw(virtual_value)))
@@ -181,7 +182,8 @@ class BPM(Device):
 class WireScanner(Device):
     # Here is the only place we have raw PV suffix.
     # So if it's changed you need to modify one line
-    current_pv = 'Current'
+    x_charge_pv = 'Hor_Cont'
+    y_charge_pv = 'Ver_Cont'
     position_pv = 'Position_Set'
     position_readback_pv = 'Position'
     speed_pv = 'Speed_Set'
@@ -190,6 +192,10 @@ class WireScanner(Device):
     y_key = 'y_histogram'
     position_key = 'wire_position'
     speed_key = 'wire_speed'
+
+    x_offset = -0.01
+    y_offset = 0.01
+    wire_coeff = 1 / math.sqrt(2)
 
     def __init__(self, name: str, model_name: str, initial_dict=None):
         super().__init__(name, model_name)
@@ -207,7 +213,8 @@ class WireScanner(Device):
 
         xy_noise = AbsNoise(noise=1e-9)
 
-        self.register_measurement(WireScanner.current_pv, noise=xy_noise)
+        self.register_measurement(WireScanner.x_charge_pv, noise=xy_noise)
+        self.register_measurement(WireScanner.y_charge_pv, noise=xy_noise)
 
         self.register_setting(WireScanner.speed_pv, default=initial_speed)
         self.register_setting(WireScanner.position_pv, default=initial_position,
@@ -240,7 +247,7 @@ class WireScanner(Device):
         if reason == WireScanner.position_pv:
             model_value = transform.real(self.getParam(reason))
             model_dict[WireScanner.position_key] = model_value
-        if reason == WireScanner.speed_pv:
+        elif reason == WireScanner.speed_pv:
             model_value = transform.real(self.getParam(reason))
             model_dict[WireScanner.speed_key] = model_value
         return model_dict
@@ -260,12 +267,14 @@ class WireScanner(Device):
         reason = None
         virtual_value = None
         if model_key == WireScanner.x_key:
-            virtual_value = np.interp(wire_pos, model_value[:, 0], model_value[:, 1])
-            reason = WireScanner.current_pv
+            x_pos = WireScanner.wire_coeff * wire_pos + WireScanner.x_offset
+            virtual_value = np.interp(x_pos, model_value[:, 0], model_value[:, 1])
+            reason = WireScanner.x_charge_pv
 
-        if model_key == WireScanner.y_key:
-            virtual_value = np.interp(wire_pos, model_value[:, 0], model_value[:, 1])
-            reason = WireScanner.current_pv
+        elif model_key == WireScanner.y_key:
+            y_pos = WireScanner.wire_coeff * wire_pos + WireScanner.y_offset
+            virtual_value = np.interp(y_pos, model_value[:, 0], model_value[:, 1])
+            reason = WireScanner.y_charge_pv
 
         if reason is not None:
             *_, transform, noise = self.measurements[reason]
@@ -291,8 +300,9 @@ class PBPM(Device):
         reason = None
         if model_key == PBPM.energy_key:
             reason = PBPM.energy_pv
-        if model_key == PBPM.beta_key:
+        elif model_key == PBPM.beta_key:
             reason = PBPM.beta_pv
+
         if reason is not None:
             *_, transform, noise = self.measurements[reason]
             self.setParam(reason, noise.add_noise(transform.raw(value)))
