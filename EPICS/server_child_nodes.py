@@ -77,13 +77,11 @@ class BPMclass:
 
 
 class WSclass:
-    def __init__(self, child_name: str):
+    def __init__(self, child_name: str, bin_number: int = 50):
         self.parameters = {'x_histogram': np.zeros((0, 0)), 'y_histogram': np.zeros((0, 0))}
         self.child_name = child_name
+        self.bin_number = bin_number
         self.node_type = 'WireScanner'
-
-        self.high_res_bins = 30
-        self.low_res_bins = 20
 
     def trackActions(self, actionsContainer, paramsDict):
         bunch = paramsDict["bunch"]
@@ -100,29 +98,16 @@ class WSclass:
                 x_array[n] = x
                 y_array[n] = y
 
-            high_res_bins = self.high_res_bins
-            low_res_bins = self.low_res_bins
-
-            x_mean = np.mean(x_array)
-            x_sigma = np.std(x_array)
-            x_high_res_bins = np.linspace(x_mean - 2 * x_sigma, x_mean + 2 * x_sigma, high_res_bins + 1)
-            x_low_res_bin = np.linspace(x_mean - 5 * x_sigma, x_mean - 2 * x_sigma, low_res_bins // 2)
-            x_low_res_bin = np.concatenate(
-                (x_low_res_bin, np.linspace(x_mean + 2 * x_sigma, x_mean + 5 * x_sigma, low_res_bins // 2)))
-            all_x_bins = np.sort(np.concatenate((x_low_res_bin, x_high_res_bins[1:-1])))
-            x_hist, x_bins = np.histogram(x_array, bins=all_x_bins)
-            x_positions = (all_x_bins[:-1] + all_x_bins[1:]) / 2
+            x_limits = np.array([np.min(x_array), np.max(x_array)]) * 1.1
+            x_bin_edges = np.linspace(x_limits[0], x_limits[1], self.bin_number + 1)
+            x_hist, x_bins = np.histogram(x_array, bins=x_bin_edges)
+            x_positions = (x_bins[:-1] + x_bins[1:]) / 2
             x_out = np.column_stack((x_positions, x_hist))
 
-            y_mean = np.mean(y_array)
-            y_sigma = np.std(y_array)
-            y_high_res_bins = np.linspace(y_mean - 2 * y_sigma, y_mean + 2 * y_sigma, high_res_bins + 1)
-            y_low_res_bin = np.linspace(y_mean - 5 * y_sigma, y_mean - 2 * y_sigma, low_res_bins // 2)
-            y_low_res_bin = np.concatenate(
-                (y_low_res_bin, np.linspace(y_mean + 2 * y_sigma, y_mean + 5 * y_sigma, low_res_bins // 2)))
-            all_y_bins = np.sort(np.concatenate((y_low_res_bin, y_high_res_bins)))
-            y_hist, y_bins = np.histogram(y_array, bins=all_y_bins)
-            y_positions = (all_y_bins[:-1] + all_y_bins[1:]) / 2
+            y_limits = np.array([np.min(y_array), np.max(y_array)]) * 1.1
+            y_bin_edges = np.linspace(y_limits[0], y_limits[1], self.bin_number + 1)
+            y_hist, y_bins = np.histogram(y_array, bins=y_bin_edges)
+            y_positions = (y_bins[:-1] + y_bins[1:]) / 2
             y_out = np.column_stack((y_positions, y_hist))
 
             self.parameters['x_histogram'] = x_out
