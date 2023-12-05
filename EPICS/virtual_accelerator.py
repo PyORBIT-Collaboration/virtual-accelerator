@@ -58,7 +58,7 @@ if __name__ == '__main__':
             for name, model_name in devices.items():
                 initial_settings = model.get_settings(model_name)[model_name]
                 phase_offset = offset_dict[name]
-                rf_device = Cavity(name, model_name, initial_settings)
+                rf_device = Cavity(name, model_name, initial_settings, phase_offset)
                 server.add_device(rf_device)
 
         if device_type == "Quadrupoles":
