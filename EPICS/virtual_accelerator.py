@@ -58,7 +58,7 @@ if __name__ == '__main__':
             for name, model_name in devices.items():
                 initial_settings = model.get_settings(model_name)[model_name]
                 phase_offset = offset_dict[name]
-                rf_device = Cavity(name, model_name, initial_settings)
+                rf_device = Cavity(name, model_name, initial_settings, phase_offset)
                 server.add_device(rf_device)
 
         if device_type == "Quadrupoles":
@@ -95,7 +95,6 @@ if __name__ == '__main__':
     # Our new data acquisition routine
     while not_ctrlc():
         loop_start_time = time.time()
-        server.update()
 
         now = epics_now()
 
@@ -105,6 +104,8 @@ if __name__ == '__main__':
         model.track()
         new_measurements = model.get_measurements()
         server.update_measurements(new_measurements)
+
+        server.update()
 
         loop_time_taken = time.time() - loop_start_time
         sleep_time = max(0.0, REP_RATE - loop_time_taken)
