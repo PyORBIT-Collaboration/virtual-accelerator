@@ -14,7 +14,7 @@ from virtual_devices import Cavity, BPM, Quadrupole, Corrector, PBPM, WireScanne
 from pyorbit_server_interface import OrbitModel
 
 # update rate in Hz
-REP_RATE = 1.0
+REP_RATE = 0.5
 
 if __name__ == '__main__':
     # Set a default prefix if unspecified at server initialization
