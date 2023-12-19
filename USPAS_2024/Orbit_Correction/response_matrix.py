@@ -57,8 +57,8 @@ for name in all_bpm_names:
     if name in bpm_names:
         hor_bpm_orig[name] = x_pos
         ver_bpm_orig[name] = y_pos
-    init_hor_pos.append(x_pos)
-    init_ver_pos.append(y_pos)
+    init_hor_pos.append(x_pos * 1000)
+    init_ver_pos.append(y_pos * 1000)
 
 
 num_hor_cors, num_hor_bpms = len(hor_cor_orig), len(hor_bpm_orig)
@@ -145,14 +145,23 @@ final_ver_vector = np.zeros(len(all_bpm_names))
 j = 0
 for name in all_bpm_names:
     x_pos = epics.caget(name + ":xAvg")
-    final_hor_vector[j] = x_pos
+    final_hor_vector[j] = x_pos * 1000
     y_pos = epics.caget(name + ":yAvg")
-    final_ver_vector[j] = y_pos
+    final_ver_vector[j] = y_pos * 1000
     j += 1
-plt.plot(init_hor_pos)
-plt.plot(final_hor_vector)
+
+plt.plot(init_hor_pos, label='Initial Positions')
+plt.plot(final_hor_vector, label='Corrected Positions')
+plt.xlabel('BPM Number')
+plt.ylabel('BPM Position [mm]')
+plt.legend()
+plt.savefig('Horizontal_Orbit_Correction.png')
 plt.show()
 
-plt.plot(init_ver_pos)
-plt.plot(final_ver_vector)
+plt.plot(init_ver_pos, label='Initial Positions')
+plt.plot(final_ver_vector, label='Corrected Positions')
+plt.xlabel('BPM Number')
+plt.ylabel('BPM Position [mm]')
+plt.legend()
+plt.savefig('Vertical_Orbit_Correction.png')
 plt.show()
