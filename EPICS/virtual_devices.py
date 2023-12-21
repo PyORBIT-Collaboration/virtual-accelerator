@@ -10,10 +10,10 @@ from ca_server import Device, AbsNoise, LinearT, PhaseT, not_ctrlc, PhaseTInv, L
 class Quadrupole(Device):
     # Here is the only place we have raw PV suffix.
     # So if it's changed you need to modify one line
-    field_set_pv = 'B_Set'
-    field_readback_pv = 'B'
+    field_set_pv = 'B_Set'  # [T/m]
+    field_readback_pv = 'B'  # [T/m]
 
-    field_key = 'dB/dr'
+    field_key = 'dB/dr'  # [T/m]
 
     def __init__(self, name: str, model_name: str, initial_dict=None):
         super().__init__(name, model_name)
@@ -48,10 +48,10 @@ class Quadrupole(Device):
 class Corrector(Device):
     # Here is the only place we have raw PV suffix.
     # So if it's changed you need to modify one line
-    field_set_pv = 'B_Set'
-    field_readback_pv = 'B'
+    field_set_pv = 'B_Set'  # [T]
+    field_readback_pv = 'B'  # [T]
 
-    field_key = 'B'
+    field_key = 'B'  # [T]
 
     field_limits = [-0.1, 0.1]
 
