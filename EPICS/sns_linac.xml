@@ -35,7 +35,7 @@
    <parameters aperture="0.032" aprt_type="1" field="-28.3266"/>
   </accElement>
   <accElement length="0.0" name="MEBT_RF:Bnch01:Rg01" pos="0.528" type="RFGAP">
-   <parameters E0L="0.000169424" E0TL="7.5e-05" EzFile="./axis_fields/MEBT1_Rg1.dat" aperture="0.03" aprt_type="1" cavity="MEBT_RF:Bnch01" mode="0" phase="90.00"/>
+   <parameters E0L="0.000169424" E0TL="7.5e-05" EzFile="./axis_fields/MEBT1_Rg1.dat" aperture="0.03" aprt_type="1" cavity="MEBT1" mode="0" phase="90.00"/>
    <TTFs beta_max="0.0797326996297" beta_min="0.0651533180282">
     <polyT order="4" pcoefs="1.01612778 0.000479710288 -0.000104039969 6.30940875e-07 -1.18628457e-09 "/>
     <polyS order="0" pcoefs="0 "/>
@@ -71,7 +71,7 @@
    <parameters/>
   </accElement>
   <accElement length="0.0" name="MEBT_RF:Bnch02:Rg01" pos="1.288" type="RFGAP">
-   <parameters E0L="0.000132964" E0TL="4.5e-05" EzFile="./axis_fields/MEBT2_Rg1.dat" aperture="0.036" aprt_type="1" cavity="MEBT_RF:Bnch02" mode="0" phase="90.00"/>
+   <parameters E0L="0.000132964" E0TL="4.5e-05" EzFile="./axis_fields/MEBT2_Rg1.dat" aperture="0.036" aprt_type="1" cavity="MEBT2" mode="0" phase="90.00"/>
    <TTFs beta_max="0.0797326996297" beta_min="0.0651533180282">
     <polyT order="4" pcoefs="1.15958109 -0.00424694247 -8.43820853e-05 6.97672569e-07 -1.56212479e-09 "/>
     <polyS order="0" pcoefs="0 "/>
@@ -122,7 +122,7 @@
    <parameters/>
   </accElement>
   <accElement length="0.0" name="MEBT_RF:Bnch03:Rg01" pos="2.248" type="RFGAP">
-   <parameters E0L="0.000135919" E0TL="4.6e-05" EzFile="./axis_fields/MEBT3_Rg1.dat" aperture="0.036" aprt_type="1" cavity="MEBT_RF:Bnch03" mode="0" phase="90.00"/>
+   <parameters E0L="0.000135919" E0TL="4.6e-05" EzFile="./axis_fields/MEBT3_Rg1.dat" aperture="0.036" aprt_type="1" cavity="MEBT3" mode="0" phase="90.00"/>
    <TTFs beta_max="0.0797326996297" beta_min="0.0651533180282">
     <polyT order="4" pcoefs="1.15958109 -0.00424694247 -8.43820853e-05 6.97672569e-07 -1.56212479e-09 "/>
     <polyS order="0" pcoefs="0 "/>
@@ -164,7 +164,7 @@
    <parameters aperture="0.032" aprt_type="1" field="-29.02"/>
   </accElement>
   <accElement length="0.0" name="MEBT_RF:Bnch04:Rg01" pos="3.158" type="RFGAP">
-   <parameters E0L="0.000212345" E0TL="9.4e-05" EzFile="./axis_fields/MEBT4_Rg1.dat" aperture="0.03" aprt_type="1" cavity="MEBT_RF:Bnch04" mode="0" phase="90.00"/>
+   <parameters E0L="0.000212345" E0TL="9.4e-05" EzFile="./axis_fields/MEBT4_Rg1.dat" aperture="0.03" aprt_type="1" cavity="MEBT4" mode="0" phase="90.00"/>
    <TTFs beta_max="0.0797326996297" beta_min="0.0651533180282">
     <polyT order="4" pcoefs="1.01612778 0.000479710288 -0.000104039969 6.30940875e-07 -1.18628457e-09 "/>
     <polyS order="0" pcoefs="0 "/>
@@ -203,10 +203,10 @@
    <parameters/>
   </accElement>
   <Cavities>
-   <Cavity ampl="1.0" frequency="   4.025e+08" name="MEBT_RF:Bnch01" pos="0.528"/>
-   <Cavity ampl="1.0" frequency="   4.025e+08" name="MEBT_RF:Bnch02" pos="1.288"/>
-   <Cavity ampl="1.0" frequency="   4.025e+08" name="MEBT_RF:Bnch03" pos="2.248"/>
-   <Cavity ampl="1.0" frequency="   4.025e+08" name="MEBT_RF:Bnch04" pos="3.158"/>
+   <Cavity ampl="1.0" frequency="   4.025e+08" name="MEBT1" pos="0.528"/>
+   <Cavity ampl="1.0" frequency="   4.025e+08" name="MEBT2" pos="1.288"/>
+   <Cavity ampl="1.0" frequency="   4.025e+08" name="MEBT3" pos="2.248"/>
+   <Cavity ampl="1.0" frequency="   4.025e+08" name="MEBT4" pos="3.158"/>
   </Cavities>
  </MEBT>
  <DTL1 bpmFrequency="8.05E8" length="4.272517" name="DTL1">
