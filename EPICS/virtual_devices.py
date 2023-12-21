@@ -4,7 +4,7 @@ from random import randint, random
 
 import numpy as np
 
-from ca_server import Device, AbsNoise, LinearT, PhaseT, not_ctrlc, PhaseTInv
+from ca_server import Device, AbsNoise, LinearT, PhaseT, not_ctrlc, PhaseTInv, LinearTInv
 
 
 class Quadrupole(Device):
@@ -92,12 +92,12 @@ class Corrector(Device):
 class Cavity(Device):
     # Here is the only place we have raw PV suffix.
     # So if it's changed you need to modify one line
-    phase_pv = 'CtlPhaseSet'
-    amp_pv = 'CtlAmpSet'
-    blank_pv = 'BlnkBeam'
+    phase_pv = 'CtlPhaseSet'  # [degrees (-180 - 180)]
+    amp_pv = 'CtlAmpSet'  # [arb. units]
+    blank_pv = 'BlnkBeam'  # [0 or 1]
 
-    phase_key = 'phase'
-    amp_key = 'amp'
+    phase_key = 'phase'  # [radians]
+    amp_key = 'amp'  # [arb. units]
 
     def __init__(self, name: str, model_name: str, initial_dict=None, phase_offset=None):
         super().__init__(name, model_name)
@@ -145,15 +145,15 @@ class Cavity(Device):
 class BPM(Device):
     # Here is the only place we have raw PV suffix.
     # So if it's changed you need to modify one line
-    x_pv = 'xAvg'
-    y_pv = 'yAvg'
-    phase_pv = 'phaseAvg'
-    current_pv = 'amplitudeAvg'
+    x_pv = 'xAvg'  # [mm]
+    y_pv = 'yAvg'  # [mm]
+    phase_pv = 'phaseAvg'  # [degrees]
+    current_pv = 'amplitudeAvg'  # [mA]
 
-    x_key = 'x_avg'
-    y_key = 'y_avg'
-    phase_key = 'phi_avg'
-    current_key = 'current'
+    x_key = 'x_avg'  # [m]
+    y_key = 'y_avg'  # [m]
+    phase_key = 'phi_avg'  # [radians]
+    current_key = 'current'  # [A]
 
     def __init__(self, name: str, model_name: str, phase_offset=None):
         super().__init__(name, model_name)
@@ -162,14 +162,16 @@ class BPM(Device):
         phase_noise = AbsNoise(noise=1e-4)
         current_noise = AbsNoise(noise=1e-4)
 
+        milli_units = LinearTInv(scaler=1000)
+
         if phase_offset is None:
             phase_offset = (2 * random() - 1) * 180
         offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
 
-        self.register_measurement(BPM.x_pv, noise=xy_noise)
-        self.register_measurement(BPM.y_pv, noise=xy_noise)
+        self.register_measurement(BPM.x_pv, noise=xy_noise, transform=milli_units)
+        self.register_measurement(BPM.y_pv, noise=xy_noise, transform=milli_units)
         self.register_measurement(BPM.phase_pv, noise=phase_noise, transform=offset_transform)
-        self.register_measurement(BPM.current_pv, noise=current_noise)
+        self.register_measurement(BPM.current_pv, noise=current_noise, transform=milli_units)
 
     def update_measurement(self, model_key, model_value):
         reason = None
@@ -194,16 +196,16 @@ class BPM(Device):
 class WireScanner(Device):
     # Here is the only place we have raw PV suffix.
     # So if it's changed you need to modify one line
-    x_charge_pv = 'Hor_Cont'
-    y_charge_pv = 'Ver_Cont'
-    position_pv = 'Position_Set'
-    position_readback_pv = 'Position'
-    speed_pv = 'Speed_Set'
+    x_charge_pv = 'Hor_Cont'  # [arb. units]
+    y_charge_pv = 'Ver_Cont'  # [arb. units]
+    position_pv = 'Position_Set'  # [mm]
+    position_readback_pv = 'Position'  # [mm]
+    speed_pv = 'Speed_Set'  # [mm/s]
 
-    x_key = 'x_histogram'
-    y_key = 'y_histogram'
-    position_key = 'wire_position'
-    speed_key = 'wire_speed'
+    x_key = 'x_histogram'  # [arb. units]
+    y_key = 'y_histogram'  # [arb. units]
+    position_key = 'wire_position'  # [m]
+    speed_key = 'wire_speed'  # [m]
 
     x_offset = -0.01
     y_offset = 0.01
@@ -216,20 +218,21 @@ class WireScanner(Device):
             initial_position = initial_dict[WireScanner.position_key]
             initial_speed = initial_dict[WireScanner.speed_key]
         else:
-            initial_position = -10
-            initial_speed = 0.001  # m/s
-
-        self.last_wire_pos = initial_position
-        self.last_wire_time = time.time()
-        self.wire_speed = initial_speed
+            initial_position = -50  # [mm]
+            initial_speed = 1  # [mm/s]
 
         xy_noise = AbsNoise(noise=1e-9)
+        milli_units = LinearTInv(scaler=1e3)
+
+        self.last_wire_pos = milli_units.real(initial_position)
+        self.last_wire_time = time.time()
+        self.wire_speed = milli_units.real(initial_speed)
 
         self.register_measurement(WireScanner.x_charge_pv, noise=xy_noise)
         self.register_measurement(WireScanner.y_charge_pv, noise=xy_noise)
 
-        self.register_setting(WireScanner.speed_pv, default=initial_speed)
-        self.register_setting(WireScanner.position_pv, default=initial_position,
+        self.register_setting(WireScanner.speed_pv, default=initial_speed, transform=milli_units)
+        self.register_setting(WireScanner.position_pv, default=initial_position, transform=milli_units,
                               reason_rb=WireScanner.position_readback_pv)
 
     def get_wire_position(self):
@@ -250,7 +253,6 @@ class WireScanner(Device):
 
         self.last_wire_time = current_time
         self.last_wire_pos = wire_pos
-
         return wire_pos
 
     def get_setting(self, reason):
@@ -296,11 +298,11 @@ class WireScanner(Device):
 class PBPM(Device):
     # Here is the only place we have raw PV suffix.
     # So if it's changed you need to modify one line
-    energy_pv = 'Energy'
-    beta_pv = 'Beta'
+    energy_pv = 'Energy'  # [GeV]
+    beta_pv = 'Beta'  # [c]
 
-    energy_key = 'energy'
-    beta_key = 'beta'
+    energy_key = 'energy'  # [GeV]
+    beta_key = 'beta'  # [c]
 
     def __init__(self, name: str, model_name: str):
         super().__init__(name, model_name)
