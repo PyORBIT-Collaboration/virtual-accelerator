@@ -51,7 +51,7 @@ def main():
 
     for or_name, ele_ref in model.pyorbit_dictionary.items():
         if isinstance(ele_ref, PyorbitCavity):
-            if 'MEBT_RF' in or_name:
+            if 'MEBT' in or_name:
                 pv_name = "MEBT_LLRF:FCM" + or_name[-1:]
                 devices['Cavities'][pv_name] = or_name
                 offsets[pv_name] = (2 * random() - 1) * 180
