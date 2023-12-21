@@ -26,14 +26,13 @@ class PyorbitElementTypes:
     # Type hint definitions
     node_classes = Union[Quad, BaseRF_Gap, MarkerLinacNode]
     cavity_classes = RF_Cavity
-    child_classes = Union[DCorrectorV, DCorrectorH, BPMclass]
+    child_classes = Union[DCorrectorV, DCorrectorH, BPMclass, WSclass, MarkerLinacNode]
 
     # type_hint for all classes
     pyorbit_classes = Union[node_classes, child_classes, cavity_classes]
 
 
 class PyorbitElement:
-
     def __init__(self, element):
         self.element = element
         self.params_dict_override = element.getParamsDict()
@@ -50,7 +49,7 @@ class PyorbitElement:
         name = self.element.getName()
         return name
 
-    def get_parameter_dict(self) -> dict[str, ]:
+    def get_parameter_dict(self) -> dict[str,]:
         element = self.element
         element_class = type(element)
         modeled_params = PyorbitElementTypes.param_ref_dict[element_class]
@@ -157,101 +156,3 @@ class PyorbitChild(PyorbitElement):
     def get_position(self) -> float:
         position = self.ancestor_node.getPosition()
         return position
-
-
-class PyorbitLibrary:
-    node_classes = PyorbitElementTypes.node_classes
-    cavity_classes = PyorbitElementTypes.cavity_classes
-    child_classes = PyorbitElementTypes.child_classes
-    pyorbit_classes = PyorbitElementTypes.pyorbit_classes
-
-    element_ref_hint = Union[PyorbitNode, PyorbitCavity, PyorbitChild]
-
-    def __init__(self, acc_lattice: LinacAccLattice, ignored_nodes=None):
-        if ignored_nodes is None:
-            ignored_nodes = set()
-        ignored_nodes |= {'baserfgap', 'drift', 'tilt', 'fringe', 'markerLinacNode', 'baseLinacNode'}
-        unique_elements = set()
-
-        # Set up a dictionary to reference different objects within the lattice by their name.
-        # This way, children nodes (correctors) and RF Cavity parameters are easy to reference.
-
-        self.acc_lattice = acc_lattice
-        element_dict_hint = Dict[str, self.element_ref_hint]
-        element_dict: element_dict_hint = {}
-
-        def add_child_nodes(ancestor_node, children_nodes, element_dictionary):
-            for child in children_nodes:
-                child_type = child.getType()
-                if not any(substring in child_type for substring in ignored_nodes):
-                    child_name = child.getName()
-                    if child_name not in unique_elements:
-                        unique_elements.add(child_name)
-                        element_dictionary[child_name] = PyorbitChild(child, ancestor_node)
-                grandchildren = child.getAllChildren()
-                if len(grandchildren) > 0:
-                    add_child_nodes(ancestor_node, grandchildren, element_dictionary)
-
-        list_of_nodes = self.acc_lattice.getNodes()
-        for node in list_of_nodes:
-            node_type = node.getType()
-            if not any(substring in node_type for substring in ignored_nodes):
-                element_name = node.getName()
-                if element_name not in unique_elements:
-                    unique_elements.add(element_name)
-                    element_dict[element_name] = PyorbitNode(node)
-            children = node.getAllChildren()
-            if len(children) > 0:
-                add_child_nodes(node, children, element_dict)
-
-        list_of_cavities = self.acc_lattice.getRF_Cavities()
-        for cavity in list_of_cavities:
-            element_name = cavity.getName()
-            unique_elements.add(element_name)
-            element_dict[element_name] = PyorbitCavity(cavity)
-
-        self.pyorbit_dictionary = element_dict
-
-    def get_element_names(self) -> list[str]:
-        return list(self.pyorbit_dictionary.keys())
-
-    def get_element_reference(self, pyorbit_name: str) -> element_ref_hint:
-        return self.pyorbit_dictionary[pyorbit_name]
-
-    def get_element_dictionary(self) -> dict[str, element_ref_hint]:
-        return self.pyorbit_dictionary
-
-    def get_element(self, pyorbit_name: str) -> pyorbit_classes:
-        element = self.pyorbit_dictionary[pyorbit_name].get_element()
-        return element
-
-    def get_element_position(self, pyorbit_name: str) -> float:
-        position = self.pyorbit_dictionary[pyorbit_name].get_position()
-        return position
-
-    def get_location_node(self, pyorbit_name: str) -> node_classes:
-        location_node = self.pyorbit_dictionary[pyorbit_name].get_tracking_node()
-        return location_node
-
-    def get_location_name(self, pyorbit_name: str) -> str:
-        location_node_name = self.get_location_node(pyorbit_name).getName()
-        return location_node_name
-
-    def get_element_index(self, pyorbit_name: str) -> int:
-        location_node = self.get_location_node(pyorbit_name)
-        element_index = self.acc_lattice.getNodeIndex(location_node)
-        return element_index
-
-    def get_element_parameters(self, pyorbit_name: str) -> dict[str, ]:
-        params_dict = self.pyorbit_dictionary[pyorbit_name].get_parameter_dict()
-        return params_dict
-
-    def set_element_parameters(self, pyorbit_name: str, new_params: dict) -> None:
-        self.pyorbit_dictionary[pyorbit_name].set_parameter_dict(new_params)
-
-    def get_element_parameter(self, pyorbit_name: str, param_key: str):
-        param = self.pyorbit_dictionary[pyorbit_name].get_parameter(param_key)
-        return param
-
-    def set_element_parameter(self, pyorbit_name: str, param_key: str, new_param) -> None:
-        self.pyorbit_dictionary[pyorbit_name].set_parameter(param_key, new_param)

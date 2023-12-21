@@ -1,6 +1,7 @@
 # Channel access server used to generate fake PV signals analogous to accelerator components.
 # The main body of the script instantiates PVs from a file passed by command line argument.
 import json
+import sys
 import time
 import argparse
 from pathlib import Path
@@ -23,13 +24,15 @@ if __name__ == '__main__':
     # parser.add_argument('--prefix', '-p', default='test', type=str, help='Prefix for PVs')
     parser.add_argument('--file', '-f', default='va_config.json', type=str,
                         help='Pathname of config json file.')
-    parser.add_argument('--bunch', default='bunch_in.dat', type=str,
+    parser.add_argument('--bunch', default='MEBT_in.dat', type=str,
                         help='Pathname of input bunch file.')
     parser.add_argument('--debug', dest='debug', action='store_true', help="Some debug info will be printed.")
     parser.add_argument('--production', dest='debug', action='store_false',
                         help="DEFAULT: No additional info printed.")
 
-    parser.add_argument("Sequences", nargs='*', help='Sequences', default=['SCLMed', 'SCLHigh', 'HEBT1'])
+    parser.add_argument("Sequences", nargs='*', help='Sequences',
+                        default=["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
+                                 "SCLMed", "SCLHigh", "HEBT1"])
 
     args = parser.parse_args()
     debug = args.debug
@@ -60,6 +63,7 @@ if __name__ == '__main__':
     bunch_in.compress()
 
     model = OrbitModel(model_lattice, bunch_in)
+    element_list = model.get_element_list()
 
     # server = Server(prefix)
     server = Server()
@@ -73,38 +77,44 @@ if __name__ == '__main__':
     for device_type, devices in devices_dict.items():
         if device_type == "Cavities":
             for name, model_name in devices.items():
-                initial_settings = model.get_settings(model_name)[model_name]
-                phase_offset = offset_dict[name]
-                rf_device = Cavity(name, model_name, initial_settings, phase_offset)
-                server.add_device(rf_device)
+                if model_name in element_list:
+                    initial_settings = model.get_settings(model_name)[model_name]
+                    phase_offset = offset_dict[name]
+                    rf_device = Cavity(name, model_name, initial_settings, phase_offset)
+                    server.add_device(rf_device)
 
         if device_type == "Quadrupoles":
             for name, model_name in devices.items():
-                initial_settings = model.get_settings(model_name)[model_name]
-                quad_device = Quadrupole(name, model_name, initial_settings)
-                server.add_device(quad_device)
+                if model_name in element_list:
+                    initial_settings = model.get_settings(model_name)[model_name]
+                    quad_device = Quadrupole(name, model_name, initial_settings)
+                    server.add_device(quad_device)
 
         if device_type == "Correctors":
             for name, model_name in devices.items():
-                initial_settings = model.get_settings(model_name)[model_name]
-                corrector_device = Corrector(name, model_name, initial_settings)
-                server.add_device(corrector_device)
+                if model_name in element_list:
+                    initial_settings = model.get_settings(model_name)[model_name]
+                    corrector_device = Corrector(name, model_name, initial_settings)
+                    server.add_device(corrector_device)
 
         if device_type == "Wire_Scanners":
             for name, model_name in devices.items():
-                ws_device = WireScanner(name, model_name)
-                server.add_device(ws_device)
+                if model_name in element_list:
+                    ws_device = WireScanner(name, model_name)
+                    server.add_device(ws_device)
 
         if device_type == "BPMs":
             for name, model_name in devices.items():
-                phase_offset = offset_dict[name]
-                bpm_device = BPM(name, model_name, phase_offset)
-                server.add_device(bpm_device)
+                if model_name in element_list:
+                    phase_offset = offset_dict[name]
+                    bpm_device = BPM(name, model_name, phase_offset)
+                    server.add_device(bpm_device)
 
         if device_type == "PBPMs":
             for name, model_name in devices.items():
-                pbpm_device = PBPM(name, model_name)
-                server.add_device(pbpm_device)
+                if model_name in element_list:
+                    pbpm_device = PBPM(name, model_name)
+                    server.add_device(pbpm_device)
 
     if debug:
         print(server)
