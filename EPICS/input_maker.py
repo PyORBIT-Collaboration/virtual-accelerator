@@ -50,23 +50,16 @@ def main():
     offsets = {}
 
     for or_name, ele_ref in model.pyorbit_dictionary.items():
+        # All cavities are named after sequence name and one digit: MEBT1, CCL2
+        # except SCL cavities: SCL:Cav03a
         if isinstance(ele_ref, PyorbitCavity):
-            if 'MEBT' in or_name:
-                pv_name = "MEBT_LLRF:FCM" + or_name[-1:]
-                devices['Cavities'][pv_name] = or_name
-                offsets[pv_name] = (2 * random() - 1) * 180
-            elif 'DTL' in or_name:
-                pv_name = "DTL_LLRF:FCM" + or_name[-1:]
-                devices['Cavities'][pv_name] = or_name
-                offsets[pv_name] = (2 * random() - 1) * 180
-            elif 'CCL' in or_name:
-                pv_name = "CCL_LLRF:FCM" + or_name[-1:]
-                devices['Cavities'][pv_name] = or_name
-                offsets[pv_name] = (2 * random() - 1) * 180
-            elif 'SCL:Cav' in or_name:
+            if 'SCL:Cav' in or_name:
                 pv_name = "SCL_LLRF:FCM" + or_name[-3:]
-                devices['Cavities'][pv_name] = or_name
-                offsets[pv_name] = (2 * random() - 1) * 180
+            else:
+                pv_name = or_name[:-1] + "_LLRF:FCM" + or_name[-1:]
+
+            devices['Cavities'][pv_name] = or_name
+            offsets[pv_name] = (2 * random() - 1) * 180
 
         elif 'Q' in or_name:
             if 'PMQ' in or_name:

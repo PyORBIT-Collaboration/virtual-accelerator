@@ -1,9 +1,9 @@
 {
     "Cavities": {
-        "MEBT_LLRF:FCM1": "MEBT_RF:Bnch01",
-        "MEBT_LLRF:FCM2": "MEBT_RF:Bnch02",
-        "MEBT_LLRF:FCM3": "MEBT_RF:Bnch03",
-        "MEBT_LLRF:FCM4": "MEBT_RF:Bnch04",
+        "MEBT_LLRF:FCM1": "MEBT1",
+        "MEBT_LLRF:FCM2": "MEBT2",
+        "MEBT_LLRF:FCM3": "MEBT3",
+        "MEBT_LLRF:FCM4": "MEBT4",
         "DTL_LLRF:FCM1": "DTL1",
         "DTL_LLRF:FCM2": "DTL2",
         "DTL_LLRF:FCM3": "DTL3",
