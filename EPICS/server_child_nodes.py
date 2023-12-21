@@ -7,9 +7,10 @@ from orbit.core.bunch import Bunch
 
 class BPMclass:
     def __init__(self, child_name: str):
-        self.parameters = {'x_avg': 0.0, 'y_avg': 0.0, 'phi_avg': 0.0, 'energy': 0.0, 'beta': 0.0}
+        self.parameters = {'x_avg': 0.0, 'y_avg': 0.0, 'phi_avg': 0.0, 'current': 0.0, 'energy': 0.0, 'beta': 0.0}
         self.child_name = child_name
         self.node_type = 'BPM'
+        self.si_e_charge = 1.6021773e-19
 
     def trackActions(self, actionsContainer, paramsDict):
         bunch = paramsDict["bunch"]
@@ -19,6 +20,7 @@ class BPMclass:
             BPM_name = paramsDict["parentNode"].getName()
             sync_part = bunch.getSyncParticle()
             sync_beta = sync_part.beta()
+            current = bunch.macroSize() * part_num * self.si_e_charge * rf_freq
             phase_coeff = 2 * math.pi / (sync_beta * 2.99792458e8 / rf_freq)
             sync_phase = (sync_part.time() * rf_freq * 2 * math.pi) % (2 * math.pi) - math.pi
             sync_energy = sync_part.kinEnergy()
@@ -32,9 +34,10 @@ class BPMclass:
             y_avg /= part_num
             z_avg /= part_num
             phi_avg = phase_coeff * z_avg + sync_phase
-            self.parameters['x_avg'] = x_avg
-            self.parameters['y_avg'] = y_avg
+            self.parameters['x_avg'] = x_avg * 1000  # mm
+            self.parameters['y_avg'] = y_avg * 1000  # mm
             self.parameters['phi_avg'] = phi_avg
+            self.parameters['current'] = current * 1000  # mA
             self.parameters['energy'] = sync_energy
             self.parameters['beta'] = sync_beta
             # print(BPM_name + " : " + str(x_avg))
@@ -42,6 +45,7 @@ class BPMclass:
             self.parameters['x_avg'] = 0.0
             self.parameters['y_avg'] = 0.0
             self.parameters['phi_avg'] = 0.0
+            self.parameters['current'] = 0.0
             self.parameters['energy'] = 0.0
             self.parameters['beta'] = 0.0
 
@@ -53,6 +57,9 @@ class BPMclass:
 
     def getYAvg(self):
         return self.parameters['y_avg']
+
+    def getCurrent(self):
+        return self.parameters['current']
 
     def getEnergy(self):
         return self.parameters['energy']
