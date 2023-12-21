@@ -162,7 +162,7 @@ class BPM(Device):
         phase_noise = AbsNoise(noise=1e-4)
         current_noise = AbsNoise(noise=1e-4)
 
-        milli_units = LinearTInv(scaler=1000)
+        milli_units = LinearTInv(scaler=1e3)
 
         if phase_offset is None:
             phase_offset = (2 * random() - 1) * 180
