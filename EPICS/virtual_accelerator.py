@@ -47,10 +47,15 @@ if __name__ == '__main__':
     Add_quad_apertures_to_lattice(model_lattice)
     Add_rfgap_apertures_to_lattice(model_lattice)
 
+    part_num = 1000
     bunch_in = Bunch()
     bunch_in.readBunch(str(bunch_file))
-    for n in range(bunch_in.getSizeGlobal()):
-        if n + 1 > 1000:
+    bunch_orig_num = bunch_in.getSizeGlobal()
+    bunch_macrosize = bunch_in.macroSize()
+    bunch_macrosize *= bunch_orig_num / part_num
+    bunch_in.macroSize(bunch_macrosize)
+    for n in range(bunch_orig_num):
+        if n + 1 > part_num:
             bunch_in.deleteParticleFast(n)
     bunch_in.compress()
 

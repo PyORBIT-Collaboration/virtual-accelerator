@@ -53,6 +53,8 @@ class Corrector(Device):
 
     field_key = 'B'
 
+    field_limits = [-0.1, 0.1]
+
     def __init__(self, name: str, model_name: str, initial_dict=None):
         super().__init__(name, model_name)
         self.model_name = model_name
@@ -70,6 +72,10 @@ class Corrector(Device):
         model_dict = {}
         if reason == Corrector.field_set_pv:
             model_value = transform.real(self.getParam(reason))
+            if model_value < self.field_limits[0]:
+                model_value = self.field_limits[0]
+            elif model_value > self.field_limits[1]:
+                model_value = self.field_limits[1]
             model_dict[Corrector.field_key] = model_value
         return model_dict
 
@@ -142,16 +148,19 @@ class BPM(Device):
     x_pv = 'xAvg'
     y_pv = 'yAvg'
     phase_pv = 'phaseAvg'
+    current_pv = 'amplitudeAvg'
 
     x_key = 'x_avg'
     y_key = 'y_avg'
     phase_key = 'phi_avg'
+    current_key = 'current'
 
     def __init__(self, name: str, model_name: str, phase_offset=None):
         super().__init__(name, model_name)
 
         xy_noise = AbsNoise(noise=1e-8)
         phase_noise = AbsNoise(noise=1e-4)
+        current_noise = AbsNoise(noise=1e-4)
 
         if phase_offset is None:
             phase_offset = (2 * random() - 1) * 180
@@ -160,6 +169,7 @@ class BPM(Device):
         self.register_measurement(BPM.x_pv, noise=xy_noise)
         self.register_measurement(BPM.y_pv, noise=xy_noise)
         self.register_measurement(BPM.phase_pv, noise=phase_noise, transform=offset_transform)
+        self.register_measurement(BPM.current_pv, noise=current_noise)
 
     def update_measurement(self, model_key, model_value):
         reason = None
@@ -173,7 +183,9 @@ class BPM(Device):
         elif model_key == BPM.phase_key:
             reason = BPM.phase_pv
             virtual_value = model_value
-
+        elif model_key == BPM.current_key:
+            reason = BPM.current_pv
+            virtual_value = model_value
         if reason is not None:
             *_, transform, noise = self.measurements[reason]
             self.setParam(reason, noise.add_noise(transform.raw(virtual_value)))
