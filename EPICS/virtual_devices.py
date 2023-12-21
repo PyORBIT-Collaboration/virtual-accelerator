@@ -207,8 +207,8 @@ class WireScanner(Device):
     position_key = 'wire_position'  # [m]
     speed_key = 'wire_speed'  # [m]
 
-    x_offset = -0.01
-    y_offset = 0.01
+    x_offset = -0.01  # [m]
+    y_offset = 0.01  # [m]
     wire_coeff = 1 / math.sqrt(2)
 
     def __init__(self, name: str, model_name: str, initial_dict=None):
