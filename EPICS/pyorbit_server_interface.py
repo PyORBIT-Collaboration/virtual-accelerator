@@ -1,12 +1,12 @@
 from datetime import datetime
-from typing import Optional, Union, List
+from typing import Optional, Union, List, Dict
 from pathlib import Path
 import json
 
 from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 from orbit.core.bunch import Bunch
 
-from interface_lib import PyorbitLibrary
+from interface_lib import PyorbitNode, PyorbitChild, PyorbitCavity
 from server_child_nodes import BPMclass, WSclass, BunchCopyClass
 
 
@@ -14,7 +14,7 @@ class Model:
     def __init__(self):
         pass
 
-    def get_measurements(self) -> dict[str, dict[str, ]]:
+    def get_measurements(self) -> dict[str, dict[str,]]:
         # Output values from the model. This needs to return a dictionary with the model name of the element as a key
         # to a dictionary of the element's parameters.
         return {}
@@ -23,35 +23,75 @@ class Model:
         # update values within your model
         pass
 
-    def update_optics(self, changed_optics: dict[str, dict[str, ]]) -> None:
+    def update_optics(self, changed_optics: dict[str, dict[str,]]) -> None:
         # Take external values and update the model. Needs an input of a dictionary with the model name of the element
         # as a key to a dictionary of the element's parameters with their new values.
         pass
 
 
 class OrbitModel(Model):
-    def __init__(self, input_lattice: LinacAccLattice, input_bunch: Bunch = None):
+    def __init__(self, input_lattice: LinacAccLattice, input_bunch: Bunch = None, ignored_nodes=None):
         super().__init__()
 
         self.accLattice = input_lattice
+        if ignored_nodes is None:
+            ignored_nodes = set()
+        ignored_nodes |= {'baserfgap', 'drift', 'tilt', 'fringe', 'markerLinacNode', 'baseLinacNode'}
+        unique_elements = set()
+
+        # Set up a dictionary to reference different objects within the lattice by their name.
+        # This way, children nodes (correctors) and RF Cavity parameters are easy to reference.
+        element_ref_hint = Union[PyorbitNode, PyorbitCavity, PyorbitChild]
+        element_dict_hint = Dict[str, element_ref_hint]
+        element_dict: element_dict_hint = {}
+
+        def add_child_nodes(ancestor_node, children_nodes, element_dictionary):
+            for child in children_nodes:
+                child_type = child.getType()
+                if child_type == 'markerLinacNode':
+                    child_name = child.getName()
+                    if 'BPM' in child_name:
+                        child.addChildNode(BPMclass(child_name), child.ENTRANCE)
+                    if 'WS' in child_name:
+                        child.addChildNode(WSclass(child_name), child.ENTRANCE)
+                if not any(substring in child_type for substring in ignored_nodes):
+                    child_name = child.getName()
+                    if child_name not in unique_elements:
+                        unique_elements.add(child_name)
+                        element_dictionary[child_name] = PyorbitChild(child, ancestor_node)
+                grandchildren = child.getAllChildren()
+                if len(grandchildren) > 0:
+                    add_child_nodes(ancestor_node, grandchildren, element_dictionary)
+
         list_of_nodes = self.accLattice.getNodes()
         for node in list_of_nodes:
             node_type = node.getType()
-            # Set up BPMs to actually do something and attach their PVs
             if node_type == 'markerLinacNode':
                 node_name = node.getName()
                 if 'BPM' in node_name:
                     node.addChildNode(BPMclass(node_name), node.ENTRANCE)
                 if 'WS' in node_name:
                     node.addChildNode(WSclass(node_name), node.ENTRANCE)
+            if not any(substring in node_type for substring in ignored_nodes):
+                element_name = node.getName()
+                if element_name not in unique_elements:
+                    unique_elements.add(element_name)
+                    element_dict[element_name] = PyorbitNode(node)
+            children = node.getAllChildren()
+            if len(children) > 0:
+                add_child_nodes(node, children, element_dict)
 
-        # Set up a dictionary to reference different objects within the lattice by their name.
-        # This way, children nodes (correctors) and RF Cavity parameters are easy to reference.
-        self.pyorbit_dict = PyorbitLibrary(self.accLattice)
+        list_of_cavities = self.accLattice.getRF_Cavities()
+        for cavity in list_of_cavities:
+            element_name = cavity.getName()
+            unique_elements.add(element_name)
+            element_dict[element_name] = PyorbitCavity(cavity)
+
+        self.pyorbit_dictionary = element_dict
 
         # set up dictionary of bunches
         self.bunch_dict = {'initial_bunch': Bunch()}
-        for element_name, element_ref in self.pyorbit_dict.get_element_dictionary().items():
+        for element_name, element_ref in self.pyorbit_dictionary.items():
             location_node = element_ref.get_tracking_node()
             if element_name not in self.bunch_dict:
                 self.bunch_dict[element_name] = Bunch()
@@ -73,27 +113,33 @@ class OrbitModel(Model):
         self.accLattice.trackBunch(initial_bunch)
         self.current_changes = set()
 
-    def get_settings(self, setting_names: Optional[Union[str, List[str]]] = None) -> dict[str, dict[str,]]:
-        pyorbit_dict = self.pyorbit_dict
+    def get_element_list(self) -> list[str]:
+        key_list = []
+        for element_key in self.pyorbit_dictionary.keys():
+            key_list.append(element_key)
+        return key_list
+
+    def get_settings(self, setting_names: Optional[Union[str, List[str]]] = None) -> dict[str, dict[str, ]]:
+        pyorbit_dict = self.pyorbit_dictionary
         return_dict = {}
         if setting_names is None:
-            for element_name, element_ref in pyorbit_dict.get_element_dictionary().items():
+            for element_name, element_ref in pyorbit_dict.items():
                 if element_ref.is_optic():
                     return_dict[element_name] = element_ref.get_parameter_dict()
 
         elif isinstance(setting_names, list):
             bad_names = []
             for element_name in setting_names:
-                if element_name in pyorbit_dict.get_element_names():
-                    return_dict[element_name] = pyorbit_dict.get_element_parameters(element_name)
+                if element_name in pyorbit_dict.keys():
+                    return_dict[element_name] = pyorbit_dict[element_name].get_parameter_dict()
                 else:
                     bad_names.append(element_name)
             if bad_names:
                 print(f'These elements are not in the model: {", ".join(bad_names)}.')
 
         elif isinstance(setting_names, str):
-            if setting_names in pyorbit_dict.get_element_names():
-                return_dict[setting_names] = pyorbit_dict.get_element_parameters(setting_names)
+            if setting_names in pyorbit_dict.keys():
+                return_dict[setting_names] = pyorbit_dict[setting_names].get_parameter_dict()
             else:
                 print(f'The element "{setting_names}" is not in the model.')
         return return_dict
@@ -101,26 +147,26 @@ class OrbitModel(Model):
     def get_measurements(self, measurement_names: Optional[Union[str, List[str]]] = None) -> dict[str, dict[str,]]:
         # think about more useful parameters that are not real
         # for fake parameters use XXX_Phys
-        pyorbit_dict = self.pyorbit_dict
+        pyorbit_dict = self.pyorbit_dictionary
         return_dict = {}
         if measurement_names is None:
-            for element_name, element_ref in pyorbit_dict.get_element_dictionary().items():
+            for element_name, element_ref in pyorbit_dict.items():
                 if not element_ref.is_optic():
                     return_dict[element_name] = element_ref.get_parameter_dict()
 
         elif isinstance(measurement_names, list):
             bad_names = []
             for element_name in measurement_names:
-                if element_name in pyorbit_dict.get_element_names():
-                    return_dict[element_name] = pyorbit_dict.get_element_parameters(element_name)
+                if element_name in pyorbit_dict.keys():
+                    return_dict[element_name] = pyorbit_dict[element_name].get_parameter_dict()
                 else:
                     bad_names.append(element_name)
             if bad_names:
                 print(f'These elements are not in the model: {", ".join(bad_names)}.')
 
         elif isinstance(measurement_names, str):
-            if measurement_names in pyorbit_dict.get_element_names():
-                return_dict[measurement_names] = pyorbit_dict.get_element_parameters(measurement_names)
+            if measurement_names in pyorbit_dict.keys():
+                return_dict[measurement_names] = pyorbit_dict[measurement_names].get_parameter_dict()
             else:
                 print(f'The element "{measurement_names}" is not in the model.')
         return return_dict
@@ -144,8 +190,9 @@ class OrbitModel(Model):
             upstream_name = None
             rf_flag = False
             for element_name in frozen_changes:
-                ind_check = self.pyorbit_dict.get_element_index(element_name)
-                if self.pyorbit_dict.get_location_node(element_name).isRFGap():
+                location_node = self.pyorbit_dictionary[element_name].get_tracking_node()
+                ind_check = frozen_lattice.getNodeIndex(location_node)
+                if location_node.isRFGap():
                     rf_flag = True
                 if ind_check < upstream_index:
                     upstream_index = ind_check
@@ -177,12 +224,12 @@ class OrbitModel(Model):
         # update optics
         # Keep track of changed elements
         # do not track here yet
-        pyorbit_dict = self.pyorbit_dict
+        pyorbit_dict = self.pyorbit_dictionary
         for element_name, param_dict in changed_optics.items():
-            if element_name not in pyorbit_dict.get_element_names():
+            if element_name not in pyorbit_dict.keys():
                 print(f'PyORBIT element "{element_name}" not found.')
-            elif pyorbit_dict.get_element_reference(element_name).is_optic():
-                element_ref = pyorbit_dict.get_element_reference(element_name)
+            elif pyorbit_dict[element_name].is_optic():
+                element_ref = pyorbit_dict[element_name]
                 for param, new_value in param_dict.items():
                     if param not in element_ref.get_parameter_dict():
                         print(f'Parameter key "{param}" not found in PyORBIT element "{element_name}".')
