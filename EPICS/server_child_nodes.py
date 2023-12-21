@@ -34,10 +34,10 @@ class BPMclass:
             y_avg /= part_num
             z_avg /= part_num
             phi_avg = phase_coeff * z_avg + sync_phase
-            self.parameters['x_avg'] = x_avg * 1000  # mm
-            self.parameters['y_avg'] = y_avg * 1000  # mm
+            self.parameters['x_avg'] = x_avg
+            self.parameters['y_avg'] = y_avg
             self.parameters['phi_avg'] = phi_avg
-            self.parameters['current'] = current * 1000  # mA
+            self.parameters['current'] = current
             self.parameters['energy'] = sync_energy
             self.parameters['beta'] = sync_beta
             # print(BPM_name + " : " + str(x_avg))
