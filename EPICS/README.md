@@ -6,7 +6,7 @@ To see help:
 ```bash
    python input_maker.py -h
 ```
-Create default config files for SCL and HEBT
+Create default config files for MEBT -> HEBT1
 ```bash
    python input_maker.py
 ```
@@ -22,12 +22,12 @@ To see help:
    python virtual_accelerator.py -h
 ```
 
-Run default SCL and HEBT
+Run default MEBT -> HEBT1
 ```bash
    python virtual_accelerator.py
 ```
 
 Run MEBT only (with printing all PVs)
 ```bash
-   python virtual_accelerator.py --debug --file mebt_config.json --bunch MEBT_in.dat MEBT
+   python virtual_accelerator.py --debug --bunch MEBT_in.dat MEBT
 ```
