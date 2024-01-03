@@ -134,7 +134,7 @@ class AbsNoise(Noise):
 
 class Device:
 
-    def __init__(self, pv_name, model_name=None):
+    def __init__(self, pv_name: str, model_name: str = None):
         self.name = pv_name
         if model_name is None:
             self.model_name = pv_name

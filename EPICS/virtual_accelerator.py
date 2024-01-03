@@ -11,7 +11,7 @@ from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, 
 from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
 
 from ca_server import Server, epics_now, not_ctrlc
-from virtual_devices import Cavity, BPM, Quadrupole, Corrector, PBPM, WireScanner
+from virtual_devices import Cavity, BPM, Quadrupole, Corrector, P_BPM, WireScanner
 
 from pyorbit_server_interface import OrbitModel
 
@@ -50,17 +50,8 @@ if __name__ == '__main__':
     Add_quad_apertures_to_lattice(model_lattice)
     Add_rfgap_apertures_to_lattice(model_lattice)
 
-    part_num = 1000
     bunch_in = Bunch()
     bunch_in.readBunch(str(bunch_file))
-    bunch_orig_num = bunch_in.getSizeGlobal()
-    bunch_macrosize = bunch_in.macroSize()
-    bunch_macrosize *= bunch_orig_num / part_num
-    bunch_in.macroSize(bunch_macrosize)
-    for n in range(bunch_orig_num):
-        if n + 1 > part_num:
-            bunch_in.deleteParticleFast(n)
-    bunch_in.compress()
 
     model = OrbitModel(model_lattice, bunch_in)
     element_list = model.get_element_list()
@@ -113,7 +104,7 @@ if __name__ == '__main__':
         if device_type == "PBPMs":
             for name, model_name in devices.items():
                 if model_name in element_list:
-                    pbpm_device = PBPM(name, model_name)
+                    pbpm_device = P_BPM(name, model_name)
                     server.add_device(pbpm_device)
 
     if debug:
