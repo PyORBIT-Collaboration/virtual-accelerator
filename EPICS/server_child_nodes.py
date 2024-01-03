@@ -4,7 +4,11 @@ from typing import Dict
 import numpy as np
 from orbit.core.bunch import Bunch
 
+# A collection of classes that are attached to the lattice as child nodes for the virtual accelerator.
 
+
+# A class that adds BPMs to the lattice. This class calculates both typical diagnostics (average position) and values
+# that can't be directly measured (like energy).
 class BPMclass:
     def __init__(self, child_name: str):
         self.parameters = {'x_avg': 0.0, 'y_avg': 0.0, 'phi_avg': 0.0, 'current': 0.0, 'energy': 0.0, 'beta': 0.0}
@@ -83,6 +87,7 @@ class BPMclass:
         return []
 
 
+# Class for wire scanners. This class simply returns histograms of the vertical and horizontal positions.
 class WSclass:
     def __init__(self, child_name: str, bin_number: int = 50):
         self.parameters = {'x_histogram': np.zeros((0, 0)), 'y_histogram': np.zeros((0, 0))}
@@ -142,6 +147,7 @@ class WSclass:
         return []
 
 
+# This class copies the bunch to a the bunch dictionary used to save the bunch at each optic.
 class BunchCopyClass:
     def __init__(self, pyorbit_name: str, bunch_dict: Dict[str, Bunch]):
         self.pyorbit_name = pyorbit_name
@@ -152,6 +158,4 @@ class BunchCopyClass:
         bunch = paramsDict["bunch"]
         part_num = bunch.getSizeGlobal()
         if part_num > 0:
-            node = paramsDict["parentNode"]
             bunch.copyBunchTo(self.bunch_dict[self.pyorbit_name])
-            # self.bunch_dict[node_name].getSyncParticle().time(0.0)
