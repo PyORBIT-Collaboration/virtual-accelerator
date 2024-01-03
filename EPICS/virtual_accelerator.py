@@ -15,34 +15,51 @@ from virtual_devices import Cavity, BPM, Quadrupole, Corrector, P_BPM, WireScann
 
 from pyorbit_server_interface import OrbitModel
 
-# update rate in Hz
-REP_RATE = 0.5
 
 if __name__ == '__main__':
-    # Set a default prefix if unspecified at server initialization
     parser = argparse.ArgumentParser(description='Run CA server')
     # parser.add_argument('--prefix', '-p', default='test', type=str, help='Prefix for PVs')
+
+    # Json file that contains a dictionary connecting EPICS name of devices with their associated element model names.
     parser.add_argument('--file', '-f', default='va_config.json', type=str,
                         help='Pathname of config json file.')
+
+    # Number (in Hz) determining the update rate for the virtual accelerator.
+    parser.add_argument('--refresh_rate', default=1.0, type=float,
+                        help='Rate (in Hz) at which the virtual accelerator updates.')
+
+    # Lattice xml input file and the sequences desired from that file.
+    parser.add_argument('--lattice', default='sns_linac.xml', type=str,
+                        help='Pathname of lattice file')
+    parser.add_argument("--sequences", nargs='*',
+                        help='Desired sections from lattice listed in order without commas',
+                        default=["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
+                                 "SCLMed", "SCLHigh", "HEBT1"])
+
+    # Desired initial bunch file and the desired number of particles from that file.
     parser.add_argument('--bunch', default='MEBT_in.dat', type=str,
                         help='Pathname of input bunch file.')
+    parser.add_argument('--particle_number', default=1000, type=int,
+                        help='Number of particles to use.')
+
+    # Desired amount of output.
     parser.add_argument('--debug', dest='debug', action='store_true', help="Some debug info will be printed.")
     parser.add_argument('--production', dest='debug', action='store_false',
                         help="DEFAULT: No additional info printed.")
 
-    parser.add_argument("Sequences", nargs='*', help='Sequences',
-                        default=["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
-                                 "SCLMed", "SCLHigh", "HEBT1"])
-
     args = parser.parse_args()
     debug = args.debug
-    bunch_file = Path(args.bunch)
     config_file = Path(args.file)
+
     config_name = config_file.name.split('.')[0]
-    offset_name = config_name[0:-7] + '_offsets.json' if config_name.endswith('_config') else config_name + '_offset.json'
+    offset_name = config_name[0:-7] + '_offsets.json' if config_name.endswith(
+        '_config') else config_name + '_offset.json'
     offset_file = config_file.parent / offset_name
-    lattice_file = 'sns_linac.xml'
-    subsections = args.Sequences
+
+    REP_RATE = args.refresh_rate
+
+    lattice_file = args.lattice
+    subsections = args.sequences
 
     sns_linac_factory = SNS_LinacLatticeFactory()
     sns_linac_factory.setMaxDriftLength(0.01)
@@ -50,8 +67,22 @@ if __name__ == '__main__':
     Add_quad_apertures_to_lattice(model_lattice)
     Add_rfgap_apertures_to_lattice(model_lattice)
 
+    bunch_file = Path(args.bunch)
+    part_num = args.particle_number
+
     bunch_in = Bunch()
     bunch_in.readBunch(str(bunch_file))
+    bunch_orig_num = bunch_in.getSizeGlobal()
+    if bunch_orig_num < part_num:
+        print('Bunch file contains less particles than the desired number of particles.')
+    else:
+        bunch_macrosize = bunch_in.macroSize()
+        bunch_macrosize *= bunch_orig_num / part_num
+        bunch_in.macroSize(bunch_macrosize)
+        for n in range(bunch_orig_num):
+            if n + 1 > part_num:
+                bunch_in.deleteParticleFast(n)
+        bunch_in.compress()
 
     model = OrbitModel(model_lattice, bunch_in)
     element_list = model.get_element_list()
@@ -128,7 +159,10 @@ if __name__ == '__main__':
         server.update()
 
         loop_time_taken = time.time() - loop_start_time
-        sleep_time = max(0.0, REP_RATE - loop_time_taken)
-        time.sleep(sleep_time)
+        sleep_time = REP_RATE - loop_time_taken
+        if sleep_time < 0.0:
+            print('Warning: Update took longer than refresh rate.')
+        else:
+            time.sleep(sleep_time)
 
     print('Exiting. Thank you for using our virtual accelerator!')
