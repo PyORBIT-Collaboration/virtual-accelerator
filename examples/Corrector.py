@@ -2,7 +2,7 @@
 # It requires pyepics installed
 # In a separate terminal launch VA:
 # cd ../EPICS/
-# python python virtual_accelerator.py --debug
+# python virtual_accelerator.py --debug
 
 from epics import caget, caput
 from time import sleep

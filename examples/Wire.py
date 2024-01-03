@@ -2,7 +2,7 @@
 # It requires pyepics installed
 # In a separate terminal launch VA for MEBT:
 # cd ../EPICS/
-#  python virtual_accelerator.py --debug --bunch MEBT_in.dat MEBT
+#  python virtual_accelerator.py --debug --refresh_rate 0.5 --bunch MEBT_in.dat --sequences MEBT
 
 from epics import caget, caput
 from time import sleep
