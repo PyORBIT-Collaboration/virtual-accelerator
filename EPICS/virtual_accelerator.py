@@ -42,6 +42,10 @@ if __name__ == '__main__':
     parser.add_argument('--particle_number', default=1000, type=int,
                         help='Number of particles to use.')
 
+    # Json file that contains a dictionary connecting EPICS name of devices with their phase offset.
+    parser.add_argument('--phase_offset', default=None, type=str,
+                        help='Pathname of phase offset file.')
+
     # Desired amount of output.
     parser.add_argument('--debug', dest='debug', action='store_true', help="Some debug info will be printed.")
     parser.add_argument('--production', dest='debug', action='store_false',
@@ -49,12 +53,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     debug = args.debug
-    config_file = Path(args.file)
 
-    config_name = config_file.name.split('.')[0]
-    offset_name = config_name[0:-7] + '_offsets.json' if config_name.endswith(
-        '_config') else config_name + '_offset.json'
-    offset_file = config_file.parent / offset_name
+    config_file = Path(args.file)
+    with open(config_file, "r") as json_file:
+        devices_dict = json.load(json_file)
 
     REP_RATE = args.refresh_rate
 
@@ -87,54 +89,46 @@ if __name__ == '__main__':
     model = OrbitModel(model_lattice, bunch_in)
     element_list = model.get_element_list()
 
-    # server = Server(prefix)
     server = Server()
 
-    with open(config_file, "r") as json_file:
-        devices_dict = json.load(json_file)
-
-    with open(offset_file, "r") as json_file:
-        offset_dict = json.load(json_file)
+    offset_file = args.phase_offset
+    if offset_file is not None:
+        with open(offset_file, "r") as json_file:
+            offset_dict = json.load(json_file)
 
     for device_type, devices in devices_dict.items():
-        if device_type == "Cavities":
-            for name, model_name in devices.items():
-                if model_name in element_list:
+        for name, model_name in devices.items():
+            if model_name in element_list:
+                if device_type == "RF_Cavity":
                     initial_settings = model.get_settings(model_name)[model_name]
-                    phase_offset = offset_dict[name]
-                    rf_device = Cavity(name, model_name, initial_settings, phase_offset)
+                    phase_offset = 0
+                    if offset_file is not None:
+                        phase_offset = offset_dict[name]
+                    rf_device = Cavity(name, model_name, initial_dict=initial_settings, phase_offset=phase_offset)
                     server.add_device(rf_device)
 
-        if device_type == "Quadrupoles":
-            for name, model_name in devices.items():
-                if model_name in element_list:
+                if device_type == "Quadrupole":
                     initial_settings = model.get_settings(model_name)[model_name]
-                    quad_device = Quadrupole(name, model_name, initial_settings)
+                    quad_device = Quadrupole(name, model_name, initial_dict=initial_settings)
                     server.add_device(quad_device)
 
-        if device_type == "Correctors":
-            for name, model_name in devices.items():
-                if model_name in element_list:
+                if device_type == "Corrector":
                     initial_settings = model.get_settings(model_name)[model_name]
-                    corrector_device = Corrector(name, model_name, initial_settings)
+                    corrector_device = Corrector(name, model_name, initial_dict=initial_settings)
                     server.add_device(corrector_device)
 
-        if device_type == "Wire_Scanners":
-            for name, model_name in devices.items():
-                if model_name in element_list:
+                if device_type == "Wire_Scanner":
                     ws_device = WireScanner(name, model_name)
                     server.add_device(ws_device)
 
-        if device_type == "BPMs":
-            for name, model_name in devices.items():
-                if model_name in element_list:
-                    phase_offset = offset_dict[name]
-                    bpm_device = BPM(name, model_name, phase_offset)
+                if device_type == "BPMs":
+                    phase_offset = 0
+                    if offset_file is not None:
+                        phase_offset = offset_dict[name]
+                    bpm_device = BPM(name, model_name, phase_offset=phase_offset)
                     server.add_device(bpm_device)
 
-        if device_type == "PBPMs":
-            for name, model_name in devices.items():
-                if model_name in element_list:
+                if device_type == "Physics_BPM":
                     pbpm_device = P_BPM(name, model_name)
                     server.add_device(pbpm_device)
 
