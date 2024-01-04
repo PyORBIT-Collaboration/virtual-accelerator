@@ -21,7 +21,6 @@ from ca_server import Device, AbsNoise, LinearT, PhaseT, not_ctrlc, PhaseTInv, L
 # server. The strings denoted with a "_key" are the keys for parameters in PyORBIT for that device. These need to match
 # the keys PyORBIT uses in the paramsDict for that devices corresponding PyORBIT element.
 
-
 class Quadrupole(Device):
     # EPICS PV names
     field_set_pv = 'B_Set'  # [T/m]
@@ -131,7 +130,7 @@ class Cavity(Device):
     phase_key = 'phase'  # [radians]
     amp_key = 'amp'  # [arb. units]
 
-    def __init__(self, name: str, model_name: str = None, initial_dict: dict[str, ] = None, phase_offset=None):
+    def __init__(self, name: str, model_name: str = None, initial_dict: dict[str, ] = None, phase_offset=0):
         if model_name is None:
             self.model_name = name
         else:
@@ -146,9 +145,7 @@ class Cavity(Device):
             initial_phase = 180
             initial_amp = 1.0
 
-        # Adds a phase offset. If none is provided, a random one is generated.
-        if phase_offset is None:
-            phase_offset = (2 * random() - 1) * 180
+        # Adds a phase offset. Default is 0 offset.
         offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
         initial_phase = offset_transform.raw(initial_phase)
 
@@ -195,7 +192,7 @@ class BPM(Device):
     phase_key = 'phi_avg'  # [radians]
     current_key = 'current'  # [A]
 
-    def __init__(self, name: str, model_name: str = None, phase_offset=None):
+    def __init__(self, name: str, model_name: str = None, phase_offset=0):
         if model_name is None:
             self.model_name = name
         else:
@@ -210,9 +207,7 @@ class BPM(Device):
         phase_noise = AbsNoise(noise=1e-4)
         current_noise = AbsNoise(noise=1e-4)
 
-        # Adds a phase offset. If none is provided, a random one is generated.
-        if phase_offset is None:
-            phase_offset = (2 * random() - 1) * 180
+        # Adds a phase offset. Default is 0 offset.
         offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
 
         # Registers the device's PVs with the server.

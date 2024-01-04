@@ -40,49 +40,59 @@ def main():
 
     model = OrbitModel(model_lattice)
 
-    devices = {'Cavities': {},
-               'Quadrupoles': {},
-               'Correctors': {},
-               'Wire_Scanners': {},
-               'BPMs': {},
-               'PBPMs': {}, }
+    cavity_key = 'RF_Cavity'
+    quad_key = 'Quadrupole'
+    corrector_key = 'Corrector'
+    BPM_key = 'BPM'
+    pBPM_key = 'Physics_BPM'
+    WS_key = 'Wire_Scanner'
+
+    devices = {cavity_key: {},
+               quad_key: {},
+               corrector_key: {},
+               WS_key: {},
+               BPM_key: {},
+               pBPM_key: {}, }
 
     offsets = {}
 
     for or_name, ele_ref in model.pyorbit_dictionary.items():
         # All cavities are named after sequence name and one digit: MEBT1, CCL2
         # except SCL cavities: SCL:Cav03a
-        if isinstance(ele_ref, PyorbitCavity):
+        ele_type = ele_ref.get_type()
+        if ele_type == cavity_key:
             if 'SCL:Cav' in or_name:
                 pv_name = "SCL_LLRF:FCM" + or_name[-3:]
             else:
                 pv_name = or_name[:-1] + "_LLRF:FCM" + or_name[-1:]
 
-            devices['Cavities'][pv_name] = or_name
+            devices[cavity_key][pv_name] = or_name
             offsets[pv_name] = (2 * random() - 1) * 180
 
-        elif 'Q' in or_name:
+        elif ele_type == quad_key:
             if 'PMQ' in or_name:
                 pass
             else:
                 split_name = or_name.split(':')
                 pv_name = f"{split_name[0]}:PS_{split_name[1]}"
-                devices['Quadrupoles'][pv_name] = or_name
-        elif 'DC' in or_name:
+                devices[quad_key][pv_name] = or_name
+
+        elif ele_type == corrector_key:
             split_name = or_name.split(':')
             pv_name = f"{split_name[0]}:PS_{split_name[1]}"
-            devices['Correctors'][pv_name] = or_name
+            devices[corrector_key][pv_name] = or_name
 
-        elif 'WS' in or_name:
+        elif ele_type == WS_key:
             pv_name = or_name
-            devices['Wire_Scanners'][pv_name] = or_name
-        elif 'BPM' in or_name:
+            devices[WS_key][pv_name] = or_name
+
+        elif ele_type == BPM_key:
             pv_name = or_name
-            devices['BPMs'][pv_name] = or_name
+            devices[BPM_key][pv_name] = or_name
             offsets[pv_name] = (2 * random() - 1) * 180
 
             pv_name = pv_name.replace('Diag', 'Phys')
-            devices['PBPMs'][pv_name] = or_name
+            devices[pBPM_key][pv_name] = or_name
 
     with open(config_file, "w") as json_file:
         json.dump(devices, json_file, indent=4)

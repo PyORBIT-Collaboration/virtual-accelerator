@@ -1,5 +1,5 @@
 {
-    "Cavities": {
+    "RF_Cavity": {
         "MEBT_LLRF:FCM1": "MEBT1",
         "MEBT_LLRF:FCM2": "MEBT2",
         "MEBT_LLRF:FCM3": "MEBT3",
@@ -96,7 +96,7 @@
         "SCL_LLRF:FCM23c": "SCL:Cav23c",
         "SCL_LLRF:FCM23d": "SCL:Cav23d"
     },
-    "Quadrupoles": {
+    "Quadrupole": {
         "MEBT_Mag:PS_QH01": "MEBT_Mag:QH01",
         "MEBT_Mag:PS_QV02": "MEBT_Mag:QV02",
         "MEBT_Mag:PS_QH03": "MEBT_Mag:QH03",
@@ -238,7 +238,7 @@
         "HEBT_Mag:PS_QH10": "HEBT_Mag:QH10",
         "HEBT_Mag:PS_QV11": "HEBT_Mag:QV11"
     },
-    "Correctors": {
+    "Corrector": {
         "MEBT_Mag:PS_DCH01": "MEBT_Mag:DCH01",
         "MEBT_Mag:PS_DCV01": "MEBT_Mag:DCV01",
         "MEBT_Mag:PS_DCH04": "MEBT_Mag:DCH04",
@@ -382,7 +382,7 @@
         "HEBT_Mag:PS_DCV07": "HEBT_Mag:DCV07",
         "HEBT_Mag:PS_DCH08": "HEBT_Mag:DCH08"
     },
-    "Wire_Scanners": {
+    "Wire_Scanner": {
         "MEBT_Diag:WS01": "MEBT_Diag:WS01",
         "MEBT_Diag:WS04a": "MEBT_Diag:WS04a",
         "MEBT_Diag:WS04b": "MEBT_Diag:WS04b",
@@ -409,7 +409,7 @@
         "HEBT_Diag:WS04": "HEBT_Diag:WS04",
         "HEBT_Diag:WS09": "HEBT_Diag:WS09"
     },
-    "BPMs": {
+    "BPM": {
         "MEBT_Diag:BPM01": "MEBT_Diag:BPM01",
         "MEBT_Diag:BPM04": "MEBT_Diag:BPM04",
         "MEBT_Diag:BPM05": "MEBT_Diag:BPM05",
@@ -482,7 +482,7 @@
         "HEBT_Diag:BPM10": "HEBT_Diag:BPM10",
         "HEBT_Diag:BPM11": "HEBT_Diag:BPM11"
     },
-    "PBPMs": {
+    "Physics_BPM": {
         "MEBT_Phys:BPM01": "MEBT_Diag:BPM01",
         "MEBT_Phys:BPM04": "MEBT_Diag:BPM04",
         "MEBT_Phys:BPM05": "MEBT_Diag:BPM05",

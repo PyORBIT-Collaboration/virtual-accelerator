@@ -7,11 +7,15 @@ from orbit.py_linac.lattice.LinacAccLatticeLib import RF_Cavity
 from server_child_nodes import BPMclass, WSclass
 
 
-# A collection of PyORBIT classes useful for hinting and PyORBIT keys we are using.
+# A collection of PyORBIT classes (useful for hinting) and PyORBIT keys we are using.
 class PyorbitElementTypes:
-    # Class check definitions from PyORBIT. Usefully for hinting and checking.
-    optic_classes = (Quad, RF_Cavity, DCorrectorV, DCorrectorH)  # Classes that can change the beam
-    diagnostic_classes = (MarkerLinacNode, BPMclass, WSclass)  # Classes that measure the beam
+    # Strings to label different PyORBIT elements.
+    cavity_key = 'RF_Cavity'
+    quad_key = 'Quadrupole'
+    corrector_key = 'Corrector'
+    BPM_key = 'BPM'
+    pBPM_key = 'Physics_BPM'
+    WS_key = 'Wire_Scanner'
 
     # PyORBIT keys for parameters we want to pass to the virtual accelerator.
     quad_params = ['dB/dr']
@@ -20,9 +24,23 @@ class PyorbitElementTypes:
     bpm_params = ['x_avg', 'y_avg', 'phi_avg', 'current', 'energy', 'beta']
     ws_params = ['x_histogram', 'y_histogram']
 
+    # Dictionary to keep track of different PyORBIT class types.
+    pyorbit_class_names = {Quad: quad_key,
+                           RF_Cavity: cavity_key,
+                           DCorrectorV: corrector_key,
+                           DCorrectorH: corrector_key,
+                           BPMclass: BPM_key,
+                           WSclass: WS_key}
+
     # Dictionary to keep the above parameters with their designated classes
-    param_ref_dict = {Quad: quad_params, RF_Cavity: cavity_params, DCorrectorV: corrector_params,
-                      DCorrectorH: corrector_params, BPMclass: bpm_params, WSclass: ws_params}
+    param_ref_dict = {quad_key: quad_params,
+                      cavity_key: cavity_params,
+                      corrector_key: corrector_params,
+                      BPM_key: bpm_params,
+                      WS_key: ws_params}
+
+    optic_classes = (quad_key, cavity_key, corrector_key)  # Classes that can change the beam
+    diagnostic_classes = (BPM_key, WS_key)  # Classes that measure the beam
 
     # Type hint definitions
     node_classes = Union[Quad, BaseRF_Gap, MarkerLinacNode]
@@ -37,63 +55,67 @@ class PyorbitElementTypes:
 # generic class all the others inherit. The actual PyOBIT instance of that element is needed as the input.
 class PyorbitElement:
     def __init__(self, element):
-        self.element = element
+        name = element.getName()
+        element_class = type(element)
+        element_type = PyorbitElementTypes.pyorbit_class_names[element_class]
 
-        # Determine if the element is an optic or diagnositc.
-        if isinstance(element, PyorbitElementTypes.optic_classes):
+        self.element = element
+        self.name = name
+        self.element_type = element_type
+
+        # Determine if the element is an optic or diagnostic.
+        if element_type in PyorbitElementTypes.optic_classes:
             self.is_optic_bool = True
-        elif isinstance(element, PyorbitElementTypes.diagnostic_classes):
+        elif element_type in PyorbitElementTypes.diagnostic_classes:
             self.is_optic_bool = False
         else:
-            name = element.getName()
             print(f'Element "{name}" is not defined as optic or diagnostic.')
 
     def get_name(self) -> str:
-        name = self.element.getName()
-        return name
+        return self.name
+
+    def get_type(self) -> str:
+        return self.element_type
+
 
     # Returns the PyORBIT ParamsDict from the element.
     def get_parameter_dict(self) -> dict[str,]:
-        element = self.element
-        element_class = type(element)
-        modeled_params = PyorbitElementTypes.param_ref_dict[element_class]
-        params_out_dict = {key: element.getParamsDict()[key] for key in modeled_params}
+        element_type = self.get_type()
+        modeled_params = PyorbitElementTypes.param_ref_dict[element_type]
+        params_out_dict = {key: self.element.getParamsDict()[key] for key in modeled_params}
         return params_out_dict
 
     # Changes the parameters of the element. Needs a dictionary that matches the PyORBIT ParamsDict for the element with
     # the new values. If any keys are not within that elements list of keys define in PyorbitElementTypes, that
     # parameter will be ignored.
     def set_parameter_dict(self, new_params: dict[str,]) -> None:
-        element = self.element
-        element_class = type(element)
-        modeled_params = PyorbitElementTypes.param_ref_dict[element_class]
+        element_type = self.get_type()
+        modeled_params = PyorbitElementTypes.param_ref_dict[element_type]
         new_params_fixed = {key: new_params[key] for key in modeled_params}
-        element.setParamsDict(new_params_fixed)
+        self.element.setParamsDict(new_params_fixed)
 
         bad_params = set(new_params.keys()) - set(modeled_params)
         if bad_params:
-            print(f'The following parameters are not in the "{element_class.__name__}" model: {", ".join(bad_params)}.')
+            print(f'The following parameters are not in the "{element_type}" model: {", ".join(bad_params)}.')
 
     # Returns the value for the given parameter key.
     def get_parameter(self, param_key: str):
-        element = self.element
-        element_class = type(element)
-        modeled_params = PyorbitElementTypes.param_ref_dict[element_class]
+        element_type = self.get_type()
+        modeled_params = PyorbitElementTypes.param_ref_dict[element_type]
         if param_key in modeled_params:
-            param = element.getParam(param_key)
+            param = self.element.getParam(param_key)
             return param
         else:
-            print(f'The key "{param_key}" is not in the "{element_class.__name__}" model.')
+            print(f'The key "{param_key}" is not in the "{element_type}" model.')
 
     # Changes the value for the given parameter key with the given new value.
     def set_parameter(self, param_key: str, new_param) -> None:
-        element = self.element
-        element_class = type(element)
-        modeled_params = PyorbitElementTypes.param_ref_dict[element_class]
+        element_type = self.get_type()
+        modeled_params = PyorbitElementTypes.param_ref_dict[element_type]
         if param_key in modeled_params:
-            element.setParam(param_key, new_param)
+            self.element.setParam(param_key, new_param)
         else:
-            print(f'The key "{param_key}" is not in the "{element_class.__name__}" model.')
+            print(f'The key "{param_key}" is not in the "{element_type}" model.')
 
     # Is the element an optic or not
     def is_optic(self) -> bool:

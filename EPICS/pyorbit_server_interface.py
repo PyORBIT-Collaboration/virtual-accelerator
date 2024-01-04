@@ -31,6 +31,10 @@ class Model:
 
 # This is a model using PyORBIT. It requires a LinacAccLattice as input. The input bunch can also be defined here.
 class OrbitModel(Model):
+    # This creates a hint for the element dictionary for easier development.
+    element_ref_hint = Union[PyorbitNode, PyorbitCavity, PyorbitChild]
+    element_dict_hint = Dict[str, element_ref_hint]
+
     def __init__(self, input_lattice: LinacAccLattice, input_bunch: Bunch = None):
         super().__init__()
 
@@ -42,9 +46,7 @@ class OrbitModel(Model):
 
         # Set up a dictionary to reference different objects within the lattice by their name. Not all elements are
         # readily available in LinacAccLattice, so this lets us easily reference them.
-        element_ref_hint = Union[PyorbitNode, PyorbitCavity, PyorbitChild]
-        element_dict_hint = Dict[str, element_ref_hint]
-        element_dict: element_dict_hint = {}
+        element_dict: OrbitModel.element_dict_hint = {}
 
         # This function is for digging into child nodes in PyORBIT to find nodes we need to reference. This is mainly
         # for correctors and some BPMs. If a BPM or wire scanner markerLinacNode is found, the appropriate child node is
@@ -130,6 +132,10 @@ class OrbitModel(Model):
         for element_key in self.pyorbit_dictionary.keys():
             key_list.append(element_key)
         return key_list
+
+    # Returns the element dictionary
+    def get_element_dictionary(self) -> element_dict_hint:
+        return self.pyorbit_dictionary
 
     # Returns a dictionary all the current setting parameters in a dictionary of elements. The number of elements
     # depends on the input provided. If nothing, the returned dictionary includes all current optics within the model.
