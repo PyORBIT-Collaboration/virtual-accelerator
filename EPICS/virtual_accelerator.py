@@ -121,7 +121,7 @@ if __name__ == '__main__':
                     ws_device = WireScanner(name, model_name)
                     server.add_device(ws_device)
 
-                if device_type == "BPMs":
+                if device_type == "BPM":
                     phase_offset = 0
                     if offset_file is not None:
                         phase_offset = offset_dict[name]
