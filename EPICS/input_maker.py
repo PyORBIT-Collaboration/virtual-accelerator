@@ -21,22 +21,26 @@ def main():
                                      formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('--file', '-f', default='va_config.json', type=str,
                         help='Pathname of resulting config json file.')
+
+    parser.add_argument('--lattice', default='sns_linac.xml', type=str,
+                        help='Pathname of lattice file')
+
     parser.add_argument("Sequences", nargs='*', help='Sequences',
                         default=["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
                                  "SCLMed", "SCLHigh", "HEBT1"])
+
+    parser.add_argument('--phase_offset', default=None, type=str,
+                        help='Pathname of resulting randomized phase offset file for cavities and BPMs.')
+
     args = parser.parse_args()
 
     config_file = Path(args.file)
-    config_name = config_file.name.split('.')[0]
-    offset_name = config_name[0:-7] + '_offsets.json' if config_name.endswith(
-        '_config') else config_name + '_offset.json'
-    offset_file = config_file.parent / offset_name
-
-    lattice_str = "sns_linac.xml"
+    lattice_file = args.lattice
     subsections = args.Sequences
+    offset_file = args.phase_offset
 
     sns_linac_factory = SNS_LinacLatticeFactory()
-    model_lattice = sns_linac_factory.getLinacAccLattice(subsections, lattice_str)
+    model_lattice = sns_linac_factory.getLinacAccLattice(subsections, lattice_file)
 
     model = OrbitModel(model_lattice)
 
@@ -67,7 +71,8 @@ def main():
                 pv_name = or_name[:-1] + "_LLRF:FCM" + or_name[-1:]
 
             devices[cavity_key][pv_name] = or_name
-            offsets[pv_name] = (2 * random() - 1) * 180
+            if offset_file is not None:
+                offsets[pv_name] = (2 * random() - 1) * 180
 
         elif ele_type == quad_key:
             if 'PMQ' in or_name:
@@ -89,7 +94,8 @@ def main():
         elif ele_type == BPM_key:
             pv_name = or_name
             devices[BPM_key][pv_name] = or_name
-            offsets[pv_name] = (2 * random() - 1) * 180
+            if offset_file is not None:
+                offsets[pv_name] = (2 * random() - 1) * 180
 
             pv_name = pv_name.replace('Diag', 'Phys')
             devices[pBPM_key][pv_name] = or_name
@@ -97,8 +103,9 @@ def main():
     with open(config_file, "w") as json_file:
         json.dump(devices, json_file, indent=4)
 
-    with open(offset_file, "w") as json_file:
-        json.dump(offsets, json_file, indent=4)
+    if offset_file is not None:
+        with open(offset_file, "w") as json_file:
+            json.dump(offsets, json_file, indent=4)
 
 
 if __name__ == "__main__":
