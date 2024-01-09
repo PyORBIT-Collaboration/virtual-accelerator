@@ -10,17 +10,18 @@ from orbit.core.bunch import Bunch
 # A class that adds BPMs to the lattice. This class calculates both typical diagnostics (average position) and values
 # that can't be directly measured (like energy).
 class BPMclass:
-    def __init__(self, child_name: str):
+    def __init__(self, child_name: str, frequency: float = 402.5e6):
         self.parameters = {'x_avg': 0.0, 'y_avg': 0.0, 'phi_avg': 0.0, 'current': 0.0, 'energy': 0.0, 'beta': 0.0}
         self.child_name = child_name
         self.node_type = 'BPM'
         self.si_e_charge = 1.6021773e-19
+        self.rf_freq = frequency
 
     def trackActions(self, actionsContainer, paramsDict):
         bunch = paramsDict["bunch"]
         part_num = bunch.getSizeGlobal()
         if part_num > 0:
-            rf_freq = 402.5e6
+            rf_freq = self.rf_freq
             BPM_name = paramsDict["parentNode"].getName()
             sync_part = bunch.getSyncParticle()
             sync_beta = sync_part.beta()
