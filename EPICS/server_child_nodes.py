@@ -4,6 +4,7 @@ from typing import Dict
 import numpy as np
 from orbit.core.bunch import Bunch
 
+
 # A collection of classes that are attached to the lattice as child nodes for the virtual accelerator.
 
 
@@ -11,7 +12,8 @@ from orbit.core.bunch import Bunch
 # that can't be directly measured (like energy).
 class BPMclass:
     def __init__(self, child_name: str, frequency: float = 402.5e6):
-        self.parameters = {'x_avg': 0.0, 'y_avg': 0.0, 'phi_avg': 0.0, 'current': 0.0, 'energy': 0.0, 'beta': 0.0}
+        self.parameters = {'frequency': frequency, 'x_avg': 0.0, 'y_avg': 0.0, 'phi_avg': 0.0, 'current': 0.0,
+                           'energy': 0.0, 'beta': 0.0}
         self.child_name = child_name
         self.node_type = 'BPM'
         self.si_e_charge = 1.6021773e-19
@@ -54,6 +56,12 @@ class BPMclass:
             self.parameters['energy'] = 0.0
             self.parameters['beta'] = 0.0
 
+    def getFrequency(self):
+        return self.parameters['frequency']
+
+    def setFrequency(self, new_frequency: float) -> None:
+        self.parameters['frequency'] = new_frequency
+
     def getPhaseAvg(self):
         return self.parameters['phi_avg']
 
@@ -74,6 +82,9 @@ class BPMclass:
 
     def getParam(self, param: str):
         return self.parameters[param]
+
+    def setParam(self, param: str, new_param):
+        self.parameters[param] = new_param
 
     def getParamsDict(self) -> dict:
         return self.parameters
