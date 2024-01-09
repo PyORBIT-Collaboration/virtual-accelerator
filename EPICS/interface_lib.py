@@ -21,7 +21,7 @@ class PyorbitElementTypes:
     quad_params = ['dB/dr']
     corrector_params = ['B']
     cavity_params = ['phase', 'amp']
-    bpm_params = ['x_avg', 'y_avg', 'phi_avg', 'current', 'energy', 'beta']
+    bpm_params = ['frequency', 'x_avg', 'y_avg', 'phi_avg', 'current', 'energy', 'beta']
     ws_params = ['x_histogram', 'y_histogram']
 
     # Dictionary to keep track of different PyORBIT class types.

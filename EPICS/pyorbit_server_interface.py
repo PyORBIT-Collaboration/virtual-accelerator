@@ -73,18 +73,12 @@ class OrbitModel(Model):
         # scanner markerLinacNode is found, the appropriate child node is attached. If the node has any child nodes, the
         # add_child_nodes function is called.
         list_of_nodes = self.accLattice.getNodes()
-        bpm_freqs = {'MEBT': 805e6, 'DTL': 805e6, 'CCL': 402.5e6, 'SCL': 402.5e6, 'HEBT': 402.5e6}
         for node in list_of_nodes:
             node_type = node.getType()
             if node_type == 'markerLinacNode':
                 node_name = node.getName()
                 if 'BPM' in node_name:
-                    for seq, freq in bpm_freqs.items():
-                        if seq in node_name:
-                            node.addChildNode(BPMclass(node_name, freq), node.ENTRANCE)
-                            print(node_name, freq)
-                        else:
-                            node.addChildNode(BPMclass(node_name), node.ENTRANCE)
+                    node.addChildNode(BPMclass(node_name), node.ENTRANCE)
                 if 'WS' in node_name:
                     node.addChildNode(WSclass(node_name), node.ENTRANCE)
             if not any(substring in node_type for substring in ignored_nodes):
