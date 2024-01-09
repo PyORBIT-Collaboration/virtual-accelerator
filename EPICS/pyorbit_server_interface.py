@@ -35,8 +35,10 @@ class OrbitModel(Model):
     element_ref_hint = Union[PyorbitNode, PyorbitCavity, PyorbitChild]
     element_dict_hint = Dict[str, element_ref_hint]
 
-    def __init__(self, input_lattice: LinacAccLattice, input_bunch: Bunch = None):
+    def __init__(self, input_lattice: LinacAccLattice, input_bunch: Bunch = None, debug: bool = False):
         super().__init__()
+
+        self.debug = debug
 
         self.accLattice = input_lattice
         # Here we specify the node types in PyORBIT we don't need to worry about and start a set to make sure each
@@ -141,7 +143,7 @@ class OrbitModel(Model):
     # depends on the input provided. If nothing, the returned dictionary includes all current optics within the model.
     # If a list of element names, the returned dictionary only includes those elements. And if just an element name, the
     # dictionary only includes that element.
-    def get_settings(self, setting_names: Optional[Union[str, List[str]]] = None) -> dict[str, dict[str, ]]:
+    def get_settings(self, setting_names: Optional[Union[str, List[str]]] = None) -> dict[str, dict[str,]]:
         pyorbit_dict = self.pyorbit_dictionary
         return_dict = {}
         if setting_names is None:
@@ -231,16 +233,19 @@ class OrbitModel(Model):
             # Use the bunch in the dictionary associated with the node that tracking with start with.
             if upstream_name in self.bunch_dict:
                 self.bunch_dict[upstream_name].copyBunchTo(tracked_bunch)
-                print("Tracking bunch from " + upstream_name + "...")
+                if self.debug:
+                    print("Tracking bunch from " + upstream_name + "...")
             else:
                 # If no bunch is found for that node, track from the beginning.
                 upstream_index = -1
                 self.bunch_dict['initial_bunch'].copyBunchTo(tracked_bunch)
-                print("Tracking bunch from start...")
+                if self.debug:
+                    print("Tracking bunch from start...")
 
             # Track bunch
             frozen_lattice.trackBunch(tracked_bunch, index_start=upstream_index)
-            print("Bunch tracked")
+            if self.debug:
+                print("Bunch tracked")
 
             # Clear the set of changes
             self.current_changes = set()
@@ -264,8 +269,9 @@ class OrbitModel(Model):
                         if abs(new_value - current_value) > 1e-12:
                             element_ref.set_parameter(param, new_value)
                             self.current_changes.add(element_name)
-                            print(
-                                f'Value of "{param}" in "{element_name}" changed from {current_value} to {new_value}.')
+                            if self.debug:
+                                print(f'Value of "{param}" in "{element_name}" changed from {current_value} to '
+                                      f'{new_value}.')
 
     # Returns optics to their original values when the model was initiated.
     def reset_optics(self) -> None:

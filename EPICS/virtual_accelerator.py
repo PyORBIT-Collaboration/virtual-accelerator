@@ -86,7 +86,7 @@ if __name__ == '__main__':
                 bunch_in.deleteParticleFast(n)
         bunch_in.compress()
 
-    model = OrbitModel(model_lattice, bunch_in)
+    model = OrbitModel(model_lattice, bunch_in, debug=debug)
     element_list = model.get_element_list()
 
     bpm_frequencies = {'MEBT': 805e6, 'DTL': 805e6, 'CCL': 402.5e6, 'SCL': 402.5e6, 'HEBT': 402.5e6}
