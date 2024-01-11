@@ -17,13 +17,12 @@ class BPMclass:
         self.child_name = child_name
         self.node_type = 'BPM'
         self.si_e_charge = 1.6021773e-19
-        self.rf_freq = frequency
 
     def trackActions(self, actionsContainer, paramsDict):
         bunch = paramsDict["bunch"]
         part_num = bunch.getSizeGlobal()
         if part_num > 0:
-            rf_freq = self.rf_freq
+            rf_freq = self.parameters['frequency']
             BPM_name = paramsDict["parentNode"].getName()
             sync_part = bunch.getSyncParticle()
             sync_beta = sync_part.beta()

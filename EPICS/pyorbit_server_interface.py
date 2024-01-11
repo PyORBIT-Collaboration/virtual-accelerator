@@ -250,6 +250,31 @@ class OrbitModel(Model):
             # Clear the set of changes
             self.current_changes = set()
 
+    # Tracks the bunch through the lattice. Always tracks from the beginning, even if no optics have been changed.
+    def force_track(self):
+        if self.bunch_dict['initial_bunch'].getSizeGlobal() == 0:
+            print('Create initial bunch in order to start tracking.')
+
+        else:
+            # I wanted to freeze the lattice to make sure no modifications could be made to it while it is tracking.
+            # Still trying to figure out the best way to do so.
+            # frozen_lattice = copy.deepcopy(self.accLattice)
+            frozen_lattice = self.accLattice
+            tracked_bunch = Bunch()
+
+            # Track from beginning
+            self.bunch_dict['initial_bunch'].copyBunchTo(tracked_bunch)
+            if self.debug:
+                print("Tracking bunch from start...")
+
+            # Track bunch
+            frozen_lattice.trackBunch(tracked_bunch)
+            if self.debug:
+                print("Bunch tracked")
+
+            # Clear the set of changes
+            self.current_changes = set()
+
     # Change optics setting. This only changes the parameters of the optics and does not retrack the bunch. For an
     # input, it needs a dictionary with a key for the name of each changed element linked to a dictionary of it's
     # changed PyORBIT parameter's keys linked to each parameter's new value.

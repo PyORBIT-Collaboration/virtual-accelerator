@@ -89,12 +89,16 @@ if __name__ == '__main__':
     model = OrbitModel(model_lattice, bunch_in, debug=debug)
     element_list = model.get_element_list()
 
+    # Give BPMs their proper frequencies
     bpm_frequencies = {'MEBT': 805e6, 'DTL': 805e6, 'CCL': 402.5e6, 'SCL': 402.5e6, 'HEBT': 402.5e6}
     for element in element_list:
         if 'BPM' in element:
             for seq, freq in bpm_frequencies.items():
                 if seq in element:
                     model.get_element_dictionary()[element].set_parameter('frequency', freq)
+
+    # Retrack the bunch to update BPMs with their new frequencies.
+    model.force_track()
 
     server = Server()
 
