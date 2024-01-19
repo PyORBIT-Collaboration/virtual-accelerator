@@ -15,7 +15,7 @@ from pathlib import Path
 
 from pyorbit_server_interface import OrbitModel
 
-with open('../../EPICS/va_config.json', "r") as json_file:
+with open('../../virtaccl/va_config.json', "r") as json_file:
     input_dicts = json.load(json_file)
 
 lattice = input_dicts['pyorbit_lattice']

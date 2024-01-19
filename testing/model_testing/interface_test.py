@@ -8,7 +8,7 @@ from orbit.core.bunch import Bunch
 
 from pyorbit_server_interface import OrbitModel
 
-lattice_file = Path("../../EPICS/sns_linac.xml")
+lattice_file = Path("../../virtaccl/sns_linac.xml")
 sns_linac_factory = SNS_LinacLatticeFactory()
 sns_linac_factory.setMaxDriftLength(0.01)
 model_lattice = sns_linac_factory.getLinacAccLattice(["SCLMed"], lattice_file)

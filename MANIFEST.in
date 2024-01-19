@@ -1,0 +1,5 @@
+include virtaccl/SCL_in.dat
+include virtaccl/MEBT_in.dat
+include virtaccl/sns_linac.xml
+include virtaccl/va_config.json
+include virtaccl/va_offsets.json
