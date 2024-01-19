@@ -59,7 +59,7 @@ def main():
     with open(config_file, "r") as json_file:
         devices_dict = json.load(json_file)
 
-    REP_RATE = args.refresh_rate
+    update_period = 1 / args.refresh_rate
 
     lattice_file = args.lattice
     subsections = args.sequences
@@ -165,7 +165,7 @@ def main():
         server.update()
 
         loop_time_taken = time.time() - loop_start_time
-        sleep_time = REP_RATE - loop_time_taken
+        sleep_time = update_period - loop_time_taken
         if sleep_time < 0.0:
             print('Warning: Update took longer than refresh rate.')
         else:
