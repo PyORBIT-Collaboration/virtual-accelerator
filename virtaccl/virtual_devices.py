@@ -190,7 +190,7 @@ class BPM(Device):
     x_key = 'x_avg'  # [m]
     y_key = 'y_avg'  # [m]
     phase_key = 'phi_avg'  # [radians]
-    current_key = 'current'  # [A]
+    amp_key = 'amp_avg'  # [A]
 
     def __init__(self, name: str, model_name: str = None, phase_offset=0):
         if model_name is None:
@@ -205,7 +205,7 @@ class BPM(Device):
         # Creates flat noise for associated PVs.
         xy_noise = AbsNoise(noise=1e-8)
         phase_noise = AbsNoise(noise=1e-4)
-        current_noise = AbsNoise(noise=1e-4)
+        amp_noise = AbsNoise(noise=1e-6)
 
         # Adds a phase offset. Default is 0 offset.
         offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
@@ -214,7 +214,7 @@ class BPM(Device):
         self.register_measurement(BPM.x_pv, noise=xy_noise, transform=milli_units)
         self.register_measurement(BPM.y_pv, noise=xy_noise, transform=milli_units)
         self.register_measurement(BPM.phase_pv, noise=phase_noise, transform=offset_transform)
-        self.register_measurement(BPM.current_pv, noise=current_noise, transform=milli_units)
+        self.register_measurement(BPM.current_pv, noise=amp_noise, transform=milli_units)
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
@@ -230,7 +230,7 @@ class BPM(Device):
         elif model_key == BPM.phase_key:
             reason = BPM.phase_pv
             virtual_value = model_value
-        elif model_key == BPM.current_key:
+        elif model_key == BPM.amp_key:
             reason = BPM.current_pv
             virtual_value = model_value
         if reason is not None:
