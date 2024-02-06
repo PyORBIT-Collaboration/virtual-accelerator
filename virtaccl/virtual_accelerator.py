@@ -88,6 +88,7 @@ def main():
         bunch_in.compress()
 
     model = OrbitModel(model_lattice, bunch_in, debug=debug)
+    model.set_beam_current(38.0e-3)  # Set the initial beam current in Amps.
     element_list = model.get_element_list()
 
     # Give BPMs their proper frequencies
