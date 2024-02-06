@@ -111,6 +111,9 @@ class OrbitModel(Model):
                 self.bunch_dict[element_name] = Bunch()
                 location_node.addChildNode(BunchCopyClass(element_name, self.bunch_dict), location_node.ENTRANCE)
 
+        # A dictionary used in tracking to keep track of parameters useful to the model.
+        self.model_params = {}
+
         if input_bunch is not None:
             self.set_initial_bunch(input_bunch)
 
@@ -120,13 +123,18 @@ class OrbitModel(Model):
         self.initial_optics = self.get_settings()
 
     # Designate an input bunch for the lattice. This bunch is then tracked through the lattice.
-    def set_initial_bunch(self, initial_bunch: Bunch):
+    def set_initial_bunch(self, initial_bunch: Bunch, beam_current: float = 40e-3):
         initial_bunch.getSyncParticle().time(0.0)
         initial_bunch.copyBunchTo(self.bunch_dict['initial_bunch'])
+        self.set_beam_current(beam_current)
+        self.model_params['initial_particle_number'] = initial_bunch.getSizeGlobal()
 
         self.accLattice.trackDesignBunch(initial_bunch)
-        self.accLattice.trackBunch(initial_bunch)
-        self.current_changes = set()
+        self.force_track()
+
+    # Set the beam current for the initial bunch.
+    def set_beam_current(self, beam_current: float):
+        self.model_params['beam_current'] = beam_current
 
     # Returns a list of all element keys currently maintained in the model.
     def get_element_list(self) -> list[str]:
@@ -243,7 +251,7 @@ class OrbitModel(Model):
                     print("Tracking bunch from start...")
 
             # Track bunch
-            frozen_lattice.trackBunch(tracked_bunch, index_start=upstream_index)
+            frozen_lattice.trackBunch(tracked_bunch, paramsDict=self.model_params, index_start=upstream_index)
             if self.debug:
                 print("Bunch tracked")
 
@@ -268,7 +276,7 @@ class OrbitModel(Model):
                 print("Tracking bunch from start...")
 
             # Track bunch
-            frozen_lattice.trackBunch(tracked_bunch)
+            frozen_lattice.trackBunch(tracked_bunch, paramsDict=self.model_params, )
             if self.debug:
                 print("Bunch tracked")
 

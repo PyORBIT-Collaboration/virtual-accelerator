@@ -184,7 +184,7 @@ class BPM(Device):
     x_pv = 'xAvg'  # [mm]
     y_pv = 'yAvg'  # [mm]
     phase_pv = 'phaseAvg'  # [degrees]
-    current_pv = 'amplitudeAvg'  # [mA]
+    amp_pv = 'amplitudeAvg'  # [mA]
 
     # PyORBIT parameter keys
     x_key = 'x_avg'  # [m]
@@ -214,7 +214,7 @@ class BPM(Device):
         self.register_measurement(BPM.x_pv, noise=xy_noise, transform=milli_units)
         self.register_measurement(BPM.y_pv, noise=xy_noise, transform=milli_units)
         self.register_measurement(BPM.phase_pv, noise=phase_noise, transform=offset_transform)
-        self.register_measurement(BPM.current_pv, noise=amp_noise, transform=milli_units)
+        self.register_measurement(BPM.amp_pv, noise=amp_noise, transform=milli_units)
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
@@ -231,7 +231,7 @@ class BPM(Device):
             reason = BPM.phase_pv
             virtual_value = model_value
         elif model_key == BPM.amp_key:
-            reason = BPM.current_pv
+            reason = BPM.amp_pv
             virtual_value = model_value
         if reason is not None:
             *_, transform, noise = self.measurements[reason]

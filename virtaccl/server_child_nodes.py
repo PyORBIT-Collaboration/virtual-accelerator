@@ -4,6 +4,8 @@ from typing import Dict
 import numpy as np
 from orbit.core.bunch import Bunch
 
+from random import random
+
 
 # A collection of classes that are attached to the lattice as child nodes for the virtual accelerator.
 
@@ -24,9 +26,11 @@ class BPMclass:
         if part_num > 0:
             rf_freq = self.parameters['frequency']
             BPM_name = paramsDict["parentNode"].getName()
+            initial_beam_current = paramsDict["beam_current"]
+            initial_number = paramsDict['initial_particle_number']
             sync_part = bunch.getSyncParticle()
             sync_beta = sync_part.beta()
-            current = bunch.macroSize() * part_num * self.si_e_charge * rf_freq
+            current = part_num / initial_number * initial_beam_current
             phase_coeff = 2 * math.pi / (sync_beta * 2.99792458e8 / rf_freq)
             sync_phase = (sync_part.time() * rf_freq * 2 * math.pi) % (2 * math.pi) - math.pi
             sync_energy = sync_part.kinEnergy()
@@ -50,7 +54,7 @@ class BPMclass:
             self.parameters['current'] = current
             self.parameters['energy'] = sync_energy
             self.parameters['beta'] = sync_beta
-            # print(BPM_name + " : " + str(amp))
+            # print(BPM_name + " : " + str(current))
         else:
             self.parameters['x_avg'] = 0.0
             self.parameters['y_avg'] = 0.0
