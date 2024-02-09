@@ -15,7 +15,7 @@ from random import random
 class BPMclass:
     def __init__(self, child_name: str, frequency: float = 402.5e6):
         self.parameters = {'frequency': frequency, 'x_avg': 0.0, 'y_avg': 0.0, 'phi_avg': 0.0, 'amp_avg': 0.0,
-                           'current': 0.0, 'energy': 0.0, 'beta': 0.0}
+                           'current': 0.0, 'energy': 0.0, 'beta': 0.0, 'part_num': 0}
         self.child_name = child_name
         self.node_type = 'BPM'
         self.si_e_charge = 1.6021773e-19
@@ -46,7 +46,7 @@ class BPMclass:
             z_avg /= part_num
             phi_rms = phase_coeff * math.sqrt(z_rms / part_num)
             phi_avg = phase_coeff * z_avg + sync_phase
-            amp = current * math.exp(-phi_rms * phi_rms / 2)
+            amp = abs(current * math.exp(-phi_rms * phi_rms / 2))
             self.parameters['x_avg'] = x_avg
             self.parameters['y_avg'] = y_avg
             self.parameters['phi_avg'] = phi_avg
@@ -54,6 +54,7 @@ class BPMclass:
             self.parameters['current'] = current
             self.parameters['energy'] = sync_energy
             self.parameters['beta'] = sync_beta
+            self.parameters['part_num'] = part_num
             # print(BPM_name + " : " + str(current))
         else:
             self.parameters['x_avg'] = 0.0
@@ -63,6 +64,7 @@ class BPMclass:
             self.parameters['current'] = 0.0
             self.parameters['energy'] = 0.0
             self.parameters['beta'] = 0.0
+            self.parameters['part_num'] = 0
 
     def getFrequency(self):
         return self.parameters['frequency']

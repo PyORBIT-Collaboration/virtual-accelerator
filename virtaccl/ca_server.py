@@ -2,9 +2,11 @@ import math
 import signal
 from threading import Event, Thread
 from datetime import datetime
+from typing import Optional, Union, List
 from time import sleep
 
 from math import floor
+
 from pcaspy import Driver
 from pcaspy.cas import epicsTimeStamp
 from pcaspy import SimpleServer
@@ -134,12 +136,14 @@ class AbsNoise(Noise):
 
 class Device:
 
-    def __init__(self, pv_name: str, model_name: str = None):
+    def __init__(self, pv_name: str, model_name: Optional[Union[str, List[str]]] = None):
         self.name = pv_name
         if model_name is None:
-            self.model_name = pv_name
+            self.model_names = [pv_name]
+        elif not isinstance(model_name, list):
+            self.model_names = [model_name]
         else:
-            self.model_name = model_name
+            self.model_names = model_name
 
         self.server = None
         self.__db_dictionary__ = {}
@@ -174,7 +178,8 @@ class Device:
         params_dict = {}
         for setting in self.settings:
             param_input_dict = self.get_setting(setting)
-            params_dict = params_dict | param_input_dict
+            for model_name in self.model_names:
+                params_dict = params_dict | {model_name: param_input_dict}
         return params_dict
 
     def update_measurement(self, reason, value):
@@ -243,8 +248,8 @@ class Server:
         self.measurement_map = self.measurement_map | mmap
 
         device_name = device.name
-        model_name = device.model_name
-        self.model_map = self.model_map | {device_name: model_name}
+        model_names = device.model_names
+        self.model_map = self.model_map | {device_name: model_names}
 
         device.server = self
         self.devices.append(device)
@@ -278,17 +283,18 @@ class Server:
     def get_settings(self):
         result = {}
         for device in self.devices:
-            result = result | {device.model_name: device.get_settings()}
+            result = result | device.get_settings()
         return result
 
     def update_measurements(self, measurements):
         for device in self.devices:
             device_name = device.name
-            model_name = self.model_map[device_name]
-            if model_name in measurements:
-                model_params = measurements[model_name]
-                for model_key, value in model_params.items():
-                    device.update_measurement(model_key, value)
+            model_names = self.model_map[device_name]
+            for model_name in model_names:
+                if model_name in measurements:
+                    model_params = measurements[model_name]
+                    for model_key, value in model_params.items():
+                        device.update_measurement(model_key, value)
 
     def update_readbacks(self):
         for device in self.devices:

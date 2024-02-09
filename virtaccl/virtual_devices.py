@@ -29,7 +29,7 @@ class Quadrupole(Device):
     # PyORBIT parameter keys
     field_key = 'dB/dr'  # [T/m]
 
-    def __init__(self, name: str, model_name: str = None, initial_dict: dict[str, ] = None):
+    def __init__(self, name: str, model_name: str = None, initial_dict: dict[str,] = None):
         if model_name is None:
             self.model_name = name
         else:
@@ -43,23 +43,75 @@ class Quadrupole(Device):
             initial_field = 0.0
 
         # Registers the device's PVs with the server
-        self.register_setting(Quadrupole.field_set_pv, default=initial_field, reason_rb=Quadrupole.field_readback_pv)
+        self.register_setting(Quadrupole.field_set_pv, default=initial_field,
+                              reason_rb=Quadrupole.field_readback_pv)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
-    def get_setting(self, reason):
-        *_, transform, _ = self.settings[reason]
-        model_dict = {}
-        if reason == Quadrupole.field_set_pv:
-            model_value = transform.real(self.getParam(reason))
-            model_dict[Quadrupole.field_key] = model_value
+    def get_settings(self):
+        params_dict = {}
+        for setting in self.settings:
+            param_value = self.get_setting(setting)
+            if setting == Quadrupole.field_set_pv:
+                params_dict = params_dict | {Quadrupole.field_key: param_value}
+        model_dict = {self.model_name: params_dict}
         return model_dict
 
     # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model.
     def update_readback(self, reason):
         value = None
         if reason == Quadrupole.field_set_pv:
-            value = self.get_setting(Quadrupole.field_set_pv)[Quadrupole.field_key]
+            value = self.get_setting(Quadrupole.field_set_pv)
+
+        if value is not None:
+            *_, reason_rb, transform, noise = self.settings[reason]
+            self.setParam(reason_rb, transform.raw(noise.add_noise(value)))
+
+
+class Quadrupole_Doublet(Device):
+    # EPICS PV names
+    field_set_pv = 'B_Set'  # [T/m]
+    field_readback_pv = 'B'  # [T/m]
+
+    # PyORBIT parameter keys
+    field_key = 'dB/dr'  # [T/m]
+
+    def __init__(self, name: str, h_model_name: str, v_model_name: str, initial_dict: dict[str,] = None):
+        self.h_name = h_model_name
+        self.v_name = v_model_name
+        self.model_names = [h_model_name, v_model_name]
+        super().__init__(name, self.model_names)
+
+        # Sets up initial values.
+        if initial_dict is not None:
+            initial_field = initial_dict[Quadrupole_Doublet.field_key]
+        else:
+            initial_field = 0.0
+
+        # Registers the device's PVs with the server
+        self.register_setting(Quadrupole_Doublet.field_set_pv, default=initial_field,
+                              reason_rb=Quadrupole_Doublet.field_readback_pv)
+
+    # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
+    # where the PV names are associated with their model keys.
+    def get_settings(self):
+        h_params = {}
+        v_params = {}
+        for setting in self.settings:
+            param_value = self.get_setting(setting)
+            if setting == Quadrupole_Doublet.field_set_pv:
+                h_param = param_value
+                h_params = h_params | {Quadrupole_Doublet.field_key: h_param}
+                v_param = -param_value
+                v_params = v_params | {Quadrupole_Doublet.field_key: v_param}
+        model_dict = {self.h_name: h_params, self.v_name: v_params}
+        return model_dict
+
+    # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model.
+    def update_readback(self, reason):
+        value = None
+        if reason == Quadrupole_Doublet.field_set_pv:
+            value = self.get_setting(Quadrupole_Doublet.field_set_pv)
 
         if value is not None:
             *_, reason_rb, transform, noise = self.settings[reason]
@@ -97,23 +149,25 @@ class Corrector(Device):
     # where the setting PV names are associated with their model keys.
     # These settings have been limited by field_limits, meaning that if the server has a value outside that range, the
     # model will receive the max or min limit defined above.
-    def get_setting(self, reason):
-        *_, transform, _ = self.settings[reason]
-        model_dict = {}
-        if reason == Corrector.field_set_pv:
-            model_value = transform.real(self.getParam(reason))
-            if model_value < self.field_limits[0]:
-                model_value = self.field_limits[0]
-            elif model_value > self.field_limits[1]:
-                model_value = self.field_limits[1]
-            model_dict[Corrector.field_key] = model_value
+    def get_settings(self):
+        params_dict = {}
+        for setting in self.settings:
+            param_value = self.get_setting(setting)
+            if setting == Corrector.field_set_pv:
+                if param_value < self.field_limits[0]:
+                    param_value = self.field_limits[0]
+                elif param_value > self.field_limits[1]:
+                    param_value = self.field_limits[1]
+                params_dict = params_dict | {Corrector.field_key: param_value}
+            params_dict = params_dict | {setting: param_value}
+        model_dict = {self.model_name: params_dict}
         return model_dict
 
     # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model.
     def update_readback(self, reason):
         value = None
         if reason == Corrector.field_set_pv:
-            value = self.get_setting(Corrector.field_set_pv)[Corrector.field_key]
+            value = self.get_setting(Corrector.field_set_pv)
 
         if value is not None:
             *_, reason_rb, transform, noise = self.settings[reason]
@@ -124,13 +178,14 @@ class Cavity(Device):
     # EPICS PV names
     phase_pv = 'CtlPhaseSet'  # [degrees (-180 - 180)]
     amp_pv = 'CtlAmpSet'  # [arb. units]
+    amp_goal_pv = 'cavAmpGoal'  # [arb. units]
     blank_pv = 'BlnkBeam'  # [0 or 1]
 
     # PyORBIT parameter keys
     phase_key = 'phase'  # [radians]
     amp_key = 'amp'  # [arb. units]
 
-    def __init__(self, name: str, model_name: str = None, initial_dict: dict[str, ] = None, phase_offset=0):
+    def __init__(self, name: str, model_name: str = None, initial_dict: dict[str,] = None, phase_offset=0):
         if model_name is None:
             self.model_name = name
         else:
@@ -142,8 +197,11 @@ class Cavity(Device):
             initial_phase = initial_dict[Cavity.phase_key]
             initial_amp = initial_dict[Cavity.amp_key]
         else:
-            initial_phase = 180
+            initial_phase = 0
             initial_amp = 1.0
+
+        # Create old amp variable for ramping
+        self.old_amp = initial_amp
 
         # Adds a phase offset. Default is 0 offset.
         offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
@@ -152,30 +210,42 @@ class Cavity(Device):
         # Registers the device's PVs with the server
         self.register_setting(Cavity.phase_pv, default=initial_phase, transform=offset_transform)
         self.register_setting(Cavity.amp_pv, default=initial_amp)
+        self.register_setting(Cavity.amp_goal_pv, default=initial_amp)
         self.register_setting(Cavity.blank_pv, default=0.0)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the setting PV names are associated with their model keys.
-    def get_setting(self, reason):
-        *_, transform, _ = self.settings[reason]
-        model_dict = {}
-        if reason == Cavity.phase_pv:
-            model_value = transform.real(self.getParam(reason))
-            model_dict[Cavity.phase_key] = model_value
+    def get_settings(self):
+        params_dict = {}
+        for setting in self.settings:
+            param_value = self.get_setting(setting)
+            if setting == Cavity.phase_pv:
+                params_dict = params_dict | {Cavity.phase_key: param_value}
 
-        elif reason == Cavity.amp_pv:
-            # Check if the cavity is blanked. If so, turn the cavity off.
-            blank_value = transform.real(self.getParam(Cavity.blank_pv))
-            if blank_value == 0:
-                model_value = transform.real(self.getParam(reason))
-                model_dict[Cavity.amp_key] = model_value
-            else:
-                model_dict[Cavity.amp_key] = 0.0
+            elif setting == Cavity.amp_pv or setting == Cavity.amp_goal_pv:
+                goal_value = self.get_setting(Cavity.amp_goal_pv)
+                set_value = self.get_setting(Cavity.amp_pv)
+                model_value = self.old_amp
+                if goal_value != self.old_amp:
+                    model_value = goal_value
+                    self.setParam(Cavity.amp_pv, goal_value)
+                elif set_value != self.old_amp:
+                    model_value = set_value
+                    self.setParam(Cavity.amp_goal_pv, set_value)
+                self.old_amp = model_value
 
-        elif reason == Cavity.blank_pv:
-            # placeholder in case something needs to happen here?
-            pass
+                # If the cavity is blanked, turn off acceleration.
+                blank_value = self.get_setting(Cavity.blank_pv)
+                if blank_value == 0:
+                    params_dict = params_dict | {Cavity.amp_key: param_value}
+                else:
+                    params_dict = params_dict | {Cavity.amp_key: 0.0}
 
+            elif setting == Cavity.blank_pv:
+                # placeholder in case something needs to happen here?
+                pass
+
+        model_dict = {self.model_name: params_dict}
         return model_dict
 
 
@@ -183,8 +253,12 @@ class BPM(Device):
     # EPICS PV names
     x_pv = 'xAvg'  # [mm]
     y_pv = 'yAvg'  # [mm]
+    xy_noise = 1e-8  # [mm]
     phase_pv = 'phaseAvg'  # [degrees]
+    phase_noise = 1e-4  # [degrees]
     amp_pv = 'amplitudeAvg'  # [mA]
+    amp_noise = 1e-6  # mA
+    oeda_pv = 'OEDA'  # Off Energy Delay Adjustment. Should be 0 during production.
 
     # PyORBIT parameter keys
     x_key = 'x_avg'  # [m]
@@ -203,9 +277,9 @@ class BPM(Device):
         milli_units = LinearTInv(scaler=1e3)
 
         # Creates flat noise for associated PVs.
-        xy_noise = AbsNoise(noise=1e-8)
-        phase_noise = AbsNoise(noise=1e-4)
-        amp_noise = AbsNoise(noise=1e-6)
+        xy_noise = AbsNoise(noise=BPM.xy_noise)
+        phase_noise = AbsNoise(noise=BPM.phase_noise)
+        amp_noise = AbsNoise(noise=BPM.amp_noise)
 
         # Adds a phase offset. Default is 0 offset.
         offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
@@ -215,6 +289,8 @@ class BPM(Device):
         self.register_measurement(BPM.y_pv, noise=xy_noise, transform=milli_units)
         self.register_measurement(BPM.phase_pv, noise=phase_noise, transform=offset_transform)
         self.register_measurement(BPM.amp_pv, noise=amp_noise, transform=milli_units)
+
+        self.register_setting(BPM.oeda_pv, default=0)
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
@@ -237,6 +313,13 @@ class BPM(Device):
             *_, transform, noise = self.measurements[reason]
             self.setParam(reason, noise.add_noise(transform.raw(virtual_value)))
 
+    def get_setting(self, reason):
+        *_, transform, _ = self.settings[reason]
+        model_dict = {}
+        if reason == BPM.oeda_pv:
+            pass
+        return model_dict
+
 
 class WireScanner(Device):
     # EPICS PV names
@@ -256,7 +339,7 @@ class WireScanner(Device):
     y_offset = 0.01  # [m]
     wire_coeff = 1 / math.sqrt(2)
 
-    def __init__(self, name: str, model_name: str = None, initial_dict: dict[str, ] = None):
+    def __init__(self, name: str, model_name: str = None, initial_dict: dict[str,] = None):
         if model_name is None:
             self.model_name = name
         else:
@@ -317,15 +400,15 @@ class WireScanner(Device):
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the setting PV names are associated with their model keys.
-    def get_setting(self, reason):
-        *_, transform, _ = self.settings[reason]
-        model_dict = {}
-        if reason == WireScanner.position_pv:
-            model_value = transform.real(self.getParam(reason))
-            model_dict[WireScanner.position_key] = model_value
-        elif reason == WireScanner.speed_pv:
-            model_value = transform.real(self.getParam(reason))
-            model_dict[WireScanner.speed_key] = model_value
+    def get_settings(self):
+        params_dict = {}
+        for setting in self.settings:
+            param_value = self.get_setting(setting)
+            if setting == WireScanner.position_pv:
+                params_dict = params_dict | {WireScanner.position_key: param_value}
+            elif setting == WireScanner.speed_pv:
+                params_dict = params_dict | {WireScanner.speed_key: param_value}
+        model_dict = {self.model_name: params_dict}
         return model_dict
 
     # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model.
@@ -369,10 +452,12 @@ class P_BPM(Device):
     # EPICS PV names
     energy_pv = 'Energy'  # [GeV]
     beta_pv = 'Beta'  # [c]
+    num_pv = 'Particle_Number'
 
     # PyORBIT parameter keys
     energy_key = 'energy'  # [GeV]
     beta_key = 'beta'  # [c]
+    num_key = 'part_num'
 
     def __init__(self, name: str, model_name: str = None):
         if model_name is None:
@@ -384,6 +469,7 @@ class P_BPM(Device):
         # Registers the device's PVs with the server.
         self.register_measurement(P_BPM.energy_pv)
         self.register_measurement(P_BPM.beta_pv)
+        self.register_measurement(P_BPM.num_pv)
 
     # Updates the measurement values on the server. Needs the model key associated with it's value and the new value.
     # This is where the measurement PV name is associated with it's model key.
@@ -393,6 +479,8 @@ class P_BPM(Device):
             reason = P_BPM.energy_pv
         elif model_key == P_BPM.beta_key:
             reason = P_BPM.beta_pv
+        elif model_key == P_BPM.num_key:
+            reason = P_BPM.num_pv
 
         if reason is not None:
             *_, transform, noise = self.measurements[reason]
