@@ -378,8 +378,8 @@ class WireScanner(Device):
     def get_wire_position(self):
         last_pos = self.last_wire_pos
         last_time = self.last_wire_time
-        wire_speed = self.get_setting(WireScanner.speed_pv)[WireScanner.speed_key]
-        pos_goal = self.get_setting(WireScanner.position_pv)[WireScanner.position_key]
+        wire_speed = self.get_setting(WireScanner.speed_pv)
+        pos_goal = self.get_setting(WireScanner.position_pv)
         direction = np.sign(pos_goal - last_pos)
         current_time = time.time()
         wire_pos = direction * wire_speed * (current_time - last_time) + last_pos
