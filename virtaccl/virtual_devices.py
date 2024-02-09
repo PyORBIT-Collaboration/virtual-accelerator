@@ -159,7 +159,6 @@ class Corrector(Device):
                 elif param_value > self.field_limits[1]:
                     param_value = self.field_limits[1]
                 params_dict = params_dict | {Corrector.field_key: param_value}
-            params_dict = params_dict | {setting: param_value}
         model_dict = {self.model_name: params_dict}
         return model_dict
 
