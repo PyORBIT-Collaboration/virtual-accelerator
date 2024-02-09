@@ -6,8 +6,7 @@ import argparse
 
 from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
 
-from interface_lib import PyorbitCavity
-from pyorbit_server_interface import OrbitModel
+from virtaccl.pyorbit_server_interface import OrbitModel
 
 
 def main():
@@ -46,6 +45,7 @@ def main():
 
     cavity_key = 'RF_Cavity'
     quad_key = 'Quadrupole'
+    doublet_key = 'Quadrupole_Doublet'
     corrector_key = 'Corrector'
     BPM_key = 'BPM'
     pBPM_key = 'Physics_BPM'
@@ -53,6 +53,7 @@ def main():
 
     devices = {cavity_key: {},
                quad_key: {},
+               doublet_key: {},
                corrector_key: {},
                WS_key: {},
                BPM_key: {},
@@ -77,6 +78,13 @@ def main():
         elif ele_type == quad_key:
             if 'PMQ' in or_name:
                 pass
+            elif 'SCL_Mag:QH01' in or_name or 'SCL_Mag:QV01' in or_name:
+                split_name = or_name.split(':')
+                pv_name = f"{split_name[0]}:PS_QD01"
+                if pv_name not in devices[doublet_key]:
+                    devices[doublet_key][pv_name] = [or_name]
+                else:
+                    devices[doublet_key][pv_name].append(or_name)
             else:
                 split_name = or_name.split(':')
                 pv_name = f"{split_name[0]}:PS_{split_name[1]}"
