@@ -6,9 +6,11 @@ import time
 import argparse
 from pathlib import Path
 
-from orbit.core.bunch import Bunch
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
 from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
+
+from orbit.core.bunch import Bunch
+from orbit.core.linac import BaseRfGap
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.virtual_devices import Cavity, BPM, Quadrupole, Quadrupole_Doublet, Corrector, P_BPM, WireScanner, \
@@ -68,6 +70,10 @@ def main():
     sns_linac_factory = SNS_LinacLatticeFactory()
     sns_linac_factory.setMaxDriftLength(0.01)
     model_lattice = sns_linac_factory.getLinacAccLattice(subsections, lattice_file)
+    cppGapModel = BaseRfGap
+    rf_gaps = model_lattice.getRF_Gaps()
+    for rf_gap in rf_gaps:
+        rf_gap.setCppGapModel(cppGapModel())
     Add_quad_apertures_to_lattice(model_lattice)
     Add_rfgap_apertures_to_lattice(model_lattice)
 

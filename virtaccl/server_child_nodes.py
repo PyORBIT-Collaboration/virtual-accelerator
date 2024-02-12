@@ -55,7 +55,7 @@ class BPMclass:
             self.parameters['energy'] = sync_energy
             self.parameters['beta'] = sync_beta
             self.parameters['part_num'] = part_num
-            # print(BPM_name + " : " + str(current))
+            # print(BPM_name + " : " + str(part_num))
         else:
             self.parameters['x_avg'] = 0.0
             self.parameters['y_avg'] = 0.0
@@ -199,5 +199,5 @@ class RF_Gap_Aperture:
         bunch = paramsDict["bunch"]
         sync_part = bunch.getSyncParticle()
         sync_beta = sync_part.beta()
-        if self.beta_min < sync_beta < self.beta_max:
+        if not self.beta_min < sync_beta < self.beta_max:
             bunch.deleteAllParticles()

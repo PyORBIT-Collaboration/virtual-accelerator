@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 from typing import Optional, Union, List, Dict
 from pathlib import Path
@@ -98,14 +99,16 @@ class OrbitModel(Model):
             element_name = cavity.getName()
             unique_elements.add(element_name)
             element_dict[element_name] = PyorbitCavity(cavity)
-            gap_ent = cavity.getRF_GapNodes()[0]
-            beta_min, beta_max = gap_ent.getBetaMinMax()
-            gap_ent.addChildNode(RF_Gap_Aperture('long_apt', beta_min, beta_max), gap_ent.ENTRANCE)
+
+            # Adds a longitudinal aperture for the bunch based on the xml files allowed beta range.
+            # gap_ent = element_dict[element_name].get_first_node()
+            # beta_min, beta_max = gap_ent.getBetaMinMax()
+            # gap_ent.addChildNode(RF_Gap_Aperture('long_apt', beta_min, beta_max), gap_ent.BEFORE)
 
         self.pyorbit_dictionary = element_dict
 
         # Sets up a dictionary of bunches at each optics element. This dictionary is referenced whenever an optic
-        # changes so that the bunch can be retracked from that optic instead of the beginning. It also attaches to each
+        # changes so that the bunch can be re-tracked from that optic instead of the beginning. It also attaches to each
         # optic the BunchCopyClass as a child node which saves the bunch within the dictionary.
         self.bunch_dict = {'initial_bunch': Bunch()}
         for element_name, element_ref in self.pyorbit_dictionary.items():
