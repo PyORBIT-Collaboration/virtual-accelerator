@@ -173,9 +173,7 @@
         "HEBT_Mag:PS_QV01": "HEBT_Mag:QV01",
         "HEBT_Mag:PS_QH02": "HEBT_Mag:QH02",
         "HEBT_Mag:PS_QV03": "HEBT_Mag:QV03",
-        "HEBT_Mag:PS_QH04": "HEBT_Mag:QH04",
         "HEBT_Mag:PS_QV05": "HEBT_Mag:QV05",
-        "HEBT_Mag:PS_QH06": "HEBT_Mag:QH06",
         "HEBT_Mag:PS_QV07": "HEBT_Mag:QV07",
         "HEBT_Mag:PS_QH08": "HEBT_Mag:QH08",
         "HEBT_Mag:PS_QV09": "HEBT_Mag:QV09",
@@ -296,6 +294,10 @@
         "SCL_Mag:PS_QH32a33": [
             "SCL_Mag:QH32",
             "SCL_Mag:QH33"
+        ],
+        "HEBT_Mag:PS_QH04a06": [
+            "HEBT_Mag:QH04",
+            "HEBT_Mag:QH06"
         ]
     },
     "Corrector": {

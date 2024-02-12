@@ -150,7 +150,7 @@ class Quadrupole_Set(Device):
                 param_value = self.get_setting(setting)
                 if setting == Quadrupole.field_set_pv:
                     params_dict = params_dict | {Quadrupole.field_key: param_value}
-            model_dict = {model_name: params_dict}
+            model_dict = model_dict | {model_name: params_dict}
         return model_dict
 
     # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model.

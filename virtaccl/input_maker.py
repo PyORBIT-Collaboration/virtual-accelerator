@@ -46,8 +46,8 @@ def main():
     quad_doublets = {'SCL': ['01', '02', '03', '04', '05', '06', '07', '08', '09', '12', '13', '14', '15', '16',
                      '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29']}
 
-    quad_sets = {'SCL_Mag:PS_QH32a33': ['32', '33'], 'HEBT_Mag:PS_QH12t18e': ['12', '14', '16', '18'],
-                 'HEBT_Mag:PS_QV13t19o': ['13', '15', '17', '19']}
+    quad_sets = {'SCL_Mag:PS_QH32a33': ['32', '33'], 'HEBT_Mag:PS_QH04a06': ['04', '06'],
+                 'HEBT_Mag:PS_QH12t18e': ['12', '14', '16', '18'], 'HEBT_Mag:PS_QV13t19o': ['13', '15', '17', '19']}
 
     cavity_key = 'RF_Cavity'
     quad_key = 'Quadrupole'
@@ -96,6 +96,12 @@ def main():
                     devices[doublet_key][pv_name].append(or_name)
             elif 'SCL_Mag:QH' in or_name and q_num in quad_sets['SCL_Mag:PS_QH32a33']:
                 pv_name = 'SCL_Mag:PS_QH32a33'
+                if pv_name not in devices[q_sets_key]:
+                    devices[q_sets_key][pv_name] = [or_name]
+                else:
+                    devices[q_sets_key][pv_name].append(or_name)
+            elif 'HEBT_Mag:QH' in or_name and q_num in quad_sets['HEBT_Mag:PS_QH04a06']:
+                pv_name = 'HEBT_Mag:PS_QH04a06'
                 if pv_name not in devices[q_sets_key]:
                     devices[q_sets_key][pv_name] = [or_name]
                 else:
