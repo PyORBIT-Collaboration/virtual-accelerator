@@ -161,75 +161,19 @@
         "CCL_Mag:PS_QV411": "CCL_Mag:QV411",
         "SCL_Mag:PS_QH00": "SCL_Mag:QH00",
         "SCL_Mag:PS_QV00": "SCL_Mag:QV00",
-        "SCL_Mag:PS_QH02": "SCL_Mag:QH02",
-        "SCL_Mag:PS_QV02": "SCL_Mag:QV02",
-        "SCL_Mag:PS_QH03": "SCL_Mag:QH03",
-        "SCL_Mag:PS_QV03": "SCL_Mag:QV03",
-        "SCL_Mag:PS_QH04": "SCL_Mag:QH04",
-        "SCL_Mag:PS_QV04": "SCL_Mag:QV04",
-        "SCL_Mag:PS_QH05": "SCL_Mag:QH05",
-        "SCL_Mag:PS_QV05": "SCL_Mag:QV05",
-        "SCL_Mag:PS_QH06": "SCL_Mag:QH06",
-        "SCL_Mag:PS_QV06": "SCL_Mag:QV06",
-        "SCL_Mag:PS_QH07": "SCL_Mag:QH07",
-        "SCL_Mag:PS_QV07": "SCL_Mag:QV07",
-        "SCL_Mag:PS_QH08": "SCL_Mag:QH08",
-        "SCL_Mag:PS_QV08": "SCL_Mag:QV08",
-        "SCL_Mag:PS_QH09": "SCL_Mag:QH09",
-        "SCL_Mag:PS_QV09": "SCL_Mag:QV09",
         "SCL_Mag:PS_QH10": "SCL_Mag:QH10",
         "SCL_Mag:PS_QV10": "SCL_Mag:QV10",
         "SCL_Mag:PS_QH11": "SCL_Mag:QH11",
         "SCL_Mag:PS_QV11": "SCL_Mag:QV11",
-        "SCL_Mag:PS_QH12": "SCL_Mag:QH12",
-        "SCL_Mag:PS_QV12": "SCL_Mag:QV12",
-        "SCL_Mag:PS_QH13": "SCL_Mag:QH13",
-        "SCL_Mag:PS_QV13": "SCL_Mag:QV13",
-        "SCL_Mag:PS_QH14": "SCL_Mag:QH14",
-        "SCL_Mag:PS_QV14": "SCL_Mag:QV14",
-        "SCL_Mag:PS_QH15": "SCL_Mag:QH15",
-        "SCL_Mag:PS_QV15": "SCL_Mag:QV15",
-        "SCL_Mag:PS_QH16": "SCL_Mag:QH16",
-        "SCL_Mag:PS_QV16": "SCL_Mag:QV16",
-        "SCL_Mag:PS_QH17": "SCL_Mag:QH17",
-        "SCL_Mag:PS_QV17": "SCL_Mag:QV17",
-        "SCL_Mag:PS_QH18": "SCL_Mag:QH18",
-        "SCL_Mag:PS_QV18": "SCL_Mag:QV18",
-        "SCL_Mag:PS_QH19": "SCL_Mag:QH19",
-        "SCL_Mag:PS_QV19": "SCL_Mag:QV19",
-        "SCL_Mag:PS_QH20": "SCL_Mag:QH20",
-        "SCL_Mag:PS_QV20": "SCL_Mag:QV20",
-        "SCL_Mag:PS_QH21": "SCL_Mag:QH21",
-        "SCL_Mag:PS_QV21": "SCL_Mag:QV21",
-        "SCL_Mag:PS_QH22": "SCL_Mag:QH22",
-        "SCL_Mag:PS_QV22": "SCL_Mag:QV22",
-        "SCL_Mag:PS_QH23": "SCL_Mag:QH23",
-        "SCL_Mag:PS_QV23": "SCL_Mag:QV23",
-        "SCL_Mag:PS_QH24": "SCL_Mag:QH24",
-        "SCL_Mag:PS_QV24": "SCL_Mag:QV24",
-        "SCL_Mag:PS_QH25": "SCL_Mag:QH25",
-        "SCL_Mag:PS_QV25": "SCL_Mag:QV25",
-        "SCL_Mag:PS_QH26": "SCL_Mag:QH26",
-        "SCL_Mag:PS_QV26": "SCL_Mag:QV26",
-        "SCL_Mag:PS_QH27": "SCL_Mag:QH27",
-        "SCL_Mag:PS_QV27": "SCL_Mag:QV27",
-        "SCL_Mag:PS_QH28": "SCL_Mag:QH28",
-        "SCL_Mag:PS_QV28": "SCL_Mag:QV28",
-        "SCL_Mag:PS_QH29": "SCL_Mag:QH29",
-        "SCL_Mag:PS_QV29": "SCL_Mag:QV29",
         "SCL_Mag:PS_QH30": "SCL_Mag:QH30",
         "SCL_Mag:PS_QV30": "SCL_Mag:QV30",
         "SCL_Mag:PS_QH31": "SCL_Mag:QH31",
         "SCL_Mag:PS_QV31": "SCL_Mag:QV31",
-        "SCL_Mag:PS_QH32": "SCL_Mag:QH32",
         "SCL_Mag:PS_QV32": "SCL_Mag:QV32",
-        "SCL_Mag:PS_QH33": "SCL_Mag:QH33",
         "HEBT_Mag:PS_QV01": "HEBT_Mag:QV01",
         "HEBT_Mag:PS_QH02": "HEBT_Mag:QH02",
         "HEBT_Mag:PS_QV03": "HEBT_Mag:QV03",
-        "HEBT_Mag:PS_QH04": "HEBT_Mag:QH04",
         "HEBT_Mag:PS_QV05": "HEBT_Mag:QV05",
-        "HEBT_Mag:PS_QH06": "HEBT_Mag:QH06",
         "HEBT_Mag:PS_QV07": "HEBT_Mag:QV07",
         "HEBT_Mag:PS_QH08": "HEBT_Mag:QH08",
         "HEBT_Mag:PS_QV09": "HEBT_Mag:QV09",
@@ -240,6 +184,120 @@
         "SCL_Mag:PS_QD01": [
             "SCL_Mag:QH01",
             "SCL_Mag:QV01"
+        ],
+        "SCL_Mag:PS_QD02": [
+            "SCL_Mag:QH02",
+            "SCL_Mag:QV02"
+        ],
+        "SCL_Mag:PS_QD03": [
+            "SCL_Mag:QH03",
+            "SCL_Mag:QV03"
+        ],
+        "SCL_Mag:PS_QD04": [
+            "SCL_Mag:QH04",
+            "SCL_Mag:QV04"
+        ],
+        "SCL_Mag:PS_QD05": [
+            "SCL_Mag:QH05",
+            "SCL_Mag:QV05"
+        ],
+        "SCL_Mag:PS_QD06": [
+            "SCL_Mag:QH06",
+            "SCL_Mag:QV06"
+        ],
+        "SCL_Mag:PS_QD07": [
+            "SCL_Mag:QH07",
+            "SCL_Mag:QV07"
+        ],
+        "SCL_Mag:PS_QD08": [
+            "SCL_Mag:QH08",
+            "SCL_Mag:QV08"
+        ],
+        "SCL_Mag:PS_QD09": [
+            "SCL_Mag:QH09",
+            "SCL_Mag:QV09"
+        ],
+        "SCL_Mag:PS_QD12": [
+            "SCL_Mag:QH12",
+            "SCL_Mag:QV12"
+        ],
+        "SCL_Mag:PS_QD13": [
+            "SCL_Mag:QH13",
+            "SCL_Mag:QV13"
+        ],
+        "SCL_Mag:PS_QD14": [
+            "SCL_Mag:QH14",
+            "SCL_Mag:QV14"
+        ],
+        "SCL_Mag:PS_QD15": [
+            "SCL_Mag:QH15",
+            "SCL_Mag:QV15"
+        ],
+        "SCL_Mag:PS_QD16": [
+            "SCL_Mag:QH16",
+            "SCL_Mag:QV16"
+        ],
+        "SCL_Mag:PS_QD17": [
+            "SCL_Mag:QH17",
+            "SCL_Mag:QV17"
+        ],
+        "SCL_Mag:PS_QD18": [
+            "SCL_Mag:QH18",
+            "SCL_Mag:QV18"
+        ],
+        "SCL_Mag:PS_QD19": [
+            "SCL_Mag:QH19",
+            "SCL_Mag:QV19"
+        ],
+        "SCL_Mag:PS_QD20": [
+            "SCL_Mag:QH20",
+            "SCL_Mag:QV20"
+        ],
+        "SCL_Mag:PS_QD21": [
+            "SCL_Mag:QH21",
+            "SCL_Mag:QV21"
+        ],
+        "SCL_Mag:PS_QD22": [
+            "SCL_Mag:QH22",
+            "SCL_Mag:QV22"
+        ],
+        "SCL_Mag:PS_QD23": [
+            "SCL_Mag:QH23",
+            "SCL_Mag:QV23"
+        ],
+        "SCL_Mag:PS_QD24": [
+            "SCL_Mag:QH24",
+            "SCL_Mag:QV24"
+        ],
+        "SCL_Mag:PS_QD25": [
+            "SCL_Mag:QH25",
+            "SCL_Mag:QV25"
+        ],
+        "SCL_Mag:PS_QD26": [
+            "SCL_Mag:QH26",
+            "SCL_Mag:QV26"
+        ],
+        "SCL_Mag:PS_QD27": [
+            "SCL_Mag:QH27",
+            "SCL_Mag:QV27"
+        ],
+        "SCL_Mag:PS_QD28": [
+            "SCL_Mag:QH28",
+            "SCL_Mag:QV28"
+        ],
+        "SCL_Mag:PS_QD29": [
+            "SCL_Mag:QH29",
+            "SCL_Mag:QV29"
+        ]
+    },
+    "Quadrupole_Set": {
+        "SCL_Mag:PS_QH32a33": [
+            "SCL_Mag:QH32",
+            "SCL_Mag:QH33"
+        ],
+        "HEBT_Mag:PS_QH04a06": [
+            "HEBT_Mag:QH04",
+            "HEBT_Mag:QH06"
         ]
     },
     "Corrector": {

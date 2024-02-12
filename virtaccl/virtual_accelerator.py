@@ -11,7 +11,8 @@ from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, 
 from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
-from virtaccl.virtual_devices import Cavity, BPM, Quadrupole, Quadrupole_Doublet, Corrector, P_BPM, WireScanner
+from virtaccl.virtual_devices import Cavity, BPM, Quadrupole, Quadrupole_Doublet, Corrector, P_BPM, WireScanner, \
+    Quadrupole_Set
 
 from virtaccl.pyorbit_server_interface import OrbitModel
 
@@ -135,6 +136,11 @@ def main():
                     initial_settings = model.get_settings(model_names[0])[model_names[0]]
                     doublet_device = Quadrupole_Doublet(name, model_names[0], model_names[1], initial_dict=initial_settings)
                     server.add_device(doublet_device)
+
+                if device_type == "Quadrupole_Set":
+                    initial_settings = model.get_settings(model_names[0])[model_names[0]]
+                    set_device = Quadrupole_Set(name, model_names, initial_dict=initial_settings)
+                    server.add_device(set_device)
 
                 if device_type == "Corrector":
                     initial_settings = model.get_settings(model_name)[model_name]
