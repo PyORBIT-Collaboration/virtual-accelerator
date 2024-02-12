@@ -79,6 +79,8 @@ def main():
     bunch_orig_num = bunch_in.getSizeGlobal()
     if bunch_orig_num < part_num:
         print('Bunch file contains less particles than the desired number of particles.')
+    elif part_num <= 0:
+        bunch_in.deleteAllParticles()
     else:
         bunch_macrosize = bunch_in.macroSize()
         bunch_macrosize *= bunch_orig_num / part_num

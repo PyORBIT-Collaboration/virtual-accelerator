@@ -23,17 +23,17 @@ class BPMclass:
     def trackActions(self, actionsContainer, paramsDict):
         bunch = paramsDict["bunch"]
         part_num = bunch.getSizeGlobal()
+        sync_part = bunch.getSyncParticle()
+        sync_beta = sync_part.beta()
+        sync_energy = sync_part.kinEnergy()
         if part_num > 0:
             rf_freq = self.parameters['frequency']
             BPM_name = paramsDict["parentNode"].getName()
             initial_beam_current = paramsDict["beam_current"]
             initial_number = paramsDict['initial_particle_number']
-            sync_part = bunch.getSyncParticle()
-            sync_beta = sync_part.beta()
             current = part_num / initial_number * initial_beam_current
             phase_coeff = 2 * math.pi / (sync_beta * 2.99792458e8 / rf_freq)
             sync_phase = (sync_part.time() * rf_freq * 2 * math.pi) % (2 * math.pi) - math.pi
-            sync_energy = sync_part.kinEnergy()
             x_avg, y_avg, z_avg, z_rms = 0, 0, 0, 0
             for n in range(part_num):
                 x, y, z = bunch.x(n), bunch.y(n), bunch.z(n)
@@ -62,9 +62,9 @@ class BPMclass:
             self.parameters['phi_avg'] = 0.0
             self.parameters['amp_avg'] = 0.0
             self.parameters['current'] = 0.0
-            self.parameters['energy'] = 0.0
-            self.parameters['beta'] = 0.0
-            self.parameters['part_num'] = 0
+            self.parameters['energy'] = sync_energy
+            self.parameters['beta'] = sync_beta
+            self.parameters['part_num'] = part_num
 
     def getFrequency(self):
         return self.parameters['frequency']
@@ -112,7 +112,7 @@ class BPMclass:
 # Class for wire scanners. This class simply returns histograms of the vertical and horizontal positions.
 class WSclass:
     def __init__(self, child_name: str, bin_number: int = 50):
-        self.parameters = {'x_histogram': np.zeros((0, 0)), 'y_histogram': np.zeros((0, 0))}
+        self.parameters = {'x_histogram': np.array([[-10, 0], [10, 0]]), 'y_histogram': np.array([[-10, 0], [10, 0]])}
         self.child_name = child_name
         self.bin_number = bin_number
         self.node_type = 'WireScanner'
@@ -146,6 +146,11 @@ class WSclass:
 
             self.parameters['x_histogram'] = x_out
             self.parameters['y_histogram'] = y_out
+
+        else:
+            self.parameters['x_histogram'] = np.array([[-10, 0], [10, 0]])
+            self.parameters['y_histogram'] = np.array([[-10, 0], [10, 0]])
+
 
     def getXHistogram(self):
         return self.parameters['x_histogram']
@@ -181,3 +186,18 @@ class BunchCopyClass:
         part_num = bunch.getSizeGlobal()
         if part_num > 0:
             bunch.copyBunchTo(self.bunch_dict[self.pyorbit_name])
+
+
+# This class removes all bunch particles if the bunch is outside of the beta limits of the cavity.
+class RF_Gap_Aperture:
+    def __init__(self, gap_name: str, beta_min: float, beta_max: float):
+        self.gap_name = gap_name
+        self.beta_min = beta_min
+        self.beta_max = beta_max
+
+    def trackActions(self, actionsContainer, paramsDict):
+        bunch = paramsDict["bunch"]
+        sync_part = bunch.getSyncParticle()
+        sync_beta = sync_part.beta()
+        if self.beta_min < sync_beta < self.beta_max:
+            bunch.deleteAllParticles()

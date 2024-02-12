@@ -7,7 +7,7 @@ from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 from orbit.core.bunch import Bunch
 
 from .interface_lib import PyorbitNode, PyorbitChild, PyorbitCavity
-from .server_child_nodes import BPMclass, WSclass, BunchCopyClass
+from .server_child_nodes import BPMclass, WSclass, BunchCopyClass, RF_Gap_Aperture
 
 
 class Model:
@@ -98,6 +98,9 @@ class OrbitModel(Model):
             element_name = cavity.getName()
             unique_elements.add(element_name)
             element_dict[element_name] = PyorbitCavity(cavity)
+            gap_ent = cavity.getRF_GapNodes()[0]
+            beta_min, beta_max = gap_ent.getBetaMinMax()
+            gap_ent.addChildNode(RF_Gap_Aperture('long_apt', beta_min, beta_max), gap_ent.ENTRANCE)
 
         self.pyorbit_dictionary = element_dict
 
@@ -113,6 +116,7 @@ class OrbitModel(Model):
 
         # A dictionary used in tracking to keep track of parameters useful to the model.
         self.model_params = {}
+        self.bunch_flag = False
 
         if input_bunch is not None:
             self.set_initial_bunch(input_bunch)
@@ -128,6 +132,7 @@ class OrbitModel(Model):
         initial_bunch.copyBunchTo(self.bunch_dict['initial_bunch'])
         self.set_beam_current(beam_current)
         self.model_params['initial_particle_number'] = initial_bunch.getSizeGlobal()
+        self.bunch_flag = True
 
         self.accLattice.trackDesignBunch(initial_bunch)
         self.force_track()
@@ -210,7 +215,7 @@ class OrbitModel(Model):
     # Tracks the bunch through the lattice. If no changes were made since the last track, then nothing happens. If a
     # change has occurred since the last track, then tracking begins from that element.
     def track(self):
-        if self.bunch_dict['initial_bunch'].getSizeGlobal() == 0:
+        if not self.bunch_flag:
             print('Create initial bunch in order to start tracking.')
 
         elif not self.current_changes:
@@ -260,7 +265,7 @@ class OrbitModel(Model):
 
     # Tracks the bunch through the lattice. Always tracks from the beginning, even if no optics have been changed.
     def force_track(self):
-        if self.bunch_dict['initial_bunch'].getSizeGlobal() == 0:
+        if not self.bunch_flag:
             print('Create initial bunch in order to start tracking.')
 
         else:
