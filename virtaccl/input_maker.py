@@ -43,9 +43,16 @@ def main():
 
     model = OrbitModel(model_lattice)
 
+    quad_doublets = {'SCL': ['01', '02', '03', '04', '05', '06', '07', '08', '09', '12', '13', '14', '15', '16',
+                     '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29']}
+
+    quad_sets = {'SCL_Mag:PS_QH32a33': ['32', '33'], 'HEBT_Mag:PS_QH12t18e': ['12', '14', '16', '18'],
+                 'HEBT_Mag:PS_QV13t19o': ['13', '15', '17', '19']}
+
     cavity_key = 'RF_Cavity'
     quad_key = 'Quadrupole'
     doublet_key = 'Quadrupole_Doublet'
+    q_sets_key = 'Quadrupole_Set'
     corrector_key = 'Corrector'
     BPM_key = 'BPM'
     pBPM_key = 'Physics_BPM'
@@ -54,6 +61,7 @@ def main():
     devices = {cavity_key: {},
                quad_key: {},
                doublet_key: {},
+               q_sets_key: {},
                corrector_key: {},
                WS_key: {},
                BPM_key: {},
@@ -76,17 +84,35 @@ def main():
                 offsets[pv_name] = (2 * random() - 1) * 180
 
         elif ele_type == quad_key:
+            split_name = or_name.split(':')
+            q_num = split_name[1][-2:]
             if 'PMQ' in or_name:
                 pass
-            elif 'SCL_Mag:QH01' in or_name or 'SCL_Mag:QV01' in or_name:
-                split_name = or_name.split(':')
-                pv_name = f"{split_name[0]}:PS_QD01"
+            elif 'SCL' in or_name and q_num in quad_doublets['SCL']:
+                pv_name = f"{split_name[0]}:PS_QD{q_num}"
                 if pv_name not in devices[doublet_key]:
                     devices[doublet_key][pv_name] = [or_name]
                 else:
                     devices[doublet_key][pv_name].append(or_name)
+            elif 'SCL_Mag:QH' in or_name and q_num in quad_sets['SCL_Mag:PS_QH32a33']:
+                pv_name = 'SCL_Mag:PS_QH32a33'
+                if pv_name not in devices[q_sets_key]:
+                    devices[q_sets_key][pv_name] = [or_name]
+                else:
+                    devices[q_sets_key][pv_name].append(or_name)
+            elif 'HEBT_Mag:QH' in or_name and q_num in quad_sets['HEBT_Mag:PS_QH12t18e']:
+                pv_name = 'HEBT_Mag:PS_QH12t18e'
+                if pv_name not in devices[q_sets_key]:
+                    devices[q_sets_key][pv_name] = [or_name]
+                else:
+                    devices[q_sets_key][pv_name].append(or_name)
+            elif 'HEBT_Mag:QV' in or_name and q_num in quad_sets['HEBT_Mag:PS_QV13t19o']:
+                pv_name = 'HEBT_Mag:PS_QV13t19o'
+                if pv_name not in devices[q_sets_key]:
+                    devices[q_sets_key][pv_name] = [or_name]
+                else:
+                    devices[q_sets_key][pv_name].append(or_name)
             else:
-                split_name = or_name.split(':')
                 pv_name = f"{split_name[0]}:PS_{split_name[1]}"
                 devices[quad_key][pv_name] = or_name
 

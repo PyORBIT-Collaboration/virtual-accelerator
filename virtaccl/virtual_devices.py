@@ -118,6 +118,52 @@ class Quadrupole_Doublet(Device):
             self.setParam(reason_rb, transform.raw(noise.add_noise(value)))
 
 
+class Quadrupole_Set(Device):
+    # EPICS PV names
+    field_set_pv = 'B_Set'  # [T/m]
+    field_readback_pv = 'B'  # [T/m]
+
+    # PyORBIT parameter keys
+    field_key = 'dB/dr'  # [T/m]
+
+    def __init__(self, name: str, model_names: list[str], initial_dict: dict[str,] = None):
+        self.model_names = model_names
+        super().__init__(name, self.model_names)
+
+        # Sets up initial values.
+        if initial_dict is not None:
+            initial_field = initial_dict[Quadrupole.field_key]
+        else:
+            initial_field = 0.0
+
+        # Registers the device's PVs with the server
+        self.register_setting(Quadrupole.field_set_pv, default=initial_field,
+                              reason_rb=Quadrupole.field_readback_pv)
+
+    # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
+    # where the PV names are associated with their model keys.
+    def get_settings(self):
+        model_dict = {}
+        for model_name in self.model_names:
+            params_dict = {}
+            for setting in self.settings:
+                param_value = self.get_setting(setting)
+                if setting == Quadrupole.field_set_pv:
+                    params_dict = params_dict | {Quadrupole.field_key: param_value}
+            model_dict = {model_name: params_dict}
+        return model_dict
+
+    # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model.
+    def update_readback(self, reason):
+        value = None
+        if reason == Quadrupole.field_set_pv:
+            value = self.get_setting(Quadrupole.field_set_pv)
+
+        if value is not None:
+            *_, reason_rb, transform, noise = self.settings[reason]
+            self.setParam(reason_rb, transform.raw(noise.add_noise(value)))
+
+
 class Corrector(Device):
     # EPICS PV names
     field_set_pv = 'B_Set'  # [T]
