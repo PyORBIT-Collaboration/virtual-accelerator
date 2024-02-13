@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 from typing import Optional, Union, List, Dict
 from pathlib import Path
@@ -7,7 +8,7 @@ from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 from orbit.core.bunch import Bunch
 
 from .interface_lib import PyorbitNode, PyorbitChild, PyorbitCavity
-from .server_child_nodes import BPMclass, WSclass, BunchCopyClass
+from .server_child_nodes import BPMclass, WSclass, BunchCopyClass, RF_Gap_Aperture
 
 
 class Model:
@@ -99,10 +100,15 @@ class OrbitModel(Model):
             unique_elements.add(element_name)
             element_dict[element_name] = PyorbitCavity(cavity)
 
+            # Adds a longitudinal aperture for the bunch based on the xml files allowed beta range.
+            # gap_ent = element_dict[element_name].get_first_node()
+            # beta_min, beta_max = gap_ent.getBetaMinMax()
+            # gap_ent.addChildNode(RF_Gap_Aperture('long_apt', beta_min, beta_max), gap_ent.BEFORE)
+
         self.pyorbit_dictionary = element_dict
 
         # Sets up a dictionary of bunches at each optics element. This dictionary is referenced whenever an optic
-        # changes so that the bunch can be retracked from that optic instead of the beginning. It also attaches to each
+        # changes so that the bunch can be re-tracked from that optic instead of the beginning. It also attaches to each
         # optic the BunchCopyClass as a child node which saves the bunch within the dictionary.
         self.bunch_dict = {'initial_bunch': Bunch()}
         for element_name, element_ref in self.pyorbit_dictionary.items():
@@ -113,6 +119,7 @@ class OrbitModel(Model):
 
         # A dictionary used in tracking to keep track of parameters useful to the model.
         self.model_params = {}
+        self.bunch_flag = False
 
         if input_bunch is not None:
             self.set_initial_bunch(input_bunch)
@@ -128,6 +135,7 @@ class OrbitModel(Model):
         initial_bunch.copyBunchTo(self.bunch_dict['initial_bunch'])
         self.set_beam_current(beam_current)
         self.model_params['initial_particle_number'] = initial_bunch.getSizeGlobal()
+        self.bunch_flag = True
 
         self.accLattice.trackDesignBunch(initial_bunch)
         self.force_track()
@@ -210,7 +218,7 @@ class OrbitModel(Model):
     # Tracks the bunch through the lattice. If no changes were made since the last track, then nothing happens. If a
     # change has occurred since the last track, then tracking begins from that element.
     def track(self):
-        if self.bunch_dict['initial_bunch'].getSizeGlobal() == 0:
+        if not self.bunch_flag:
             print('Create initial bunch in order to start tracking.')
 
         elif not self.current_changes:
@@ -260,7 +268,7 @@ class OrbitModel(Model):
 
     # Tracks the bunch through the lattice. Always tracks from the beginning, even if no optics have been changed.
     def force_track(self):
-        if self.bunch_dict['initial_bunch'].getSizeGlobal() == 0:
+        if not self.bunch_flag:
             print('Create initial bunch in order to start tracking.')
 
         else:
