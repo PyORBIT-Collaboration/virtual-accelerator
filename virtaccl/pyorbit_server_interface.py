@@ -30,10 +30,11 @@ class Model:
         pass
 
 
-# This is a model using PyORBIT.
-# It requires a PyORBIT LinacAccLattice as input. You can also provide the input PyORBIT bunch as well. Setting debug to
-# True provides additional outputs while it is running.
 class OrbitModel(Model):
+    """
+    This is a model that automates using PyORBIT.
+    """
+
     # This creates a hint for the element dictionary for easier development.
     element_ref_hint = Union[PyorbitNode, PyorbitCavity, PyorbitChild]
     element_dict_hint = Dict[str, element_ref_hint]
