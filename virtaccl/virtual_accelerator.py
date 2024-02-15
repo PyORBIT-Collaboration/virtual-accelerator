@@ -128,7 +128,7 @@ def main():
 
             if all(names in element_list for names in model_names):
                 if device_type == "RF_Cavity":
-                    initial_settings = model.get_settings(model_name)[model_name]
+                    initial_settings = model.get_element_parameters(model_name)
                     phase_offset = 0
                     if offset_file is not None:
                         phase_offset = offset_dict[name]
@@ -136,22 +136,22 @@ def main():
                     server.add_device(rf_device)
 
                 if device_type == "Quadrupole":
-                    initial_settings = model.get_settings(model_name)[model_name]
+                    initial_settings = model.get_element_parameters(model_name)
                     quad_device = Quadrupole(name, model_name, initial_dict=initial_settings)
                     server.add_device(quad_device)
 
                 if device_type == "Quadrupole_Doublet":
-                    initial_settings = model.get_settings(model_names[0])[model_names[0]]
+                    initial_settings = model.get_element_parameters(model_name[0])
                     doublet_device = Quadrupole_Doublet(name, model_names[0], model_names[1], initial_dict=initial_settings)
                     server.add_device(doublet_device)
 
                 if device_type == "Quadrupole_Set":
-                    initial_settings = model.get_settings(model_names[0])[model_names[0]]
+                    initial_settings = model.get_element_parameters(model_name[0])
                     set_device = Quadrupole_Set(name, model_names, initial_dict=initial_settings)
                     server.add_device(set_device)
 
                 if device_type == "Corrector":
-                    initial_settings = model.get_settings(model_name)[model_name]
+                    initial_settings = model.get_element_parameters(model_name)
                     corrector_device = Corrector(name, model_name, initial_dict=initial_settings)
                     server.add_device(corrector_device)
 

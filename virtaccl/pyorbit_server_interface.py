@@ -30,15 +30,30 @@ class Model:
         pass
 
 
-# This is a model using PyORBIT. It requires a LinacAccLattice as input. The input bunch can also be defined here.
 class OrbitModel(Model):
+    """
+    This is a model that automates using PyORBIT.
+    """
+
     # This creates a hint for the element dictionary for easier development.
     element_ref_hint = Union[PyorbitNode, PyorbitCavity, PyorbitChild]
     element_dict_hint = Dict[str, element_ref_hint]
 
     def __init__(self, input_lattice: LinacAccLattice, input_bunch: Bunch = None, debug: bool = False):
-        super().__init__()
+        """Create a model accelerator using PyORBIT.
 
+        Parameters
+        ----------
+        input_lattice : LinacAccLattice
+            PyORBIT linac lattice the model uses for tracking.
+        input_bunch : Bunch, optional
+            PyORBIT bunch that the model will track from the entrance of the input_lattice.
+        debug : bool, optional, default = False
+            Setting to True has the model print additional information when used
+            (when the lattice is updated, the bunch is tracked, etc.).
+        """
+
+        super().__init__()
         self.debug = debug
 
         self.accLattice = input_lattice
@@ -129,8 +144,18 @@ class OrbitModel(Model):
         # Store initial settings
         self.initial_optics = self.get_settings()
 
-    # Designate an input bunch for the lattice. This bunch is then tracked through the lattice.
     def set_initial_bunch(self, initial_bunch: Bunch, beam_current: float = 40e-3):
+        """Designate an input PyORBIT bunch for the lattice. This bunch is then tracked through the lattice from the
+        beginning.
+
+        Parameters
+        ----------
+        initial_bunch : Bunch
+            PyORBIT bunch that the model will track from the entrance of the input_lattice.
+        beam_current : float, optional
+            The beam current in Amps.
+        """
+
         initial_bunch.getSyncParticle().time(0.0)
         initial_bunch.copyBunchTo(self.bunch_dict['initial_bunch'])
         self.set_beam_current(beam_current)
@@ -142,82 +167,212 @@ class OrbitModel(Model):
 
     # Set the beam current for the initial bunch.
     def set_beam_current(self, beam_current: float):
+        """Set the beam current for the initial bunch.
+
+        Parameters
+        ----------
+        beam_current : float, optional
+            The beam current in Amps.
+        """
+
         self.model_params['beam_current'] = beam_current
 
-    # Returns a list of all element keys currently maintained in the model.
     def get_element_list(self) -> list[str]:
+        """Returns a list of all element key names currently maintained in the model."""
+
         key_list = []
         for element_key in self.pyorbit_dictionary.keys():
             key_list.append(element_key)
         return key_list
 
-    # Returns the element dictionary
     def get_element_dictionary(self) -> element_dict_hint:
+        """Returns a dictionary of the PyORBIT model elements.
+
+        Results
+        ----------
+        out : dictionary
+            Dictionary with the element name as the key and the element model class (PyorbitNode, PyorbitChild, or
+            PyorbitCavity) as the value.
+        """
+
         return self.pyorbit_dictionary
+
+    def get_parameter(self, element_name: str, parameter_key: str):
+        """Returns a parameter value for an element in the model.
+
+        Parameters
+        ----------
+        element_name : string
+            The name of the element whose parameter you want.
+        parameter_key : string
+            The key for the parameter you want.
+
+        Returns
+        ----------
+        out : parameter
+            The value of the parameter in the element's dictionary.
+        """
+
+        pyorbit_dict = self.pyorbit_dictionary
+        if element_name not in pyorbit_dict.keys():
+            print(f'The element "{element_name}" is not in the model.')
+        elif parameter_key not in pyorbit_dict[element_name].get_parameter_dict().keys():
+            print(f'Parameter key "{parameter_key}" not found in PyORBIT element "{element_name}".')
+        else:
+            return pyorbit_dict[element_name].get_parameter(parameter_key)
+
+    def get_element_parameters(self, element_name: str) -> dict[str,]:
+        """Returns a parameter dictionary for an element in the model.
+
+        Parameters
+        ----------
+        element_name : string
+            The name of the element whose parameter dictionary you want.
+
+        Returns
+        ----------
+        out : dictionary
+            The parameter dictionary for the element.
+        """
+
+        pyorbit_dict = self.pyorbit_dictionary
+        if element_name not in pyorbit_dict.keys():
+            print(f'The element "{element_name}" is not in the model.')
+        else:
+            return pyorbit_dict[element_name].get_parameter_dict()
+
+    def get_model_parameters(self, element_names: list[str] = None) -> dict[str, dict[str,]]:
+        """Returns a parameter dictionary for multiple elements in the model.
+
+        Parameters
+        ----------
+        element_names : list[string], optional
+            List of the names of the elements whose parameter dictionaries you want. If nothing is provided, the
+            dictionary includes all elements in the model.
+
+        Returns
+        ----------
+        out : dictionary
+            A dictionary of element names as keys connected to that element's parameter dictionary.
+        """
+
+        pyorbit_dict = self.pyorbit_dictionary
+        return_dict = {}
+        bad_names = []
+        good_names = []
+
+        if element_names is None:
+            for element_name, element_ref in pyorbit_dict.items():
+                good_names.append(element_name)
+        else:
+            for element_name in element_names:
+                if element_name not in pyorbit_dict.keys():
+                    bad_names.append(element_name)
+                else:
+                    good_names.append(element_name)
+            if bad_names:
+                print(f'These elements are not in the model: {", ".join(bad_names)}.')
+
+        for element_name in good_names:
+            return_dict[element_name] = pyorbit_dict[element_name].get_parameter_dict()
+
+        return return_dict
 
     # Returns a dictionary all the current setting parameters in a dictionary of elements. The number of elements
     # depends on the input provided. If nothing, the returned dictionary includes all current optics within the model.
     # If a list of element names, the returned dictionary only includes those elements. And if just an element name, the
     # dictionary only includes that element.
-    def get_settings(self, setting_names: Optional[Union[str, List[str]]] = None) -> dict[str, dict[str,]]:
+    def get_settings(self, setting_names: list[str] = None) -> dict[str, dict[str,]]:
+        """Returns a parameter dictionary for the setting elements in the model.
+
+        Parameters
+        ----------
+        setting_names : list[string], optional
+            List of the names of the optics elements whose parameter dictionaries you want. If nothing is provided, the
+            dictionary includes all optics elements in the model.
+
+        Returns
+        ----------
+        out : dictionary
+            A dictionary of element names as keys connected to that element's parameter dictionary.
+        """
+
         pyorbit_dict = self.pyorbit_dictionary
         return_dict = {}
+        bad_names = []
+        good_names = []
+
         if setting_names is None:
             for element_name, element_ref in pyorbit_dict.items():
                 if element_ref.is_optic():
-                    return_dict[element_name] = element_ref.get_parameter_dict()
-
-        elif isinstance(setting_names, list):
-            bad_names = []
+                    good_names.append(element_name)
+        else:
             for element_name in setting_names:
-                if element_name in pyorbit_dict.keys():
-                    return_dict[element_name] = pyorbit_dict[element_name].get_parameter_dict()
-                else:
+                if element_name not in pyorbit_dict.keys():
                     bad_names.append(element_name)
+                elif not pyorbit_dict[element_name].is_optic():
+                    bad_names.append(element_name)
+                else:
+                    good_names.append(element_name)
             if bad_names:
-                print(f'These elements are not in the model: {", ".join(bad_names)}.')
+                print(f'These elements are not in the model or are not optics: {", ".join(bad_names)}.')
 
-        elif isinstance(setting_names, str):
-            if setting_names in pyorbit_dict.keys():
-                return_dict[setting_names] = pyorbit_dict[setting_names].get_parameter_dict()
-            else:
-                print(f'The element "{setting_names}" is not in the model.')
+        for element_name in good_names:
+            return_dict[element_name] = pyorbit_dict[element_name].get_parameter_dict()
+
         return return_dict
 
     # Returns a dictionary all the current measurement readings in a dictionary of elements. The number of elements
     # depends on the input provided. If nothing, the returned dictionary includes all current measurement devices within
     # the model. If a list of element names, the returned dictionary only includes those elements. And if just an
     # element name, the dictionary only includes that element.
-    def get_measurements(self, measurement_names: Optional[Union[str, List[str]]] = None) -> dict[str, dict[str,]]:
+    def get_measurements(self, measurement_names: list[str] = None) -> dict[str, dict[str,]]:
+        """Returns a parameter dictionary for the measurement elements in the model.
+
+        Parameters
+        ----------
+        measurement_names : list[string], optional
+            List of the names of the measurement elements whose parameter dictionaries you want. If nothing is provided,
+            the dictionary includes all measurement elements in the model.
+
+        Returns
+        ----------
+        out : dictionary
+            A dictionary of element names as keys connected to that element's parameter dictionary.
+        """
+
         # think about more useful parameters that are not real
         # for fake parameters use XXX_Phys
         pyorbit_dict = self.pyorbit_dictionary
         return_dict = {}
+        bad_names = []
+        good_names = []
+
         if measurement_names is None:
             for element_name, element_ref in pyorbit_dict.items():
                 if not element_ref.is_optic():
-                    return_dict[element_name] = element_ref.get_parameter_dict()
-
-        elif isinstance(measurement_names, list):
-            bad_names = []
+                    good_names.append(element_name)
+        else:
             for element_name in measurement_names:
-                if element_name in pyorbit_dict.keys():
-                    return_dict[element_name] = pyorbit_dict[element_name].get_parameter_dict()
-                else:
+                if element_name not in pyorbit_dict.keys():
                     bad_names.append(element_name)
+                elif pyorbit_dict[element_name].is_optic():
+                    bad_names.append(element_name)
+                else:
+                    good_names.append(element_name)
             if bad_names:
-                print(f'These elements are not in the model: {", ".join(bad_names)}.')
+                print(f'These elements are not in the model or are optics: {", ".join(bad_names)}.')
 
-        elif isinstance(measurement_names, str):
-            if measurement_names in pyorbit_dict.keys():
-                return_dict[measurement_names] = pyorbit_dict[measurement_names].get_parameter_dict()
-            else:
-                print(f'The element "{measurement_names}" is not in the model.')
+        for element_name in good_names:
+            return_dict[element_name] = pyorbit_dict[element_name].get_parameter_dict()
+
         return return_dict
 
     # Tracks the bunch through the lattice. If no changes were made since the last track, then nothing happens. If a
     # change has occurred since the last track, then tracking begins from that element.
     def track(self):
+        """Tracks the bunch through the lattice. Tracks from the most upstream change to the end."""
+
         if not self.bunch_flag:
             print('Create initial bunch in order to start tracking.')
 
@@ -268,6 +423,8 @@ class OrbitModel(Model):
 
     # Tracks the bunch through the lattice. Always tracks from the beginning, even if no optics have been changed.
     def force_track(self):
+        """Tracks the bunch through the lattice. Tracks from the beginning to the end."""
+
         if not self.bunch_flag:
             print('Create initial bunch in order to start tracking.')
 
@@ -293,8 +450,17 @@ class OrbitModel(Model):
 
     # Change optics setting. This only changes the parameters of the optics and does not retrack the bunch. For an
     # input, it needs a dictionary with a key for the name of each changed element linked to a dictionary of it's
-    # changed PyORBIT parameter's keys linked to each parameter's new value.
+    # changed PyORBIT parameters' key linked to each parameters' new value.
     def update_optics(self, changed_optics: dict[str, dict[str,]]) -> None:
+        """Updates the optics in the lattice.
+
+        Parameters
+        ----------
+        changed_optics : dictionary
+            Dictionary using the element names as keys. Each key is connected to a parameter dictionary containing the
+            new parameter values.
+        """
+
         pyorbit_dict = self.pyorbit_dictionary
         for element_name, param_dict in changed_optics.items():
             if element_name not in pyorbit_dict.keys():
@@ -316,11 +482,21 @@ class OrbitModel(Model):
 
     # Returns optics to their original values when the model was initiated.
     def reset_optics(self) -> None:
+        """Returns optics to their original values when the model was initiated."""
+
         self.update_optics(self.initial_optics)
 
     # Saves the current optics as dictionary in a json file. The time stamp is used as the default name if none is
     # given. The dictionary is the same dictionary that get_settings outputs above.
     def save_optics(self, filename: Path = None) -> None:
+        """Saves the optics as a dictionary in a json file.
+
+        Parameters
+        ----------
+        filename : Path, optional
+            Location and name for the optics file. If none is provided, the file saved using the time stamp.
+        """
+
         if filename is None:
             current_time = datetime.now()
             timestamp = current_time.strftime("%Y-%m-%d-%H-%M-%S")
@@ -332,12 +508,28 @@ class OrbitModel(Model):
     # Takes optics in a json file and updates the lattice parameters with them. The dictionary in the file needs to be
     # the same format as update_optics requires.
     def load_optics(self, filename: Path) -> None:
+        """Load an optics and update the lattice.
+
+        Parameters
+        ----------
+        filename : Path
+            Location and name for the optics file. The file needs to be a json file containing a dictionary.
+        """
+
         with open(filename, "r") as json_file:
             input_optics = json.load(json_file)
             self.update_optics(input_optics)
 
     # Saves the current diagnostic readings as a json file. The format is the same as the output from get_measurements.
     def save_diagnostics(self, filename: Path = None) -> None:
+        """Save the measurements dictionary to a json file.
+
+        Parameters
+        ----------
+        filename : Path
+            Location and name for the measurements file. If none is provided, the file saved using the time stamp.
+        """
+
         # timestamp being default name
         if filename is None:
             current_time = datetime.now()
