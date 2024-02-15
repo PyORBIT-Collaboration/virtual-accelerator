@@ -2,7 +2,7 @@ import math
 import signal
 from threading import Event, Thread
 from datetime import datetime
-from typing import Optional, Union, List
+from typing import Optional, Union, List, Dict, Any
 from time import sleep
 
 from math import floor
@@ -176,15 +176,25 @@ class Device:
 
     def get_settings(self):
         params_dict = {}
-        for setting in self.settings:
-            param_input_dict = self.get_setting(setting)
-            for model_name in self.model_names:
-                params_dict = params_dict | {model_name: param_input_dict}
+        for model_name in self.model_names:
+            param_input_dict = {}
+            for setting in self.settings:
+                param_value = self.get_setting(setting)
+                param_input_dict = param_input_dict | {setting: param_value}
+            params_dict = params_dict | {model_name: param_input_dict}
         return params_dict
 
     def update_measurement(self, reason, value):
         *_, transform, noise = self.measurements[reason]
         self.setParam(reason, noise.add_noise(transform.raw(value)))
+
+    def update_measurements(self, new_measurements: Dict[str, Dict[str, Any]]):
+        for model_name, model_dict in new_measurements.items():
+            if model_name in self.model_names:
+                for param_name, new_value in model_dict.items():
+                    if param_name in self.measurements:
+                        reason = model_name + ':' + param_name
+                        self.update_measurement(reason, new_value)
 
     def update_readback(self, reason):
         value = self.get_setting(reason)
@@ -227,8 +237,6 @@ class Server:
         self.measurement_map = {}
         self.devices = []
 
-        self.model_map = {}
-
     def _CA_events(self, server):
         while True:
             server.process(0.1)
@@ -246,10 +254,6 @@ class Server:
         pvs, mmap = device.build_db()
         self.pv_db = self.pv_db | pvs
         self.measurement_map = self.measurement_map | mmap
-
-        device_name = device.name
-        model_names = device.model_names
-        self.model_map = self.model_map | {device_name: model_names}
 
         device.server = self
         self.devices.append(device)
@@ -286,15 +290,11 @@ class Server:
             result = result | device.get_settings()
         return result
 
-    def update_measurements(self, measurements):
+    def update_measurements(self, new_measurements: Dict[str, Dict[str, Any]]):
         for device in self.devices:
-            device_name = device.name
-            model_names = self.model_map[device_name]
-            for model_name in model_names:
-                if model_name in measurements:
-                    model_params = measurements[model_name]
-                    for model_key, value in model_params.items():
-                        device.update_measurement(model_key, value)
+            model_names = device.model_names
+            device_measurements = {key: value for key, value in new_measurements.items() if key in model_names}
+            device.update_measurements(device_measurements)
 
     def update_readbacks(self):
         for device in self.devices:

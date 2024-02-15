@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'The PyORBIT Virtual Accelerator'
-copyright = '2024, Brandon Cathey, Alexander Zhukov, Carrie Elliott, Andrei Shishlo'
+# copyright = '2024, Brandon Cathey, Alexander Zhukov, Carrie Elliott, Andrei Shishlo'
 author = 'Brandon Cathey, Alexander Zhukov, Carrie Elliott, Andrei Shishlo'
 release = '0.0.0'
 

@@ -1,6 +1,6 @@
 import sys
 from datetime import datetime
-from typing import Optional, Union, List, Dict
+from typing import Optional, Union, List, Dict, Any
 from pathlib import Path
 import json
 
@@ -16,7 +16,7 @@ class Model:
     def __init__(self):
         pass
 
-    def get_measurements(self) -> dict[str, dict[str,]]:
+    def get_measurements(self) -> Dict[str, Dict[str, Any]]:
         """Output values from the model. This needs to return a dictionary with the model name of the element as a key
         to a dictionary of the element's parameters.
 
@@ -31,7 +31,7 @@ class Model:
         """Updates values within your model."""
         pass
 
-    def update_optics(self, changed_optics: dict[str, dict[str,]]) -> None:
+    def update_optics(self, changed_optics: Dict[str, Dict[str, Any]]) -> None:
         """Take external values and update the model. Needs an input of a dictionary with the model name of the element
         as a key to a dictionary of the element's parameters with their new values.
 
@@ -238,7 +238,7 @@ class OrbitModel(Model):
         else:
             return pyorbit_dict[element_name].get_parameter(parameter_key)
 
-    def get_element_parameters(self, element_name: str) -> dict[str,]:
+    def get_element_parameters(self, element_name: str) -> Dict[str, Any]:
         """Returns a parameter dictionary for an element in the model.
 
         Parameters
@@ -258,7 +258,7 @@ class OrbitModel(Model):
         else:
             return pyorbit_dict[element_name].get_parameter_dict()
 
-    def get_model_parameters(self, element_names: list[str] = None) -> dict[str, dict[str,]]:
+    def get_model_parameters(self, element_names: list[str] = None) -> Dict[str, Dict[str, Any]]:
         """Returns a parameter dictionary for multiple elements in the model.
 
         Parameters
@@ -299,7 +299,7 @@ class OrbitModel(Model):
     # depends on the input provided. If nothing, the returned dictionary includes all current optics within the model.
     # If a list of element names, the returned dictionary only includes those elements. And if just an element name, the
     # dictionary only includes that element.
-    def get_settings(self, setting_names: list[str] = None) -> dict[str, dict[str,]]:
+    def get_settings(self, setting_names: list[str] = None) -> Dict[str, Dict[str, Any]]:
         """Returns a parameter dictionary for the setting elements in the model.
 
         Parameters
@@ -343,7 +343,7 @@ class OrbitModel(Model):
     # depends on the input provided. If nothing, the returned dictionary includes all current measurement devices within
     # the model. If a list of element names, the returned dictionary only includes those elements. And if just an
     # element name, the dictionary only includes that element.
-    def get_measurements(self, measurement_names: list[str] = None) -> dict[str, dict[str,]]:
+    def get_measurements(self, measurement_names: list[str] = None) -> Dict[str, Dict[str, Any]]:
         """Returns a parameter dictionary for the measurement elements in the model.
 
         Parameters
@@ -468,7 +468,7 @@ class OrbitModel(Model):
     # Change optics setting. This only changes the parameters of the optics and does not retrack the bunch. For an
     # input, it needs a dictionary with a key for the name of each changed element linked to a dictionary of it's
     # changed PyORBIT parameters' key linked to each parameters' new value.
-    def update_optics(self, changed_optics: dict[str, dict[str,]]) -> None:
+    def update_optics(self, changed_optics: Dict[str, Dict[str, Any]]) -> None:
         """Updates the optics in the lattice.
 
         Parameters

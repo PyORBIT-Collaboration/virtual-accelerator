@@ -1,6 +1,7 @@
 import time
 import math
 from random import randint, random
+from typing import Dict, Any
 
 import numpy as np
 
@@ -29,7 +30,7 @@ class Quadrupole(Device):
     # PyORBIT parameter keys
     field_key = 'dB/dr'  # [T/m]
 
-    def __init__(self, name: str, model_name: str = None, initial_dict: dict[str,] = None):
+    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None):
         if model_name is None:
             self.model_name = name
         else:
@@ -76,7 +77,7 @@ class Quadrupole_Doublet(Device):
     # PyORBIT parameter keys
     field_key = 'dB/dr'  # [T/m]
 
-    def __init__(self, name: str, h_model_name: str, v_model_name: str, initial_dict: dict[str,] = None):
+    def __init__(self, name: str, h_model_name: str, v_model_name: str, initial_dict: Dict[str, Any] = None):
         self.h_name = h_model_name
         self.v_name = v_model_name
         self.model_names = [h_model_name, v_model_name]
@@ -126,7 +127,7 @@ class Quadrupole_Set(Device):
     # PyORBIT parameter keys
     field_key = 'dB/dr'  # [T/m]
 
-    def __init__(self, name: str, model_names: list[str], initial_dict: dict[str,] = None):
+    def __init__(self, name: str, model_names: list[str], initial_dict: Dict[str, Any] = None):
         self.model_names = model_names
         super().__init__(name, self.model_names)
 
@@ -175,7 +176,7 @@ class Corrector(Device):
     # Setting limits
     field_limits = [-0.1, 0.1]  # [T]
 
-    def __init__(self, name: str, model_name: str = None, initial_dict: dict[str,] = None):
+    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None):
         if model_name is None:
             self.model_name = name
         else:
@@ -230,7 +231,7 @@ class Cavity(Device):
     phase_key = 'phase'  # [radians]
     amp_key = 'amp'  # [arb. units]
 
-    def __init__(self, name: str, model_name: str = None, initial_dict: dict[str,] = None, phase_offset=0):
+    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None, phase_offset=0):
         if model_name is None:
             self.model_name = name
         else:
@@ -339,30 +340,30 @@ class BPM(Device):
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
-    def update_measurement(self, model_key, model_value):
-        reason = None
-        virtual_value = None
-        if model_key == BPM.x_key:
-            reason = BPM.x_pv
-            virtual_value = model_value
-        elif model_key == BPM.y_key:
-            reason = BPM.y_pv
-            virtual_value = model_value
-        elif model_key == BPM.phase_key:
-            reason = BPM.phase_pv
-            virtual_value = model_value
-        elif model_key == BPM.amp_key:
-            reason = BPM.amp_pv
-            virtual_value = model_value
-        if reason is not None:
-            *_, transform, noise = self.measurements[reason]
-            self.setParam(reason, noise.add_noise(transform.raw(virtual_value)))
+    def update_measurements(self, new_params: Dict[str, Dict[str, Any]]):
+        for model_name, param_dict in new_params.items():
+            if model_name == self.model_name:
+                for param_key, new_value in param_dict.items():
+                    reason = None
+                    if param_key == BPM.x_key:
+                        reason = BPM.x_pv
+                    elif param_key == BPM.y_key:
+                        reason = BPM.y_pv
+                    elif param_key == BPM.phase_key:
+                        reason = BPM.phase_pv
+                    elif param_key == BPM.amp_key:
+                        reason = BPM.amp_pv
 
-    def get_setting(self, reason):
-        *_, transform, _ = self.settings[reason]
-        model_dict = {}
-        if reason == BPM.oeda_pv:
-            pass
+                    if reason is not None:
+                        self.update_measurement(reason, new_value)
+
+    def get_settings(self):
+        params_dict = {}
+        for setting in self.settings:
+            param_value = self.get_setting(setting)
+            if setting == BPM.oeda_pv:
+                pass
+        model_dict = {self.model_name: params_dict}
         return model_dict
 
 
@@ -384,7 +385,7 @@ class WireScanner(Device):
     y_offset = 0.01  # [m]
     wire_coeff = 1 / math.sqrt(2)
 
-    def __init__(self, name: str, model_name: str = None, initial_dict: dict[str,] = None):
+    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None):
         if model_name is None:
             self.model_name = name
         else:
@@ -468,27 +469,29 @@ class WireScanner(Device):
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
-    def update_measurement(self, model_key, model_value):
+    def update_measurements(self, new_params: Dict[str, Dict[str, Any]]):
         # Find the current position of the center of the wire scanner
         wire_pos = WireScanner.get_wire_position(self)
 
-        reason = None
-        virtual_value = None
-        if model_key == WireScanner.x_key:
-            # Find the location of the vertical wire. Then interpolate the histogram from the model at that value.
-            x_pos = WireScanner.wire_coeff * wire_pos + WireScanner.x_offset
-            virtual_value = np.interp(x_pos, model_value[:, 0], model_value[:, 1])
-            reason = WireScanner.x_charge_pv
+        for model_name, param_dict in new_params.items():
+            if model_name == self.model_name:
+                for param_key, model_value in param_dict.items():
+                    reason = None
+                    virtual_value = 0
+                    if param_key == WireScanner.x_key:
+                        # Find the location of the vertical wire. Then interpolate the histogram from the model at that value.
+                        x_pos = WireScanner.wire_coeff * wire_pos + WireScanner.x_offset
+                        virtual_value = np.interp(x_pos, model_value[:, 0], model_value[:, 1])
+                        reason = WireScanner.x_charge_pv
 
-        elif model_key == WireScanner.y_key:
-            # Find the location of the horizontal wire. Then interpolate the histogram from the model at that value.
-            y_pos = WireScanner.wire_coeff * wire_pos + WireScanner.y_offset
-            virtual_value = np.interp(y_pos, model_value[:, 0], model_value[:, 1])
-            reason = WireScanner.y_charge_pv
+                    elif param_key == WireScanner.y_key:
+                        # Find the location of the horizontal wire. Then interpolate the histogram from the model at that value.
+                        y_pos = WireScanner.wire_coeff * wire_pos + WireScanner.y_offset
+                        virtual_value = np.interp(y_pos, model_value[:, 0], model_value[:, 1])
+                        reason = WireScanner.y_charge_pv
 
-        if reason is not None:
-            *_, transform, noise = self.measurements[reason]
-            self.setParam(reason, noise.add_noise(transform.raw(virtual_value)))
+                    if reason is not None:
+                        self.update_measurement(reason, virtual_value)
 
 
 # An unrealistic device associated with BPMs in the PyORBIT model that tracks values that cannot be measured directly.
