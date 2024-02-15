@@ -1,4 +1,4 @@
-from typing import Union, Dict
+from typing import Union, Dict, Any
 
 from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 from orbit.py_linac.lattice.LinacAccNodes import Quad, MarkerLinacNode, DCorrectorV, DCorrectorH
@@ -78,7 +78,7 @@ class PyorbitElement:
         return self.element_type
 
     # Returns the PyORBIT ParamsDict from the element.
-    def get_parameter_dict(self) -> dict[str,]:
+    def get_parameter_dict(self) -> Dict[str, Any]:
         element_type = self.get_type()
         modeled_params = PyorbitElementTypes.param_ref_dict[element_type]
         params_out_dict = {key: self.element.getParamsDict()[key] for key in modeled_params}
@@ -87,7 +87,7 @@ class PyorbitElement:
     # Changes the parameters of the element. Needs a dictionary that matches the PyORBIT ParamsDict for the element with
     # the new values. If any keys are not within that elements list of keys define in PyorbitElementTypes, that
     # parameter will be ignored.
-    def set_parameter_dict(self, new_params: dict[str,]) -> None:
+    def set_parameter_dict(self, new_params: Dict[str, Any]) -> None:
         element_type = self.get_type()
         modeled_params = PyorbitElementTypes.param_ref_dict[element_type]
         new_params_fixed = {key: new_params[key] for key in modeled_params}
