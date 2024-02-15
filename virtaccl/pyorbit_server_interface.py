@@ -12,35 +12,41 @@ from .server_child_nodes import BPMclass, WSclass, BunchCopyClass, RF_Gap_Apertu
 
 
 class Model:
+    """This is a generic model that other models can inherit."""
     def __init__(self):
         pass
 
     def get_measurements(self) -> dict[str, dict[str,]]:
-        # Output values from the model. This needs to return a dictionary with the model name of the element as a key
-        # to a dictionary of the element's parameters.
+        """Output values from the model. This needs to return a dictionary with the model name of the element as a key
+        to a dictionary of the element's parameters.
+
+        Returns
+        ----------
+        out : dictionary
+            A dictionary of element names as keys connected to that element's parameter dictionary.
+        """
         return {}
 
     def track(self) -> None:
-        # update values within your model
+        """Updates values within your model."""
         pass
 
     def update_optics(self, changed_optics: dict[str, dict[str,]]) -> None:
-        # Take external values and update the model. Needs an input of a dictionary with the model name of the element
-        # as a key to a dictionary of the element's parameters with their new values.
+        """Take external values and update the model. Needs an input of a dictionary with the model name of the element
+        as a key to a dictionary of the element's parameters with their new values.
+
+        Parameters
+        ----------
+        changed_optics : dictionary
+            Dictionary using the element names as keys. Each key is connected to a parameter dictionary containing the
+            new parameter values.
+        """
         pass
 
 
 class OrbitModel(Model):
     """
     This is a model that automates using PyORBIT.
-    """
-
-    # This creates a hint for the element dictionary for easier development.
-    element_ref_hint = Union[PyorbitNode, PyorbitCavity, PyorbitChild]
-    element_dict_hint = Dict[str, element_ref_hint]
-
-    def __init__(self, input_lattice: LinacAccLattice, input_bunch: Bunch = None, debug: bool = False):
-        """Create a model accelerator using PyORBIT.
 
         Parameters
         ----------
@@ -51,8 +57,13 @@ class OrbitModel(Model):
         debug : bool, optional, default = False
             Setting to True has the model print additional information when used
             (when the lattice is updated, the bunch is tracked, etc.).
-        """
+    """
 
+    # This creates a hint for the element dictionary for easier development.
+    _element_ref_hint = Union[PyorbitNode, PyorbitCavity, PyorbitChild]
+    _element_dict_hint = Dict[str, _element_ref_hint]
+
+    def __init__(self, input_lattice: LinacAccLattice, input_bunch: Bunch = None, debug: bool = False):
         super().__init__()
         self.debug = debug
 
@@ -64,7 +75,7 @@ class OrbitModel(Model):
 
         # Set up a dictionary to reference different objects within the lattice by their name. Not all elements are
         # readily available in LinacAccLattice, so this lets us easily reference them.
-        element_dict: OrbitModel.element_dict_hint = {}
+        element_dict: OrbitModel._element_dict_hint = {}
 
         # This function is for digging into child nodes in PyORBIT to find nodes we need to reference. This is mainly
         # for correctors and some BPMs. If a BPM or wire scanner markerLinacNode is found, the appropriate child node is
@@ -178,14 +189,20 @@ class OrbitModel(Model):
         self.model_params['beam_current'] = beam_current
 
     def get_element_list(self) -> list[str]:
-        """Returns a list of all element key names currently maintained in the model."""
+        """Returns a list of all element key names currently maintained in the model.
+
+        Results
+        ----------
+        out : list[string]
+            List of all element names currently in the model.
+        """
 
         key_list = []
         for element_key in self.pyorbit_dictionary.keys():
             key_list.append(element_key)
         return key_list
 
-    def get_element_dictionary(self) -> element_dict_hint:
+    def get_element_dictionary(self) -> _element_dict_hint:
         """Returns a dictionary of the PyORBIT model elements.
 
         Results

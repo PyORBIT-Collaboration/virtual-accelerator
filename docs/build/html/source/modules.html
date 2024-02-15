@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>virtaccl &#8212; The PyORBIT Virtual Accelerator 0.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=7026087e"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="virtaccl package" href="virtaccl.html" />
+    <link rel="prev" title="Welcome to The PyORBIT Virtual Accelerator’s documentation!" href="../index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="virtaccl">
+<h1>virtaccl<a class="headerlink" href="#virtaccl" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="virtaccl.html">virtaccl package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="virtaccl.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtaccl.html#module-virtaccl.ca_server">virtaccl.ca_server module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.AbsNoise"><code class="docutils literal notranslate"><span class="pre">AbsNoise</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.AbsNoise.add_noise"><code class="docutils literal notranslate"><span class="pre">AbsNoise.add_noise()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.CtrlC"><code class="docutils literal notranslate"><span class="pre">CtrlC</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.CtrlC.event"><code class="docutils literal notranslate"><span class="pre">CtrlC.event</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Device"><code class="docutils literal notranslate"><span class="pre">Device</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Device.build_db"><code class="docutils literal notranslate"><span class="pre">Device.build_db()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Device.getParam"><code class="docutils literal notranslate"><span class="pre">Device.getParam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Device.get_setting"><code class="docutils literal notranslate"><span class="pre">Device.get_setting()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Device.get_settings"><code class="docutils literal notranslate"><span class="pre">Device.get_settings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Device.register_measurement"><code class="docutils literal notranslate"><span class="pre">Device.register_measurement()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Device.register_setting"><code class="docutils literal notranslate"><span class="pre">Device.register_setting()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Device.reset"><code class="docutils literal notranslate"><span class="pre">Device.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Device.setParam"><code class="docutils literal notranslate"><span class="pre">Device.setParam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Device.update_measurement"><code class="docutils literal notranslate"><span class="pre">Device.update_measurement()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Device.update_readback"><code class="docutils literal notranslate"><span class="pre">Device.update_readback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Device.update_readbacks"><code class="docutils literal notranslate"><span class="pre">Device.update_readbacks()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.LinearT"><code class="docutils literal notranslate"><span class="pre">LinearT</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.LinearT.calculate_rb"><code class="docutils literal notranslate"><span class="pre">LinearT.calculate_rb()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.LinearT.raw"><code class="docutils literal notranslate"><span class="pre">LinearT.raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.LinearT.real"><code class="docutils literal notranslate"><span class="pre">LinearT.real()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.LinearTInv"><code class="docutils literal notranslate"><span class="pre">LinearTInv</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.LinearTInv.calculate_rb"><code class="docutils literal notranslate"><span class="pre">LinearTInv.calculate_rb()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.LinearTInv.raw"><code class="docutils literal notranslate"><span class="pre">LinearTInv.raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.LinearTInv.real"><code class="docutils literal notranslate"><span class="pre">LinearTInv.real()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Noise"><code class="docutils literal notranslate"><span class="pre">Noise</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Noise.add_noise"><code class="docutils literal notranslate"><span class="pre">Noise.add_noise()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.PhaseT"><code class="docutils literal notranslate"><span class="pre">PhaseT</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.PhaseT.raw"><code class="docutils literal notranslate"><span class="pre">PhaseT.raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.PhaseT.real"><code class="docutils literal notranslate"><span class="pre">PhaseT.real()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.PhaseT.wrap_phase"><code class="docutils literal notranslate"><span class="pre">PhaseT.wrap_phase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.PhaseTInv"><code class="docutils literal notranslate"><span class="pre">PhaseTInv</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.PhaseTInv.raw"><code class="docutils literal notranslate"><span class="pre">PhaseTInv.raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.PhaseTInv.real"><code class="docutils literal notranslate"><span class="pre">PhaseTInv.real()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.PhaseTInv.wrap_phase_deg"><code class="docutils literal notranslate"><span class="pre">PhaseTInv.wrap_phase_deg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.PhaseTInv.wrap_phase_rad"><code class="docutils literal notranslate"><span class="pre">PhaseTInv.wrap_phase_rad()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Server"><code class="docutils literal notranslate"><span class="pre">Server</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Server.add_device"><code class="docutils literal notranslate"><span class="pre">Server.add_device()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Server.getParam"><code class="docutils literal notranslate"><span class="pre">Server.getParam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Server.get_params"><code class="docutils literal notranslate"><span class="pre">Server.get_params()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Server.get_settings"><code class="docutils literal notranslate"><span class="pre">Server.get_settings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Server.run"><code class="docutils literal notranslate"><span class="pre">Server.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Server.setParam"><code class="docutils literal notranslate"><span class="pre">Server.setParam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Server.set_params"><code class="docutils literal notranslate"><span class="pre">Server.set_params()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Server.start"><code class="docutils literal notranslate"><span class="pre">Server.start()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Server.stop"><code class="docutils literal notranslate"><span class="pre">Server.stop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Server.update"><code class="docutils literal notranslate"><span class="pre">Server.update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Server.update_measurements"><code class="docutils literal notranslate"><span class="pre">Server.update_measurements()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Server.update_readbacks"><code class="docutils literal notranslate"><span class="pre">Server.update_readbacks()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.TDriver"><code class="docutils literal notranslate"><span class="pre">TDriver</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.TDriver.setParam"><code class="docutils literal notranslate"><span class="pre">TDriver.setParam()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Transform"><code class="docutils literal notranslate"><span class="pre">Transform</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Transform.raw"><code class="docutils literal notranslate"><span class="pre">Transform.raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.Transform.real"><code class="docutils literal notranslate"><span class="pre">Transform.real()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.epics_now"><code class="docutils literal notranslate"><span class="pre">epics_now()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.not_ctrlc"><code class="docutils literal notranslate"><span class="pre">not_ctrlc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.random_sample"><code class="docutils literal notranslate"><span class="pre">random_sample()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.ca_server.to_epics_timestamp"><code class="docutils literal notranslate"><span class="pre">to_epics_timestamp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="virtaccl.html#module-virtaccl.input_maker">virtaccl.input_maker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.input_maker.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.input_maker.random"><code class="docutils literal notranslate"><span class="pre">random()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="virtaccl.html#module-virtaccl.interface_lib">virtaccl.interface_lib module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitCavity"><code class="docutils literal notranslate"><span class="pre">PyorbitCavity</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitCavity.cavity_type"><code class="docutils literal notranslate"><span class="pre">PyorbitCavity.cavity_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitCavity.get_element"><code class="docutils literal notranslate"><span class="pre">PyorbitCavity.get_element()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitCavity.get_first_node"><code class="docutils literal notranslate"><span class="pre">PyorbitCavity.get_first_node()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitCavity.get_position"><code class="docutils literal notranslate"><span class="pre">PyorbitCavity.get_position()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitCavity.get_tracking_node"><code class="docutils literal notranslate"><span class="pre">PyorbitCavity.get_tracking_node()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitCavity.rf_gap_type"><code class="docutils literal notranslate"><span class="pre">PyorbitCavity.rf_gap_type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitChild"><code class="docutils literal notranslate"><span class="pre">PyorbitChild</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitChild.child_types"><code class="docutils literal notranslate"><span class="pre">PyorbitChild.child_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitChild.get_ancestor_node"><code class="docutils literal notranslate"><span class="pre">PyorbitChild.get_ancestor_node()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitChild.get_element"><code class="docutils literal notranslate"><span class="pre">PyorbitChild.get_element()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitChild.get_position"><code class="docutils literal notranslate"><span class="pre">PyorbitChild.get_position()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitChild.get_tracking_node"><code class="docutils literal notranslate"><span class="pre">PyorbitChild.get_tracking_node()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitChild.node_types"><code class="docutils literal notranslate"><span class="pre">PyorbitChild.node_types</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElement"><code class="docutils literal notranslate"><span class="pre">PyorbitElement</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElement.get_name"><code class="docutils literal notranslate"><span class="pre">PyorbitElement.get_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElement.get_parameter"><code class="docutils literal notranslate"><span class="pre">PyorbitElement.get_parameter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElement.get_parameter_dict"><code class="docutils literal notranslate"><span class="pre">PyorbitElement.get_parameter_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElement.get_type"><code class="docutils literal notranslate"><span class="pre">PyorbitElement.get_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElement.is_optic"><code class="docutils literal notranslate"><span class="pre">PyorbitElement.is_optic()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElement.set_parameter"><code class="docutils literal notranslate"><span class="pre">PyorbitElement.set_parameter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElement.set_parameter_dict"><code class="docutils literal notranslate"><span class="pre">PyorbitElement.set_parameter_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.BPM_key"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.BPM_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.WS_key"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.WS_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.bpm_params"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.bpm_params</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.cavity_classes"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.cavity_classes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.cavity_key"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.cavity_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.cavity_params"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.cavity_params</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.child_classes"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.child_classes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.corrector_key"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.corrector_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.corrector_params"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.corrector_params</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.diagnostic_classes"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.diagnostic_classes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.node_classes"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.node_classes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.optic_classes"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.optic_classes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.pBPM_key"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.pBPM_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.param_ref_dict"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.param_ref_dict</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.pyorbit_class_names"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.pyorbit_class_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.pyorbit_classes"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.pyorbit_classes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.quad_key"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.quad_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.quad_params"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.quad_params</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitElementTypes.ws_params"><code class="docutils literal notranslate"><span class="pre">PyorbitElementTypes.ws_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitNode"><code class="docutils literal notranslate"><span class="pre">PyorbitNode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitNode.get_element"><code class="docutils literal notranslate"><span class="pre">PyorbitNode.get_element()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitNode.get_position"><code class="docutils literal notranslate"><span class="pre">PyorbitNode.get_position()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitNode.get_tracking_node"><code class="docutils literal notranslate"><span class="pre">PyorbitNode.get_tracking_node()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.interface_lib.PyorbitNode.node_types"><code class="docutils literal notranslate"><span class="pre">PyorbitNode.node_types</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="virtaccl.html#module-virtaccl.pyorbit_server_interface">virtaccl.pyorbit_server_interface module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.Model"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.Model.get_measurements"><code class="docutils literal notranslate"><span class="pre">Model.get_measurements()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.Model.track"><code class="docutils literal notranslate"><span class="pre">Model.track()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.Model.update_optics"><code class="docutils literal notranslate"><span class="pre">Model.update_optics()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel"><code class="docutils literal notranslate"><span class="pre">OrbitModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.force_track"><code class="docutils literal notranslate"><span class="pre">OrbitModel.force_track()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.get_element_dictionary"><code class="docutils literal notranslate"><span class="pre">OrbitModel.get_element_dictionary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.get_element_list"><code class="docutils literal notranslate"><span class="pre">OrbitModel.get_element_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.get_element_parameters"><code class="docutils literal notranslate"><span class="pre">OrbitModel.get_element_parameters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.get_measurements"><code class="docutils literal notranslate"><span class="pre">OrbitModel.get_measurements()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.get_model_parameters"><code class="docutils literal notranslate"><span class="pre">OrbitModel.get_model_parameters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.get_parameter"><code class="docutils literal notranslate"><span class="pre">OrbitModel.get_parameter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.get_settings"><code class="docutils literal notranslate"><span class="pre">OrbitModel.get_settings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.load_optics"><code class="docutils literal notranslate"><span class="pre">OrbitModel.load_optics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.reset_optics"><code class="docutils literal notranslate"><span class="pre">OrbitModel.reset_optics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.save_diagnostics"><code class="docutils literal notranslate"><span class="pre">OrbitModel.save_diagnostics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.save_optics"><code class="docutils literal notranslate"><span class="pre">OrbitModel.save_optics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.set_beam_current"><code class="docutils literal notranslate"><span class="pre">OrbitModel.set_beam_current()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.set_initial_bunch"><code class="docutils literal notranslate"><span class="pre">OrbitModel.set_initial_bunch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.track"><code class="docutils literal notranslate"><span class="pre">OrbitModel.track()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.pyorbit_server_interface.OrbitModel.update_optics"><code class="docutils literal notranslate"><span class="pre">OrbitModel.update_optics()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="virtaccl.html#module-virtaccl.server_child_nodes">virtaccl.server_child_nodes module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass"><code class="docutils literal notranslate"><span class="pre">BPMclass</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass.getAllChildren"><code class="docutils literal notranslate"><span class="pre">BPMclass.getAllChildren()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass.getBeta"><code class="docutils literal notranslate"><span class="pre">BPMclass.getBeta()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass.getCurrent"><code class="docutils literal notranslate"><span class="pre">BPMclass.getCurrent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass.getEnergy"><code class="docutils literal notranslate"><span class="pre">BPMclass.getEnergy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass.getFrequency"><code class="docutils literal notranslate"><span class="pre">BPMclass.getFrequency()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass.getName"><code class="docutils literal notranslate"><span class="pre">BPMclass.getName()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass.getParam"><code class="docutils literal notranslate"><span class="pre">BPMclass.getParam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass.getParamsDict"><code class="docutils literal notranslate"><span class="pre">BPMclass.getParamsDict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass.getPhaseAvg"><code class="docutils literal notranslate"><span class="pre">BPMclass.getPhaseAvg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass.getType"><code class="docutils literal notranslate"><span class="pre">BPMclass.getType()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass.getXAvg"><code class="docutils literal notranslate"><span class="pre">BPMclass.getXAvg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass.getYAvg"><code class="docutils literal notranslate"><span class="pre">BPMclass.getYAvg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass.setFrequency"><code class="docutils literal notranslate"><span class="pre">BPMclass.setFrequency()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass.setParam"><code class="docutils literal notranslate"><span class="pre">BPMclass.setParam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BPMclass.trackActions"><code class="docutils literal notranslate"><span class="pre">BPMclass.trackActions()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BunchCopyClass"><code class="docutils literal notranslate"><span class="pre">BunchCopyClass</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.BunchCopyClass.trackActions"><code class="docutils literal notranslate"><span class="pre">BunchCopyClass.trackActions()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.RF_Gap_Aperture"><code class="docutils literal notranslate"><span class="pre">RF_Gap_Aperture</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.RF_Gap_Aperture.trackActions"><code class="docutils literal notranslate"><span class="pre">RF_Gap_Aperture.trackActions()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.WSclass"><code class="docutils literal notranslate"><span class="pre">WSclass</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.WSclass.getAllChildren"><code class="docutils literal notranslate"><span class="pre">WSclass.getAllChildren()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.WSclass.getName"><code class="docutils literal notranslate"><span class="pre">WSclass.getName()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.WSclass.getParam"><code class="docutils literal notranslate"><span class="pre">WSclass.getParam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.WSclass.getParamsDict"><code class="docutils literal notranslate"><span class="pre">WSclass.getParamsDict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.WSclass.getType"><code class="docutils literal notranslate"><span class="pre">WSclass.getType()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.WSclass.getXHistogram"><code class="docutils literal notranslate"><span class="pre">WSclass.getXHistogram()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.WSclass.getYHistogram"><code class="docutils literal notranslate"><span class="pre">WSclass.getYHistogram()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.WSclass.trackActions"><code class="docutils literal notranslate"><span class="pre">WSclass.trackActions()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.server_child_nodes.random"><code class="docutils literal notranslate"><span class="pre">random()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="virtaccl.html#module-virtaccl.sns_linac_bunch_generator">virtaccl.sns_linac_bunch_generator module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.sns_linac_bunch_generator.SNS_Linac_BunchGenerator"><code class="docutils literal notranslate"><span class="pre">SNS_Linac_BunchGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.sns_linac_bunch_generator.SNS_Linac_BunchGenerator.getBeamCurrent"><code class="docutils literal notranslate"><span class="pre">SNS_Linac_BunchGenerator.getBeamCurrent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.sns_linac_bunch_generator.SNS_Linac_BunchGenerator.getBunch"><code class="docutils literal notranslate"><span class="pre">SNS_Linac_BunchGenerator.getBunch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.sns_linac_bunch_generator.SNS_Linac_BunchGenerator.getKinEnergy"><code class="docutils literal notranslate"><span class="pre">SNS_Linac_BunchGenerator.getKinEnergy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.sns_linac_bunch_generator.SNS_Linac_BunchGenerator.getZtoPhaseCoeff"><code class="docutils literal notranslate"><span class="pre">SNS_Linac_BunchGenerator.getZtoPhaseCoeff()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.sns_linac_bunch_generator.SNS_Linac_BunchGenerator.setBeamCurrent"><code class="docutils literal notranslate"><span class="pre">SNS_Linac_BunchGenerator.setBeamCurrent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.sns_linac_bunch_generator.SNS_Linac_BunchGenerator.setKinEnergy"><code class="docutils literal notranslate"><span class="pre">SNS_Linac_BunchGenerator.setKinEnergy()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="virtaccl.html#module-virtaccl.virtual_accelerator">virtaccl.virtual_accelerator module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_accelerator.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="virtaccl.html#module-virtaccl.virtual_devices">virtaccl.virtual_devices module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.BPM"><code class="docutils literal notranslate"><span class="pre">BPM</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.BPM.amp_key"><code class="docutils literal notranslate"><span class="pre">BPM.amp_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.BPM.amp_noise"><code class="docutils literal notranslate"><span class="pre">BPM.amp_noise</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.BPM.amp_pv"><code class="docutils literal notranslate"><span class="pre">BPM.amp_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.BPM.get_setting"><code class="docutils literal notranslate"><span class="pre">BPM.get_setting()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.BPM.oeda_pv"><code class="docutils literal notranslate"><span class="pre">BPM.oeda_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.BPM.phase_key"><code class="docutils literal notranslate"><span class="pre">BPM.phase_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.BPM.phase_noise"><code class="docutils literal notranslate"><span class="pre">BPM.phase_noise</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.BPM.phase_pv"><code class="docutils literal notranslate"><span class="pre">BPM.phase_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.BPM.update_measurement"><code class="docutils literal notranslate"><span class="pre">BPM.update_measurement()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.BPM.x_key"><code class="docutils literal notranslate"><span class="pre">BPM.x_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.BPM.x_pv"><code class="docutils literal notranslate"><span class="pre">BPM.x_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.BPM.xy_noise"><code class="docutils literal notranslate"><span class="pre">BPM.xy_noise</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.BPM.y_key"><code class="docutils literal notranslate"><span class="pre">BPM.y_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.BPM.y_pv"><code class="docutils literal notranslate"><span class="pre">BPM.y_pv</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Cavity"><code class="docutils literal notranslate"><span class="pre">Cavity</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Cavity.amp_goal_pv"><code class="docutils literal notranslate"><span class="pre">Cavity.amp_goal_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Cavity.amp_key"><code class="docutils literal notranslate"><span class="pre">Cavity.amp_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Cavity.amp_pv"><code class="docutils literal notranslate"><span class="pre">Cavity.amp_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Cavity.blank_pv"><code class="docutils literal notranslate"><span class="pre">Cavity.blank_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Cavity.get_settings"><code class="docutils literal notranslate"><span class="pre">Cavity.get_settings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Cavity.phase_key"><code class="docutils literal notranslate"><span class="pre">Cavity.phase_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Cavity.phase_pv"><code class="docutils literal notranslate"><span class="pre">Cavity.phase_pv</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Corrector"><code class="docutils literal notranslate"><span class="pre">Corrector</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Corrector.field_key"><code class="docutils literal notranslate"><span class="pre">Corrector.field_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Corrector.field_limits"><code class="docutils literal notranslate"><span class="pre">Corrector.field_limits</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Corrector.field_readback_pv"><code class="docutils literal notranslate"><span class="pre">Corrector.field_readback_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Corrector.field_set_pv"><code class="docutils literal notranslate"><span class="pre">Corrector.field_set_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Corrector.get_settings"><code class="docutils literal notranslate"><span class="pre">Corrector.get_settings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Corrector.update_readback"><code class="docutils literal notranslate"><span class="pre">Corrector.update_readback()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.P_BPM"><code class="docutils literal notranslate"><span class="pre">P_BPM</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.P_BPM.beta_key"><code class="docutils literal notranslate"><span class="pre">P_BPM.beta_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.P_BPM.beta_pv"><code class="docutils literal notranslate"><span class="pre">P_BPM.beta_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.P_BPM.energy_key"><code class="docutils literal notranslate"><span class="pre">P_BPM.energy_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.P_BPM.energy_pv"><code class="docutils literal notranslate"><span class="pre">P_BPM.energy_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.P_BPM.num_key"><code class="docutils literal notranslate"><span class="pre">P_BPM.num_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.P_BPM.num_pv"><code class="docutils literal notranslate"><span class="pre">P_BPM.num_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.P_BPM.update_measurement"><code class="docutils literal notranslate"><span class="pre">P_BPM.update_measurement()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole"><code class="docutils literal notranslate"><span class="pre">Quadrupole</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole.field_key"><code class="docutils literal notranslate"><span class="pre">Quadrupole.field_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole.field_readback_pv"><code class="docutils literal notranslate"><span class="pre">Quadrupole.field_readback_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole.field_set_pv"><code class="docutils literal notranslate"><span class="pre">Quadrupole.field_set_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole.get_settings"><code class="docutils literal notranslate"><span class="pre">Quadrupole.get_settings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole.update_readback"><code class="docutils literal notranslate"><span class="pre">Quadrupole.update_readback()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole_Doublet"><code class="docutils literal notranslate"><span class="pre">Quadrupole_Doublet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole_Doublet.field_key"><code class="docutils literal notranslate"><span class="pre">Quadrupole_Doublet.field_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole_Doublet.field_readback_pv"><code class="docutils literal notranslate"><span class="pre">Quadrupole_Doublet.field_readback_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole_Doublet.field_set_pv"><code class="docutils literal notranslate"><span class="pre">Quadrupole_Doublet.field_set_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole_Doublet.get_settings"><code class="docutils literal notranslate"><span class="pre">Quadrupole_Doublet.get_settings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole_Doublet.update_readback"><code class="docutils literal notranslate"><span class="pre">Quadrupole_Doublet.update_readback()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole_Set"><code class="docutils literal notranslate"><span class="pre">Quadrupole_Set</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole_Set.field_key"><code class="docutils literal notranslate"><span class="pre">Quadrupole_Set.field_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole_Set.field_readback_pv"><code class="docutils literal notranslate"><span class="pre">Quadrupole_Set.field_readback_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole_Set.field_set_pv"><code class="docutils literal notranslate"><span class="pre">Quadrupole_Set.field_set_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole_Set.get_settings"><code class="docutils literal notranslate"><span class="pre">Quadrupole_Set.get_settings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.Quadrupole_Set.update_readback"><code class="docutils literal notranslate"><span class="pre">Quadrupole_Set.update_readback()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner"><code class="docutils literal notranslate"><span class="pre">WireScanner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.get_settings"><code class="docutils literal notranslate"><span class="pre">WireScanner.get_settings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.get_wire_position"><code class="docutils literal notranslate"><span class="pre">WireScanner.get_wire_position()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.position_key"><code class="docutils literal notranslate"><span class="pre">WireScanner.position_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.position_pv"><code class="docutils literal notranslate"><span class="pre">WireScanner.position_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.position_readback_pv"><code class="docutils literal notranslate"><span class="pre">WireScanner.position_readback_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.speed_key"><code class="docutils literal notranslate"><span class="pre">WireScanner.speed_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.speed_pv"><code class="docutils literal notranslate"><span class="pre">WireScanner.speed_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.update_measurement"><code class="docutils literal notranslate"><span class="pre">WireScanner.update_measurement()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.update_readback"><code class="docutils literal notranslate"><span class="pre">WireScanner.update_readback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.wire_coeff"><code class="docutils literal notranslate"><span class="pre">WireScanner.wire_coeff</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.x_charge_pv"><code class="docutils literal notranslate"><span class="pre">WireScanner.x_charge_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.x_key"><code class="docutils literal notranslate"><span class="pre">WireScanner.x_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.x_offset"><code class="docutils literal notranslate"><span class="pre">WireScanner.x_offset</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.y_charge_pv"><code class="docutils literal notranslate"><span class="pre">WireScanner.y_charge_pv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.y_key"><code class="docutils literal notranslate"><span class="pre">WireScanner.y_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.WireScanner.y_offset"><code class="docutils literal notranslate"><span class="pre">WireScanner.y_offset</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtaccl.html#virtaccl.virtual_devices.random"><code class="docutils literal notranslate"><span class="pre">random()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="virtaccl.html#module-virtaccl">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">The PyORBIT Virtual Accelerator</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">virtaccl</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="virtaccl.html">virtaccl package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="virtaccl.html">virtaccl package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">Welcome to The PyORBIT Virtual Accelerator’s documentation!</a></li>
+      <li>Next: <a href="virtaccl.html" title="next chapter">virtaccl package</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Brandon Cathey, Alexander Zhukov, Carrie Elliott, Andrei Shishlo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/source/modules.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
