@@ -181,7 +181,8 @@ class Device:
             for setting in self.settings:
                 param_value = self.get_setting(setting)
                 param_input_dict = param_input_dict | {setting: param_value}
-            params_dict = params_dict | {model_name: param_input_dict}
+            if param_input_dict:
+                params_dict = params_dict | {model_name: param_input_dict}
         return params_dict
 
     def update_measurement(self, reason: str, value=None):
