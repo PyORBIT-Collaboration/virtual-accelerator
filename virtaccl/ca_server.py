@@ -166,35 +166,48 @@ class Device:
         t, n = self._default(transform, noise)
         self.measurements[reason] = (definition if definition else {}), t, n
 
-    def register_setting(self, reason, definition=None, default=0, transform=None, noise=None, reason_rb=None):
+    def register_setting(self, reason: str, definition=None, default=0, transform=None, noise=None, reason_rb=None):
         t, n = self._default(transform, noise)
         self.settings[reason] = (definition if definition else {}), default, reason_rb, t, n
 
-    def get_setting(self, reason):
+    def get_setting(self, reason: str):
         *_, transform, _ = self.settings[reason]
         return transform.real(self.getParam(reason))
 
-    def get_settings(self):
+    def get_settings(self) -> Dict[str, Dict[str, Any]]:
         params_dict = {}
         for model_name in self.model_names:
             param_input_dict = {}
             for setting in self.settings:
                 param_value = self.get_setting(setting)
                 param_input_dict = param_input_dict | {setting: param_value}
-            params_dict = params_dict | {model_name: param_input_dict}
+            if param_input_dict:
+                params_dict = params_dict | {model_name: param_input_dict}
         return params_dict
 
-    def update_measurement(self, reason, value):
-        *_, transform, noise = self.measurements[reason]
-        self.setParam(reason, noise.add_noise(transform.raw(value)))
+    def update_measurement(self, reason: str, value=None):
+        if value is None:
+            value = self.getParam(reason)
+            *_, transform, noise = self.measurements[reason]
+            self.setParam(reason, noise.add_noise(transform.raw(value)))
+        else:
+            *_, transform, noise = self.measurements[reason]
+            self.setParam(reason, noise.add_noise(transform.raw(value)))
 
-    def update_measurements(self, new_measurements: Dict[str, Dict[str, Any]]):
+    def update_measurements(self, new_measurements: Dict[str, Dict[str, Any]] = None) -> None:
+        new_dict = {}
         for model_name, model_dict in new_measurements.items():
             if model_name in self.model_names:
                 for param_name, new_value in model_dict.items():
                     if param_name in self.measurements:
                         reason = model_name + ':' + param_name
-                        self.update_measurement(reason, new_value)
+                        new_dict[reason] = new_value
+
+        for reason in self.measurements:
+            if reason in new_dict:
+                self.update_measurement(reason, new_dict[reason])
+            else:
+                self.update_measurement(reason)
 
     def update_readback(self, reason):
         value = self.get_setting(reason)

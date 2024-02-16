@@ -15,6 +15,7 @@ from orbit.core.linac import BaseRfGap
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.virtual_devices import Cavity, BPM, Quadrupole, Quadrupole_Doublet, Corrector, P_BPM, WireScanner, \
     Quadrupole_Set
+from virtaccl.virtual_devices_SNS import SNS_Dummy_BCM
 
 from virtaccl.pyorbit_server_interface import OrbitModel
 
@@ -169,6 +170,9 @@ def main():
                 if device_type == "Physics_BPM":
                     pbpm_device = P_BPM(name, model_name)
                     server.add_device(pbpm_device)
+
+    dummy_device = SNS_Dummy_BCM("Ring_Diag:BCM_D09", 'HEBT_Diag:BPM11')
+    server.add_device(dummy_device)
 
     if debug:
         print(server)

@@ -340,7 +340,7 @@ class BPM(Device):
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
-    def update_measurements(self, new_params: Dict[str, Dict[str, Any]]):
+    def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
         for model_name, param_dict in new_params.items():
             if model_name == self.model_name:
                 for param_key, new_value in param_dict.items():
@@ -475,7 +475,7 @@ class WireScanner(Device):
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
-    def update_measurements(self, new_params: Dict[str, Dict[str, Any]]):
+    def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
         # Find the current position of the center of the wire scanner
         wire_pos = WireScanner.get_wire_position(self)
 
@@ -527,15 +527,17 @@ class P_BPM(Device):
 
     # Updates the measurement values on the server. Needs the model key associated with it's value and the new value.
     # This is where the measurement PV name is associated with it's model key.
-    def update_measurement(self, model_key, value):
-        reason = None
-        if model_key == P_BPM.energy_key:
-            reason = P_BPM.energy_pv
-        elif model_key == P_BPM.beta_key:
-            reason = P_BPM.beta_pv
-        elif model_key == P_BPM.num_key:
-            reason = P_BPM.num_pv
+    def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
+        for model_name, param_dict in new_params.items():
+            if model_name == self.model_name:
+                for param_key, model_value in param_dict.items():
+                    reason = None
+                    if param_key == P_BPM.energy_key:
+                        reason = P_BPM.energy_pv
+                    elif param_key == P_BPM.beta_key:
+                        reason = P_BPM.beta_pv
+                    elif param_key == P_BPM.num_key:
+                        reason = P_BPM.num_pv
 
-        if reason is not None:
-            *_, transform, noise = self.measurements[reason]
-            self.setParam(reason, noise.add_noise(transform.raw(value)))
+                    if reason is not None:
+                        self.update_measurement(reason, model_value)
