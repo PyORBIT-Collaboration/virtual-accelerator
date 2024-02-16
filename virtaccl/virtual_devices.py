@@ -347,10 +347,16 @@ class BPM(Device):
                     reason = None
                     if param_key == BPM.x_key:
                         reason = BPM.x_pv
+                        if param_dict[BPM.amp_key] < 1e-8:
+                            new_value = (random() * 2 - 1) * 0.1
                     elif param_key == BPM.y_key:
                         reason = BPM.y_pv
+                        if param_dict[BPM.amp_key] < 1e-8:
+                            new_value = (random() * 2 - 1) * 0.1
                     elif param_key == BPM.phase_key:
                         reason = BPM.phase_pv
+                        if param_dict[BPM.amp_key] < 1e-8:
+                            new_value = (random() * 2 - 1) * math.pi
                     elif param_key == BPM.amp_key:
                         reason = BPM.amp_pv
 
