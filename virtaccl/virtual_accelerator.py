@@ -15,7 +15,7 @@ from orbit.core.linac import BaseRfGap
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.virtual_devices import Cavity, BPM, Quadrupole, Quadrupole_Doublet, Corrector, P_BPM, WireScanner, \
     Quadrupole_Set
-from virtaccl.virtual_devices_SNS import SNS_Dummy_BCM
+from virtaccl.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity
 
 from virtaccl.pyorbit_server_interface import OrbitModel
 
@@ -133,7 +133,7 @@ def main():
                     phase_offset = 0
                     if offset_file is not None:
                         phase_offset = offset_dict[name]
-                    rf_device = Cavity(name, model_name, initial_dict=initial_settings, phase_offset=phase_offset)
+                    rf_device = SNS_Cavity(name, model_name, initial_dict=initial_settings, phase_offset=phase_offset)
                     server.add_device(rf_device)
 
                 if device_type == "Quadrupole":

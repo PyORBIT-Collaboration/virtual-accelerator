@@ -55,7 +55,7 @@ class SNS_Cavity(Device):
         self.old_amp = initial_amp
 
         # Adds a phase offset. Default is 0 offset.
-        offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
+        offset_transform = PhaseTInv(offset=phase_offset, scaler=-180 / math.pi)
         initial_phase = offset_transform.raw(initial_phase)
 
         self.amp_transform = LinearTInv(scaler=SNS_Cavity.design_amp)
