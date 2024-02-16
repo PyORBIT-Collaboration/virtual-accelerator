@@ -174,7 +174,9 @@ class Corrector(Device):
     # PyORBIT parameter keys
     field_key = 'B'  # [T]
 
-    # Setting limits
+    # Initial field limits
+    field_high_limit_pv = 'B_Set.DRVH'
+    field_low_limit_pv = 'B_Set.DRVL'
     field_limits = [-0.1, 0.1]  # [T]
 
     def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None):
@@ -192,6 +194,8 @@ class Corrector(Device):
 
         # Registers the device's PVs with the server
         self.register_setting(Corrector.field_set_pv, default=initial_field, reason_rb=self.field_readback_pv)
+        self.register_setting(Corrector.field_high_limit_pv, default=Corrector.field_limits[1])
+        self.register_setting(Corrector.field_low_limit_pv, default=Corrector.field_limits[0])
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the setting PV names are associated with their model keys.
@@ -202,10 +206,12 @@ class Corrector(Device):
         for setting in self.settings:
             param_value = self.get_setting(setting)
             if setting == Corrector.field_set_pv:
-                if param_value < self.field_limits[0]:
-                    param_value = self.field_limits[0]
-                elif param_value > self.field_limits[1]:
-                    param_value = self.field_limits[1]
+                low_limit = self.get_setting(Corrector.field_low_limit_pv)
+                high_limit = self.get_setting(Corrector.field_high_limit_pv)
+                if param_value < low_limit:
+                    param_value = low_limit
+                elif param_value > high_limit:
+                    param_value = high_limit
                 params_dict = params_dict | {Corrector.field_key: param_value}
         model_dict = {self.model_name: params_dict}
         return model_dict
