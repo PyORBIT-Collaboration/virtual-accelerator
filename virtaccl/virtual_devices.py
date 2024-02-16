@@ -1,3 +1,4 @@
+import sys
 import time
 import math
 from random import randint, random
@@ -227,6 +228,8 @@ class Cavity(Device):
     amp_goal_pv = 'cavAmpGoal'  # [arb. units]
     blank_pv = 'BlnkBeam'  # [0 or 1]
 
+    design_amp = 15.0  # [MV]
+
     # PyORBIT parameter keys
     phase_key = 'phase'  # [radians]
     amp_key = 'amp'  # [arb. units]
@@ -253,10 +256,13 @@ class Cavity(Device):
         offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
         initial_phase = offset_transform.raw(initial_phase)
 
+        self.amp_transform = LinearTInv(scaler=Cavity.design_amp)
+        initial_amp = self.amp_transform.raw(initial_amp)
+
         # Registers the device's PVs with the server
         self.register_setting(Cavity.phase_pv, default=initial_phase, transform=offset_transform)
-        self.register_setting(Cavity.amp_pv, default=initial_amp)
-        self.register_setting(Cavity.amp_goal_pv, default=initial_amp)
+        self.register_setting(Cavity.amp_pv, default=initial_amp, transform=self.amp_transform)
+        self.register_setting(Cavity.amp_goal_pv, default=initial_amp, transform=self.amp_transform)
         self.register_setting(Cavity.blank_pv, default=0.0)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
@@ -274,10 +280,10 @@ class Cavity(Device):
                 model_value = self.old_amp
                 if goal_value != self.old_amp:
                     model_value = goal_value
-                    self.setParam(Cavity.amp_pv, goal_value)
+                    self.setParam(Cavity.amp_pv, self.amp_transform.raw(goal_value))
                 elif set_value != self.old_amp:
                     model_value = set_value
-                    self.setParam(Cavity.amp_goal_pv, set_value)
+                    self.setParam(Cavity.amp_goal_pv, self.amp_transform.raw(set_value))
                 self.old_amp = model_value
 
                 # If the cavity is blanked, turn off acceleration.
