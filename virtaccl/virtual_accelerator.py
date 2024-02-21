@@ -133,7 +133,7 @@ def main():
                     phase_offset = 0
                     if offset_file is not None:
                         phase_offset = offset_dict[name]
-                    rf_device = SNS_Cavity(name, model_name, initial_dict=initial_settings, phase_offset=phase_offset)
+                    rf_device = Cavity(name, model_name, initial_dict=initial_settings, phase_offset=phase_offset)
                     server.add_device(rf_device)
 
                 if device_type == "Quadrupole":
