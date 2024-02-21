@@ -1,5 +1,6 @@
 import math
 import signal
+import sys
 from threading import Event, Thread
 from datetime import datetime
 from typing import Optional, Union, List, Dict, Any
@@ -134,6 +135,66 @@ class AbsNoise(Noise):
         return x + self.noise * (random_sample() - 0.5)
 
 
+class Parameter:
+    def __init__(self, reason: str, definition=None, default=0, transform=None, noise=None, name_override: str = None):
+        self.reason = reason
+        self.definition = definition
+        self.default = default
+        self.transform, self.noise = self._default(transform, noise)
+        self.name_or = name_override
+
+        self.device: Device = None
+        self.server: Server = None
+
+        self.setting_param = None
+
+    @classmethod
+    def _default(cls, transform, noise):
+        # default transformation is identity
+        transform = transform if transform else Transform()
+        # default noise is zero
+        noise = noise if noise else Noise()
+        return transform, noise
+
+    def get_pv(self):
+        if self.name_or is None:
+            return self.device.name + ':' + self.reason
+        else:
+            return self.name_or + ':' + self.reason
+
+    def get_definition(self):
+        return self.definition
+
+    def get_default(self):
+        return self.default
+
+    def is_name_override(self):
+        if self.name_or:
+            return True
+        else:
+            return False
+
+    def get_param(self):
+        if self.server:
+            val = self.server.getParam(self.get_pv())
+            return self.transform.real(val)
+
+    def set_param(self, value=None, timestamp=None):
+        if self.server:
+            if value is None:
+                value = self.get_param()
+            param = self.noise.add_noise(self.transform.raw(value))
+            self.server.setParam(self.get_pv(), param, timestamp)
+
+    def get_value(self):
+        if self.server:
+            return self.server.getParam(self.get_pv())
+
+    def set_value(self, value, timestamp=None):
+        if self.server:
+            self.server.setParam(self.get_pv(), value, timestamp)
+
+
 class Device:
 
     def __init__(self, pv_name: str, model_name: Optional[Union[str, List[str]]] = None):
@@ -148,51 +209,57 @@ class Device:
         self.server = None
         self.__db_dictionary__ = {}
 
-        # dictionary stores (definition, default, reason_rb, transform, noise)
-        self.settings = {}
+        # dictionary stores (definition, default, transform, noise)
+        self.settings: {str: Parameter} = {}
 
         # dictionary stores (definition, transform, noise)
-        self.measurements = {}
+        self.measurements: {str: Parameter} = {}
 
-    @classmethod
-    def _default(cls, transform, noise):
-        # default transformation is identity
-        transform = transform if transform else Transform()
-        # default noise is zero
-        noise = noise if noise else Noise()
-        return transform, noise
+        # dictionary stores (definition, transform, noise)
+        self.readbacks: {str: Parameter} = {}
 
-    def register_measurement(self, reason, definition=None, transform=None, noise=None):
-        t, n = self._default(transform, noise)
-        self.measurements[reason] = (definition if definition else {}), t, n
+    def register_measurement(self, reason, definition=None, transform=None, noise=None, name_override=None):
+        if definition is None:
+            definition = {}
+        param = Parameter(reason, definition, transform=transform, noise=noise, name_override=name_override)
+        param.device = self
+        self.measurements[reason] = param
+        return param
 
-    def register_setting(self, reason: str, definition=None, default=0, transform=None, noise=None, reason_rb=None):
-        t, n = self._default(transform, noise)
-        self.settings[reason] = (definition if definition else {}), default, reason_rb, t, n
+    def register_setting(self, reason: str, definition=None, default=0, transform=None, noise=None, name_override=None):
+        if definition is None:
+            definition = {}
+        param = Parameter(reason, definition, default=default, transform=transform, noise=noise,
+                          name_override=name_override)
+        param.device = self
+        self.settings[reason] = param
+        return param
 
-    def get_setting(self, reason: str):
-        *_, transform, _ = self.settings[reason]
-        return transform.real(self.getParam(reason))
+    def register_readback(self, reason: str, setting: Parameter, transform=None, noise=None, name_override=None):
+        definition = setting.get_definition()
+        param = Parameter(reason, definition, transform=transform, noise=noise, name_override=name_override)
+        param.device = self
+        param.setting_param = setting
+        self.readbacks[reason] = param
+        return param
+
+    def get_setting(self, reason):
+        return self.settings[reason].get_param()
 
     def get_settings(self) -> Dict[str, Dict[str, Any]]:
         params_dict = {}
         for model_name in self.model_names:
             param_input_dict = {}
-            for setting in self.settings:
-                param_value = self.get_setting(setting)
+            for setting, param in self.settings.items():
+                param_value = param.get_param()
                 param_input_dict = param_input_dict | {setting: param_value}
             if param_input_dict:
                 params_dict = params_dict | {model_name: param_input_dict}
         return params_dict
 
     def update_measurement(self, reason: str, value=None):
-        if value is None:
-            value = self.getParam(reason)
-            *_, transform, noise = self.measurements[reason]
-            self.setParam(reason, noise.add_noise(transform.raw(value)))
-        else:
-            *_, transform, noise = self.measurements[reason]
-            self.setParam(reason, noise.add_noise(transform.raw(value)))
+        param = self.measurements[reason]
+        param.set_param(value)
 
     def update_measurements(self, new_measurements: Dict[str, Dict[str, Any]] = None) -> None:
         new_dict = {}
@@ -203,43 +270,33 @@ class Device:
                         reason = model_name + ':' + param_name
                         new_dict[reason] = new_value
 
-        for reason in self.measurements:
-            if reason in new_dict:
-                self.update_measurement(reason, new_dict[reason])
+        for reason, param in self.measurements.items():
+            if param.get_pv() in new_dict:
+                self.update_measurement(reason, new_dict[param.get_pv()])
             else:
                 self.update_measurement(reason)
 
-    def update_readback(self, reason):
-        value = self.get_setting(reason)
-        *_, reason_rb, transform, noise = self.settings[reason]
-        self.setParam(reason_rb, transform.raw(noise.add_noise(value)))
+    def update_readback(self, reason, value=None):
+        rb_param = self.readbacks[reason]
+        if value is None:
+            value = rb_param.setting_param.get_param()
+        rb_param.set_param(value)
 
     def update_readbacks(self):
         # s[2] is reason_rb
-        [self.update_readback(k) for k, s in self.settings.items() if s[2]]
+        for reason, param in self.readbacks.items():
+            self.update_readback(reason)
 
     def reset(self):
         for k, v in self.settings.items():
-            self.setParam(k, v[1])
-
-    def setParam(self, reason, value, timestamp=None):
-        if self.server:
-            self.server.setParam(f'{self.name}:{reason}', value, timestamp)
-
-    def getParam(self, reason):
-        if self.server:
-            return self.server.getParam(f'{self.name}:{reason}')
-        return None
+            v.set_value(v.get_default())
 
     def build_db(self):
-        setting_pvs = {k: v[0] for k, v in self.settings.items()}
-        readback_pvs = {v[2]: v[0] for k, v in self.settings.items() if v[2]}
-        measurement_pvs = {k: v[0] for k, v in self.measurements.items()}
-        all_pvs = setting_pvs | readback_pvs | measurement_pvs
-        full_db = {f'{self.name}:{k}': v for k, v in all_pvs.items()}
-
-        measurement_map = {f'{self.name}:{k}': (self, k) for k in measurement_pvs}
-        return full_db, measurement_map
+        setting_pvs = {v.get_pv(): v for k, v in self.settings.items()}
+        readback_pvs = {v.get_pv(): v for k, v in self.readbacks.items()}
+        measurement_pvs = {v.get_pv(): v for k, v in self.measurements.items()}
+        full_db = setting_pvs | readback_pvs | measurement_pvs
+        return full_db
 
 
 class Server:
@@ -247,7 +304,6 @@ class Server:
         self.prefix = prefix
         self.driver = None
         self.pv_db = dict()
-        self.measurement_map = {}
         self.devices = []
 
     def _CA_events(self, server):
@@ -264,9 +320,12 @@ class Server:
         self.driver.updatePVs()
 
     def add_device(self, device):
-        pvs, mmap = device.build_db()
-        self.pv_db = self.pv_db | pvs
-        self.measurement_map = self.measurement_map | mmap
+        pvs = device.build_db()
+        def_dict = {}
+        for reason, param in pvs.items():
+            param.server = self
+            def_dict[reason] = param.get_definition()
+        self.pv_db = self.pv_db | def_dict
 
         device.server = self
         self.devices.append(device)

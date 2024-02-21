@@ -38,36 +38,30 @@ class Quadrupole(Device):
             self.model_name = model_name
         super().__init__(name, self.model_name)
 
+        readback_name = name.replace('PS_', '', 1)
+
         # Sets up initial values.
         if initial_dict is not None:
             initial_field = initial_dict[Quadrupole.field_key]
         else:
             initial_field = 0.0
 
+        field_noise = AbsNoise(noise=1e-6)
+
         # Registers the device's PVs with the server
-        self.register_setting(Quadrupole.field_set_pv, default=initial_field,
-                              reason_rb=Quadrupole.field_readback_pv)
+        field_param = self.register_setting(Quadrupole.field_set_pv, default=initial_field)
+        self.register_readback(Quadrupole.field_readback_pv, field_param, noise=field_noise, name_override=readback_name)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
     def get_settings(self):
         params_dict = {}
-        for setting in self.settings:
-            param_value = self.get_setting(setting)
+        for setting, param in self.settings.items():
+            param_value = param.get_param()
             if setting == Quadrupole.field_set_pv:
                 params_dict = params_dict | {Quadrupole.field_key: param_value}
         model_dict = {self.model_name: params_dict}
         return model_dict
-
-    # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model.
-    def update_readback(self, reason):
-        value = None
-        if reason == Quadrupole.field_set_pv:
-            value = self.get_setting(Quadrupole.field_set_pv)
-
-        if value is not None:
-            *_, reason_rb, transform, noise = self.settings[reason]
-            self.setParam(reason_rb, transform.raw(noise.add_noise(value)))
 
 
 class Quadrupole_Doublet(Device):
@@ -84,23 +78,28 @@ class Quadrupole_Doublet(Device):
         self.model_names = [h_model_name, v_model_name]
         super().__init__(name, self.model_names)
 
+        readback_name = name.replace('PS_', '', 1)
+
         # Sets up initial values.
         if initial_dict is not None:
             initial_field = initial_dict[Quadrupole_Doublet.field_key]
         else:
             initial_field = 0.0
 
+        field_noise = AbsNoise(noise=1e-6)
+
         # Registers the device's PVs with the server
-        self.register_setting(Quadrupole_Doublet.field_set_pv, default=initial_field,
-                              reason_rb=Quadrupole_Doublet.field_readback_pv)
+        field_param = self.register_setting(Quadrupole_Doublet.field_set_pv, default=initial_field)
+        self.register_readback(Quadrupole_Doublet.field_readback_pv, field_param, noise=field_noise,
+                               name_override=readback_name)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
     def get_settings(self):
         h_params = {}
         v_params = {}
-        for setting in self.settings:
-            param_value = self.get_setting(setting)
+        for setting, param in self.settings.items():
+            param_value = param.get_param()
             if setting == Quadrupole_Doublet.field_set_pv:
                 h_param = param_value
                 h_params = h_params | {Quadrupole_Doublet.field_key: h_param}
@@ -108,16 +107,6 @@ class Quadrupole_Doublet(Device):
                 v_params = v_params | {Quadrupole_Doublet.field_key: v_param}
         model_dict = {self.h_name: h_params, self.v_name: v_params}
         return model_dict
-
-    # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model.
-    def update_readback(self, reason):
-        value = None
-        if reason == Quadrupole_Doublet.field_set_pv:
-            value = self.get_setting(Quadrupole_Doublet.field_set_pv)
-
-        if value is not None:
-            *_, reason_rb, transform, noise = self.settings[reason]
-            self.setParam(reason_rb, transform.raw(noise.add_noise(value)))
 
 
 class Quadrupole_Set(Device):
@@ -132,15 +121,20 @@ class Quadrupole_Set(Device):
         self.model_names = model_names
         super().__init__(name, self.model_names)
 
+        readback_name = name.replace('PS_', '', 1)
+
         # Sets up initial values.
         if initial_dict is not None:
             initial_field = initial_dict[Quadrupole.field_key]
         else:
             initial_field = 0.0
 
+        field_noise = AbsNoise(noise=1e-6)
+
         # Registers the device's PVs with the server
-        self.register_setting(Quadrupole.field_set_pv, default=initial_field,
-                              reason_rb=Quadrupole.field_readback_pv)
+        field_param = self.register_setting(Quadrupole_Set.field_set_pv, default=initial_field)
+        self.register_readback(Quadrupole_Set.field_readback_pv, field_param, noise=field_noise,
+                               name_override=readback_name)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
@@ -148,22 +142,12 @@ class Quadrupole_Set(Device):
         model_dict = {}
         for model_name in self.model_names:
             params_dict = {}
-            for setting in self.settings:
-                param_value = self.get_setting(setting)
+            for setting, param in self.settings.items():
+                param_value = param.get_param()
                 if setting == Quadrupole.field_set_pv:
                     params_dict = params_dict | {Quadrupole.field_key: param_value}
             model_dict = model_dict | {model_name: params_dict}
         return model_dict
-
-    # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model.
-    def update_readback(self, reason):
-        value = None
-        if reason == Quadrupole.field_set_pv:
-            value = self.get_setting(Quadrupole.field_set_pv)
-
-        if value is not None:
-            *_, reason_rb, transform, noise = self.settings[reason]
-            self.setParam(reason_rb, transform.raw(noise.add_noise(value)))
 
 
 class Corrector(Device):
@@ -175,8 +159,8 @@ class Corrector(Device):
     field_key = 'B'  # [T]
 
     # Initial field limits
-    field_high_limit_pv = 'B_Set.DRVH'
-    field_low_limit_pv = 'B_Set.DRVL'
+    field_high_limit_pv = 'B_Set.HOPR'
+    field_low_limit_pv = 'B_Set.LOPR'
     field_limits = [-0.1, 0.1]  # [T]
 
     def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None):
@@ -186,14 +170,20 @@ class Corrector(Device):
             self.model_name = model_name
         super().__init__(name, self.model_name)
 
+        readback_name = name.replace('PS_', '', 1)
+
         # Sets initial values for parameters.
         if initial_dict is not None:
             initial_field = initial_dict[Corrector.field_key]
         else:
             initial_field = 0.0
 
+        field_noise = AbsNoise(noise=1e-6)
+
         # Registers the device's PVs with the server
-        self.register_setting(Corrector.field_set_pv, default=initial_field, reason_rb=self.field_readback_pv)
+        field_param = self.register_setting(Corrector.field_set_pv, default=initial_field)
+        self.register_readback(Corrector.field_readback_pv, field_param, noise=field_noise,
+                               name_override=readback_name)
         self.register_setting(Corrector.field_high_limit_pv, default=Corrector.field_limits[1])
         self.register_setting(Corrector.field_low_limit_pv, default=Corrector.field_limits[0])
 
@@ -203,8 +193,8 @@ class Corrector(Device):
     # model will receive the max or min limit defined above.
     def get_settings(self):
         params_dict = {}
-        for setting in self.settings:
-            param_value = self.get_setting(setting)
+        for setting, param in self.settings.items():
+            param_value = param.get_param()
             if setting == Corrector.field_set_pv:
                 low_limit = self.get_setting(Corrector.field_low_limit_pv)
                 high_limit = self.get_setting(Corrector.field_high_limit_pv)
@@ -215,16 +205,6 @@ class Corrector(Device):
                 params_dict = params_dict | {Corrector.field_key: param_value}
         model_dict = {self.model_name: params_dict}
         return model_dict
-
-    # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model.
-    def update_readback(self, reason):
-        value = None
-        if reason == Corrector.field_set_pv:
-            value = self.get_setting(Corrector.field_set_pv)
-
-        if value is not None:
-            *_, reason_rb, transform, noise = self.settings[reason]
-            self.setParam(reason_rb, transform.raw(noise.add_noise(value)))
 
 
 class Cavity(Device):
@@ -260,23 +240,23 @@ class Cavity(Device):
 
         # Adds a phase offset. Default is 0 offset.
         offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
-        initial_phase = offset_transform.raw(initial_phase)
+        amp_transform = LinearTInv(scaler=Cavity.design_amp)
 
-        self.amp_transform = LinearTInv(scaler=Cavity.design_amp)
-        initial_amp = self.amp_transform.raw(initial_amp)
+        initial_phase = offset_transform.raw(initial_phase)
+        initial_amp = amp_transform.raw(initial_amp)
 
         # Registers the device's PVs with the server
         self.register_setting(Cavity.phase_pv, default=initial_phase, transform=offset_transform)
-        self.register_setting(Cavity.amp_pv, default=initial_amp, transform=self.amp_transform)
-        self.register_setting(Cavity.amp_goal_pv, default=initial_amp, transform=self.amp_transform)
+        self.register_setting(Cavity.amp_pv, default=initial_amp, transform=amp_transform)
+        self.register_setting(Cavity.amp_goal_pv, default=initial_amp, transform=amp_transform)
         self.register_setting(Cavity.blank_pv, default=0.0)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the setting PV names are associated with their model keys.
     def get_settings(self):
         params_dict = {}
-        for setting in self.settings:
-            param_value = self.get_setting(setting)
+        for setting, param in self.settings.items():
+            param_value = param.get_param()
             if setting == Cavity.phase_pv:
                 params_dict = params_dict | {Cavity.phase_key: param_value}
 
@@ -286,10 +266,12 @@ class Cavity(Device):
                 model_value = self.old_amp
                 if goal_value != self.old_amp:
                     model_value = goal_value
-                    self.setParam(Cavity.amp_pv, self.amp_transform.raw(goal_value))
+                    amp_param = self.settings[Cavity.amp_pv]
+                    amp_param.set_param(goal_value)
                 elif set_value != self.old_amp:
                     model_value = set_value
-                    self.setParam(Cavity.amp_goal_pv, self.amp_transform.raw(set_value))
+                    goal_param = self.settings[Cavity.amp_goal_pv]
+                    goal_param.set_param(set_value)
                 self.old_amp = model_value
 
                 # If the cavity is blanked, turn off acceleration.
@@ -411,31 +393,35 @@ class WireScanner(Device):
         super().__init__(name, self.model_name)
 
         # Changes the units from meters to millimeters for associated PVs.
-        milli_units = LinearTInv(scaler=1e3)
+        self.milli_units = LinearTInv(scaler=1e3)
 
         # Sets initial values for parameters.
         if initial_dict is not None:
             initial_position = initial_dict[WireScanner.position_key]
             initial_speed = initial_dict[WireScanner.speed_key]
         else:
-            initial_position = -50  # [mm]
-            initial_speed = 1  # [mm/s]
+            initial_position = -0.05  # [m]
+            initial_speed = 0.001  # [mm/s]
 
         # Defines internal parameters to keep track of the wire position.
-        self.last_wire_pos = milli_units.real(initial_position)
+        self.last_wire_pos = initial_position
         self.last_wire_time = time.time()
-        self.wire_speed = milli_units.real(initial_speed)
+        self.wire_speed = initial_speed
+
+        initial_position = self.milli_units.raw(initial_position)
+        initial_speed = self.milli_units.raw(initial_speed)
 
         # Creates flat noise for associated PVs.
         xy_noise = AbsNoise(noise=1e-9)
+        pos_noise = AbsNoise(noise=1e-6)
 
         # Registers the device's PVs with the server.
         self.register_measurement(WireScanner.x_charge_pv, noise=xy_noise)
         self.register_measurement(WireScanner.y_charge_pv, noise=xy_noise)
 
-        self.register_setting(WireScanner.speed_pv, default=initial_speed, transform=milli_units)
-        self.register_setting(WireScanner.position_pv, default=initial_position, transform=milli_units,
-                              reason_rb=WireScanner.position_readback_pv)
+        self.register_setting(WireScanner.speed_pv, default=initial_speed, transform=self.milli_units)
+        pos_param = self.register_setting(WireScanner.position_pv, default=initial_position, transform=self.milli_units)
+        self.register_readback(WireScanner.position_readback_pv, pos_param, transform=self.milli_units, noise=pos_noise)
 
     # Function to find the position of the virtual wire using time of flight from the previous position and the speed of
     # the wire.
@@ -466,8 +452,8 @@ class WireScanner(Device):
     # where the setting PV names are associated with their model keys.
     def get_settings(self):
         params_dict = {}
-        for setting in self.settings:
-            param_value = self.get_setting(setting)
+        for setting, param in self.settings.items():
+            param_value = param.get_param()
             if setting == WireScanner.position_pv:
                 params_dict = params_dict | {WireScanner.position_key: param_value}
             elif setting == WireScanner.speed_pv:
@@ -476,14 +462,11 @@ class WireScanner(Device):
         return model_dict
 
     # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model.
-    def update_readback(self, reason):
-        value = None
-        if reason == WireScanner.position_pv:
-            value = WireScanner.get_wire_position(self)
-
-        if value is not None:
-            *_, reason_rb, transform, noise = self.settings[reason]
-            self.setParam(reason_rb, transform.raw(noise.add_noise(value)))
+    def update_readbacks(self):
+        for reason, param in self.readbacks.items():
+            if reason == WireScanner.position_readback_pv:
+                value = WireScanner.get_wire_position(self)
+                self.update_readback(reason, value)
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
@@ -493,19 +476,18 @@ class WireScanner(Device):
 
         for model_name, param_dict in new_params.items():
             if model_name == self.model_name:
-                for param_key, model_value in param_dict.items():
+                for param_key, new_value in param_dict.items():
                     reason = None
                     virtual_value = 0
                     if param_key == WireScanner.x_key:
                         # Find the location of the vertical wire. Then interpolate the histogram from the model at that value.
                         x_pos = WireScanner.wire_coeff * wire_pos + WireScanner.x_offset
-                        virtual_value = np.interp(x_pos, model_value[:, 0], model_value[:, 1])
+                        virtual_value = np.interp(x_pos, new_value[:, 0], new_value[:, 1])
                         reason = WireScanner.x_charge_pv
-
                     elif param_key == WireScanner.y_key:
                         # Find the location of the horizontal wire. Then interpolate the histogram from the model at that value.
                         y_pos = WireScanner.wire_coeff * wire_pos + WireScanner.y_offset
-                        virtual_value = np.interp(y_pos, model_value[:, 0], model_value[:, 1])
+                        virtual_value = np.interp(y_pos, new_value[:, 0], new_value[:, 1])
                         reason = WireScanner.y_charge_pv
 
                     if reason is not None:

@@ -6,7 +6,7 @@
 
 from epics import caget, caput
 from time import sleep
-corrector = "SCL_Mag:PS_DCH00:B"
+corrector = "SCL_Mag:DCH00:B"
 corrector_set = "SCL_Mag:PS_DCH00:B_Set"
 bpm = "SCL_Diag:BPM04:xAvg"
 
