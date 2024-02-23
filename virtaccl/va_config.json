@@ -178,7 +178,22 @@
         "HEBT_Mag:PS_QH08": "HEBT_Mag:QH08",
         "HEBT_Mag:PS_QV09": "HEBT_Mag:QV09",
         "HEBT_Mag:PS_QH10": "HEBT_Mag:QH10",
-        "HEBT_Mag:PS_QV11": "HEBT_Mag:QV11"
+        "HEBT_Mag:PS_QV11": "HEBT_Mag:QV11",
+        "HEBT_Mag:PS_QH20": "HEBT_Mag:QH20",
+        "HEBT_Mag:PS_QV21": "HEBT_Mag:QV21",
+        "HEBT_Mag:PS_QH22": "HEBT_Mag:QH22",
+        "HEBT_Mag:PS_QV23": "HEBT_Mag:QV23",
+        "HEBT_Mag:PS_QH24": "HEBT_Mag:QH24",
+        "HEBT_Mag:PS_QV25": "HEBT_Mag:QV25",
+        "HEBT_Mag:PS_QH26": "HEBT_Mag:QH26",
+        "HEBT_Mag:PS_QV27": "HEBT_Mag:QV27",
+        "HEBT_Mag:PS_QH28": "HEBT_Mag:QH28",
+        "HEBT_Mag:PS_QV29": "HEBT_Mag:QV29",
+        "HEBT_Mag:PS_QH30": "HEBT_Mag:QH30",
+        "HEBT_Mag:PS_QV31": "HEBT_Mag:QV31",
+        "HEBT_Mag:PS_QH32": "HEBT_Mag:QH32",
+        "HEBT_Mag:PS_QV33": "HEBT_Mag:QV33",
+        "HEBT_Mag:PS_QH34": "HEBT_Mag:QH34"
     },
     "Quadrupole_Doublet": {
         "SCL_Mag:PS_QD01": [
@@ -298,6 +313,18 @@
         "HEBT_Mag:PS_QH04a06": [
             "HEBT_Mag:QH04",
             "HEBT_Mag:QH06"
+        ],
+        "HEBT_Mag:PS_QH12t18e": [
+            "HEBT_Mag:QH12",
+            "HEBT_Mag:QH14",
+            "HEBT_Mag:QH16",
+            "HEBT_Mag:QH18"
+        ],
+        "HEBT_Mag:PS_QV13t19o": [
+            "HEBT_Mag:QV13",
+            "HEBT_Mag:QV15",
+            "HEBT_Mag:QV17",
+            "HEBT_Mag:QV19"
         ]
     },
     "Corrector": {
@@ -442,7 +469,19 @@
         "HEBT_Mag:PS_DCV05": "HEBT_Mag:DCV05",
         "HEBT_Mag:PS_DCH06": "HEBT_Mag:DCH06",
         "HEBT_Mag:PS_DCV07": "HEBT_Mag:DCV07",
-        "HEBT_Mag:PS_DCH08": "HEBT_Mag:DCH08"
+        "HEBT_Mag:PS_DCH08": "HEBT_Mag:DCH08",
+        "HEBT_Mag:PS_DCH14": "HEBT_Mag:DCH14",
+        "HEBT_Mag:PS_DCV15": "HEBT_Mag:DCV15",
+        "HEBT_Mag:PS_DCH16": "HEBT_Mag:DCH16",
+        "HEBT_Mag:PS_DCV17": "HEBT_Mag:DCV17",
+        "HEBT_Mag:PS_DCV21": "HEBT_Mag:DCV21",
+        "HEBT_Mag:PS_DCH22": "HEBT_Mag:DCH22",
+        "HEBT_Mag:PS_DCV23": "HEBT_Mag:DCV23",
+        "HEBT_Mag:PS_DCH24": "HEBT_Mag:DCH24",
+        "HEBT_Mag:PS_DCH28": "HEBT_Mag:DCH28",
+        "HEBT_Mag:PS_DCV29": "HEBT_Mag:DCV29",
+        "HEBT_Mag:PS_DCH30": "HEBT_Mag:DCH30",
+        "HEBT_Mag:PS_DCV31": "HEBT_Mag:DCV31"
     },
     "Wire_Scanner": {
         "MEBT_Diag:WS01": "MEBT_Diag:WS01",
@@ -469,7 +508,13 @@
         "HEBT_Diag:WS02": "HEBT_Diag:WS02",
         "HEBT_Diag:WS03": "HEBT_Diag:WS03",
         "HEBT_Diag:WS04": "HEBT_Diag:WS04",
-        "HEBT_Diag:WS09": "HEBT_Diag:WS09"
+        "HEBT_Diag:WS09": "HEBT_Diag:WS09",
+        "HEBT_Diag:WS16": "HEBT_Diag:WS16",
+        "HEBT_Diag:WS20": "HEBT_Diag:WS20",
+        "HEBT_Diag:WS21": "HEBT_Diag:WS21",
+        "HEBT_Diag:WS22": "HEBT_Diag:WS22",
+        "HEBT_Diag:WS23": "HEBT_Diag:WS23",
+        "HEBT_Diag:WS32": "HEBT_Diag:WS32"
     },
     "BPM": {
         "MEBT_Diag:BPM01": "MEBT_Diag:BPM01",
@@ -542,7 +587,25 @@
         "HEBT_Diag:BPM08": "HEBT_Diag:BPM08",
         "HEBT_Diag:BPM09": "HEBT_Diag:BPM09",
         "HEBT_Diag:BPM10": "HEBT_Diag:BPM10",
-        "HEBT_Diag:BPM11": "HEBT_Diag:BPM11"
+        "HEBT_Diag:BPM11": "HEBT_Diag:BPM11",
+        "HEBT_Diag:BPM16": "HEBT_Diag:BPM16",
+        "HEBT_Diag:BPM17": "HEBT_Diag:BPM17",
+        "HEBT_Diag:BPM18": "HEBT_Diag:BPM18",
+        "HEBT_Diag:BPM19": "HEBT_Diag:BPM19",
+        "HEBT_Diag:BPM20": "HEBT_Diag:BPM20",
+        "HEBT_Diag:BPM21": "HEBT_Diag:BPM21",
+        "HEBT_Diag:BPM22": "HEBT_Diag:BPM22",
+        "HEBT_Diag:BPM23": "HEBT_Diag:BPM23",
+        "HEBT_Diag:BPM24": "HEBT_Diag:BPM24",
+        "HEBT_Diag:BPM25": "HEBT_Diag:BPM25",
+        "HEBT_Diag:BPM26": "HEBT_Diag:BPM26",
+        "HEBT_Diag:BPM27": "HEBT_Diag:BPM27",
+        "HEBT_Diag:BPM28": "HEBT_Diag:BPM28",
+        "HEBT_Diag:BPM29": "HEBT_Diag:BPM29",
+        "HEBT_Diag:BPM30": "HEBT_Diag:BPM30",
+        "HEBT_Diag:BPM31": "HEBT_Diag:BPM31",
+        "HEBT_Diag:BPM32": "HEBT_Diag:BPM32",
+        "HEBT_Diag:BPM33": "HEBT_Diag:BPM33"
     },
     "Physics_BPM": {
         "MEBT_Phys:BPM01": "MEBT_Diag:BPM01",
@@ -615,6 +678,24 @@
         "HEBT_Phys:BPM08": "HEBT_Diag:BPM08",
         "HEBT_Phys:BPM09": "HEBT_Diag:BPM09",
         "HEBT_Phys:BPM10": "HEBT_Diag:BPM10",
-        "HEBT_Phys:BPM11": "HEBT_Diag:BPM11"
+        "HEBT_Phys:BPM11": "HEBT_Diag:BPM11",
+        "HEBT_Phys:BPM16": "HEBT_Diag:BPM16",
+        "HEBT_Phys:BPM17": "HEBT_Diag:BPM17",
+        "HEBT_Phys:BPM18": "HEBT_Diag:BPM18",
+        "HEBT_Phys:BPM19": "HEBT_Diag:BPM19",
+        "HEBT_Phys:BPM20": "HEBT_Diag:BPM20",
+        "HEBT_Phys:BPM21": "HEBT_Diag:BPM21",
+        "HEBT_Phys:BPM22": "HEBT_Diag:BPM22",
+        "HEBT_Phys:BPM23": "HEBT_Diag:BPM23",
+        "HEBT_Phys:BPM24": "HEBT_Diag:BPM24",
+        "HEBT_Phys:BPM25": "HEBT_Diag:BPM25",
+        "HEBT_Phys:BPM26": "HEBT_Diag:BPM26",
+        "HEBT_Phys:BPM27": "HEBT_Diag:BPM27",
+        "HEBT_Phys:BPM28": "HEBT_Diag:BPM28",
+        "HEBT_Phys:BPM29": "HEBT_Diag:BPM29",
+        "HEBT_Phys:BPM30": "HEBT_Diag:BPM30",
+        "HEBT_Phys:BPM31": "HEBT_Diag:BPM31",
+        "HEBT_Phys:BPM32": "HEBT_Diag:BPM32",
+        "HEBT_Phys:BPM33": "HEBT_Diag:BPM33"
     }
 }

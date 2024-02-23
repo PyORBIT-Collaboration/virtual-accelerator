@@ -26,7 +26,7 @@ def main():
 
     parser.add_argument("Sequences", nargs='*', help='Sequences',
                         default=["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
-                                 "SCLMed", "SCLHigh", "HEBT1"])
+                                 "SCLMed", "SCLHigh", "HEBT1", "HEBT2"])
 
     parser.add_argument('--phase_offset', default=None, type=str,
                         help='Pathname of resulting randomized phase offset file for cavities and BPMs.')
