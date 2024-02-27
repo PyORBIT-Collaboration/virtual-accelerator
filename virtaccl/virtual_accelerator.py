@@ -10,12 +10,13 @@ from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, 
 from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
 
 from orbit.core.bunch import Bunch
-from orbit.core.linac import BaseRfGap
+from orbit.core.linac import BaseRfGap, RfGapTTF
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.virtual_devices import Cavity, BPM, Quadrupole, Quadrupole_Doublet, Corrector, P_BPM, WireScanner, \
     Quadrupole_Set
-from virtaccl.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity
+from virtaccl.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS, SNS_Quadrupole, \
+    SNS_Quadrupole_Doublet, SNS_Quadrupole_Set, SNS_Corrector
 
 from virtaccl.pyorbit_server_interface import OrbitModel
 
@@ -72,9 +73,14 @@ def main():
     sns_linac_factory.setMaxDriftLength(0.01)
     model_lattice = sns_linac_factory.getLinacAccLattice(subsections, lattice_file)
     cppGapModel = BaseRfGap
+    # cppGapModel = RfGapTTF
     rf_gaps = model_lattice.getRF_Gaps()
     for rf_gap in rf_gaps:
         rf_gap.setCppGapModel(cppGapModel())
+    # cavities = model_lattice.getRF_Cavities()
+    # for cavity in cavities:
+    #     if 'SCL' in cavity.getName():
+    #         cavity.setAmp(0.0)
     Add_quad_apertures_to_lattice(model_lattice)
     Add_rfgap_apertures_to_lattice(model_lattice)
 
@@ -138,22 +144,23 @@ def main():
 
                 if device_type == "Quadrupole":
                     initial_settings = model.get_element_parameters(model_name)
-                    quad_device = Quadrupole(name, model_name, initial_dict=initial_settings)
+                    quad_device = SNS_Quadrupole(name, model_name, initial_dict=initial_settings)
                     server.add_device(quad_device)
 
                 if device_type == "Quadrupole_Doublet":
                     initial_settings = model.get_element_parameters(model_name[0])
-                    doublet_device = Quadrupole_Doublet(name, model_names[0], model_names[1], initial_dict=initial_settings)
+                    doublet_device = SNS_Quadrupole_Doublet(name, model_names[0], model_names[1],
+                                                            initial_dict=initial_settings)
                     server.add_device(doublet_device)
 
                 if device_type == "Quadrupole_Set":
                     initial_settings = model.get_element_parameters(model_name[0])
-                    set_device = Quadrupole_Set(name, model_names, initial_dict=initial_settings)
+                    set_device = SNS_Quadrupole_Set(name, model_names, initial_dict=initial_settings)
                     server.add_device(set_device)
 
                 if device_type == "Corrector":
                     initial_settings = model.get_element_parameters(model_name)
-                    corrector_device = Corrector(name, model_name, initial_dict=initial_settings)
+                    corrector_device = SNS_Corrector(name, model_name, initial_dict=initial_settings)
                     server.add_device(corrector_device)
 
                 if device_type == "Wire_Scanner":
@@ -172,6 +179,8 @@ def main():
                     server.add_device(pbpm_device)
 
     dummy_device = SNS_Dummy_BCM("Ring_Diag:BCM_D09", 'HEBT_Diag:BPM11')
+    server.add_device(dummy_device)
+    dummy_device = SNS_Dummy_ICS("ICS_Tim")
     server.add_device(dummy_device)
 
     if debug:

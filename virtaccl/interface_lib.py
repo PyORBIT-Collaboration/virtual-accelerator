@@ -1,7 +1,7 @@
 from typing import Union, Dict, Any
 
 from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
-from orbit.py_linac.lattice.LinacAccNodes import Quad, MarkerLinacNode, DCorrectorV, DCorrectorH
+from orbit.py_linac.lattice.LinacAccNodes import Quad, MarkerLinacNode, DCorrectorV, DCorrectorH, Bend
 from orbit.py_linac.lattice.LinacRfGapNodes import BaseRF_Gap
 from orbit.py_linac.lattice.LinacAccLatticeLib import RF_Cavity
 from .server_child_nodes import BPMclass, WSclass
@@ -16,6 +16,7 @@ class PyorbitElementTypes:
     BPM_key = 'BPM'
     pBPM_key = 'Physics_BPM'
     WS_key = 'Wire_Scanner'
+    bend_key = 'Bend'
 
     # PyORBIT keys for parameters we want to pass to the virtual accelerator.
     quad_params = ['dB/dr']
@@ -30,7 +31,8 @@ class PyorbitElementTypes:
                            DCorrectorV: corrector_key,
                            DCorrectorH: corrector_key,
                            BPMclass: BPM_key,
-                           WSclass: WS_key}
+                           WSclass: WS_key,
+                           Bend: bend_key}
 
     # Dictionary to keep the above parameters with their designated classes
     param_ref_dict = {quad_key: quad_params,
@@ -43,7 +45,7 @@ class PyorbitElementTypes:
     diagnostic_classes = (BPM_key, WS_key)  # Classes that measure the beam
 
     # Type hint definitions
-    node_classes = Union[Quad, BaseRF_Gap, MarkerLinacNode]
+    node_classes = Union[Quad, BaseRF_Gap, MarkerLinacNode, Bend]
     cavity_classes = RF_Cavity
     child_classes = Union[DCorrectorV, DCorrectorH, BPMclass, WSclass, MarkerLinacNode]
 
