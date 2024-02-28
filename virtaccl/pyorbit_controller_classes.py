@@ -4,7 +4,7 @@ from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 from orbit.py_linac.lattice.LinacAccNodes import Quad, MarkerLinacNode, DCorrectorV, DCorrectorH, Bend
 from orbit.py_linac.lattice.LinacRfGapNodes import BaseRF_Gap
 from orbit.py_linac.lattice.LinacAccLatticeLib import RF_Cavity
-from .server_child_nodes import BPMclass, WSclass
+from .pyorbit_child_nodes import BPMclass, WSclass
 
 
 # A collection of PyORBIT classes (useful for hinting) and PyORBIT keys we are using.

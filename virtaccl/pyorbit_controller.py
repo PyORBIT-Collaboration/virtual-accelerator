@@ -7,8 +7,8 @@ import json
 from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 from orbit.core.bunch import Bunch
 
-from .interface_lib import PyorbitNode, PyorbitChild, PyorbitCavity
-from .server_child_nodes import BPMclass, WSclass, BunchCopyClass, RF_Gap_Aperture
+from .pyorbit_controller_classes import PyorbitNode, PyorbitChild, PyorbitCavity
+from .pyorbit_child_nodes import BPMclass, WSclass, BunchCopyClass, RF_Gap_Aperture
 
 
 class Model:
