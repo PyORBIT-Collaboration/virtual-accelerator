@@ -6,7 +6,7 @@ import argparse
 
 from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
 
-from virtaccl.pyorbit_server_interface import OrbitModel
+from virtaccl.pyorbit_controller import OrbitModel
 
 
 def main():
