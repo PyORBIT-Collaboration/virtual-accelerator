@@ -18,7 +18,7 @@ from virtaccl.virtual_devices import Cavity, BPM, Quadrupole, Quadrupole_Doublet
 from virtaccl.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS, SNS_Quadrupole, \
     SNS_Quadrupole_Doublet, SNS_Quadrupole_Set, SNS_Corrector
 
-from virtaccl.pyorbit_server_interface import OrbitModel
+from virtaccl.pyorbit_controller import OrbitModel
 
 
 def main():
