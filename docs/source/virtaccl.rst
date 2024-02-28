@@ -20,26 +20,26 @@ virtaccl.input\_maker module
    :undoc-members:
    :show-inheritance:
 
-virtaccl.interface\_lib module
-------------------------------
+virtaccl.pyorbit\_controller module
+-----------------------------------
 
-.. automodule:: virtaccl.interface_lib
+.. automodule:: virtaccl.pyorbit_controller
    :members:
    :undoc-members:
    :show-inheritance:
 
-virtaccl.pyorbit\_server\_interface module
-------------------------------------------
+virtaccl.pyorbit\_controller\_classes module
+--------------------------------------------
 
-.. automodule:: virtaccl.pyorbit_server_interface
+.. automodule:: virtaccl.pyorbit_controller_classes
    :members:
    :undoc-members:
    :show-inheritance:
 
-virtaccl.server\_child\_nodes module
-------------------------------------
+virtaccl.pyorbit\_child\_nodes module
+-------------------------------------
 
-.. automodule:: virtaccl.server_child_nodes
+.. automodule:: virtaccl.pyorbit_child_nodes
    :members:
    :undoc-members:
    :show-inheritance:
@@ -64,6 +64,14 @@ virtaccl.virtual\_devices module
 --------------------------------
 
 .. automodule:: virtaccl.virtual_devices
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+virtaccl.virtual\_devices\_SNS module
+-------------------------------------
+
+.. automodule:: virtaccl.virtual_devices_SNS
    :members:
    :undoc-members:
    :show-inheritance:

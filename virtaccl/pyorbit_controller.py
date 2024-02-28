@@ -46,7 +46,7 @@ class Model:
 
 class OrbitModel(Model):
     """
-    This is a model that automates using PyORBIT.
+    This is a controller that automates using the PyORBIT model for the virtual accelerator.
 
         Parameters
         ----------
