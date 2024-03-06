@@ -4,9 +4,9 @@ from random import randint, random
 from typing import Dict, Any
 
 import numpy as np
-from virtaccl.virtual_devices import Cavity, Quadrupole, Quadrupole_Doublet, Quadrupole_Set, Corrector
+from virtaccl.PyORBIT_Model.virtual_devices import Cavity, Quadrupole, Quadrupole_Doublet, Quadrupole_Set, Corrector
 
-from .ca_server import Device, AbsNoise, LinearT, PhaseT, not_ctrlc, PhaseTInv, LinearTInv
+from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTInv, LinearTInv
 
 
 # Here are the device definitions that take the information from PyORBIT and translates/packages it into information for
@@ -25,17 +25,22 @@ from .ca_server import Device, AbsNoise, LinearT, PhaseT, not_ctrlc, PhaseTInv, 
 
 
 class SNS_Cavity(Cavity):
-    def __init__(self, name: str, model_name: str = None, initial_dict: dict[str,] = None, phase_offset=0):
+    # EPICS PV names
+    mode_pv = 'AFF_Mode'
+    reset_pv = 'AFF_Reset'
+    MPS_pv = 'FPAR_LDmp_swmask_set'
+
+    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None, phase_offset=0):
         if model_name is None:
             self.model_name = name
         else:
             self.model_name = model_name
-        super().__init__(name, self.model_name, initial_dict, phase_offset)
+        super().__init__(name, self.model_name)
 
         # Sets initial values for parameters.
         if initial_dict is not None:
-            initial_phase = initial_dict[SNS_Cavity.phase_key]
-            initial_amp = initial_dict[SNS_Cavity.amp_key]
+            initial_phase = initial_dict[Cavity.phase_key]
+            initial_amp = initial_dict[Cavity.amp_key]
         else:
             initial_phase = 0
             initial_amp = 1.0
@@ -44,17 +49,23 @@ class SNS_Cavity(Cavity):
         self.old_amp = initial_amp
 
         # Adds a phase offset. Default is 0 offset.
-        offset_transform = PhaseTInv(offset=phase_offset, scaler=-180 / math.pi)
-        initial_phase = offset_transform.raw(initial_phase)
+        offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
+        amp_transform = LinearTInv(scaler=Cavity.design_amp)
 
-        self.amp_transform = LinearTInv(scaler=SNS_Cavity.design_amp)
-        initial_amp = self.amp_transform.raw(initial_amp)
+        initial_phase = offset_transform.raw(initial_phase)
+        initial_amp = amp_transform.raw(initial_amp)
+
+        mps_name = name.replace('FCM', 'HPM', 1)
 
         # Registers the device's PVs with the server
-        self.register_setting(SNS_Cavity.phase_pv, default=initial_phase, transform=offset_transform)
-        self.register_setting(SNS_Cavity.amp_pv, default=initial_amp, transform=self.amp_transform)
-        self.register_setting(SNS_Cavity.amp_goal_pv, default=initial_amp, transform=self.amp_transform)
-        self.register_setting(SNS_Cavity.blank_pv, default=0.0)
+        self.register_setting(Cavity.phase_pv, default=initial_phase, transform=offset_transform)
+        self.register_setting(Cavity.amp_pv, default=initial_amp, transform=amp_transform)
+        self.register_setting(Cavity.amp_goal_pv, default=initial_amp, transform=amp_transform)
+        self.register_setting(Cavity.blank_pv, default=0.0)
+
+        self.register_setting(SNS_Cavity.mode_pv, default=0.0)
+        self.register_setting(SNS_Cavity.reset_pv, default=0.0)
+        self.register_setting(SNS_Cavity.MPS_pv, default=0.0, name_override=mps_name)
 
 
 class SNS_Quadrupole(Quadrupole):
@@ -188,7 +199,7 @@ class SNS_Dummy_BCM(Device):
     beta_key = 'beta'  # [c]
 
     c_light = 2.99792458e+8  # [m/s]
-    ring_length = 247.967  # [m]
+    ring_length = 247.9672  # [m]
 
     def __init__(self, name: str, model_name: str = None):
         if model_name is None:

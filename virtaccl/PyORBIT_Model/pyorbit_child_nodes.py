@@ -33,7 +33,7 @@ class BPMclass:
             initial_number = paramsDict['initial_particle_number']
             current = part_num / initial_number * initial_beam_current
             phase_coeff = 2 * math.pi / (sync_beta * 2.99792458e8 / rf_freq)
-            sync_phase = (sync_part.time() * rf_freq * 2 * math.pi) % (2 * math.pi) - math.pi
+            sync_phase = sync_part.time() * rf_freq * 2 * math.pi
             x_avg, y_avg, z_avg, z_rms = 0, 0, 0, 0
             for n in range(part_num):
                 x, y, z = bunch.x(n), bunch.y(n), bunch.z(n)
@@ -45,7 +45,7 @@ class BPMclass:
             y_avg /= part_num
             z_avg /= part_num
             phi_rms = phase_coeff * math.sqrt(z_rms / part_num)
-            phi_avg = phase_coeff * z_avg + sync_phase
+            phi_avg = (phase_coeff * z_avg + sync_phase) % (2 * math.pi) - math.pi
             amp = abs(current * math.exp(-phi_rms * phi_rms / 2))
             self.parameters['x_avg'] = x_avg
             self.parameters['y_avg'] = y_avg

@@ -15,12 +15,13 @@ setuptools.setup(
                       'pcaspy',
                       'PyORBIT',
                       ],
-    url= "https://github.com/PyORBIT-Collaboration/virtual-accelerator",
+    url="https://github.com/PyORBIT-Collaboration/virtual-accelerator",
     entry_points={
         "console_scripts": [
             "virtual_accelerator = virtaccl.virtual_accelerator:main",
         ]},
-    packages=['virtaccl'],
+
+    packages=setuptools.find_packages(),
 
     classifiers=[
         "Programming Language :: Python :: 3",

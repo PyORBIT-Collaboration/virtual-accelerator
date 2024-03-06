@@ -13,12 +13,12 @@ from orbit.core.bunch import Bunch
 from orbit.core.linac import BaseRfGap, RfGapTTF
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
-from virtaccl.virtual_devices import Cavity, BPM, Quadrupole, Quadrupole_Doublet, Corrector, P_BPM, WireScanner, \
+from virtaccl.PyORBIT_Model.virtual_devices import Cavity, BPM, Quadrupole, Quadrupole_Doublet, Corrector, P_BPM, WireScanner, \
     Quadrupole_Set
-from virtaccl.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS, SNS_Quadrupole, \
+from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS, SNS_Quadrupole, \
     SNS_Quadrupole_Doublet, SNS_Quadrupole_Set, SNS_Corrector
 
-from virtaccl.pyorbit_controller import OrbitModel
+from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 
 
 def main():
@@ -35,7 +35,7 @@ def main():
                         help='Rate (in Hz) at which the virtual accelerator updates.')
 
     # Lattice xml input file and the sequences desired from that file.
-    parser.add_argument('--lattice', default=loc / 'sns_linac.xml', type=str,
+    parser.add_argument('--lattice', default=loc / 'PyORBIT_Model/SNS/sns_linac.xml', type=str,
                         help='Pathname of lattice file')
     parser.add_argument("--sequences", nargs='*',
                         help='Desired sections from lattice listed in order without commas',
@@ -43,7 +43,7 @@ def main():
                                  "SCLMed", "SCLHigh", "HEBT1"])
 
     # Desired initial bunch file and the desired number of particles from that file.
-    parser.add_argument('--bunch', default=loc / 'MEBT_in.dat', type=str,
+    parser.add_argument('--bunch', default=loc / 'PyORBIT_Model/SNS/MEBT_in.dat', type=str,
                         help='Pathname of input bunch file.')
     parser.add_argument('--particle_number', default=1000, type=int,
                         help='Number of particles to use.')
@@ -81,8 +81,8 @@ def main():
     # for cavity in cavities:
     #     if 'SCL' in cavity.getName():
     #         cavity.setAmp(0.0)
-    Add_quad_apertures_to_lattice(model_lattice)
-    Add_rfgap_apertures_to_lattice(model_lattice)
+    # Add_quad_apertures_to_lattice(model_lattice)
+    # Add_rfgap_apertures_to_lattice(model_lattice)
 
     bunch_file = Path(args.bunch)
     part_num = args.particle_number
@@ -139,7 +139,7 @@ def main():
                     phase_offset = 0
                     if offset_file is not None:
                         phase_offset = offset_dict[name]
-                    rf_device = Cavity(name, model_name, initial_dict=initial_settings, phase_offset=phase_offset)
+                    rf_device = SNS_Cavity(name, model_name, initial_dict=initial_settings, phase_offset=phase_offset)
                     server.add_device(rf_device)
 
                 if device_type == "Quadrupole":
