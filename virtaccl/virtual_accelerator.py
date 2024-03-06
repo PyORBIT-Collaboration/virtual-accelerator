@@ -35,7 +35,7 @@ def main():
                         help='Rate (in Hz) at which the virtual accelerator updates.')
 
     # Lattice xml input file and the sequences desired from that file.
-    parser.add_argument('--lattice', default=loc / 'PyORBIT_Model/sns_linac.xml', type=str,
+    parser.add_argument('--lattice', default=loc / 'PyORBIT_Model/SNS/sns_linac.xml', type=str,
                         help='Pathname of lattice file')
     parser.add_argument("--sequences", nargs='*',
                         help='Desired sections from lattice listed in order without commas',
@@ -43,7 +43,7 @@ def main():
                                  "SCLMed", "SCLHigh", "HEBT1"])
 
     # Desired initial bunch file and the desired number of particles from that file.
-    parser.add_argument('--bunch', default=loc / 'PyORBIT_Model/MEBT_in.dat', type=str,
+    parser.add_argument('--bunch', default=loc / 'PyORBIT_Model/SNS/MEBT_in.dat', type=str,
                         help='Pathname of input bunch file.')
     parser.add_argument('--particle_number', default=1000, type=int,
                         help='Number of particles to use.')
