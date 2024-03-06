@@ -1,6 +1,5 @@
 from typing import Union, Dict, Any
 
-from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 from orbit.py_linac.lattice.LinacAccNodes import Quad, MarkerLinacNode, DCorrectorV, DCorrectorH, Bend
 from orbit.py_linac.lattice.LinacRfGapNodes import BaseRF_Gap
 from orbit.py_linac.lattice.LinacAccLatticeLib import RF_Cavity
@@ -192,7 +191,6 @@ class PyorbitElement:
         return self.is_optic_bool
 
 
-# Class for handling PyORBIT nodes that are not children of any other nodes. The node instance is needed as the input.
 class PyorbitNode(PyorbitElement):
     """Class for handling PyORBIT nodes that are direct children of the lattice. Inherits from PyorbitElement.
 
@@ -308,8 +306,6 @@ class PyorbitCavity(PyorbitElement):
         return position
 
 
-# This class is for nodes that are children of other nodes. It needs both the child instance, and the instance of the
-# node on the lattice that this node is a descendant of.
 class PyorbitChild(PyorbitElement):
     """Class for PyORBIT child nodes that are children of other nodes and not the lattice.
 

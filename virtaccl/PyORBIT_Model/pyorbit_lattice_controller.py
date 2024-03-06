@@ -7,41 +7,10 @@ import json
 from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 from orbit.core.bunch import Bunch
 
-from .pyorbit_controller_classes import PyorbitNode, PyorbitChild, PyorbitCavity
+from .pyorbit_element_controllers import PyorbitNode, PyorbitChild, PyorbitCavity
 from .pyorbit_child_nodes import BPMclass, WSclass, BunchCopyClass, RF_Gap_Aperture
 
-
-class Model:
-    """This is a generic model that other models can inherit."""
-    def __init__(self):
-        pass
-
-    def get_measurements(self) -> Dict[str, Dict[str, Any]]:
-        """Output values from the model. This needs to return a dictionary with the model name of the element as a key
-        to a dictionary of the element's parameters.
-
-        Returns
-        ----------
-        out : dictionary
-            A dictionary of element names as keys connected to that element's parameter dictionary.
-        """
-        return {}
-
-    def track(self) -> None:
-        """Updates values within your model."""
-        pass
-
-    def update_optics(self, changed_optics: Dict[str, Dict[str, Any]]) -> None:
-        """Take external values and update the model. Needs an input of a dictionary with the model name of the element
-        as a key to a dictionary of the element's parameters with their new values.
-
-        Parameters
-        ----------
-        changed_optics : dictionary
-            Dictionary using the element names as keys. Each key is connected to a parameter dictionary containing the
-            new parameter values.
-        """
-        pass
+from virtaccl.model import Model
 
 
 class OrbitModel(Model):
@@ -176,7 +145,6 @@ class OrbitModel(Model):
         self.accLattice.trackDesignBunch(initial_bunch)
         self.force_track()
 
-    # Set the beam current for the initial bunch.
     def set_beam_current(self, beam_current: float):
         """Set the beam current for the initial bunch.
 
@@ -295,10 +263,6 @@ class OrbitModel(Model):
 
         return return_dict
 
-    # Returns a dictionary all the current setting parameters in a dictionary of elements. The number of elements
-    # depends on the input provided. If nothing, the returned dictionary includes all current optics within the model.
-    # If a list of element names, the returned dictionary only includes those elements. And if just an element name, the
-    # dictionary only includes that element.
     def get_settings(self, setting_names: list[str] = None) -> Dict[str, Dict[str, Any]]:
         """Returns a parameter dictionary for the setting elements in the model.
 
@@ -339,10 +303,6 @@ class OrbitModel(Model):
 
         return return_dict
 
-    # Returns a dictionary all the current measurement readings in a dictionary of elements. The number of elements
-    # depends on the input provided. If nothing, the returned dictionary includes all current measurement devices within
-    # the model. If a list of element names, the returned dictionary only includes those elements. And if just an
-    # element name, the dictionary only includes that element.
     def get_measurements(self, measurement_names: list[str] = None) -> Dict[str, Dict[str, Any]]:
         """Returns a parameter dictionary for the measurement elements in the model.
 
@@ -385,8 +345,6 @@ class OrbitModel(Model):
 
         return return_dict
 
-    # Tracks the bunch through the lattice. If no changes were made since the last track, then nothing happens. If a
-    # change has occurred since the last track, then tracking begins from that element.
     def track(self):
         """Tracks the bunch through the lattice. Tracks from the most upstream change to the end."""
 
@@ -438,7 +396,6 @@ class OrbitModel(Model):
             # Clear the set of changes
             self.current_changes = set()
 
-    # Tracks the bunch through the lattice. Always tracks from the beginning, even if no optics have been changed.
     def force_track(self):
         """Tracks the bunch through the lattice. Tracks from the beginning to the end."""
 
@@ -465,9 +422,6 @@ class OrbitModel(Model):
             # Clear the set of changes
             self.current_changes = set()
 
-    # Change optics setting. This only changes the parameters of the optics and does not retrack the bunch. For an
-    # input, it needs a dictionary with a key for the name of each changed element linked to a dictionary of it's
-    # changed PyORBIT parameters' key linked to each parameters' new value.
     def update_optics(self, changed_optics: Dict[str, Dict[str, Any]]) -> None:
         """Updates the optics in the lattice.
 
@@ -497,14 +451,11 @@ class OrbitModel(Model):
                                 print(f'Value of "{param}" in "{element_name}" changed from {current_value} to '
                                       f'{new_value}.')
 
-    # Returns optics to their original values when the model was initiated.
     def reset_optics(self) -> None:
         """Returns optics to their original values when the model was initiated."""
 
         self.update_optics(self.initial_optics)
 
-    # Saves the current optics as dictionary in a json file. The time stamp is used as the default name if none is
-    # given. The dictionary is the same dictionary that get_settings outputs above.
     def save_optics(self, filename: Path = None) -> None:
         """Saves the optics as a dictionary in a json file.
 
@@ -522,8 +473,6 @@ class OrbitModel(Model):
         with open(filename, "w") as json_file:
             json.dump(saved_optics, json_file, indent=4)
 
-    # Takes optics in a json file and updates the lattice parameters with them. The dictionary in the file needs to be
-    # the same format as update_optics requires.
     def load_optics(self, filename: Path) -> None:
         """Load an optics and update the lattice.
 
@@ -537,7 +486,6 @@ class OrbitModel(Model):
             input_optics = json.load(json_file)
             self.update_optics(input_optics)
 
-    # Saves the current diagnostic readings as a json file. The format is the same as the output from get_measurements.
     def save_diagnostics(self, filename: Path = None) -> None:
         """Save the measurements dictionary to a json file.
 
