@@ -30,6 +30,7 @@ class FC(Device):
 class SlitModel(Model):
 
     def __init__(self):
+        super().__init__()
         self._current_slit_position = - 100
         self._current_FC_charge = 0
 
