@@ -247,9 +247,11 @@ class Device:
         rb_param.set_param(value)
 
     def update_readbacks(self):
-        # s[2] is reason_rb
         for reason, param in self.readbacks.items():
             self.update_readback(reason)
+
+    def get_readback(self, reason):
+        return self.readbacks[reason].get_param()
 
     def reset(self):
         for k, v in self.settings.items():

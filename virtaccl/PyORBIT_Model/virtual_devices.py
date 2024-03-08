@@ -27,6 +27,7 @@ class Quadrupole(Device):
     # EPICS PV names
     field_set_pv = 'B_Set'  # [T/m]
     field_readback_pv = 'B'  # [T/m]
+    field_noise = 1e-6  # [T/m]
 
     # PyORBIT parameter keys
     field_key = 'dB/dr'  # [T/m]
@@ -38,19 +39,17 @@ class Quadrupole(Device):
             self.model_name = model_name
         super().__init__(name, self.model_name)
 
-        readback_name = name.replace('PS_', '', 1)
-
         # Sets up initial values.
         if initial_dict is not None:
             initial_field = initial_dict[Quadrupole.field_key]
         else:
             initial_field = 0.0
 
-        field_noise = AbsNoise(noise=1e-6)
+        field_noise = AbsNoise(noise=Quadrupole.field_noise)
 
         # Registers the device's PVs with the server
         field_param = self.register_setting(Quadrupole.field_set_pv, default=initial_field)
-        self.register_readback(Quadrupole.field_readback_pv, field_param, noise=field_noise, name_override=readback_name)
+        self.register_readback(Quadrupole.field_readback_pv, field_param, noise=field_noise)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
@@ -68,6 +67,7 @@ class Quadrupole_Doublet(Device):
     # EPICS PV names
     field_set_pv = 'B_Set'  # [T/m]
     field_readback_pv = 'B'  # [T/m]
+    field_noise = 1e-6  # [T/m]
 
     # PyORBIT parameter keys
     field_key = 'dB/dr'  # [T/m]
@@ -78,20 +78,17 @@ class Quadrupole_Doublet(Device):
         self.model_names = [h_model_name, v_model_name]
         super().__init__(name, self.model_names)
 
-        readback_name = name.replace('PS_', '', 1)
-
         # Sets up initial values.
         if initial_dict is not None:
             initial_field = initial_dict[Quadrupole_Doublet.field_key]
         else:
             initial_field = 0.0
 
-        field_noise = AbsNoise(noise=1e-6)
+        field_noise = AbsNoise(noise=Quadrupole_Doublet.field_noise)
 
         # Registers the device's PVs with the server
         field_param = self.register_setting(Quadrupole_Doublet.field_set_pv, default=initial_field)
-        self.register_readback(Quadrupole_Doublet.field_readback_pv, field_param, noise=field_noise,
-                               name_override=readback_name)
+        self.register_readback(Quadrupole_Doublet.field_readback_pv, field_param, noise=field_noise)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
@@ -113,6 +110,7 @@ class Quadrupole_Set(Device):
     # EPICS PV names
     field_set_pv = 'B_Set'  # [T/m]
     field_readback_pv = 'B'  # [T/m]
+    field_noise = 1e-6  # [T/m]
 
     # PyORBIT parameter keys
     field_key = 'dB/dr'  # [T/m]
@@ -121,20 +119,17 @@ class Quadrupole_Set(Device):
         self.model_names = model_names
         super().__init__(name, self.model_names)
 
-        readback_name = name.replace('PS_', '', 1)
-
         # Sets up initial values.
         if initial_dict is not None:
-            initial_field = initial_dict[Quadrupole.field_key]
+            initial_field = initial_dict[Quadrupole_Set.field_key]
         else:
             initial_field = 0.0
 
-        field_noise = AbsNoise(noise=1e-6)
+        field_noise = AbsNoise(noise=Quadrupole_Set.field_noise)
 
         # Registers the device's PVs with the server
         field_param = self.register_setting(Quadrupole_Set.field_set_pv, default=initial_field)
-        self.register_readback(Quadrupole_Set.field_readback_pv, field_param, noise=field_noise,
-                               name_override=readback_name)
+        self.register_readback(Quadrupole_Set.field_readback_pv, field_param, noise=field_noise)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
@@ -154,6 +149,7 @@ class Corrector(Device):
     # EPICS PV names
     field_set_pv = 'B_Set'  # [T]
     field_readback_pv = 'B'  # [T]
+    field_noise = 1e-6  # [T/m]
 
     # PyORBIT parameter keys
     field_key = 'B'  # [T]
@@ -170,20 +166,18 @@ class Corrector(Device):
             self.model_name = model_name
         super().__init__(name, self.model_name)
 
-        readback_name = name.replace('PS_', '', 1)
-
         # Sets initial values for parameters.
         if initial_dict is not None:
             initial_field = initial_dict[Corrector.field_key]
         else:
             initial_field = 0.0
 
-        field_noise = AbsNoise(noise=1e-6)
+        field_noise = AbsNoise(noise=Corrector.field_noise)
 
         # Registers the device's PVs with the server
         field_param = self.register_setting(Corrector.field_set_pv, default=initial_field)
-        self.register_readback(Corrector.field_readback_pv, field_param, noise=field_noise,
-                               name_override=readback_name)
+        self.register_readback(Corrector.field_readback_pv, field_param, noise=field_noise)
+
         self.register_setting(Corrector.field_high_limit_pv, default=Corrector.field_limits[1])
         self.register_setting(Corrector.field_low_limit_pv, default=Corrector.field_limits[0])
 
