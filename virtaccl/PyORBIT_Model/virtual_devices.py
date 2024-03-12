@@ -54,11 +54,8 @@ class Quadrupole(Device):
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
     def get_settings(self):
-        params_dict = {}
-        for setting, param in self.settings.items():
-            param_value = param.get_param()
-            if setting == Quadrupole.field_set_pv:
-                params_dict = params_dict | {Quadrupole.field_key: param_value}
+        new_field = self.settings[Quadrupole.field_set_pv].get_param()
+        params_dict = {Quadrupole.field_key: new_field}
         model_dict = {self.model_name: params_dict}
         return model_dict
 
@@ -329,27 +326,22 @@ class BPM(Device):
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
     def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
-        for model_name, param_dict in new_params.items():
-            if model_name == self.model_name:
-                for param_key, new_value in param_dict.items():
-                    reason = None
-                    if param_key == BPM.x_key:
-                        reason = BPM.x_pv
-                        if param_dict[BPM.amp_key] < 1e-8:
-                            new_value = (random() * 2 - 1) * 0.1
-                    elif param_key == BPM.y_key:
-                        reason = BPM.y_pv
-                        if param_dict[BPM.amp_key] < 1e-8:
-                            new_value = (random() * 2 - 1) * 0.1
-                    elif param_key == BPM.phase_key:
-                        reason = BPM.phase_pv
-                        if param_dict[BPM.amp_key] < 1e-8:
-                            new_value = (random() * 2 - 1) * math.pi
-                    elif param_key == BPM.amp_key:
-                        reason = BPM.amp_pv
+        bpm_params = new_params[self.model_name]
+        amp = bpm_params[BPM.amp_key]
+        self.update_measurement(BPM.amp_pv, amp)
 
-                    if reason is not None:
-                        self.update_measurement(reason, new_value)
+        if amp < 1e-8:
+            x_avg = (random() * 2 - 1) * 0.1
+            y_avg = (random() * 2 - 1) * 0.1
+            phase_avg = (random() * 2 - 1) * 0.1
+        else:
+            x_avg = bpm_params[BPM.x_key]
+            y_avg = bpm_params[BPM.y_key]
+            phase_avg = bpm_params[BPM.phase_key]
+
+        self.update_measurement(BPM.x_pv, x_avg)
+        self.update_measurement(BPM.y_pv, y_avg)
+        self.update_measurement(BPM.phase_pv, phase_avg)
 
     def get_settings(self):
         params_dict = {}
