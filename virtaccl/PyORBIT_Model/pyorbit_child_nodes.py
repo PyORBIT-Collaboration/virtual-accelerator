@@ -4,8 +4,6 @@ from typing import Dict
 import numpy as np
 from orbit.core.bunch import Bunch
 
-from random import random
-
 
 # A collection of classes that are attached to the lattice as child nodes for the virtual accelerator.
 
@@ -112,7 +110,8 @@ class BPMclass:
 # Class for wire scanners. This class simply returns histograms of the vertical and horizontal positions.
 class WSclass:
     def __init__(self, child_name: str, bin_number: int = 50):
-        self.parameters = {'x_histogram': np.array([[-10, 0], [10, 0]]), 'y_histogram': np.array([[-10, 0], [10, 0]])}
+        self.parameters = {'x_histogram': np.array([[-10, 0], [10, 0]]), 'y_histogram': np.array([[-10, 0], [10, 0]]),
+                           'x_avg': 0.0, 'y_avg': 0.0}
         self.child_name = child_name
         self.bin_number = bin_number
         self.node_type = 'WireScanner'
@@ -127,10 +126,14 @@ class WSclass:
             sync_part = bunch.getSyncParticle()
             sync_beta = sync_part.beta()
             sync_energy = sync_part.kinEnergy()
+            x_avg = 0
+            y_avg = 0
             for n in range(part_num):
                 x, y, z = bunch.x(n), bunch.y(n), bunch.z(n)
                 x_array[n] = x
                 y_array[n] = y
+                x_avg += x
+                y_avg += y
 
             x_limits = np.array([np.min(x_array), np.max(x_array)]) * 1.1
             x_bin_edges = np.linspace(x_limits[0], x_limits[1], self.bin_number + 1)
@@ -144,12 +147,19 @@ class WSclass:
             y_positions = (y_bins[:-1] + y_bins[1:]) / 2
             y_out = np.column_stack((y_positions, y_hist))
 
+            x_avg /= part_num
+            y_avg /= part_num
+
             self.parameters['x_histogram'] = x_out
             self.parameters['y_histogram'] = y_out
+            self.parameters['x_avg'] = x_avg
+            self.parameters['y_avg'] = y_avg
 
         else:
             self.parameters['x_histogram'] = np.array([[-10, 0], [10, 0]])
             self.parameters['y_histogram'] = np.array([[-10, 0], [10, 0]])
+            self.parameters['x_avg'] = 0
+            self.parameters['y_avg'] = 0
 
 
     def getXHistogram(self):
@@ -157,6 +167,12 @@ class WSclass:
 
     def getYHistogram(self):
         return self.parameters['y_histogram']
+
+    def getXAvg(self):
+        return self.parameters['x_avg']
+
+    def getYAvg(self):
+        return self.parameters['y_avg']
 
     def getParam(self, param: str):
         return self.parameters[param]

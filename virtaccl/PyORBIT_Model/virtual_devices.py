@@ -360,10 +360,16 @@ class WireScanner(Device):
     position_pv = 'Position_Set'  # [mm]
     position_readback_pv = 'Position'  # [mm]
     speed_pv = 'Speed_Set'  # [mm/s]
+    x_avg_pv = 'Hor_Mean_gs'  # [mm]
+    y_avg_pv = 'Ver_Mean_gs'  # [mm]
 
     # PyORBIT parameter keys
-    x_key = 'x_histogram'  # [arb. units]
-    y_key = 'y_histogram'  # [arb. units]
+    x_hist_key = 'x_histogram'  # [arb. units]
+    y_hist_key = 'y_histogram'  # [arb. units]
+    x_avg_key = 'x_avg'  # [m]
+    y_avg_key = 'y_avg'  # [m]
+
+    # Device keys
     position_key = 'wire_position'  # [m]
     speed_key = 'wire_speed'  # [m]
 
@@ -404,6 +410,8 @@ class WireScanner(Device):
         # Registers the device's PVs with the server.
         self.register_measurement(WireScanner.x_charge_pv, noise=xy_noise)
         self.register_measurement(WireScanner.y_charge_pv, noise=xy_noise)
+        self.register_measurement(WireScanner.x_avg_pv, noise=xy_noise, transform=self.milli_units)
+        self.register_measurement(WireScanner.y_avg_pv, noise=xy_noise, transform=self.milli_units)
 
         self.register_setting(WireScanner.speed_pv, default=initial_speed, transform=self.milli_units)
         pos_param = self.register_setting(WireScanner.position_pv, default=initial_position, transform=self.milli_units)
@@ -437,22 +445,16 @@ class WireScanner(Device):
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the setting PV names are associated with their model keys.
     def get_settings(self):
-        params_dict = {}
-        for setting, param in self.settings.items():
-            param_value = param.get_param()
-            if setting == WireScanner.position_pv:
-                params_dict = params_dict | {WireScanner.position_key: param_value}
-            elif setting == WireScanner.speed_pv:
-                params_dict = params_dict | {WireScanner.speed_key: param_value}
+        wire_goal = self.settings[WireScanner.position_pv].get_param()
+        wire_speed = self.settings[WireScanner.speed_pv].get_param()
+        params_dict = {WireScanner.position_key: wire_goal, WireScanner.speed_key: wire_speed}
         model_dict = {self.model_name: params_dict}
         return model_dict
 
     # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model.
     def update_readbacks(self):
-        for reason, param in self.readbacks.items():
-            if reason == WireScanner.position_readback_pv:
-                value = WireScanner.get_wire_position(self)
-                self.update_readback(reason, value)
+        wire_pos = WireScanner.get_wire_position(self)
+        self.update_readback(WireScanner.position_readback_pv, wire_pos)
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
@@ -460,24 +462,20 @@ class WireScanner(Device):
         # Find the current position of the center of the wire scanner
         wire_pos = WireScanner.get_wire_position(self)
 
-        for model_name, param_dict in new_params.items():
-            if model_name == self.model_name:
-                for param_key, new_value in param_dict.items():
-                    reason = None
-                    virtual_value = 0
-                    if param_key == WireScanner.x_key:
-                        # Find the location of the vertical wire. Then interpolate the histogram from the model at that value.
-                        x_pos = WireScanner.wire_coeff * wire_pos + WireScanner.x_offset
-                        virtual_value = np.interp(x_pos, new_value[:, 0], new_value[:, 1])
-                        reason = WireScanner.x_charge_pv
-                    elif param_key == WireScanner.y_key:
-                        # Find the location of the horizontal wire. Then interpolate the histogram from the model at that value.
-                        y_pos = WireScanner.wire_coeff * wire_pos + WireScanner.y_offset
-                        virtual_value = np.interp(y_pos, new_value[:, 0], new_value[:, 1])
-                        reason = WireScanner.y_charge_pv
+        ws_params = new_params[self.model_name]
+        x_hist = ws_params[WireScanner.x_hist_key]
+        y_hist = ws_params[WireScanner.y_hist_key]
 
-                    if reason is not None:
-                        self.update_measurement(reason, virtual_value)
+        # Find the location of the vertical wire. Then interpolate the histogram from the model at that value.
+        x_pos = WireScanner.wire_coeff * wire_pos + WireScanner.x_offset
+        x_value = np.interp(x_pos, x_hist[:, 0], x_hist[:, 1])
+        self.update_measurement(WireScanner.x_charge_pv, x_value)
+        y_pos = WireScanner.wire_coeff * wire_pos + WireScanner.y_offset
+        y_value = np.interp(y_pos, y_hist[:, 0], y_hist[:, 1])
+        self.update_measurement(WireScanner.y_charge_pv, y_value)
+
+        self.update_measurement(WireScanner.x_avg_pv, ws_params[WireScanner.x_avg_key])
+        self.update_measurement(WireScanner.y_avg_pv, ws_params[WireScanner.y_avg_key])
 
 
 # An unrealistic device associated with BPMs in the PyORBIT model that tracks values that cannot be measured directly.
