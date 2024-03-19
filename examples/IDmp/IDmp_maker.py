@@ -20,9 +20,9 @@ from orbit.lattice import AccActionsContainer
 from virtaccl.PyORBIT_Model.sns_linac_bunch_generator import SNS_Linac_BunchGenerator
 
 
-def get_IDMP_lattice_and_bunch(particle_number=1000):
+def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0, yp_off=0):
     # Field strength and length of the quadrupoles
-    quad_field = 1.0
+    quad_field = -1.0
     dch_field = 0.0
     dcv_field = -0.0
     mag_len = 0.673
@@ -158,5 +158,12 @@ def get_IDMP_lattice_and_bunch(particle_number=1000):
     # bunch_in = bunch_gen.getBunch(nParticles = particle_number, distributorClass = KVDist3D)
 
     bunch_in.charge(+1)
+    for n in range(particle_number):
+        x, xp, y, yp = bunch_in.x(n), bunch_in.xp(n), bunch_in.y(n), bunch_in.yp(n)
+        bunch_in.x(n, x + x_off/1000)
+        bunch_in.xp(n, xp + xp_off/1000)
+        bunch_in.y(n, y + y_off/1000)
+        bunch_in.yp(n, yp + yp_off/1000)
+
 
     return my_lattice, bunch_in

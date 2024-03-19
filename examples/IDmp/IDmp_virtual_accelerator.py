@@ -16,7 +16,7 @@ from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.PyORBIT_Model.virtual_devices import Cavity, BPM, Quadrupole, Quadrupole_Doublet, Corrector, P_BPM, \
     WireScanner, Quadrupole_Set
 from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS, SNS_Quadrupole, \
-    SNS_Quadrupole_Doublet, SNS_Quadrupole_Set, SNS_Corrector
+    SNS_Quadrupole_Doublet, SNS_Quadrupole_Set, SNS_Corrector, SNS_WireScanner
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 
@@ -58,7 +58,7 @@ def main():
     update_period = 1 / args.refresh_rate
     part_num = args.particle_number
 
-    lattice, bunch = get_IDMP_lattice_and_bunch(part_num)
+    lattice, bunch = get_IDMP_lattice_and_bunch(part_num, x_off=2, xp_off=0.3)
 
     model = OrbitModel(lattice, bunch, debug=debug)
     model.set_beam_current(38.0e-3)  # Set the initial beam current in Amps.
@@ -91,7 +91,7 @@ def main():
                     server.add_device(corrector_device)
 
                 if device_type == "Wire_Scanner":
-                    ws_device = WireScanner(name, model_name)
+                    ws_device = SNS_WireScanner(name, model_name)
                     server.add_device(ws_device)
 
                 if device_type == "BPM":

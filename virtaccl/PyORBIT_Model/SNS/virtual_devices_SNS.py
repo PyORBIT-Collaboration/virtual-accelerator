@@ -4,7 +4,8 @@ from random import randint, random
 from typing import Dict, Any
 
 import numpy as np
-from virtaccl.PyORBIT_Model.virtual_devices import Cavity, Quadrupole, Quadrupole_Doublet, Quadrupole_Set, Corrector
+from virtaccl.PyORBIT_Model.virtual_devices import Cavity, Quadrupole, Quadrupole_Doublet, Quadrupole_Set, Corrector, \
+    WireScanner
 
 from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTInv, LinearTInv
 
@@ -87,7 +88,7 @@ class SNS_Quadrupole(Quadrupole):
         field_noise = AbsNoise(noise=1e-6)
 
         pol = 1
-        if 'PS_QH' in name:
+        if 'PS_QH' in name or 'IDmp_Mag:PS_QV01' == name:
             pol = -1
         pol_transform = LinearTInv(scaler=pol)
 
@@ -222,6 +223,36 @@ class SNS_Dummy_BCM(Device):
                         beta = model_value
                         freq = beta * SNS_Dummy_BCM.c_light / SNS_Dummy_BCM.ring_length
                         self.update_measurement(reason, freq)
+
+
+class SNS_WireScanner(WireScanner):
+    x_amp_pv = 'Hor_Amp_gs'
+    y_amp_pv = 'Ver_Amp_gs'
+    initial_move_pv = 'Scan_InitialMove_rb'
+    scan_step_pv = 'Scan_Steps_rb'
+    step_size_pv = 'Scan_StepSize_rb'
+    trace_pv = 'Scan_Traces/step_rb'
+    length_pv = 'Scan_Length'
+    stroke_pv = 'Stroke'
+    oor_pv = 'Scan_OOR'
+
+    def __init__(self, name: str, model_name: str = None):
+        if model_name is None:
+            self.model_name = name
+        else:
+            self.model_name = model_name
+        super().__init__(name, model_name)
+
+        self.register_setting(SNS_WireScanner.x_amp_pv, default=10)
+        self.register_setting(SNS_WireScanner.y_amp_pv, default=10)
+        self.register_setting(SNS_WireScanner.initial_move_pv, default=0)
+        self.register_setting(SNS_WireScanner.scan_step_pv, default=10)
+        self.register_setting(SNS_WireScanner.step_size_pv, default=0.01)
+        self.register_setting(SNS_WireScanner.trace_pv, default=0)
+        self.register_setting(SNS_WireScanner.length_pv, default=10)
+        self.register_setting(SNS_WireScanner.stroke_pv, default=0)
+        self.register_setting(SNS_WireScanner.oor_pv, default=0)
+
 
 
 class SNS_Dummy_ICS(Device):
