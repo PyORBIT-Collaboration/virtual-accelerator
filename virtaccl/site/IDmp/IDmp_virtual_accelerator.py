@@ -1,26 +1,19 @@
 # Channel access server used to generate fake PV signals analogous to accelerator components.
 # The main body of the script instantiates PVs from a file passed by command line argument.
 import json
-import sys
 import time
 import argparse
 from pathlib import Path
 
-from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
-from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
-
-from orbit.core.bunch import Bunch
-from orbit.core.linac import BaseRfGap, RfGapTTF
-
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
-from virtaccl.PyORBIT_Model.virtual_devices import Cavity, BPM, Quadrupole, Quadrupole_Doublet, Corrector, P_BPM, \
-    WireScanner, Quadrupole_Set
-from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS, SNS_Quadrupole, \
-    SNS_Quadrupole_Doublet, SNS_Quadrupole_Set, SNS_Corrector, SNS_WireScanner
+from virtaccl.PyORBIT_Model.virtual_devices import BPM, Quadrupole_Doublet, P_BPM, \
+    Quadrupole_Set
+from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Dummy_ICS, SNS_Quadrupole, \
+    SNS_Corrector, SNS_WireScanner
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 
-from IDmp_maker import get_IDMP_lattice_and_bunch
+from virtaccl.site.IDmp.IDmp_maker import get_IDMP_lattice_and_bunch
 
 
 def main():

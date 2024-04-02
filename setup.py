@@ -19,6 +19,7 @@ setuptools.setup(
     entry_points={
         "console_scripts": [
             "virtual_accelerator = virtaccl.virtual_accelerator:main",
+            "idmp_va = virtaccl.site.IDmp.IDmp_virtual_accelerator:main",
         ]},
 
     packages=setuptools.find_packages(),
@@ -30,4 +31,5 @@ setuptools.setup(
     ],
     python_requires='>=3.9',
     include_package_data=True,
+    package_data={"": ["*.xml", "*.json", "*.dat"]},
 )
