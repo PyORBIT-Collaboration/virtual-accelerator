@@ -71,11 +71,7 @@ class SNS_Cavity(Cavity):
 
 class SNS_Quadrupole(Quadrupole):
     def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None):
-        if model_name is None:
-            self.model_name = name
-        else:
-            self.model_name = model_name
-        super().__init__(name, self.model_name, initial_dict)
+        super().__init__(name, model_name, initial_dict)
 
         readback_name = name.replace('PS_', '', 1)
 
@@ -102,9 +98,6 @@ class SNS_Quadrupole(Quadrupole):
 
 class SNS_Quadrupole_Doublet(Quadrupole_Doublet):
     def __init__(self, name: str, h_model_name: str, v_model_name: str, initial_dict: Dict[str, Any] = None):
-        self.h_name = h_model_name
-        self.v_name = v_model_name
-        self.model_names = [h_model_name, v_model_name]
         super().__init__(name, h_model_name, v_model_name, initial_dict)
 
         readback_name = name.replace('PS_', '', 1)
@@ -132,9 +125,8 @@ class SNS_Quadrupole_Doublet(Quadrupole_Doublet):
 
 
 class SNS_Quadrupole_Set(Quadrupole_Set):
-    def __init__(self, name: str, model_names: list[str], initial_dict: Dict[str, Any] = None):
-        self.model_names = model_names
-        super().__init__(name, model_names, initial_dict)
+    def __init__(self, name: str, h_model_names: list[str] = None, v_model_names: list[str] = None,  initial_dict: Dict[str, Any] = None):
+        super().__init__(name, h_model_names, v_model_names,  initial_dict)
 
         readback_name = name.replace('PS_', '', 1)
 

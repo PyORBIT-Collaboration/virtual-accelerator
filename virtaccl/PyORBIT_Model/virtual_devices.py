@@ -90,15 +90,9 @@ class Quadrupole_Doublet(Device):
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
     def get_settings(self):
-        h_params = {}
-        v_params = {}
-        for setting, param in self.settings.items():
-            param_value = param.get_param()
-            if setting == Quadrupole_Doublet.field_set_pv:
-                h_param = param_value
-                h_params = h_params | {Quadrupole_Doublet.field_key: h_param}
-                v_param = -param_value
-                v_params = v_params | {Quadrupole_Doublet.field_key: v_param}
+        new_field = self.settings[Quadrupole_Doublet.field_set_pv].get_param()
+        h_params = {Quadrupole_Doublet.field_key: new_field}
+        v_params = {Quadrupole_Doublet.field_key: -new_field}
         model_dict = {self.h_name: h_params, self.v_name: v_params}
         return model_dict
 
@@ -112,9 +106,18 @@ class Quadrupole_Set(Device):
     # PyORBIT parameter keys
     field_key = 'dB/dr'  # [T/m]
 
-    def __init__(self, name: str, model_names: list[str], initial_dict: Dict[str, Any] = None):
-        self.model_names = model_names
+    def __init__(self, name: str, h_model_names: list[str] = None, v_model_names: list[str] = None,  initial_dict: Dict[str, Any] = None):
+        if h_model_names is None and v_model_names is None:
+            raise ValueError("Quadrupole Set device requires at least one set of model names.")
+        elif h_model_names is None:
+            h_model_names = []
+        elif v_model_names is None:
+            v_model_names = []
+        self.model_names = h_model_names + v_model_names
         super().__init__(name, self.model_names)
+
+        self.h_names = h_model_names
+        self.v_names = v_model_names
 
         # Sets up initial values.
         if initial_dict is not None:
@@ -131,14 +134,15 @@ class Quadrupole_Set(Device):
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
     def get_settings(self):
+        new_field = self.settings[Quadrupole_Doublet.field_set_pv].get_param()
+        h_params = {Quadrupole_Doublet.field_key: new_field}
+        v_params = {Quadrupole_Doublet.field_key: -new_field}
+
         model_dict = {}
-        for model_name in self.model_names:
-            params_dict = {}
-            for setting, param in self.settings.items():
-                param_value = param.get_param()
-                if setting == Quadrupole.field_set_pv:
-                    params_dict = params_dict | {Quadrupole.field_key: param_value}
-            model_dict = model_dict | {model_name: params_dict}
+        for name in self.h_names:
+            model_dict = model_dict | {name: h_params}
+        for name in self.v_names:
+            model_dict = model_dict | {name: v_params}
         return model_dict
 
 

@@ -94,35 +94,7 @@
         "SCL_LLRF:FCM23a": "SCL:Cav23a",
         "SCL_LLRF:FCM23b": "SCL:Cav23b",
         "SCL_LLRF:FCM23c": "SCL:Cav23c",
-        "SCL_LLRF:FCM23d": "SCL:Cav23d",
-        "SCL_LLRF:FCM25a": "SCL:Cav25a",
-        "SCL_LLRF:FCM25b": "SCL:Cav25b",
-        "SCL_LLRF:FCM25c": "SCL:Cav25c",
-        "SCL_LLRF:FCM25d": "SCL:Cav25d",
-        "SCL_LLRF:FCM27a": "SCL:Cav27a",
-        "SCL_LLRF:FCM27b": "SCL:Cav27b",
-        "SCL_LLRF:FCM27c": "SCL:Cav27c",
-        "SCL_LLRF:FCM27d": "SCL:Cav27d",
-        "SCL_LLRF:FCM28a": "SCL:Cav28a",
-        "SCL_LLRF:FCM28b": "SCL:Cav28b",
-        "SCL_LLRF:FCM28c": "SCL:Cav28c",
-        "SCL_LLRF:FCM28d": "SCL:Cav28d",
-        "SCL_LLRF:FCM29a": "SCL:Cav29a",
-        "SCL_LLRF:FCM29b": "SCL:Cav29b",
-        "SCL_LLRF:FCM29c": "SCL:Cav29c",
-        "SCL_LLRF:FCM29d": "SCL:Cav29d",
-        "SCL_LLRF:FCM30a": "SCL:Cav30a",
-        "SCL_LLRF:FCM30b": "SCL:Cav30b",
-        "SCL_LLRF:FCM30c": "SCL:Cav30c",
-        "SCL_LLRF:FCM30d": "SCL:Cav30d",
-        "SCL_LLRF:FCM31a": "SCL:Cav31a",
-        "SCL_LLRF:FCM31b": "SCL:Cav31b",
-        "SCL_LLRF:FCM31c": "SCL:Cav31c",
-        "SCL_LLRF:FCM31d": "SCL:Cav31d",
-        "SCL_LLRF:FCM32a": "SCL:Cav32a",
-        "SCL_LLRF:FCM32b": "SCL:Cav32b",
-        "SCL_LLRF:FCM32c": "SCL:Cav32c",
-        "SCL_LLRF:FCM32d": "SCL:Cav32d"
+        "SCL_LLRF:FCM23d": "SCL:Cav23d"
     },
     "Quadrupole": {
         "MEBT_Mag:PS_QH01": "MEBT_Mag:QH01",
@@ -334,26 +306,34 @@
         ]
     },
     "Quadrupole_Set": {
-        "SCL_Mag:PS_QH32a33": [
-            "SCL_Mag:QH32",
-            "SCL_Mag:QH33"
-        ],
-        "HEBT_Mag:PS_QH04a06": [
-            "HEBT_Mag:QH04",
-            "HEBT_Mag:QH06"
-        ],
-        "HEBT_Mag:PS_QH12t18e": [
-            "HEBT_Mag:QH12",
-            "HEBT_Mag:QH14",
-            "HEBT_Mag:QH16",
-            "HEBT_Mag:QH18"
-        ],
-        "HEBT_Mag:PS_QV13t19o": [
-            "HEBT_Mag:QV13",
-            "HEBT_Mag:QV15",
-            "HEBT_Mag:QV17",
-            "HEBT_Mag:QV19"
-        ]
+        "SCL_Mag:PS_QH32a33": {
+            "H_Names": [
+                "SCL_Mag:QH32",
+                "SCL_Mag:QH33"
+            ]
+        },
+        "HEBT_Mag:PS_QH04a06": {
+            "H_Names": [
+                "HEBT_Mag:QH04",
+                "HEBT_Mag:QH06"
+            ]
+        },
+        "HEBT_Mag:PS_QH12t18e": {
+            "H_Names": [
+                "HEBT_Mag:QH12",
+                "HEBT_Mag:QH14",
+                "HEBT_Mag:QH16",
+                "HEBT_Mag:QH18"
+            ]
+        },
+        "HEBT_Mag:PS_QV13t19o": {
+            "V_Names": [
+                "HEBT_Mag:QV13",
+                "HEBT_Mag:QV15",
+                "HEBT_Mag:QV17",
+                "HEBT_Mag:QV19"
+            ]
+        }
     },
     "Corrector": {
         "MEBT_Mag:PS_DCH01": "MEBT_Mag:DCH01",

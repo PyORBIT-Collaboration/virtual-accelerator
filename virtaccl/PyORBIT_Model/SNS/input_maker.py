@@ -21,7 +21,7 @@ def main():
     parser.add_argument('--file', '-f', default='va_config.json', type=str,
                         help='Pathname of resulting config json file.')
 
-    parser.add_argument('--lattice', default='sns_linac.xml', type=str,
+    parser.add_argument('--lattice', default='PyORBIT_Model/SNS/sns_linac.xml', type=str,
                         help='Pathname of lattice file')
 
     parser.add_argument("Sequences", nargs='*', help='Sequences',
@@ -53,6 +53,8 @@ def main():
     quad_key = 'Quadrupole'
     doublet_key = 'Quadrupole_Doublet'
     q_sets_key = 'Quadrupole_Set'
+    q_sets_h_key = 'H_Names'
+    q_sets_v_key = 'V_Names'
     corrector_key = 'Corrector'
     BPM_key = 'BPM'
     pBPM_key = 'Physics_BPM'
@@ -97,27 +99,27 @@ def main():
             elif 'SCL_Mag:QH' in or_name and q_num in quad_sets['SCL_Mag:PS_QH32a33']:
                 pv_name = 'SCL_Mag:PS_QH32a33'
                 if pv_name not in devices[q_sets_key]:
-                    devices[q_sets_key][pv_name] = [or_name]
+                    devices[q_sets_key][pv_name] = {q_sets_h_key: [or_name]}
                 else:
-                    devices[q_sets_key][pv_name].append(or_name)
+                    devices[q_sets_key][pv_name][q_sets_h_key].append(or_name)
             elif 'HEBT_Mag:QH' in or_name and q_num in quad_sets['HEBT_Mag:PS_QH04a06']:
                 pv_name = 'HEBT_Mag:PS_QH04a06'
                 if pv_name not in devices[q_sets_key]:
-                    devices[q_sets_key][pv_name] = [or_name]
+                    devices[q_sets_key][pv_name] = {q_sets_h_key: [or_name]}
                 else:
-                    devices[q_sets_key][pv_name].append(or_name)
+                    devices[q_sets_key][pv_name][q_sets_h_key].append(or_name)
             elif 'HEBT_Mag:QH' in or_name and q_num in quad_sets['HEBT_Mag:PS_QH12t18e']:
                 pv_name = 'HEBT_Mag:PS_QH12t18e'
                 if pv_name not in devices[q_sets_key]:
-                    devices[q_sets_key][pv_name] = [or_name]
+                    devices[q_sets_key][pv_name] = {q_sets_h_key: [or_name]}
                 else:
-                    devices[q_sets_key][pv_name].append(or_name)
+                    devices[q_sets_key][pv_name][q_sets_h_key].append(or_name)
             elif 'HEBT_Mag:QV' in or_name and q_num in quad_sets['HEBT_Mag:PS_QV13t19o']:
                 pv_name = 'HEBT_Mag:PS_QV13t19o'
                 if pv_name not in devices[q_sets_key]:
-                    devices[q_sets_key][pv_name] = [or_name]
+                    devices[q_sets_key][pv_name] = {q_sets_v_key: [or_name]}
                 else:
-                    devices[q_sets_key][pv_name].append(or_name)
+                    devices[q_sets_key][pv_name][q_sets_v_key].append(or_name)
             else:
                 pv_name = f"{split_name[0]}:PS_{split_name[1]}"
                 devices[quad_key][pv_name] = or_name

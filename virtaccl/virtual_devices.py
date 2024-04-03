@@ -105,7 +105,7 @@ class Parameter:
         self.definition = definition
         self.default = default
         self.transform, self.noise = self._default(transform, noise)
-        self.name_or = name_override
+        self.name_override = name_override
 
         self.device: Device = None
         self.server: Server = None
@@ -121,10 +121,10 @@ class Parameter:
         return transform, noise
 
     def get_pv(self):
-        if self.name_or is None:
+        if self.name_override is None:
             return self.device.name + ':' + self.reason
         else:
-            return self.name_or + ':' + self.reason
+            return self.name_override + ':' + self.reason
 
     def get_definition(self):
         return self.definition
@@ -133,7 +133,7 @@ class Parameter:
         return self.default
 
     def is_name_override(self):
-        if self.name_or:
+        if self.name_override:
             return True
         else:
             return False
@@ -174,13 +174,13 @@ class Device:
         self.__db_dictionary__ = {}
 
         # dictionary stores (definition, default, transform, noise)
-        self.settings: {str: Parameter} = {}
+        self.settings: Dict[str: Parameter] = {}
 
         # dictionary stores (definition, transform, noise)
-        self.measurements: {str: Parameter} = {}
+        self.measurements: Dict[str: Parameter] = {}
 
         # dictionary stores (definition, transform, noise)
-        self.readbacks: {str: Parameter} = {}
+        self.readbacks: Dict[str: Parameter] = {}
 
     def register_measurement(self, reason, definition=None, transform=None, noise=None, name_override=None):
         if definition is None:
