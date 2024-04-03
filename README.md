@@ -8,7 +8,7 @@ You need to have PyORBIT installed in the same virtual environment.
 
 ```bash
 pip install -e .
-pipl ist
+pip list
 # virtaccl should be in the list of installed packages
 ```
 This will install VA in development mode, so you can edit the code and and immediately see the results without re-installation.
