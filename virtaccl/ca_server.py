@@ -9,6 +9,7 @@ from math import floor
 from pcaspy import Driver
 from pcaspy.cas import epicsTimeStamp
 from pcaspy import SimpleServer
+from virtaccl.virtual_devices import Device
 
 
 def to_epics_timestamp(t: datetime):
@@ -42,7 +43,7 @@ class Server:
         self.prefix = prefix
         self.driver = None
         self.pv_db = dict()
-        self.devices = []
+        self.devices: Dict[str, Device] = {}
 
     def _CA_events(self, server):
         while True:
@@ -57,7 +58,7 @@ class Server:
     def update(self):
         self.driver.updatePVs()
 
-    def add_device(self, device):
+    def add_device(self, device: Device):
         pvs = device.build_db()
         def_dict = {}
         for reason, param in pvs.items():
@@ -66,7 +67,7 @@ class Server:
         self.pv_db = self.pv_db | def_dict
 
         device.server = self
-        self.devices.append(device)
+        self.devices[device.name] = device
         return device
 
     def start(self):
@@ -79,7 +80,7 @@ class Server:
         tid.setDaemon(True)
         tid.start()
 
-        for device in self.devices:
+        for device_name, device in self.devices.items():
             device.reset()
 
         self.run()
@@ -96,18 +97,18 @@ class Server:
 
     def get_settings(self):
         result = {}
-        for device in self.devices:
+        for device_name, device in self.devices.items():
             result = result | device.get_settings()
         return result
 
     def update_measurements(self, new_measurements: Dict[str, Dict[str, Any]]):
-        for device in self.devices:
+        for device_name, device in self.devices.items():
             model_names = device.model_names
             device_measurements = {key: value for key, value in new_measurements.items() if key in model_names}
             device.update_measurements(device_measurements)
 
     def update_readbacks(self):
-        for device in self.devices:
+        for device_name, device in self.devices.items():
             device.update_readbacks()
 
     def set_params(self, values: dict, timestamp=None):

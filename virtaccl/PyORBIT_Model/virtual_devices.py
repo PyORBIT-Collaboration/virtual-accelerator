@@ -32,12 +32,13 @@ class Quadrupole(Device):
     # PyORBIT parameter keys
     field_key = 'dB/dr'  # [T/m]
 
-    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None):
+    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None, power_supply: str = None):
         if model_name is None:
-            self.model_name = name
+            model_name = name
         else:
-            self.model_name = model_name
-        super().__init__(name, self.model_name)
+            model_name = model_name
+        self.model_name = model_name
+        super().__init__(name, self.model_name, power_supply)
 
         # Sets up initial values.
         if initial_dict is not None:
@@ -55,6 +56,11 @@ class Quadrupole(Device):
     # where the PV names are associated with their model keys.
     def get_settings(self):
         new_field = self.settings[Quadrupole.field_set_pv].get_param()
+
+        if self.connected_devices is not None:
+            ps_field = self.server.devices[self.connected_devices].get_setting(Magnet_Power_Supply.field_set_pv)
+            new_field += ps_field
+
         params_dict = {Quadrupole.field_key: new_field}
         model_dict = {self.model_name: params_dict}
         return model_dict
@@ -134,9 +140,9 @@ class Quadrupole_Set(Device):
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
     def get_settings(self):
-        new_field = self.settings[Quadrupole_Doublet.field_set_pv].get_param()
-        h_params = {Quadrupole_Doublet.field_key: new_field}
-        v_params = {Quadrupole_Doublet.field_key: -new_field}
+        new_field = self.settings[Quadrupole_Set.field_set_pv].get_param()
+        h_params = {Quadrupole_Set.field_key: new_field}
+        v_params = {Quadrupole_Set.field_key: -new_field}
 
         model_dict = {}
         for name in self.h_names:
@@ -480,6 +486,22 @@ class WireScanner(Device):
 
         self.update_measurement(WireScanner.x_avg_pv, ws_params[WireScanner.x_avg_key])
         self.update_measurement(WireScanner.y_avg_pv, ws_params[WireScanner.y_avg_key])
+
+
+class Magnet_Power_Supply(Device):
+    # EPICS PV names
+    field_set_pv = 'B_Set'  # [T/m]
+    field_readback_pv = 'B'  # [T/m]
+    field_noise = 1e-6  # [T/m]
+
+    def __init__(self, name: str):
+        super().__init__(name)
+
+        field_noise = AbsNoise(noise=1e-6)
+
+        # Registers the device's PVs with the server.
+        field_param = self.register_setting(Magnet_Power_Supply.field_set_pv, default=0)
+        self.register_readback(Quadrupole.field_readback_pv, field_param, noise=field_noise)
 
 
 # An unrealistic device associated with BPMs in the PyORBIT model that tracks values that cannot be measured directly.

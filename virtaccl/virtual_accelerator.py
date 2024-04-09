@@ -14,11 +14,16 @@ from orbit.core.linac import BaseRfGap, RfGapTTF
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.PyORBIT_Model.virtual_devices import Cavity, BPM, Quadrupole, Quadrupole_Doublet, Corrector, P_BPM, \
-    WireScanner, Quadrupole_Set
+    WireScanner, Quadrupole_Set, Magnet_Power_Supply
 from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS, SNS_Quadrupole, \
     SNS_Quadrupole_Doublet, SNS_Quadrupole_Set, SNS_Corrector
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
+
+
+def load_config(filename: Path):
+    with open(filename, "r") as json_file:
+        devices_dict = json.load(json_file)
 
 
 def main():
@@ -40,7 +45,7 @@ def main():
     parser.add_argument("--sequences", nargs='*',
                         help='Desired sections from lattice listed in order without commas',
                         default=["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
-                                 "SCLMed", "SCLHigh", "HEBT1"])
+                                 "SCLMed", "SCLHigh", "HEBT1", "HEBT2"])
 
     # Desired initial bunch file and the desired number of particles from that file.
     parser.add_argument('--bunch', default=loc / 'PyORBIT_Model/SNS/MEBT_in.dat', type=str,
@@ -125,58 +130,84 @@ def main():
         with open(offset_file, "r") as json_file:
             offset_dict = json.load(json_file)
 
-    for device_type, devices in devices_dict.items():
-        for name, model_name in devices.items():
+    cavities = devices_dict["RF_Cavity"]
+    for name, model_name in cavities.items():
+        if model_name in element_list:
+            initial_settings = model.get_element_parameters(model_name)
+            phase_offset = 0
+            if offset_file is not None:
+                phase_offset = offset_dict[name]
+            rf_device = SNS_Cavity(name, model_name, initial_dict=initial_settings, phase_offset=phase_offset)
+            server.add_device(rf_device)
 
-            if not isinstance(model_name, list):
-                model_names = [model_name]
+    mag_ps = devices_dict["Power_Supply"]
+    for name in mag_ps:
+        ps_device = Magnet_Power_Supply(name)
+        server.add_device(ps_device)
+
+    quads = devices_dict["Quadrupole"]
+    for name, model_name in quads.items():
+        if isinstance(model_name, str):
+            if model_name in element_list:
+                initial_settings = model.get_element_parameters(model_name)
+                quad_device = SNS_Quadrupole(name, model_name, initial_dict=initial_settings)
+                server.add_device(quad_device)
+
+        elif isinstance(model_name, dict):
+            name = model_name["PyORBIT_Name"]
+            power_supply = model_name["Power_Supply"]
+            if model_name in element_list and power_supply in mag_ps:
+                initial_settings = model.get_element_parameters(name)
+                quad_device = SNS_Quadrupole(name, name, initial_dict=initial_settings, power_supply=power_supply)
+                server.add_device(quad_device)
+
+    doublets = devices_dict["Quadrupole_Doublet"]
+    for name, model_names in doublets.items():
+        if all(names in element_list for names in model_names):
+            initial_settings = model.get_element_parameters(model_names[0])
+            doublet_device = SNS_Quadrupole_Doublet(name, model_names[0], model_names[1], initial_dict=initial_settings)
+            server.add_device(doublet_device)
+
+    quad_sets = devices_dict["Quadrupole_Set"]
+    for name, model_names in quad_sets.items():
+        p_names = []
+        n_names = []
+        if 'Positive' in model_names:
+            p_names = model_names['Positive']
+        if 'Negative' in model_names:
+            n_names = model_names['Negative']
+        if all(names in element_list for names in (p_names + n_names)):
+            if len(p_names) > 0:
+                initial_settings = model.get_element_parameters(p_names[0])
             else:
-                model_names = model_name
+                initial_settings = model.get_element_parameters(n_names[0])
+            set_device = SNS_Quadrupole_Set(name, h_model_names=p_names, v_model_names=n_names,
+                                            initial_dict=initial_settings)
+            server.add_device(set_device)
 
-            if all(names in element_list for names in model_names):
-                if device_type == "RF_Cavity":
-                    initial_settings = model.get_element_parameters(model_name)
-                    phase_offset = 0
-                    if offset_file is not None:
-                        phase_offset = offset_dict[name]
-                    rf_device = SNS_Cavity(name, model_name, initial_dict=initial_settings, phase_offset=phase_offset)
-                    server.add_device(rf_device)
+    correctors = devices_dict["Corrector"]
+    for name, model_name in correctors.items():
+        initial_settings = model.get_element_parameters(model_name)
+        corrector_device = SNS_Corrector(name, model_name, initial_dict=initial_settings)
+        server.add_device(corrector_device)
 
-                if device_type == "Quadrupole":
-                    initial_settings = model.get_element_parameters(model_name)
-                    quad_device = SNS_Quadrupole(name, model_name, initial_dict=initial_settings)
-                    server.add_device(quad_device)
+    wire_scanners = devices_dict["Wire_Scanner"]
+    for name, model_name in wire_scanners.items():
+        ws_device = WireScanner(name, model_name)
+        server.add_device(ws_device)
 
-                if device_type == "Quadrupole_Doublet":
-                    initial_settings = model.get_element_parameters(model_name[0])
-                    doublet_device = SNS_Quadrupole_Doublet(name, model_names[0], model_names[1],
-                                                            initial_dict=initial_settings)
-                    server.add_device(doublet_device)
+    bpms = devices_dict["BPM"]
+    for name, model_name in bpms.items():
+        phase_offset = 0
+        if offset_file is not None:
+            phase_offset = offset_dict[name]
+        bpm_device = BPM(name, model_name, phase_offset=phase_offset)
+        server.add_device(bpm_device)
 
-                if device_type == "Quadrupole_Set":
-                    initial_settings = model.get_element_parameters(model_name[0])
-                    set_device = SNS_Quadrupole_Set(name, model_names, initial_dict=initial_settings)
-                    server.add_device(set_device)
-
-                if device_type == "Corrector":
-                    initial_settings = model.get_element_parameters(model_name)
-                    corrector_device = SNS_Corrector(name, model_name, initial_dict=initial_settings)
-                    server.add_device(corrector_device)
-
-                if device_type == "Wire_Scanner":
-                    ws_device = WireScanner(name, model_name)
-                    server.add_device(ws_device)
-
-                if device_type == "BPM":
-                    phase_offset = 0
-                    if offset_file is not None:
-                        phase_offset = offset_dict[name]
-                    bpm_device = BPM(name, model_name, phase_offset=phase_offset)
-                    server.add_device(bpm_device)
-
-                if device_type == "Physics_BPM":
-                    pbpm_device = P_BPM(name, model_name)
-                    server.add_device(pbpm_device)
+    pbpms = devices_dict["Physics_BPM"]
+    for name, model_name in pbpms.items():
+        pbpm_device = P_BPM(name, model_name)
+        server.add_device(pbpm_device)
 
     dummy_device = SNS_Dummy_BCM("Ring_Diag:BCM_D09", 'HEBT_Diag:BPM11')
     server.add_device(dummy_device)

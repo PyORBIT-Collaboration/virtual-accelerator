@@ -70,8 +70,8 @@ class SNS_Cavity(Cavity):
 
 
 class SNS_Quadrupole(Quadrupole):
-    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None):
-        super().__init__(name, model_name, initial_dict)
+    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None, power_supply: str = None):
+        super().__init__(name, model_name, initial_dict, power_supply)
 
         readback_name = name.replace('PS_', '', 1)
 
@@ -110,9 +110,7 @@ class SNS_Quadrupole_Doublet(Quadrupole_Doublet):
 
         field_noise = AbsNoise(noise=1e-6)
 
-        pol = 1
-        if 'SCL' in name:
-            pol = -1
+        pol = -1
         pol_transform = LinearTInv(scaler=pol)
 
         initial_field = pol_transform.raw(initial_field)
@@ -125,31 +123,31 @@ class SNS_Quadrupole_Doublet(Quadrupole_Doublet):
 
 
 class SNS_Quadrupole_Set(Quadrupole_Set):
-    def __init__(self, name: str, h_model_names: list[str] = None, v_model_names: list[str] = None,  initial_dict: Dict[str, Any] = None):
-        super().__init__(name, h_model_names, v_model_names,  initial_dict)
+    def __init__(self, name: str, h_model_names: list[str] = None, v_model_names: list[str] = None,
+                 initial_dict: Dict[str, Any] = None):
+        super().__init__(name, h_model_names, v_model_names, initial_dict)
 
         readback_name = name.replace('PS_', '', 1)
 
         # Sets up initial values.
         if initial_dict is not None:
-            initial_field = initial_dict[Quadrupole.field_key]
+            initial_field = initial_dict[Quadrupole_Set.field_key]
         else:
             initial_field = 0.0
 
         field_noise = AbsNoise(noise=1e-6)
 
-        pol = 1
-        if 'SCL' in name:
-            pol = -1
+        pol = -1
         pol_transform = LinearTInv(scaler=pol)
 
+        if 'PS_QV' in name:
+            initial_field = -initial_field
         initial_field = pol_transform.raw(initial_field)
 
         # Registers the device's PVs with the server
         field_param = self.register_setting(Quadrupole_Set.field_set_pv, default=initial_field, transform=pol_transform)
         self.register_readback(Quadrupole_Set.field_readback_pv, field_param, noise=field_noise,
                                name_override=readback_name)
-
 
 class SNS_Corrector(Corrector):
     def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None):
@@ -169,9 +167,7 @@ class SNS_Corrector(Corrector):
 
         field_noise = AbsNoise(noise=1e-6)
 
-        pol = 1
-        if 'SCL' in name:
-            pol = -1
+        pol = -1
         pol_transform = LinearTInv(scaler=pol)
 
         initial_field = pol_transform.raw(initial_field)
@@ -244,7 +240,6 @@ class SNS_WireScanner(WireScanner):
         self.register_setting(SNS_WireScanner.length_pv, default=10)
         self.register_setting(SNS_WireScanner.stroke_pv, default=0)
         self.register_setting(SNS_WireScanner.oor_pv, default=0)
-
 
 
 class SNS_Dummy_ICS(Device):

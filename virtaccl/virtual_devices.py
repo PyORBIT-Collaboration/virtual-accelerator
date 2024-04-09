@@ -2,9 +2,6 @@ import math
 from numpy.random import random_sample
 from typing import Optional, Union, List, Dict, Any
 
-from .ca_server import Server
-
-
 class Transform:
 
     def real(self, x):
@@ -107,8 +104,9 @@ class Parameter:
         self.transform, self.noise = self._default(transform, noise)
         self.name_override = name_override
 
-        self.device: Device = None
-        self.server: Server = None
+        self.device: Optional[Device] = None
+        from virtaccl.ca_server import Server
+        self.server: Optional[Server] = None
 
         self.setting_param = None
 
@@ -161,8 +159,10 @@ class Parameter:
 
 class Device:
 
-    def __init__(self, pv_name: str, model_name: Optional[Union[str, List[str]]] = None):
+    def __init__(self, pv_name: str, model_name: Optional[Union[str, List[str]]] = None,
+                 connected_devices: Optional[Union[str, List[str]]] = None):
         self.name = pv_name
+
         if model_name is None:
             self.model_names = [pv_name]
         elif not isinstance(model_name, list):
@@ -170,17 +170,19 @@ class Device:
         else:
             self.model_names = model_name
 
-        self.server = None
-        self.__db_dictionary__ = {}
+        self.connected_devices = connected_devices
+
+        from virtaccl.ca_server import Server
+        self.server: Optional[Server] = None
 
         # dictionary stores (definition, default, transform, noise)
-        self.settings: Dict[str: Parameter] = {}
+        self.settings: Dict[str, Parameter] = {}
 
         # dictionary stores (definition, transform, noise)
-        self.measurements: Dict[str: Parameter] = {}
+        self.measurements: Dict[str, Parameter] = {}
 
         # dictionary stores (definition, transform, noise)
-        self.readbacks: Dict[str: Parameter] = {}
+        self.readbacks: Dict[str, Parameter] = {}
 
     def register_measurement(self, reason, definition=None, transform=None, noise=None, name_override=None):
         if definition is None:
@@ -211,34 +213,14 @@ class Device:
         return self.settings[reason].get_param()
 
     def get_settings(self) -> Dict[str, Dict[str, Any]]:
-        params_dict = {}
-        for model_name in self.model_names:
-            param_input_dict = {}
-            for setting, param in self.settings.items():
-                param_value = param.get_param()
-                param_input_dict = param_input_dict | {setting: param_value}
-            if param_input_dict:
-                params_dict = params_dict | {model_name: param_input_dict}
-        return params_dict
+        return {}
 
     def update_measurement(self, reason: str, value=None):
         param = self.measurements[reason]
         param.set_param(value)
 
     def update_measurements(self, new_measurements: Dict[str, Dict[str, Any]] = None) -> None:
-        new_dict = {}
-        for model_name, model_dict in new_measurements.items():
-            if model_name in self.model_names:
-                for param_name, new_value in model_dict.items():
-                    if param_name in self.measurements:
-                        reason = model_name + ':' + param_name
-                        new_dict[reason] = new_value
-
-        for reason, param in self.measurements.items():
-            if param.get_pv() in new_dict:
-                self.update_measurement(reason, new_dict[param.get_pv()])
-            else:
-                self.update_measurement(reason)
+        pass
 
     def update_readback(self, reason, value=None):
         rb_param = self.readbacks[reason]
