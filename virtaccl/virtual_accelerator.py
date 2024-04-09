@@ -146,20 +146,18 @@ def main():
         server.add_device(ps_device)
 
     quads = devices_dict["Quadrupole"]
-    for name, model_name in quads.items():
-        if isinstance(model_name, str):
-            if model_name in element_list:
-                initial_settings = model.get_element_parameters(model_name)
-                quad_device = SNS_Quadrupole(name, model_name, initial_dict=initial_settings)
-                server.add_device(quad_device)
-
-        elif isinstance(model_name, dict):
-            ele_name = model_name["PyORBIT_Name"]
-            power_supply = model_name["Power_Supply"]
-            if ele_name in element_list and power_supply in mag_ps:
-                initial_settings = model.get_element_parameters(ele_name)
-                quad_device = SNS_Quadrupole(name, ele_name, initial_dict=initial_settings, power_supply=power_supply)
-                server.add_device(quad_device)
+    for name, device_dict in quads.items():
+        ele_name = device_dict["PyORBIT_Name"]
+        polarity = device_dict["Polarity"]
+        if ele_name in element_list:
+            initial_settings = model.get_element_parameters(ele_name)
+            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in mag_ps:
+                power_supply = server.devices[device_dict["Power_Supply"]]
+                quad_device = SNS_Quadrupole(name, ele_name, initial_dict=initial_settings, polarity=polarity,
+                                             power_supply=power_supply)
+            else:
+                quad_device = SNS_Quadrupole(name, ele_name, initial_dict=initial_settings, polarity=polarity)
+            server.add_device(quad_device)
 
     doublets = devices_dict["Quadrupole_Doublet"]
     for name, model_names in doublets.items():

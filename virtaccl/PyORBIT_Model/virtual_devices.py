@@ -2,7 +2,7 @@ import sys
 import time
 import math
 from random import randint, random
-from typing import Dict, Any
+from typing import Dict, Any, Union, Literal
 
 import numpy as np
 
@@ -32,13 +32,16 @@ class Quadrupole(Device):
     # PyORBIT parameter keys
     field_key = 'dB/dr'  # [T/m]
 
-    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None, power_supply: str = None):
+    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None,
+                 power_supply: Device = None, polarity: Literal[-1, 1] = None):
         if model_name is None:
             model_name = name
         else:
             model_name = model_name
         self.model_name = model_name
         super().__init__(name, self.model_name, power_supply)
+
+        self.power_supply = power_supply
 
         # Sets up initial values.
         if initial_dict is not None:
@@ -48,8 +51,16 @@ class Quadrupole(Device):
 
         field_noise = AbsNoise(noise=Quadrupole.field_noise)
 
+        pol = 1
+        if polarity is not None:
+            pol = polarity
+        self.pol_transform = LinearTInv(scaler=pol)
+        self.pol_test = pol
+
+        initial_field = self.pol_transform.raw(initial_field)
+
         # Registers the device's PVs with the server
-        field_param = self.register_setting(Quadrupole.field_set_pv, default=initial_field)
+        field_param = self.register_setting(Quadrupole.field_set_pv, default=initial_field, transform=self.pol_transform)
         self.register_readback(Quadrupole.field_readback_pv, field_param, noise=field_noise)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
@@ -57,8 +68,9 @@ class Quadrupole(Device):
     def get_settings(self):
         new_field = self.settings[Quadrupole.field_set_pv].get_param()
 
-        if self.connected_devices is not None:
-            ps_field = self.server.devices[self.connected_devices].get_setting(Magnet_Power_Supply.field_set_pv)
+        if self.connected_devices:
+            ps_field = self.power_supply.get_setting(Magnet_Power_Supply.field_set_pv)
+            ps_field = self.pol_transform.real(ps_field)
             new_field += ps_field
 
         params_dict = {Quadrupole.field_key: new_field}

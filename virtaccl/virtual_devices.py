@@ -160,7 +160,7 @@ class Parameter:
 class Device:
 
     def __init__(self, pv_name: str, model_name: Optional[Union[str, List[str]]] = None,
-                 connected_devices: Optional[Union[str, List[str]]] = None):
+                 connected_device: Optional[Union['Device', List['Device']]] = None):
         self.name = pv_name
 
         if model_name is None:
@@ -170,7 +170,16 @@ class Device:
         else:
             self.model_names = model_name
 
-        self.connected_devices = connected_devices
+        if connected_device is None:
+            connected_device = []
+        elif not isinstance(connected_device, list):
+            connected_device = [connected_device]
+        else:
+            connected_device = connected_device
+
+        self.connected_devices = {}
+        for device in connected_device:
+            self.connected_devices[device.name] = device
 
         from virtaccl.ca_server import Server
         self.server: Optional[Server] = None

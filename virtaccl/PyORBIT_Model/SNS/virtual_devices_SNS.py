@@ -1,7 +1,7 @@
 import time
 import math
 from random import randint, random
-from typing import Dict, Any
+from typing import Dict, Any, Union, Literal
 
 import numpy as np
 from virtaccl.PyORBIT_Model.virtual_devices import Cavity, Quadrupole, Quadrupole_Doublet, Quadrupole_Set, Corrector, \
@@ -71,8 +71,8 @@ class SNS_Cavity(Cavity):
 
 class SNS_Quadrupole(Quadrupole):
     def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None,
-                 power_supply: str = None):
-        super().__init__(name, model_name, initial_dict, power_supply)
+                 power_supply: Device = None, polarity: Literal[-1, 1] = None):
+        super().__init__(name, model_name, initial_dict, power_supply, polarity)
 
         readback_name = name.replace('PS_', '', 1)
 
@@ -85,8 +85,8 @@ class SNS_Quadrupole(Quadrupole):
         field_noise = AbsNoise(noise=1e-6)
 
         pol = 1
-        if 'PS_QH' in name or 'IDmp_Mag:PS_QV01' == name:
-            pol = -1
+        if polarity is not None:
+            pol = polarity
         pol_transform = LinearTInv(scaler=pol)
 
         initial_field = pol_transform.raw(initial_field)

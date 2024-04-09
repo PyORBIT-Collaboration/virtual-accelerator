@@ -123,31 +123,46 @@ def main():
                                             q_num in quad_sets['CCL_Mag:PS_Q104t111']['ver']):
                 ps_name = 'CCL_Mag:PS_Q104t111'
                 pv_name = f"{split_name[0]}:ShntC_{split_name[1]}"
-                devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name}
+                if q_num in quad_sets['CCL_Mag:PS_Q104t111']['hor']:
+                    devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: -1}
+                else:
+                    devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: 1}
 
             elif 'CCL_Mag:' in or_name and (q_num in quad_sets['CCL_Mag:PS_Q112t207']['hor'] or
                                             q_num in quad_sets['CCL_Mag:PS_Q112t207']['ver']):
                 ps_name = 'CCL_Mag:PS_Q112t207'
                 pv_name = f"{split_name[0]}:ShntC_{split_name[1]}"
-                devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name}
+                if q_num in quad_sets['CCL_Mag:PS_Q112t207']['hor']:
+                    devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: -1}
+                else:
+                    devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: 1}
 
             elif 'CCL_Mag:' in or_name and (q_num in quad_sets['CCL_Mag:PS_Q208t303']['hor'] or
                                             q_num in quad_sets['CCL_Mag:PS_Q208t303']['ver']):
                 ps_name = 'CCL_Mag:PS_Q208t303'
                 pv_name = f"{split_name[0]}:ShntC_{split_name[1]}"
-                devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name}
+                if q_num in quad_sets['CCL_Mag:PS_Q208t303']['hor']:
+                    devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: -1}
+                else:
+                    devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: 1}
 
             elif 'CCL_Mag:' in or_name and (q_num in quad_sets['CCL_Mag:PS_Q304t311']['hor'] or
                                             q_num in quad_sets['CCL_Mag:PS_Q304t311']['ver']):
                 ps_name = 'CCL_Mag:PS_Q304t311'
                 pv_name = f"{split_name[0]}:ShntC_{split_name[1]}"
-                devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name}
+                if q_num in quad_sets['CCL_Mag:PS_Q304t311']['hor']:
+                    devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: -1}
+                else:
+                    devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: 1}
 
             elif 'CCL_Mag:' in or_name and (q_num in quad_sets['CCL_Mag:PS_Q312t407']['hor'] or
                                             q_num in quad_sets['CCL_Mag:PS_Q312t407']['ver']):
                 ps_name = 'CCL_Mag:PS_Q312t407'
                 pv_name = f"{split_name[0]}:ShntC_{split_name[1]}"
-                devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name}
+                if q_num in quad_sets['CCL_Mag:PS_Q312t407']['hor']:
+                    devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: -1}
+                else:
+                    devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: 1}
 
             elif 'SCL_Mag:QH' in or_name and q_num in quad_sets['SCL_Mag:PS_QH32a33']:
                 pv_name = 'SCL_Mag:PS_QH32a33'
@@ -176,7 +191,10 @@ def main():
                     devices[q_sets_key][pv_name][q_sets_v_key].append(or_name)
             else:
                 pv_name = f"{split_name[0]}:PS_{split_name[1]}"
-                devices[quad_key][pv_name] = or_name
+                if 'H' in or_name:
+                    devices[quad_key][pv_name] = {pyorbit_key: or_name, polarity_key: -1}
+                else:
+                    devices[quad_key][pv_name] = {pyorbit_key: or_name, polarity_key: 1}
 
         elif ele_type == corrector_key:
             split_name = or_name.split(':')
