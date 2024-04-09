@@ -154,11 +154,11 @@ def main():
                 server.add_device(quad_device)
 
         elif isinstance(model_name, dict):
-            name = model_name["PyORBIT_Name"]
+            ele_name = model_name["PyORBIT_Name"]
             power_supply = model_name["Power_Supply"]
-            if model_name in element_list and power_supply in mag_ps:
-                initial_settings = model.get_element_parameters(name)
-                quad_device = SNS_Quadrupole(name, name, initial_dict=initial_settings, power_supply=power_supply)
+            if ele_name in element_list and power_supply in mag_ps:
+                initial_settings = model.get_element_parameters(ele_name)
+                quad_device = SNS_Quadrupole(name, ele_name, initial_dict=initial_settings, power_supply=power_supply)
                 server.add_device(quad_device)
 
     doublets = devices_dict["Quadrupole_Doublet"]

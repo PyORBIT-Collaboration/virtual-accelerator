@@ -70,7 +70,8 @@ class SNS_Cavity(Cavity):
 
 
 class SNS_Quadrupole(Quadrupole):
-    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None, power_supply: str = None):
+    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None,
+                 power_supply: str = None):
         super().__init__(name, model_name, initial_dict, power_supply)
 
         readback_name = name.replace('PS_', '', 1)
@@ -148,6 +149,7 @@ class SNS_Quadrupole_Set(Quadrupole_Set):
         field_param = self.register_setting(Quadrupole_Set.field_set_pv, default=initial_field, transform=pol_transform)
         self.register_readback(Quadrupole_Set.field_readback_pv, field_param, noise=field_noise,
                                name_override=readback_name)
+
 
 class SNS_Corrector(Corrector):
     def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None):
