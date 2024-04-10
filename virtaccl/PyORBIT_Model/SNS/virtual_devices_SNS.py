@@ -1,7 +1,7 @@
 import time
 import math
 from random import randint, random
-from typing import Dict, Any
+from typing import Dict, Any, Union, Literal
 
 import numpy as np
 from virtaccl.PyORBIT_Model.virtual_devices import Cavity, Quadrupole, Quadrupole_Doublet, Quadrupole_Set, Corrector, \
@@ -70,12 +70,9 @@ class SNS_Cavity(Cavity):
 
 
 class SNS_Quadrupole(Quadrupole):
-    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None):
-        if model_name is None:
-            self.model_name = name
-        else:
-            self.model_name = model_name
-        super().__init__(name, self.model_name, initial_dict)
+    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None,
+                 power_supply: Device = None, polarity: Literal[-1, 1] = None):
+        super().__init__(name, model_name, initial_dict, power_supply, polarity)
 
         readback_name = name.replace('PS_', '', 1)
 
@@ -88,8 +85,8 @@ class SNS_Quadrupole(Quadrupole):
         field_noise = AbsNoise(noise=1e-6)
 
         pol = 1
-        if 'PS_QH' in name or 'IDmp_Mag:PS_QV01' == name:
-            pol = -1
+        if polarity is not None:
+            pol = polarity
         pol_transform = LinearTInv(scaler=pol)
 
         initial_field = pol_transform.raw(initial_field)
@@ -102,9 +99,6 @@ class SNS_Quadrupole(Quadrupole):
 
 class SNS_Quadrupole_Doublet(Quadrupole_Doublet):
     def __init__(self, name: str, h_model_name: str, v_model_name: str, initial_dict: Dict[str, Any] = None):
-        self.h_name = h_model_name
-        self.v_name = v_model_name
-        self.model_names = [h_model_name, v_model_name]
         super().__init__(name, h_model_name, v_model_name, initial_dict)
 
         readback_name = name.replace('PS_', '', 1)
@@ -117,9 +111,7 @@ class SNS_Quadrupole_Doublet(Quadrupole_Doublet):
 
         field_noise = AbsNoise(noise=1e-6)
 
-        pol = 1
-        if 'SCL' in name:
-            pol = -1
+        pol = -1
         pol_transform = LinearTInv(scaler=pol)
 
         initial_field = pol_transform.raw(initial_field)
@@ -132,25 +124,25 @@ class SNS_Quadrupole_Doublet(Quadrupole_Doublet):
 
 
 class SNS_Quadrupole_Set(Quadrupole_Set):
-    def __init__(self, name: str, model_names: list[str], initial_dict: Dict[str, Any] = None):
-        self.model_names = model_names
-        super().__init__(name, model_names, initial_dict)
+    def __init__(self, name: str, h_model_names: list[str] = None, v_model_names: list[str] = None,
+                 initial_dict: Dict[str, Any] = None):
+        super().__init__(name, h_model_names, v_model_names, initial_dict)
 
         readback_name = name.replace('PS_', '', 1)
 
         # Sets up initial values.
         if initial_dict is not None:
-            initial_field = initial_dict[Quadrupole.field_key]
+            initial_field = initial_dict[Quadrupole_Set.field_key]
         else:
             initial_field = 0.0
 
         field_noise = AbsNoise(noise=1e-6)
 
-        pol = 1
-        if 'SCL' in name:
-            pol = -1
+        pol = -1
         pol_transform = LinearTInv(scaler=pol)
 
+        if 'PS_QV' in name:
+            initial_field = -initial_field
         initial_field = pol_transform.raw(initial_field)
 
         # Registers the device's PVs with the server
@@ -177,9 +169,7 @@ class SNS_Corrector(Corrector):
 
         field_noise = AbsNoise(noise=1e-6)
 
-        pol = 1
-        if 'SCL' in name:
-            pol = -1
+        pol = -1
         pol_transform = LinearTInv(scaler=pol)
 
         initial_field = pol_transform.raw(initial_field)
@@ -252,7 +242,6 @@ class SNS_WireScanner(WireScanner):
         self.register_setting(SNS_WireScanner.length_pv, default=10)
         self.register_setting(SNS_WireScanner.stroke_pv, default=0)
         self.register_setting(SNS_WireScanner.oor_pv, default=0)
-
 
 
 class SNS_Dummy_ICS(Device):

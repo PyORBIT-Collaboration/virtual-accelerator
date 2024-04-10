@@ -2,7 +2,7 @@ import sys
 import time
 import math
 from random import randint, random
-from typing import Dict, Any
+from typing import Dict, Any, Union, Literal
 
 import numpy as np
 
@@ -32,12 +32,16 @@ class Quadrupole(Device):
     # PyORBIT parameter keys
     field_key = 'dB/dr'  # [T/m]
 
-    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None):
+    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None,
+                 power_supply: Device = None, polarity: Literal[-1, 1] = None):
         if model_name is None:
-            self.model_name = name
+            model_name = name
         else:
-            self.model_name = model_name
-        super().__init__(name, self.model_name)
+            model_name = model_name
+        self.model_name = model_name
+        super().__init__(name, self.model_name, power_supply)
+
+        self.power_supply = power_supply
 
         # Sets up initial values.
         if initial_dict is not None:
@@ -47,14 +51,28 @@ class Quadrupole(Device):
 
         field_noise = AbsNoise(noise=Quadrupole.field_noise)
 
+        pol = 1
+        if polarity is not None:
+            pol = polarity
+        self.pol_transform = LinearTInv(scaler=pol)
+        self.pol_test = pol
+
+        initial_field = self.pol_transform.raw(initial_field)
+
         # Registers the device's PVs with the server
-        field_param = self.register_setting(Quadrupole.field_set_pv, default=initial_field)
+        field_param = self.register_setting(Quadrupole.field_set_pv, default=initial_field, transform=self.pol_transform)
         self.register_readback(Quadrupole.field_readback_pv, field_param, noise=field_noise)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
     def get_settings(self):
         new_field = self.settings[Quadrupole.field_set_pv].get_param()
+
+        if self.connected_devices:
+            ps_field = self.power_supply.get_setting(Magnet_Power_Supply.field_set_pv)
+            ps_field = self.pol_transform.real(ps_field)
+            new_field += ps_field
+
         params_dict = {Quadrupole.field_key: new_field}
         model_dict = {self.model_name: params_dict}
         return model_dict
@@ -90,15 +108,9 @@ class Quadrupole_Doublet(Device):
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
     def get_settings(self):
-        h_params = {}
-        v_params = {}
-        for setting, param in self.settings.items():
-            param_value = param.get_param()
-            if setting == Quadrupole_Doublet.field_set_pv:
-                h_param = param_value
-                h_params = h_params | {Quadrupole_Doublet.field_key: h_param}
-                v_param = -param_value
-                v_params = v_params | {Quadrupole_Doublet.field_key: v_param}
+        new_field = self.settings[Quadrupole_Doublet.field_set_pv].get_param()
+        h_params = {Quadrupole_Doublet.field_key: new_field}
+        v_params = {Quadrupole_Doublet.field_key: -new_field}
         model_dict = {self.h_name: h_params, self.v_name: v_params}
         return model_dict
 
@@ -112,9 +124,18 @@ class Quadrupole_Set(Device):
     # PyORBIT parameter keys
     field_key = 'dB/dr'  # [T/m]
 
-    def __init__(self, name: str, model_names: list[str], initial_dict: Dict[str, Any] = None):
-        self.model_names = model_names
+    def __init__(self, name: str, h_model_names: list[str] = None, v_model_names: list[str] = None,  initial_dict: Dict[str, Any] = None):
+        if h_model_names is None and v_model_names is None:
+            raise ValueError("Quadrupole Set device requires at least one set of model names.")
+        elif h_model_names is None:
+            h_model_names = []
+        elif v_model_names is None:
+            v_model_names = []
+        self.model_names = h_model_names + v_model_names
         super().__init__(name, self.model_names)
+
+        self.h_names = h_model_names
+        self.v_names = v_model_names
 
         # Sets up initial values.
         if initial_dict is not None:
@@ -131,14 +152,15 @@ class Quadrupole_Set(Device):
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
     def get_settings(self):
+        new_field = self.settings[Quadrupole_Set.field_set_pv].get_param()
+        h_params = {Quadrupole_Set.field_key: new_field}
+        v_params = {Quadrupole_Set.field_key: -new_field}
+
         model_dict = {}
-        for model_name in self.model_names:
-            params_dict = {}
-            for setting, param in self.settings.items():
-                param_value = param.get_param()
-                if setting == Quadrupole.field_set_pv:
-                    params_dict = params_dict | {Quadrupole.field_key: param_value}
-            model_dict = model_dict | {model_name: params_dict}
+        for name in self.h_names:
+            model_dict = model_dict | {name: h_params}
+        for name in self.v_names:
+            model_dict = model_dict | {name: v_params}
         return model_dict
 
 
@@ -476,6 +498,22 @@ class WireScanner(Device):
 
         self.update_measurement(WireScanner.x_avg_pv, ws_params[WireScanner.x_avg_key])
         self.update_measurement(WireScanner.y_avg_pv, ws_params[WireScanner.y_avg_key])
+
+
+class Magnet_Power_Supply(Device):
+    # EPICS PV names
+    field_set_pv = 'B_Set'  # [T/m]
+    field_readback_pv = 'B'  # [T/m]
+    field_noise = 1e-6  # [T/m]
+
+    def __init__(self, name: str):
+        super().__init__(name)
+
+        field_noise = AbsNoise(noise=1e-6)
+
+        # Registers the device's PVs with the server.
+        field_param = self.register_setting(Magnet_Power_Supply.field_set_pv, default=0)
+        self.register_readback(Quadrupole.field_readback_pv, field_param, noise=field_noise)
 
 
 # An unrealistic device associated with BPMs in the PyORBIT model that tracks values that cannot be measured directly.
