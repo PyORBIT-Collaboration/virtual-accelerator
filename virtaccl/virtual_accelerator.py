@@ -45,7 +45,7 @@ def main():
     parser.add_argument("--sequences", nargs='*',
                         help='Desired sections from lattice listed in order without commas',
                         default=["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
-                                 "SCLMed", "SCLHigh", "HEBT1", "HEBT2"])
+                                 "SCLMed", "SCLHigh", "HEBT1"])
 
     # Desired initial bunch file and the desired number of particles from that file.
     parser.add_argument('--bunch', default=loc / 'PyORBIT_Model/SNS/MEBT_in.dat', type=str,
@@ -198,27 +198,31 @@ def main():
 
     correctors = devices_dict["Corrector"]
     for name, model_name in correctors.items():
-        initial_settings = model.get_element_parameters(model_name)
-        corrector_device = SNS_Corrector(name, model_name, initial_dict=initial_settings)
-        server.add_device(corrector_device)
+        if model_name in element_list:
+            initial_settings = model.get_element_parameters(model_name)
+            corrector_device = SNS_Corrector(name, model_name, initial_dict=initial_settings)
+            server.add_device(corrector_device)
 
     wire_scanners = devices_dict["Wire_Scanner"]
     for name, model_name in wire_scanners.items():
-        ws_device = WireScanner(name, model_name)
-        server.add_device(ws_device)
+        if model_name in element_list:
+            ws_device = WireScanner(name, model_name)
+            server.add_device(ws_device)
 
     bpms = devices_dict["BPM"]
     for name, model_name in bpms.items():
-        phase_offset = 0
-        if offset_file is not None:
-            phase_offset = offset_dict[name]
-        bpm_device = BPM(name, model_name, phase_offset=phase_offset)
-        server.add_device(bpm_device)
+        if model_name in element_list:
+            phase_offset = 0
+            if offset_file is not None:
+                phase_offset = offset_dict[name]
+            bpm_device = BPM(name, model_name, phase_offset=phase_offset)
+            server.add_device(bpm_device)
 
     pbpms = devices_dict["Physics_BPM"]
     for name, model_name in pbpms.items():
-        pbpm_device = P_BPM(name, model_name)
-        server.add_device(pbpm_device)
+        if model_name in element_list:
+            pbpm_device = P_BPM(name, model_name)
+            server.add_device(pbpm_device)
 
     dummy_device = SNS_Dummy_BCM("Ring_Diag:BCM_D09", 'HEBT_Diag:BPM11')
     server.add_device(dummy_device)
