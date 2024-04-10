@@ -21,7 +21,7 @@ def main():
     parser.add_argument('--file', '-f', default='va_config.json', type=str,
                         help='Pathname of resulting config json file.')
 
-    parser.add_argument('--lattice', default='PyORBIT_Model/SNS/sns_linac.xml', type=str,
+    parser.add_argument('--lattice', default='PyORBIT_Model/SNS/sns_sts_linac.xml', type=str,
                         help='Pathname of lattice file')
 
     parser.add_argument("Sequences", nargs='*', help='Sequences',
