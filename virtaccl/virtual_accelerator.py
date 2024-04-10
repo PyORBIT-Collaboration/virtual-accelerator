@@ -165,10 +165,8 @@ def main():
         ps_field = ps_dict["avg_field"]
         power_supply = server.devices[ps_name]
         power_supply.settings['B_Set'].set_default_value(ps_field)
-        print(power_supply.settings['B_Set'].get_default())
         for quad_name, quad_model in ps_dict["quads"].items():
             shunt_field = quad_model[1] - ps_field * quad_model[1] / abs(quad_model[1])
-            print(quad_model[1], ps_field, shunt_field)
             initial_settings = {'dB/dr': shunt_field}
             quad_device = SNS_Quadrupole(quad_name, quad_model[0], initial_dict=initial_settings,
                                          polarity=quad_model[2], power_supply=power_supply)
