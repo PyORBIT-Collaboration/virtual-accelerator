@@ -156,6 +156,9 @@ class Parameter:
         if self.server:
             self.server.setParam(self.get_pv(), value, timestamp)
 
+    def set_default_value(self, new_default):
+        self.default = new_default
+
 
 class Device:
 

@@ -40,7 +40,7 @@ def main():
                         help='Rate (in Hz) at which the virtual accelerator updates.')
 
     # Lattice xml input file and the sequences desired from that file.
-    parser.add_argument('--lattice', default=loc / 'PyORBIT_Model/SNS/sns_linac.xml', type=str,
+    parser.add_argument('--lattice', default=loc / 'PyORBIT_Model/SNS/sns_sts_linac.xml', type=str,
                         help='Pathname of lattice file')
     parser.add_argument("--sequences", nargs='*',
                         help='Desired sections from lattice listed in order without commas',
@@ -141,9 +141,11 @@ def main():
             server.add_device(rf_device)
 
     mag_ps = devices_dict["Power_Supply"]
+    linked_quads = {}
     for name in mag_ps:
         ps_device = Magnet_Power_Supply(name)
         server.add_device(ps_device)
+        linked_quads[name] = {"quads": {}, "avg_field": 0}
 
     quads = devices_dict["Quadrupole"]
     for name, device_dict in quads.items():
@@ -152,11 +154,24 @@ def main():
         if ele_name in element_list:
             initial_settings = model.get_element_parameters(ele_name)
             if "Power_Supply" in device_dict and device_dict["Power_Supply"] in mag_ps:
-                power_supply = server.devices[device_dict["Power_Supply"]]
-                quad_device = SNS_Quadrupole(name, ele_name, initial_dict=initial_settings, polarity=polarity,
-                                             power_supply=power_supply)
+                linked_quads[device_dict["Power_Supply"]]["quads"][name] = [ele_name, initial_settings['dB/dr'], polarity]
+                linked_quads[device_dict["Power_Supply"]]["avg_field"] += abs(initial_settings['dB/dr'])
             else:
                 quad_device = SNS_Quadrupole(name, ele_name, initial_dict=initial_settings, polarity=polarity)
+                server.add_device(quad_device)
+
+    for ps_name, ps_dict in linked_quads.items():
+        ps_dict["avg_field"] /= len(ps_dict["quads"])
+        ps_field = ps_dict["avg_field"]
+        power_supply = server.devices[ps_name]
+        power_supply.settings['B_Set'].set_default_value(ps_field)
+        print(power_supply.settings['B_Set'].get_default())
+        for quad_name, quad_model in ps_dict["quads"].items():
+            shunt_field = quad_model[1] - ps_field * quad_model[1] / abs(quad_model[1])
+            print(quad_model[1], ps_field, shunt_field)
+            initial_settings = {'dB/dr': shunt_field}
+            quad_device = SNS_Quadrupole(quad_name, quad_model[0], initial_dict=initial_settings,
+                                         polarity=quad_model[2], power_supply=power_supply)
             server.add_device(quad_device)
 
     doublets = devices_dict["Quadrupole_Doublet"]
