@@ -4,8 +4,12 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
+    setup_requires=['setuptools_scm'],
+    use_scm_version=True,
+
     name="virtaccl",
-    version="0.0.0",
+    dynamic=["version"],
+    # version="0.0.0",
     author="SNS AP Team",
     author_email="zhukovap@ornl.gov",
     description="Package for running virtual SNS accelerator.",
