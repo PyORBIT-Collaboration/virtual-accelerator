@@ -5,6 +5,7 @@ import sys
 import time
 import argparse
 from pathlib import Path
+from importlib.metadata import version
 
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
 from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
@@ -28,7 +29,8 @@ def load_config(filename: Path):
 
 def main():
     loc = Path(__file__).parent
-    parser = argparse.ArgumentParser(description='Run CA server')
+    va_version = version('virtaccl')
+    parser = argparse.ArgumentParser(description='Run the SNS PyORBIT virtual accelerator server. Version ' + va_version)
     # parser.add_argument('--prefix', '-p', default='test', type=str, help='Prefix for PVs')
 
     # Json file that contains a dictionary connecting EPICS name of devices with their associated element model names.
