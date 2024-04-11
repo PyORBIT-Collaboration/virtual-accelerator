@@ -175,9 +175,11 @@ def main():
 
     doublets = devices_dict["Quadrupole_Doublet"]
     for name, model_names in doublets.items():
-        if all(names in element_list for names in model_names):
-            initial_settings = model.get_element_parameters(model_names[0])
-            doublet_device = SNS_Quadrupole_Doublet(name, model_names[0], model_names[1], initial_dict=initial_settings)
+        positive_name = model_names['Positive']
+        negative_name = model_names['Negative']
+        if positive_name in element_list and negative_name in element_list:
+            initial_settings = model.get_element_parameters(model_names['Positive'])
+            doublet_device = SNS_Quadrupole_Doublet(name, positive_name, negative_name, initial_dict=initial_settings)
             server.add_device(doublet_device)
 
     quad_sets = devices_dict["Quadrupole_Set"]
