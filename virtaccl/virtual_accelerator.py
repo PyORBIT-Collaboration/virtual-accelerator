@@ -134,6 +134,7 @@ def main():
     for name, model_name in cavities.items():
         if model_name in element_list:
             initial_settings = model.get_element_parameters(model_name)
+            initial_settings['amp'] = 1
             phase_offset = 0
             if offset_file is not None:
                 phase_offset = offset_dict[name]
