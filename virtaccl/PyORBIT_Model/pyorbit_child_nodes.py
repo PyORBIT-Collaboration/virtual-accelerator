@@ -1,8 +1,9 @@
 import math
+import sys
 from typing import Dict
 
 import numpy as np
-from orbit.core.bunch import Bunch
+from orbit.core.bunch import Bunch, BunchTwissAnalysis
 
 
 # A collection of classes that are attached to the lattice as child nodes for the virtual accelerator.
@@ -18,6 +19,8 @@ class BPMclass:
         self.node_type = 'BPM'
         self.si_e_charge = 1.6021773e-19
 
+        self.twiss_analysis = BunchTwissAnalysis()
+
     def trackActions(self, actionsContainer, paramsDict):
         bunch = paramsDict["bunch"]
         part_num = bunch.getSizeGlobal()
@@ -32,16 +35,11 @@ class BPMclass:
             current = part_num / initial_number * initial_beam_current
             phase_coeff = 2 * math.pi / (sync_beta * 2.99792458e8 / rf_freq)
             sync_phase = sync_part.time() * rf_freq * 2 * math.pi
-            x_avg, y_avg, z_avg, z_rms = 0, 0, 0, 0
-            for n in range(part_num):
-                x, y, z = bunch.x(n), bunch.y(n), bunch.z(n)
-                x_avg += x
-                y_avg += y
-                z_avg += z
-                z_rms += z * z
-            x_avg /= part_num
-            y_avg /= part_num
-            z_avg /= part_num
+            self.twiss_analysis.analyzeBunch(bunch)
+            x_avg = self.twiss_analysis.getAverage(0)
+            y_avg = self.twiss_analysis.getAverage(1)
+            z_avg = self.twiss_analysis.getAverage(2)
+            z_rms = math.sqrt(self.twiss_analysis.getTwiss(2)[1] * self.twiss_analysis.getTwiss(2)[3])
             phi_rms = phase_coeff * math.sqrt(z_rms / part_num)
             phi_avg = (phase_coeff * z_avg + sync_phase) % (2 * math.pi) - math.pi
             amp = abs(current * math.exp(-phi_rms * phi_rms / 2))
