@@ -4,8 +4,12 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
+    setup_requires=['setuptools_scm'],
+    use_scm_version=True,
+
     name="virtaccl",
-    version="0.0.0",
+    dynamic=["version"],
+    # version="0.0.0",
     author="SNS AP Team",
     author_email="zhukovap@ornl.gov",
     description="Package for running virtual SNS accelerator.",
@@ -15,12 +19,14 @@ setuptools.setup(
                       'pcaspy',
                       'PyORBIT',
                       ],
-    url= "https://github.com/PyORBIT-Collaboration/virtual-accelerator",
+    url="https://github.com/PyORBIT-Collaboration/virtual-accelerator",
     entry_points={
         "console_scripts": [
             "virtual_accelerator = virtaccl.virtual_accelerator:main",
+            "idmp_va = virtaccl.site.IDmp.IDmp_virtual_accelerator:main",
         ]},
-    packages=['virtaccl'],
+
+    packages=setuptools.find_packages(),
 
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -29,4 +35,5 @@ setuptools.setup(
     ],
     python_requires='>=3.9',
     include_package_data=True,
+    package_data={"": ["*.xml", "*.json", "*.dat"]},
 )

@@ -1,0 +1,24 @@
+{
+    "Quadrupole": {
+        "IDmp_Mag:PS_QV01": "Quad"
+    },
+    "Corrector": {
+        "IDmp_Mag:PS_DCH01": "HCorrector",
+        "IDmp_Mag:PS_DCV01": "VCorrector"
+    },
+    "Wire_Scanner": {
+        "IDmp_Diag:WS01": "WS01"
+    },
+    "BPM": {
+        "IDmp_Diag:BPM00": "BPM00",
+        "IDmp_Diag:BPM01a": "BPM01",
+        "IDmp_Diag:BPM01b": "BPM02",
+        "IDmp_Diag:BPM01c": "BPM03"
+    },
+    "Physics_BPM": {
+        "IDmp_Phys:BPM00": "BPM00",
+        "IDmp_Phys:BPM01a": "BPM01",
+        "IDmp_Phys:BPM01b": "BPM02",
+        "IDmp_Phys:BPM01c": "BPM03"
+    }
+}

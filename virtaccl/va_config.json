@@ -94,149 +94,605 @@
         "SCL_LLRF:FCM23a": "SCL:Cav23a",
         "SCL_LLRF:FCM23b": "SCL:Cav23b",
         "SCL_LLRF:FCM23c": "SCL:Cav23c",
-        "SCL_LLRF:FCM23d": "SCL:Cav23d"
+        "SCL_LLRF:FCM23d": "SCL:Cav23d",
+        "SCL_LLRF:FCM25a": "SCL:Cav25a",
+        "SCL_LLRF:FCM25b": "SCL:Cav25b",
+        "SCL_LLRF:FCM25c": "SCL:Cav25c",
+        "SCL_LLRF:FCM25d": "SCL:Cav25d",
+        "SCL_LLRF:FCM27a": "SCL:Cav27a",
+        "SCL_LLRF:FCM27b": "SCL:Cav27b",
+        "SCL_LLRF:FCM27c": "SCL:Cav27c",
+        "SCL_LLRF:FCM27d": "SCL:Cav27d",
+        "SCL_LLRF:FCM28a": "SCL:Cav28a",
+        "SCL_LLRF:FCM28b": "SCL:Cav28b",
+        "SCL_LLRF:FCM28c": "SCL:Cav28c",
+        "SCL_LLRF:FCM28d": "SCL:Cav28d",
+        "SCL_LLRF:FCM29a": "SCL:Cav29a",
+        "SCL_LLRF:FCM29b": "SCL:Cav29b",
+        "SCL_LLRF:FCM29c": "SCL:Cav29c",
+        "SCL_LLRF:FCM29d": "SCL:Cav29d",
+        "SCL_LLRF:FCM30a": "SCL:Cav30a",
+        "SCL_LLRF:FCM30b": "SCL:Cav30b",
+        "SCL_LLRF:FCM30c": "SCL:Cav30c",
+        "SCL_LLRF:FCM30d": "SCL:Cav30d",
+        "SCL_LLRF:FCM31a": "SCL:Cav31a",
+        "SCL_LLRF:FCM31b": "SCL:Cav31b",
+        "SCL_LLRF:FCM31c": "SCL:Cav31c",
+        "SCL_LLRF:FCM31d": "SCL:Cav31d",
+        "SCL_LLRF:FCM32a": "SCL:Cav32a",
+        "SCL_LLRF:FCM32b": "SCL:Cav32b",
+        "SCL_LLRF:FCM32c": "SCL:Cav32c",
+        "SCL_LLRF:FCM32d": "SCL:Cav32d"
     },
     "Quadrupole": {
-        "MEBT_Mag:PS_QH01": "MEBT_Mag:QH01",
-        "MEBT_Mag:PS_QV02": "MEBT_Mag:QV02",
-        "MEBT_Mag:PS_QH03": "MEBT_Mag:QH03",
-        "MEBT_Mag:PS_QV04": "MEBT_Mag:QV04",
-        "MEBT_Mag:PS_QH05": "MEBT_Mag:QH05",
-        "MEBT_Mag:PS_QV06": "MEBT_Mag:QV06",
-        "MEBT_Mag:PS_QH07": "MEBT_Mag:QH07",
-        "MEBT_Mag:PS_QH08": "MEBT_Mag:QH08",
-        "MEBT_Mag:PS_QV09": "MEBT_Mag:QV09",
-        "MEBT_Mag:PS_QH10": "MEBT_Mag:QH10",
-        "MEBT_Mag:PS_QV11": "MEBT_Mag:QV11",
-        "MEBT_Mag:PS_QH12": "MEBT_Mag:QH12",
-        "MEBT_Mag:PS_QV13": "MEBT_Mag:QV13",
-        "MEBT_Mag:PS_QH14": "MEBT_Mag:QH14",
-        "CCL_Mag:PS_QH00": "CCL_Mag:QH00",
-        "CCL_Mag:PS_QV101": "CCL_Mag:QV101",
-        "CCL_Mag:PS_QH102": "CCL_Mag:QH102",
-        "CCL_Mag:PS_QV103": "CCL_Mag:QV103",
-        "CCL_Mag:PS_QTH104": "CCL_Mag:QTH104",
-        "CCL_Mag:PS_QTV105": "CCL_Mag:QTV105",
-        "CCL_Mag:PS_QTH106": "CCL_Mag:QTH106",
-        "CCL_Mag:PS_QTV107": "CCL_Mag:QTV107",
-        "CCL_Mag:PS_QTH108": "CCL_Mag:QTH108",
-        "CCL_Mag:PS_QTV109": "CCL_Mag:QTV109",
-        "CCL_Mag:PS_QTH110": "CCL_Mag:QTH110",
-        "CCL_Mag:PS_QTV111": "CCL_Mag:QTV111",
-        "CCL_Mag:PS_QTH112": "CCL_Mag:QTH112",
-        "CCL_Mag:PS_QTV201": "CCL_Mag:QTV201",
-        "CCL_Mag:PS_QTH202": "CCL_Mag:QTH202",
-        "CCL_Mag:PS_QTV203": "CCL_Mag:QTV203",
-        "CCL_Mag:PS_QTH204": "CCL_Mag:QTH204",
-        "CCL_Mag:PS_QTV205": "CCL_Mag:QTV205",
-        "CCL_Mag:PS_QTH206": "CCL_Mag:QTH206",
-        "CCL_Mag:PS_QTV207": "CCL_Mag:QTV207",
-        "CCL_Mag:PS_QTH208": "CCL_Mag:QTH208",
-        "CCL_Mag:PS_QTV209": "CCL_Mag:QTV209",
-        "CCL_Mag:PS_QTH210": "CCL_Mag:QTH210",
-        "CCL_Mag:PS_QTV211": "CCL_Mag:QTV211",
-        "CCL_Mag:PS_QTH212": "CCL_Mag:QTH212",
-        "CCL_Mag:PS_QTV301": "CCL_Mag:QTV301",
-        "CCL_Mag:PS_QTH302": "CCL_Mag:QTH302",
-        "CCL_Mag:PS_QTV303": "CCL_Mag:QTV303",
-        "CCL_Mag:PS_QTH304": "CCL_Mag:QTH304",
-        "CCL_Mag:PS_QTV305": "CCL_Mag:QTV305",
-        "CCL_Mag:PS_QTH306": "CCL_Mag:QTH306",
-        "CCL_Mag:PS_QTV307": "CCL_Mag:QTV307",
-        "CCL_Mag:PS_QTH308": "CCL_Mag:QTH308",
-        "CCL_Mag:PS_QTV309": "CCL_Mag:QTV309",
-        "CCL_Mag:PS_QTH310": "CCL_Mag:QTH310",
-        "CCL_Mag:PS_QTV311": "CCL_Mag:QTV311",
-        "CCL_Mag:PS_QTH312": "CCL_Mag:QTH312",
-        "CCL_Mag:PS_QTV401": "CCL_Mag:QTV401",
-        "CCL_Mag:PS_QTH402": "CCL_Mag:QTH402",
-        "CCL_Mag:PS_QTV403": "CCL_Mag:QTV403",
-        "CCL_Mag:PS_QTH404": "CCL_Mag:QTH404",
-        "CCL_Mag:PS_QTV405": "CCL_Mag:QTV405",
-        "CCL_Mag:PS_QTH406": "CCL_Mag:QTH406",
-        "CCL_Mag:PS_QTV407": "CCL_Mag:QTV407",
-        "CCL_Mag:PS_QH408": "CCL_Mag:QH408",
-        "CCL_Mag:PS_QV409": "CCL_Mag:QV409",
-        "CCL_Mag:PS_QH410": "CCL_Mag:QH410",
-        "CCL_Mag:PS_QV411": "CCL_Mag:QV411",
-        "SCL_Mag:PS_QH00": "SCL_Mag:QH00",
-        "SCL_Mag:PS_QV00": "SCL_Mag:QV00",
-        "SCL_Mag:PS_QH01": "SCL_Mag:QH01",
-        "SCL_Mag:PS_QV01": "SCL_Mag:QV01",
-        "SCL_Mag:PS_QH02": "SCL_Mag:QH02",
-        "SCL_Mag:PS_QV02": "SCL_Mag:QV02",
-        "SCL_Mag:PS_QH03": "SCL_Mag:QH03",
-        "SCL_Mag:PS_QV03": "SCL_Mag:QV03",
-        "SCL_Mag:PS_QH04": "SCL_Mag:QH04",
-        "SCL_Mag:PS_QV04": "SCL_Mag:QV04",
-        "SCL_Mag:PS_QH05": "SCL_Mag:QH05",
-        "SCL_Mag:PS_QV05": "SCL_Mag:QV05",
-        "SCL_Mag:PS_QH06": "SCL_Mag:QH06",
-        "SCL_Mag:PS_QV06": "SCL_Mag:QV06",
-        "SCL_Mag:PS_QH07": "SCL_Mag:QH07",
-        "SCL_Mag:PS_QV07": "SCL_Mag:QV07",
-        "SCL_Mag:PS_QH08": "SCL_Mag:QH08",
-        "SCL_Mag:PS_QV08": "SCL_Mag:QV08",
-        "SCL_Mag:PS_QH09": "SCL_Mag:QH09",
-        "SCL_Mag:PS_QV09": "SCL_Mag:QV09",
-        "SCL_Mag:PS_QH10": "SCL_Mag:QH10",
-        "SCL_Mag:PS_QV10": "SCL_Mag:QV10",
-        "SCL_Mag:PS_QH11": "SCL_Mag:QH11",
-        "SCL_Mag:PS_QV11": "SCL_Mag:QV11",
-        "SCL_Mag:PS_QH12": "SCL_Mag:QH12",
-        "SCL_Mag:PS_QV12": "SCL_Mag:QV12",
-        "SCL_Mag:PS_QH13": "SCL_Mag:QH13",
-        "SCL_Mag:PS_QV13": "SCL_Mag:QV13",
-        "SCL_Mag:PS_QH14": "SCL_Mag:QH14",
-        "SCL_Mag:PS_QV14": "SCL_Mag:QV14",
-        "SCL_Mag:PS_QH15": "SCL_Mag:QH15",
-        "SCL_Mag:PS_QV15": "SCL_Mag:QV15",
-        "SCL_Mag:PS_QH16": "SCL_Mag:QH16",
-        "SCL_Mag:PS_QV16": "SCL_Mag:QV16",
-        "SCL_Mag:PS_QH17": "SCL_Mag:QH17",
-        "SCL_Mag:PS_QV17": "SCL_Mag:QV17",
-        "SCL_Mag:PS_QH18": "SCL_Mag:QH18",
-        "SCL_Mag:PS_QV18": "SCL_Mag:QV18",
-        "SCL_Mag:PS_QH19": "SCL_Mag:QH19",
-        "SCL_Mag:PS_QV19": "SCL_Mag:QV19",
-        "SCL_Mag:PS_QH20": "SCL_Mag:QH20",
-        "SCL_Mag:PS_QV20": "SCL_Mag:QV20",
-        "SCL_Mag:PS_QH21": "SCL_Mag:QH21",
-        "SCL_Mag:PS_QV21": "SCL_Mag:QV21",
-        "SCL_Mag:PS_QH22": "SCL_Mag:QH22",
-        "SCL_Mag:PS_QV22": "SCL_Mag:QV22",
-        "SCL_Mag:PS_QH23": "SCL_Mag:QH23",
-        "SCL_Mag:PS_QV23": "SCL_Mag:QV23",
-        "SCL_Mag:PS_QH24": "SCL_Mag:QH24",
-        "SCL_Mag:PS_QV24": "SCL_Mag:QV24",
-        "SCL_Mag:PS_QH25": "SCL_Mag:QH25",
-        "SCL_Mag:PS_QV25": "SCL_Mag:QV25",
-        "SCL_Mag:PS_QH26": "SCL_Mag:QH26",
-        "SCL_Mag:PS_QV26": "SCL_Mag:QV26",
-        "SCL_Mag:PS_QH27": "SCL_Mag:QH27",
-        "SCL_Mag:PS_QV27": "SCL_Mag:QV27",
-        "SCL_Mag:PS_QH28": "SCL_Mag:QH28",
-        "SCL_Mag:PS_QV28": "SCL_Mag:QV28",
-        "SCL_Mag:PS_QH29": "SCL_Mag:QH29",
-        "SCL_Mag:PS_QV29": "SCL_Mag:QV29",
-        "SCL_Mag:PS_QH30": "SCL_Mag:QH30",
-        "SCL_Mag:PS_QV30": "SCL_Mag:QV30",
-        "SCL_Mag:PS_QH31": "SCL_Mag:QH31",
-        "SCL_Mag:PS_QV31": "SCL_Mag:QV31",
-        "SCL_Mag:PS_QH32": "SCL_Mag:QH32",
-        "SCL_Mag:PS_QV32": "SCL_Mag:QV32",
-        "SCL_Mag:PS_QH33": "SCL_Mag:QH33",
-        "HEBT_Mag:PS_QV01": "HEBT_Mag:QV01",
-        "HEBT_Mag:PS_QH02": "HEBT_Mag:QH02",
-        "HEBT_Mag:PS_QV03": "HEBT_Mag:QV03",
-        "HEBT_Mag:PS_QH04": "HEBT_Mag:QH04",
-        "HEBT_Mag:PS_QV05": "HEBT_Mag:QV05",
-        "HEBT_Mag:PS_QH06": "HEBT_Mag:QH06",
-        "HEBT_Mag:PS_QV07": "HEBT_Mag:QV07",
-        "HEBT_Mag:PS_QH08": "HEBT_Mag:QH08",
-        "HEBT_Mag:PS_QV09": "HEBT_Mag:QV09",
-        "HEBT_Mag:PS_QH10": "HEBT_Mag:QH10",
-        "HEBT_Mag:PS_QV11": "HEBT_Mag:QV11"
+        "MEBT_Mag:PS_QH01": {
+            "PyORBIT_Name": "MEBT_Mag:QH01",
+            "Polarity": -1
+        },
+        "MEBT_Mag:PS_QV02": {
+            "PyORBIT_Name": "MEBT_Mag:QV02",
+            "Polarity": 1
+        },
+        "MEBT_Mag:PS_QH03": {
+            "PyORBIT_Name": "MEBT_Mag:QH03",
+            "Polarity": -1
+        },
+        "MEBT_Mag:PS_QV04": {
+            "PyORBIT_Name": "MEBT_Mag:QV04",
+            "Polarity": 1
+        },
+        "MEBT_Mag:PS_QH05": {
+            "PyORBIT_Name": "MEBT_Mag:QH05",
+            "Polarity": -1
+        },
+        "MEBT_Mag:PS_QV06": {
+            "PyORBIT_Name": "MEBT_Mag:QV06",
+            "Polarity": 1
+        },
+        "MEBT_Mag:PS_QH07": {
+            "PyORBIT_Name": "MEBT_Mag:QH07",
+            "Polarity": -1
+        },
+        "MEBT_Mag:PS_QH08": {
+            "PyORBIT_Name": "MEBT_Mag:QH08",
+            "Polarity": -1
+        },
+        "MEBT_Mag:PS_QV09": {
+            "PyORBIT_Name": "MEBT_Mag:QV09",
+            "Polarity": 1
+        },
+        "MEBT_Mag:PS_QH10": {
+            "PyORBIT_Name": "MEBT_Mag:QH10",
+            "Polarity": -1
+        },
+        "MEBT_Mag:PS_QV11": {
+            "PyORBIT_Name": "MEBT_Mag:QV11",
+            "Polarity": 1
+        },
+        "MEBT_Mag:PS_QH12": {
+            "PyORBIT_Name": "MEBT_Mag:QH12",
+            "Polarity": -1
+        },
+        "MEBT_Mag:PS_QV13": {
+            "PyORBIT_Name": "MEBT_Mag:QV13",
+            "Polarity": 1
+        },
+        "MEBT_Mag:PS_QH14": {
+            "PyORBIT_Name": "MEBT_Mag:QH14",
+            "Polarity": -1
+        },
+        "CCL_Mag:PS_QH00": {
+            "PyORBIT_Name": "CCL_Mag:QH00",
+            "Polarity": -1
+        },
+        "CCL_Mag:PS_QV101": {
+            "PyORBIT_Name": "CCL_Mag:QV101",
+            "Polarity": 1
+        },
+        "CCL_Mag:PS_QH102": {
+            "PyORBIT_Name": "CCL_Mag:QH102",
+            "Polarity": -1
+        },
+        "CCL_Mag:PS_QV103": {
+            "PyORBIT_Name": "CCL_Mag:QV103",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH104": {
+            "PyORBIT_Name": "CCL_Mag:QTH104",
+            "Power_Supply": "CCL_Mag:PS_Q104t111",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV105": {
+            "PyORBIT_Name": "CCL_Mag:QTV105",
+            "Power_Supply": "CCL_Mag:PS_Q104t111",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH106": {
+            "PyORBIT_Name": "CCL_Mag:QTH106",
+            "Power_Supply": "CCL_Mag:PS_Q104t111",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV107": {
+            "PyORBIT_Name": "CCL_Mag:QTV107",
+            "Power_Supply": "CCL_Mag:PS_Q104t111",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH108": {
+            "PyORBIT_Name": "CCL_Mag:QTH108",
+            "Power_Supply": "CCL_Mag:PS_Q104t111",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV109": {
+            "PyORBIT_Name": "CCL_Mag:QTV109",
+            "Power_Supply": "CCL_Mag:PS_Q104t111",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH110": {
+            "PyORBIT_Name": "CCL_Mag:QTH110",
+            "Power_Supply": "CCL_Mag:PS_Q104t111",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV111": {
+            "PyORBIT_Name": "CCL_Mag:QTV111",
+            "Power_Supply": "CCL_Mag:PS_Q104t111",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH112": {
+            "PyORBIT_Name": "CCL_Mag:QTH112",
+            "Power_Supply": "CCL_Mag:PS_Q112t207",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV201": {
+            "PyORBIT_Name": "CCL_Mag:QTV201",
+            "Power_Supply": "CCL_Mag:PS_Q112t207",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH202": {
+            "PyORBIT_Name": "CCL_Mag:QTH202",
+            "Power_Supply": "CCL_Mag:PS_Q112t207",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV203": {
+            "PyORBIT_Name": "CCL_Mag:QTV203",
+            "Power_Supply": "CCL_Mag:PS_Q112t207",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH204": {
+            "PyORBIT_Name": "CCL_Mag:QTH204",
+            "Power_Supply": "CCL_Mag:PS_Q112t207",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV205": {
+            "PyORBIT_Name": "CCL_Mag:QTV205",
+            "Power_Supply": "CCL_Mag:PS_Q112t207",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH206": {
+            "PyORBIT_Name": "CCL_Mag:QTH206",
+            "Power_Supply": "CCL_Mag:PS_Q112t207",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV207": {
+            "PyORBIT_Name": "CCL_Mag:QTV207",
+            "Power_Supply": "CCL_Mag:PS_Q112t207",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH208": {
+            "PyORBIT_Name": "CCL_Mag:QTH208",
+            "Power_Supply": "CCL_Mag:PS_Q208t303",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV209": {
+            "PyORBIT_Name": "CCL_Mag:QTV209",
+            "Power_Supply": "CCL_Mag:PS_Q208t303",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH210": {
+            "PyORBIT_Name": "CCL_Mag:QTH210",
+            "Power_Supply": "CCL_Mag:PS_Q208t303",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV211": {
+            "PyORBIT_Name": "CCL_Mag:QTV211",
+            "Power_Supply": "CCL_Mag:PS_Q208t303",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH212": {
+            "PyORBIT_Name": "CCL_Mag:QTH212",
+            "Power_Supply": "CCL_Mag:PS_Q208t303",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV301": {
+            "PyORBIT_Name": "CCL_Mag:QTV301",
+            "Power_Supply": "CCL_Mag:PS_Q208t303",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH302": {
+            "PyORBIT_Name": "CCL_Mag:QTH302",
+            "Power_Supply": "CCL_Mag:PS_Q208t303",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV303": {
+            "PyORBIT_Name": "CCL_Mag:QTV303",
+            "Power_Supply": "CCL_Mag:PS_Q208t303",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH304": {
+            "PyORBIT_Name": "CCL_Mag:QTH304",
+            "Power_Supply": "CCL_Mag:PS_Q304t311",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV305": {
+            "PyORBIT_Name": "CCL_Mag:QTV305",
+            "Power_Supply": "CCL_Mag:PS_Q304t311",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH306": {
+            "PyORBIT_Name": "CCL_Mag:QTH306",
+            "Power_Supply": "CCL_Mag:PS_Q304t311",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV307": {
+            "PyORBIT_Name": "CCL_Mag:QTV307",
+            "Power_Supply": "CCL_Mag:PS_Q304t311",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH308": {
+            "PyORBIT_Name": "CCL_Mag:QTH308",
+            "Power_Supply": "CCL_Mag:PS_Q304t311",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV309": {
+            "PyORBIT_Name": "CCL_Mag:QTV309",
+            "Power_Supply": "CCL_Mag:PS_Q304t311",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH310": {
+            "PyORBIT_Name": "CCL_Mag:QTH310",
+            "Power_Supply": "CCL_Mag:PS_Q304t311",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV311": {
+            "PyORBIT_Name": "CCL_Mag:QTV311",
+            "Power_Supply": "CCL_Mag:PS_Q304t311",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH312": {
+            "PyORBIT_Name": "CCL_Mag:QTH312",
+            "Power_Supply": "CCL_Mag:PS_Q312t407",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV401": {
+            "PyORBIT_Name": "CCL_Mag:QTV401",
+            "Power_Supply": "CCL_Mag:PS_Q312t407",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH402": {
+            "PyORBIT_Name": "CCL_Mag:QTH402",
+            "Power_Supply": "CCL_Mag:PS_Q312t407",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV403": {
+            "PyORBIT_Name": "CCL_Mag:QTV403",
+            "Power_Supply": "CCL_Mag:PS_Q312t407",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH404": {
+            "PyORBIT_Name": "CCL_Mag:QTH404",
+            "Power_Supply": "CCL_Mag:PS_Q312t407",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV405": {
+            "PyORBIT_Name": "CCL_Mag:QTV405",
+            "Power_Supply": "CCL_Mag:PS_Q312t407",
+            "Polarity": 1
+        },
+        "CCL_Mag:ShntC_QTH406": {
+            "PyORBIT_Name": "CCL_Mag:QTH406",
+            "Power_Supply": "CCL_Mag:PS_Q312t407",
+            "Polarity": -1
+        },
+        "CCL_Mag:ShntC_QTV407": {
+            "PyORBIT_Name": "CCL_Mag:QTV407",
+            "Power_Supply": "CCL_Mag:PS_Q312t407",
+            "Polarity": 1
+        },
+        "CCL_Mag:PS_QH408": {
+            "PyORBIT_Name": "CCL_Mag:QH408",
+            "Polarity": -1
+        },
+        "CCL_Mag:PS_QV409": {
+            "PyORBIT_Name": "CCL_Mag:QV409",
+            "Polarity": 1
+        },
+        "CCL_Mag:PS_QH410": {
+            "PyORBIT_Name": "CCL_Mag:QH410",
+            "Polarity": -1
+        },
+        "CCL_Mag:PS_QV411": {
+            "PyORBIT_Name": "CCL_Mag:QV411",
+            "Polarity": 1
+        },
+        "SCL_Mag:PS_QH00": {
+            "PyORBIT_Name": "SCL_Mag:QH00",
+            "Polarity": -1
+        },
+        "SCL_Mag:PS_QV00": {
+            "PyORBIT_Name": "SCL_Mag:QV00",
+            "Polarity": 1
+        },
+        "SCL_Mag:PS_QH10": {
+            "PyORBIT_Name": "SCL_Mag:QH10",
+            "Polarity": -1
+        },
+        "SCL_Mag:PS_QV10": {
+            "PyORBIT_Name": "SCL_Mag:QV10",
+            "Polarity": 1
+        },
+        "SCL_Mag:PS_QH11": {
+            "PyORBIT_Name": "SCL_Mag:QH11",
+            "Polarity": -1
+        },
+        "SCL_Mag:PS_QV11": {
+            "PyORBIT_Name": "SCL_Mag:QV11",
+            "Polarity": 1
+        },
+        "SCL_Mag:PS_QH30": {
+            "PyORBIT_Name": "SCL_Mag:QH30",
+            "Polarity": -1
+        },
+        "SCL_Mag:PS_QV30": {
+            "PyORBIT_Name": "SCL_Mag:QV30",
+            "Polarity": 1
+        },
+        "SCL_Mag:PS_QH31": {
+            "PyORBIT_Name": "SCL_Mag:QH31",
+            "Polarity": -1
+        },
+        "SCL_Mag:PS_QV31": {
+            "PyORBIT_Name": "SCL_Mag:QV31",
+            "Polarity": 1
+        },
+        "SCL_Mag:PS_QV32": {
+            "PyORBIT_Name": "SCL_Mag:QV32",
+            "Polarity": 1
+        },
+        "HEBT_Mag:PS_QV01": {
+            "PyORBIT_Name": "HEBT_Mag:QV01",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QH02": {
+            "PyORBIT_Name": "HEBT_Mag:QH02",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QV03": {
+            "PyORBIT_Name": "HEBT_Mag:QV03",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QV05": {
+            "PyORBIT_Name": "HEBT_Mag:QV05",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QV07": {
+            "PyORBIT_Name": "HEBT_Mag:QV07",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QH08": {
+            "PyORBIT_Name": "HEBT_Mag:QH08",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QV09": {
+            "PyORBIT_Name": "HEBT_Mag:QV09",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QH10": {
+            "PyORBIT_Name": "HEBT_Mag:QH10",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QV11": {
+            "PyORBIT_Name": "HEBT_Mag:QV11",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QH20": {
+            "PyORBIT_Name": "HEBT_Mag:QH20",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QV21": {
+            "PyORBIT_Name": "HEBT_Mag:QV21",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QH22": {
+            "PyORBIT_Name": "HEBT_Mag:QH22",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QV23": {
+            "PyORBIT_Name": "HEBT_Mag:QV23",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QH24": {
+            "PyORBIT_Name": "HEBT_Mag:QH24",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QV25": {
+            "PyORBIT_Name": "HEBT_Mag:QV25",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QH26": {
+            "PyORBIT_Name": "HEBT_Mag:QH26",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QV27": {
+            "PyORBIT_Name": "HEBT_Mag:QV27",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QH28": {
+            "PyORBIT_Name": "HEBT_Mag:QH28",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QV29": {
+            "PyORBIT_Name": "HEBT_Mag:QV29",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QH30": {
+            "PyORBIT_Name": "HEBT_Mag:QH30",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QV31": {
+            "PyORBIT_Name": "HEBT_Mag:QV31",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QH32": {
+            "PyORBIT_Name": "HEBT_Mag:QH32",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QV33": {
+            "PyORBIT_Name": "HEBT_Mag:QV33",
+            "Polarity": -1
+        },
+        "HEBT_Mag:PS_QH34": {
+            "PyORBIT_Name": "HEBT_Mag:QH34",
+            "Polarity": -1
+        }
+    },
+    "Quadrupole_Doublet": {
+        "SCL_Mag:PS_QD01": {
+            "Positive": "SCL_Mag:QH01",
+            "Negative": "SCL_Mag:QV01"
+        },
+        "SCL_Mag:PS_QD02": {
+            "Positive": "SCL_Mag:QH02",
+            "Negative": "SCL_Mag:QV02"
+        },
+        "SCL_Mag:PS_QD03": {
+            "Positive": "SCL_Mag:QH03",
+            "Negative": "SCL_Mag:QV03"
+        },
+        "SCL_Mag:PS_QD04": {
+            "Positive": "SCL_Mag:QH04",
+            "Negative": "SCL_Mag:QV04"
+        },
+        "SCL_Mag:PS_QD05": {
+            "Positive": "SCL_Mag:QH05",
+            "Negative": "SCL_Mag:QV05"
+        },
+        "SCL_Mag:PS_QD06": {
+            "Positive": "SCL_Mag:QH06",
+            "Negative": "SCL_Mag:QV06"
+        },
+        "SCL_Mag:PS_QD07": {
+            "Positive": "SCL_Mag:QH07",
+            "Negative": "SCL_Mag:QV07"
+        },
+        "SCL_Mag:PS_QD08": {
+            "Positive": "SCL_Mag:QH08",
+            "Negative": "SCL_Mag:QV08"
+        },
+        "SCL_Mag:PS_QD09": {
+            "Positive": "SCL_Mag:QH09",
+            "Negative": "SCL_Mag:QV09"
+        },
+        "SCL_Mag:PS_QD12": {
+            "Positive": "SCL_Mag:QH12",
+            "Negative": "SCL_Mag:QV12"
+        },
+        "SCL_Mag:PS_QD13": {
+            "Positive": "SCL_Mag:QH13",
+            "Negative": "SCL_Mag:QV13"
+        },
+        "SCL_Mag:PS_QD14": {
+            "Positive": "SCL_Mag:QH14",
+            "Negative": "SCL_Mag:QV14"
+        },
+        "SCL_Mag:PS_QD15": {
+            "Positive": "SCL_Mag:QH15",
+            "Negative": "SCL_Mag:QV15"
+        },
+        "SCL_Mag:PS_QD16": {
+            "Positive": "SCL_Mag:QH16",
+            "Negative": "SCL_Mag:QV16"
+        },
+        "SCL_Mag:PS_QD17": {
+            "Positive": "SCL_Mag:QH17",
+            "Negative": "SCL_Mag:QV17"
+        },
+        "SCL_Mag:PS_QD18": {
+            "Positive": "SCL_Mag:QH18",
+            "Negative": "SCL_Mag:QV18"
+        },
+        "SCL_Mag:PS_QD19": {
+            "Positive": "SCL_Mag:QH19",
+            "Negative": "SCL_Mag:QV19"
+        },
+        "SCL_Mag:PS_QD20": {
+            "Positive": "SCL_Mag:QH20",
+            "Negative": "SCL_Mag:QV20"
+        },
+        "SCL_Mag:PS_QD21": {
+            "Positive": "SCL_Mag:QH21",
+            "Negative": "SCL_Mag:QV21"
+        },
+        "SCL_Mag:PS_QD22": {
+            "Positive": "SCL_Mag:QH22",
+            "Negative": "SCL_Mag:QV22"
+        },
+        "SCL_Mag:PS_QD23": {
+            "Positive": "SCL_Mag:QH23",
+            "Negative": "SCL_Mag:QV23"
+        },
+        "SCL_Mag:PS_QD24": {
+            "Positive": "SCL_Mag:QH24",
+            "Negative": "SCL_Mag:QV24"
+        },
+        "SCL_Mag:PS_QD25": {
+            "Positive": "SCL_Mag:QH25",
+            "Negative": "SCL_Mag:QV25"
+        },
+        "SCL_Mag:PS_QD26": {
+            "Positive": "SCL_Mag:QH26",
+            "Negative": "SCL_Mag:QV26"
+        },
+        "SCL_Mag:PS_QD27": {
+            "Positive": "SCL_Mag:QH27",
+            "Negative": "SCL_Mag:QV27"
+        },
+        "SCL_Mag:PS_QD28": {
+            "Positive": "SCL_Mag:QH28",
+            "Negative": "SCL_Mag:QV28"
+        },
+        "SCL_Mag:PS_QD29": {
+            "Positive": "SCL_Mag:QH29",
+            "Negative": "SCL_Mag:QV29"
+        }
+    },
+    "Quadrupole_Set": {
+        "SCL_Mag:PS_QH32a33": {
+            "Positive": [
+                "SCL_Mag:QH32",
+                "SCL_Mag:QH33"
+            ]
+        },
+        "HEBT_Mag:PS_QH04a06": {
+            "Positive": [
+                "HEBT_Mag:QH04",
+                "HEBT_Mag:QH06"
+            ]
+        },
+        "HEBT_Mag:PS_QH12t18e": {
+            "Positive": [
+                "HEBT_Mag:QH12",
+                "HEBT_Mag:QH14",
+                "HEBT_Mag:QH16",
+                "HEBT_Mag:QH18"
+            ]
+        },
+        "HEBT_Mag:PS_QV13t19o": {
+            "Negative": [
+                "HEBT_Mag:QV13",
+                "HEBT_Mag:QV15",
+                "HEBT_Mag:QV17",
+                "HEBT_Mag:QV19"
+            ]
+        }
     },
     "Corrector": {
         "MEBT_Mag:PS_DCH01": "MEBT_Mag:DCH01",
@@ -380,7 +836,19 @@
         "HEBT_Mag:PS_DCV05": "HEBT_Mag:DCV05",
         "HEBT_Mag:PS_DCH06": "HEBT_Mag:DCH06",
         "HEBT_Mag:PS_DCV07": "HEBT_Mag:DCV07",
-        "HEBT_Mag:PS_DCH08": "HEBT_Mag:DCH08"
+        "HEBT_Mag:PS_DCH08": "HEBT_Mag:DCH08",
+        "HEBT_Mag:PS_DCH14": "HEBT_Mag:DCH14",
+        "HEBT_Mag:PS_DCV15": "HEBT_Mag:DCV15",
+        "HEBT_Mag:PS_DCH16": "HEBT_Mag:DCH16",
+        "HEBT_Mag:PS_DCV17": "HEBT_Mag:DCV17",
+        "HEBT_Mag:PS_DCV21": "HEBT_Mag:DCV21",
+        "HEBT_Mag:PS_DCH22": "HEBT_Mag:DCH22",
+        "HEBT_Mag:PS_DCV23": "HEBT_Mag:DCV23",
+        "HEBT_Mag:PS_DCH24": "HEBT_Mag:DCH24",
+        "HEBT_Mag:PS_DCH28": "HEBT_Mag:DCH28",
+        "HEBT_Mag:PS_DCV29": "HEBT_Mag:DCV29",
+        "HEBT_Mag:PS_DCH30": "HEBT_Mag:DCH30",
+        "HEBT_Mag:PS_DCV31": "HEBT_Mag:DCV31"
     },
     "Wire_Scanner": {
         "MEBT_Diag:WS01": "MEBT_Diag:WS01",
@@ -407,7 +875,13 @@
         "HEBT_Diag:WS02": "HEBT_Diag:WS02",
         "HEBT_Diag:WS03": "HEBT_Diag:WS03",
         "HEBT_Diag:WS04": "HEBT_Diag:WS04",
-        "HEBT_Diag:WS09": "HEBT_Diag:WS09"
+        "HEBT_Diag:WS09": "HEBT_Diag:WS09",
+        "HEBT_Diag:WS16": "HEBT_Diag:WS16",
+        "HEBT_Diag:WS20": "HEBT_Diag:WS20",
+        "HEBT_Diag:WS21": "HEBT_Diag:WS21",
+        "HEBT_Diag:WS22": "HEBT_Diag:WS22",
+        "HEBT_Diag:WS23": "HEBT_Diag:WS23",
+        "HEBT_Diag:WS32": "HEBT_Diag:WS32"
     },
     "BPM": {
         "MEBT_Diag:BPM01": "MEBT_Diag:BPM01",
@@ -480,8 +954,33 @@
         "HEBT_Diag:BPM08": "HEBT_Diag:BPM08",
         "HEBT_Diag:BPM09": "HEBT_Diag:BPM09",
         "HEBT_Diag:BPM10": "HEBT_Diag:BPM10",
-        "HEBT_Diag:BPM11": "HEBT_Diag:BPM11"
+        "HEBT_Diag:BPM11": "HEBT_Diag:BPM11",
+        "HEBT_Diag:BPM16": "HEBT_Diag:BPM16",
+        "HEBT_Diag:BPM17": "HEBT_Diag:BPM17",
+        "HEBT_Diag:BPM18": "HEBT_Diag:BPM18",
+        "HEBT_Diag:BPM19": "HEBT_Diag:BPM19",
+        "HEBT_Diag:BPM20": "HEBT_Diag:BPM20",
+        "HEBT_Diag:BPM21": "HEBT_Diag:BPM21",
+        "HEBT_Diag:BPM22": "HEBT_Diag:BPM22",
+        "HEBT_Diag:BPM23": "HEBT_Diag:BPM23",
+        "HEBT_Diag:BPM24": "HEBT_Diag:BPM24",
+        "HEBT_Diag:BPM25": "HEBT_Diag:BPM25",
+        "HEBT_Diag:BPM26": "HEBT_Diag:BPM26",
+        "HEBT_Diag:BPM27": "HEBT_Diag:BPM27",
+        "HEBT_Diag:BPM28": "HEBT_Diag:BPM28",
+        "HEBT_Diag:BPM29": "HEBT_Diag:BPM29",
+        "HEBT_Diag:BPM30": "HEBT_Diag:BPM30",
+        "HEBT_Diag:BPM31": "HEBT_Diag:BPM31",
+        "HEBT_Diag:BPM32": "HEBT_Diag:BPM32",
+        "HEBT_Diag:BPM33": "HEBT_Diag:BPM33"
     },
+    "Power_Supply": [
+        "CCL_Mag:PS_Q104t111",
+        "CCL_Mag:PS_Q112t207",
+        "CCL_Mag:PS_Q208t303",
+        "CCL_Mag:PS_Q304t311",
+        "CCL_Mag:PS_Q312t407"
+    ],
     "Physics_BPM": {
         "MEBT_Phys:BPM01": "MEBT_Diag:BPM01",
         "MEBT_Phys:BPM04": "MEBT_Diag:BPM04",
@@ -553,6 +1052,24 @@
         "HEBT_Phys:BPM08": "HEBT_Diag:BPM08",
         "HEBT_Phys:BPM09": "HEBT_Diag:BPM09",
         "HEBT_Phys:BPM10": "HEBT_Diag:BPM10",
-        "HEBT_Phys:BPM11": "HEBT_Diag:BPM11"
+        "HEBT_Phys:BPM11": "HEBT_Diag:BPM11",
+        "HEBT_Phys:BPM16": "HEBT_Diag:BPM16",
+        "HEBT_Phys:BPM17": "HEBT_Diag:BPM17",
+        "HEBT_Phys:BPM18": "HEBT_Diag:BPM18",
+        "HEBT_Phys:BPM19": "HEBT_Diag:BPM19",
+        "HEBT_Phys:BPM20": "HEBT_Diag:BPM20",
+        "HEBT_Phys:BPM21": "HEBT_Diag:BPM21",
+        "HEBT_Phys:BPM22": "HEBT_Diag:BPM22",
+        "HEBT_Phys:BPM23": "HEBT_Diag:BPM23",
+        "HEBT_Phys:BPM24": "HEBT_Diag:BPM24",
+        "HEBT_Phys:BPM25": "HEBT_Diag:BPM25",
+        "HEBT_Phys:BPM26": "HEBT_Diag:BPM26",
+        "HEBT_Phys:BPM27": "HEBT_Diag:BPM27",
+        "HEBT_Phys:BPM28": "HEBT_Diag:BPM28",
+        "HEBT_Phys:BPM29": "HEBT_Diag:BPM29",
+        "HEBT_Phys:BPM30": "HEBT_Diag:BPM30",
+        "HEBT_Phys:BPM31": "HEBT_Diag:BPM31",
+        "HEBT_Phys:BPM32": "HEBT_Diag:BPM32",
+        "HEBT_Phys:BPM33": "HEBT_Diag:BPM33"
     }
 }
