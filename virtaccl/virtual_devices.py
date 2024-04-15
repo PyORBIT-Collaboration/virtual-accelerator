@@ -2,6 +2,7 @@ import math
 from numpy.random import random_sample
 from typing import Optional, Union, List, Dict, Any
 
+
 class Transform:
 
     def real(self, x):
@@ -213,13 +214,18 @@ class Device:
         self.settings[reason] = param
         return param
 
-    def register_readback(self, reason: str, setting: Parameter, transform=None, noise=None, name_override=None):
-        definition = setting.get_definition()
-        param = Parameter(reason, definition, transform=transform, noise=noise, name_override=name_override)
-        param.device = self
-        param.setting_param = setting
-        self.readbacks[reason] = param
-        return param
+    def register_readback(self, reason: str, setting: Parameter = None, transform=None, noise=None, name_override=None):
+        if setting is not None:
+            definition = setting.get_definition()
+            param = Parameter(reason, definition, transform=transform, noise=noise, name_override=name_override)
+            param.device = self
+            param.setting_param = setting
+            self.readbacks[reason] = param
+        else:
+            param = Parameter(reason, definition={}, transform=transform, noise=noise, name_override=name_override)
+            param.device = self
+            self.readbacks[reason] = param
+            return param
 
     def get_setting(self, reason):
         return self.settings[reason].get_param()
@@ -237,8 +243,9 @@ class Device:
     def update_readback(self, reason, value=None):
         rb_param = self.readbacks[reason]
         if value is None:
-            value = rb_param.setting_param.get_param()
-        rb_param.set_param(value)
+            if rb_param.setting_param is not None:
+                value = rb_param.setting_param.get_param()
+                rb_param.set_param(value)
 
     def update_readbacks(self):
         for reason, param in self.readbacks.items():
