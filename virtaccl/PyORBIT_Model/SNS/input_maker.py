@@ -56,9 +56,8 @@ def main():
 
     cavity_key = 'RF_Cavity'
     quad_key = 'Quadrupole'
-    q_sets_h_key = 'Positive'
-    q_sets_v_key = 'Negative'
     corrector_key = 'Corrector'
+    bend_key = 'Bend'
     BPM_key = 'BPM'
     pBPM_key = 'Physics_BPM'
     WS_key = 'Wire_Scanner'
@@ -70,6 +69,7 @@ def main():
     devices = {cavity_key: {},
                quad_key: {},
                corrector_key: {},
+               bend_key: {},
                WS_key: {},
                BPM_key: {},
                PS_key: [],
@@ -225,6 +225,13 @@ def main():
             split_name = or_name.split(':')
             ps_name = f"{split_name[0]}:PS_{split_name[1]}"
             devices[corrector_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: -1}
+            devices[PS_key].append(ps_name)
+
+        elif ele_type == bend_key:
+            pv_name = or_name
+            split_name = or_name.split(':')
+            ps_name = f"{split_name[0]}:PS_{split_name[1]}"
+            devices[bend_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name}
             devices[PS_key].append(ps_name)
 
         elif ele_type == WS_key:
