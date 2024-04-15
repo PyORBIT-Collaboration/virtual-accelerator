@@ -243,8 +243,9 @@ class Device:
     def update_readback(self, reason, value=None):
         rb_param = self.readbacks[reason]
         if value is None:
-            value = rb_param.setting_param.get_param()
-        rb_param.set_param(value)
+            if rb_param.setting_param is not None:
+                value = rb_param.setting_param.get_param()
+                rb_param.set_param(value)
 
     def update_readbacks(self):
         for reason, param in self.readbacks.items():

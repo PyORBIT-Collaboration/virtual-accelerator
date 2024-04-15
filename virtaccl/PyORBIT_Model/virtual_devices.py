@@ -415,6 +415,8 @@ class Magnet_Power_Supply(Device):
     field_readback_pv = 'B'  # [T/m]
     field_noise = 1e-6  # [T/m]
 
+    book_pv = 'B_Book'
+
     def __init__(self, name: str):
         super().__init__(name)
 
@@ -423,6 +425,8 @@ class Magnet_Power_Supply(Device):
         # Registers the device's PVs with the server.
         field_param = self.register_setting(Magnet_Power_Supply.field_set_pv, default=0)
         self.register_readback(Quadrupole.field_readback_pv, field_param, noise=field_noise)
+
+        self.register_setting(Magnet_Power_Supply.book_pv, default=0)
 
 
 # An unrealistic device associated with BPMs in the PyORBIT model that tracks values that cannot be measured directly.
