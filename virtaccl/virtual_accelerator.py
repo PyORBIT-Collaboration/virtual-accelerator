@@ -14,10 +14,9 @@ from orbit.core.bunch import Bunch
 from orbit.core.linac import BaseRfGap, RfGapTTF
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
-from virtaccl.PyORBIT_Model.virtual_devices import Cavity, BPM, Quadrupole, Quadrupole_Doublet, Corrector, P_BPM, \
-    WireScanner, Quadrupole_Set, Magnet_Power_Supply
-from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS, SNS_Quadrupole, \
-    SNS_Quadrupole_Doublet, SNS_Quadrupole_Set, SNS_Corrector
+from virtaccl.PyORBIT_Model.virtual_devices import Cavity, BPM, Quadrupole, Corrector, P_BPM, \
+    WireScanner, Magnet_Power_Supply
+from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS, SNS_Corrector
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 
@@ -144,11 +143,11 @@ def main():
             server.add_device(rf_device)
 
     mag_ps = devices_dict["Power_Supply"]
-    linked_quads = {}
+    ps_quads = {}
     for name in mag_ps:
         ps_device = Magnet_Power_Supply(name)
         server.add_device(ps_device)
-        linked_quads[name] = {"quads": {}, "avg_field": 0}
+        ps_quads[name] = {"quads": {}, "avg_field": 0}
 
     quads = devices_dict["Quadrupole"]
     for name, device_dict in quads.items():
@@ -157,49 +156,38 @@ def main():
         if ele_name in element_list:
             initial_settings = model.get_element_parameters(ele_name)
             if "Power_Supply" in device_dict and device_dict["Power_Supply"] in mag_ps:
-                linked_quads[device_dict["Power_Supply"]]["quads"][name] = [ele_name, initial_settings['dB/dr'], polarity]
-                linked_quads[device_dict["Power_Supply"]]["avg_field"] += abs(initial_settings['dB/dr'])
-            else:
-                quad_device = SNS_Quadrupole(name, ele_name, initial_dict=initial_settings, polarity=polarity)
+                ps_name = device_dict["Power_Supply"]
+                if "Power_Shunt" in device_dict and device_dict["Power_Shunt"] in mag_ps:
+                    shunt_name = device_dict["Power_Shunt"]
+                    ps_quads[ps_name]["quads"] |= \
+                        {name:  {'or_name': ele_name,'shunt': shunt_name, 'dB/dr': abs(initial_settings['dB/dr']),
+                                 'polarity': polarity}}
+                    ps_quads[ps_name]["avg_field"] += abs(initial_settings['dB/dr'])
+                else:
+                    ps_quads[ps_name]["quads"] |= \
+                        {name:  {'or_name': ele_name,'shunt': 'none', 'dB/dr': abs(initial_settings['dB/dr']),
+                                 'polarity': polarity}}
+                    ps_quads[ps_name]["avg_field"] += abs(initial_settings['dB/dr'])
+
+    for ps_name, ps_dict in ps_quads.items():
+        if ps_dict["quads"]:
+            ps_dict["avg_field"] /= len(ps_dict["quads"])
+            ps_field = ps_dict["avg_field"]
+            power_supply = server.devices[ps_name]
+            power_supply.settings['B_Set'].set_default_value(ps_field)
+            for quad_name, quad_model in ps_dict["quads"].items():
+                if quad_model['shunt'] == 'none':
+                    quad_device = Quadrupole(quad_name, quad_model['or_name'], power_supply=power_supply,
+                                             polarity=quad_model['polarity'])
+                else:
+                    shunt_name = quad_model['shunt']
+                    power_shunt = server.devices[shunt_name]
+                    field = quad_model['dB/dr']
+                    shunt_field = field - ps_field
+                    power_shunt.settings['B_Set'].set_default_value(shunt_field)
+                    quad_device = Quadrupole(quad_name, quad_model['or_name'], power_supply=power_supply,
+                                             power_shunt=power_shunt, polarity=quad_model['polarity'])
                 server.add_device(quad_device)
-
-    for ps_name, ps_dict in linked_quads.items():
-        ps_dict["avg_field"] /= len(ps_dict["quads"])
-        ps_field = ps_dict["avg_field"]
-        power_supply = server.devices[ps_name]
-        power_supply.settings['B_Set'].set_default_value(ps_field)
-        for quad_name, quad_model in ps_dict["quads"].items():
-            shunt_field = quad_model[1] - ps_field * quad_model[1] / abs(quad_model[1])
-            initial_settings = {'dB/dr': shunt_field}
-            quad_device = SNS_Quadrupole(quad_name, quad_model[0], initial_dict=initial_settings,
-                                         polarity=quad_model[2], power_supply=power_supply)
-            server.add_device(quad_device)
-
-    doublets = devices_dict["Quadrupole_Doublet"]
-    for name, model_names in doublets.items():
-        positive_name = model_names['Positive']
-        negative_name = model_names['Negative']
-        if positive_name in element_list and negative_name in element_list:
-            initial_settings = model.get_element_parameters(model_names['Positive'])
-            doublet_device = SNS_Quadrupole_Doublet(name, positive_name, negative_name, initial_dict=initial_settings)
-            server.add_device(doublet_device)
-
-    quad_sets = devices_dict["Quadrupole_Set"]
-    for name, model_names in quad_sets.items():
-        p_names = []
-        n_names = []
-        if 'Positive' in model_names:
-            p_names = model_names['Positive']
-        if 'Negative' in model_names:
-            n_names = model_names['Negative']
-        if all(names in element_list for names in (p_names + n_names)):
-            if len(p_names) > 0:
-                initial_settings = model.get_element_parameters(p_names[0])
-            else:
-                initial_settings = model.get_element_parameters(n_names[0])
-            set_device = SNS_Quadrupole_Set(name, h_model_names=p_names, v_model_names=n_names,
-                                            initial_dict=initial_settings)
-            server.add_device(set_device)
 
     correctors = devices_dict["Corrector"]
     for name, model_name in correctors.items():

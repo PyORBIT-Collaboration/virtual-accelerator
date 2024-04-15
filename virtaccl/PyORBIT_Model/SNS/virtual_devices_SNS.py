@@ -4,8 +4,7 @@ from random import randint, random
 from typing import Dict, Any, Union, Literal
 
 import numpy as np
-from virtaccl.PyORBIT_Model.virtual_devices import Cavity, Quadrupole, Quadrupole_Doublet, Quadrupole_Set, Corrector, \
-    WireScanner
+from virtaccl.PyORBIT_Model.virtual_devices import Cavity, Quadrupole, Corrector, WireScanner
 
 from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTInv, LinearTInv
 
@@ -67,88 +66,6 @@ class SNS_Cavity(Cavity):
         self.register_setting(SNS_Cavity.mode_pv, default=0.0)
         self.register_setting(SNS_Cavity.reset_pv, default=0.0)
         self.register_setting(SNS_Cavity.MPS_pv, default=0.0, name_override=mps_name)
-
-
-class SNS_Quadrupole(Quadrupole):
-    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None,
-                 power_supply: Device = None, polarity: Literal[-1, 1] = None):
-        super().__init__(name, model_name, initial_dict, power_supply, polarity)
-
-        readback_name = name.replace('PS_', '', 1)
-
-        # Sets up initial values.
-        if initial_dict is not None:
-            initial_field = initial_dict[Quadrupole.field_key]
-        else:
-            initial_field = 0.0
-
-        field_noise = AbsNoise(noise=1e-6)
-
-        pol = 1
-        if polarity is not None:
-            pol = polarity
-        pol_transform = LinearTInv(scaler=pol)
-
-        initial_field = pol_transform.raw(initial_field)
-
-        # Registers the device's PVs with the server
-        field_param = self.register_setting(Quadrupole.field_set_pv, default=initial_field, transform=pol_transform)
-        self.register_readback(Quadrupole.field_readback_pv, field_param, noise=field_noise,
-                               name_override=readback_name)
-
-
-class SNS_Quadrupole_Doublet(Quadrupole_Doublet):
-    def __init__(self, name: str, h_model_name: str, v_model_name: str, initial_dict: Dict[str, Any] = None):
-        super().__init__(name, h_model_name, v_model_name, initial_dict)
-
-        readback_name = name.replace('PS_', '', 1)
-
-        # Sets up initial values.
-        if initial_dict is not None:
-            initial_field = initial_dict[Quadrupole_Doublet.field_key]
-        else:
-            initial_field = 0.0
-
-        field_noise = AbsNoise(noise=1e-6)
-
-        pol = -1
-        pol_transform = LinearTInv(scaler=pol)
-
-        initial_field = pol_transform.raw(initial_field)
-
-        # Registers the device's PVs with the server
-        field_param = self.register_setting(Quadrupole_Doublet.field_set_pv, default=initial_field,
-                                            transform=pol_transform)
-        self.register_readback(Quadrupole_Doublet.field_readback_pv, field_param, noise=field_noise,
-                               name_override=readback_name)
-
-
-class SNS_Quadrupole_Set(Quadrupole_Set):
-    def __init__(self, name: str, h_model_names: list[str] = None, v_model_names: list[str] = None,
-                 initial_dict: Dict[str, Any] = None):
-        super().__init__(name, h_model_names, v_model_names, initial_dict)
-
-        readback_name = name.replace('PS_', '', 1)
-
-        # Sets up initial values.
-        if initial_dict is not None:
-            initial_field = initial_dict[Quadrupole_Set.field_key]
-        else:
-            initial_field = 0.0
-
-        field_noise = AbsNoise(noise=1e-6)
-
-        pol = -1
-        pol_transform = LinearTInv(scaler=pol)
-
-        if 'PS_QV' in name:
-            initial_field = -initial_field
-        initial_field = pol_transform.raw(initial_field)
-
-        # Registers the device's PVs with the server
-        field_param = self.register_setting(Quadrupole_Set.field_set_pv, default=initial_field, transform=pol_transform)
-        self.register_readback(Quadrupole_Set.field_readback_pv, field_param, noise=field_noise,
-                               name_override=readback_name)
 
 
 class SNS_Corrector(Corrector):
