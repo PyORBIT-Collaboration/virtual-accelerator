@@ -39,7 +39,7 @@ class OrbitModel(Model):
         self.accLattice = input_lattice
         # Here we specify the node types in PyORBIT we don't need to worry about and start a set to make sure each
         # element we do care about has a unique name.
-        ignored_nodes = {'baserfgap', 'drift', 'tilt', 'fringe', 'markerLinacNode', 'baseLinacNode', 'bend'}
+        ignored_nodes = {'baserfgap', 'drift', 'tilt', 'fringe', 'markerLinacNode', 'baseLinacNode'}
         unique_elements = set()
 
         # Set up a dictionary to reference different objects within the lattice by their name. Not all elements are
