@@ -68,37 +68,6 @@ class SNS_Cavity(Cavity):
         self.register_setting(SNS_Cavity.MPS_pv, default=0.0, name_override=mps_name)
 
 
-class SNS_Corrector(Corrector):
-    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None):
-        if model_name is None:
-            self.model_name = name
-        else:
-            self.model_name = model_name
-        super().__init__(name, model_name, initial_dict)
-
-        readback_name = name.replace('PS_', '', 1)
-
-        # Sets initial values for parameters.
-        if initial_dict is not None:
-            initial_field = initial_dict[Corrector.field_key]
-        else:
-            initial_field = 0.0
-
-        field_noise = AbsNoise(noise=1e-6)
-
-        pol = -1
-        pol_transform = LinearTInv(scaler=pol)
-
-        initial_field = pol_transform.raw(initial_field)
-
-        # Registers the device's PVs with the server
-        field_param = self.register_setting(Corrector.field_set_pv, default=initial_field, transform=pol_transform)
-        self.register_readback(Corrector.field_readback_pv, field_param, noise=field_noise,
-                               name_override=readback_name)
-        self.register_setting(Corrector.field_high_limit_pv, default=Corrector.field_limits[1])
-        self.register_setting(Corrector.field_low_limit_pv, default=Corrector.field_limits[0])
-
-
 class SNS_Dummy_BCM(Device):
     # EPICS PV names
     freq_pv = 'FFT_peak2'
