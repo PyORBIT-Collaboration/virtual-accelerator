@@ -75,58 +75,42 @@ class Quadrupole(Device):
 
 class Corrector(Device):
     # EPICS PV names
-    field_set_pv = 'B_Set'  # [T]
     field_readback_pv = 'B'  # [T]
     field_noise = 1e-6  # [T/m]
 
     # PyORBIT parameter keys
     field_key = 'B'  # [T]
 
-    # Initial field limits
-    field_high_limit_pv = 'B_Set.HOPR'
-    field_low_limit_pv = 'B_Set.LOPR'
-    field_limits = [-0.1, 0.1]  # [T]
+    def __init__(self, name: str, model_name: str, power_supply: Device, polarity: Literal[-1, 1] = None):
 
-    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None):
-        if model_name is None:
-            self.model_name = name
-        else:
-            self.model_name = model_name
-        super().__init__(name, self.model_name)
+        self.model_name = model_name
+        self.power_supply = power_supply
 
-        # Sets initial values for parameters.
-        if initial_dict is not None:
-            initial_field = initial_dict[Corrector.field_key]
-        else:
-            initial_field = 0.0
+        super().__init__(name, self.model_name, self.power_supply)
 
-        field_noise = AbsNoise(noise=Corrector.field_noise)
+        self.pol_transform = LinearTInv(scaler=polarity)
+
+        field_noise = AbsNoise(noise=Quadrupole.field_noise)
 
         # Registers the device's PVs with the server
-        field_param = self.register_setting(Corrector.field_set_pv, default=initial_field)
-        self.register_readback(Corrector.field_readback_pv, field_param, noise=field_noise)
-
-        self.register_setting(Corrector.field_high_limit_pv, default=Corrector.field_limits[1])
-        self.register_setting(Corrector.field_low_limit_pv, default=Corrector.field_limits[0])
+        self.register_readback(Quadrupole.field_readback_pv, noise=field_noise)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the setting PV names are associated with their model keys.
     # These settings have been limited by field_limits, meaning that if the server has a value outside that range, the
     # model will receive the max or min limit defined above.
     def get_settings(self):
-        params_dict = {}
-        for setting, param in self.settings.items():
-            param_value = param.get_param()
-            if setting == Corrector.field_set_pv:
-                low_limit = self.get_setting(Corrector.field_low_limit_pv)
-                high_limit = self.get_setting(Corrector.field_high_limit_pv)
-                if param_value < low_limit:
-                    param_value = low_limit
-                elif param_value > high_limit:
-                    param_value = high_limit
-                params_dict = params_dict | {Corrector.field_key: param_value}
+        new_field = self.power_supply.get_setting(Magnet_Power_Supply.field_set_pv)
+        new_field = self.pol_transform.real(new_field)
+
+        params_dict = {Corrector.field_key: new_field}
         model_dict = {self.model_name: params_dict}
         return model_dict
+
+    def update_readbacks(self):
+        rb_field = abs(self.get_settings()[self.model_name][Corrector.field_key])
+        rb_param = self.readbacks[Corrector.field_readback_pv]
+        rb_param.set_param(rb_field)
 
 
 class Cavity(Device):
@@ -415,6 +399,11 @@ class Magnet_Power_Supply(Device):
     field_readback_pv = 'B'  # [T/m]
     field_noise = 1e-6  # [T/m]
 
+    # Initial field limits
+    field_high_limit_pv = 'B_Set.HOPR'
+    field_low_limit_pv = 'B_Set.LOPR'
+    field_limits = [-100.0, 100.0]  # [T]
+
     book_pv = 'B_Book'
 
     def __init__(self, name: str):
@@ -425,6 +414,9 @@ class Magnet_Power_Supply(Device):
         # Registers the device's PVs with the server.
         field_param = self.register_setting(Magnet_Power_Supply.field_set_pv, default=0)
         self.register_readback(Quadrupole.field_readback_pv, field_param, noise=field_noise)
+
+        self.register_setting(Magnet_Power_Supply.field_high_limit_pv, default=Magnet_Power_Supply.field_limits[1])
+        self.register_setting(Magnet_Power_Supply.field_low_limit_pv, default=Magnet_Power_Supply.field_limits[0])
 
         self.register_setting(Magnet_Power_Supply.book_pv, default=0)
 

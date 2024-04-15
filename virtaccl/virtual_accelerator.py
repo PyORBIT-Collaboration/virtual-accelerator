@@ -16,7 +16,7 @@ from orbit.core.linac import BaseRfGap, RfGapTTF
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.PyORBIT_Model.virtual_devices import Cavity, BPM, Quadrupole, Corrector, P_BPM, \
     WireScanner, Magnet_Power_Supply
-from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS, SNS_Corrector
+from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 
@@ -190,11 +190,17 @@ def main():
                 server.add_device(quad_device)
 
     correctors = devices_dict["Corrector"]
-    for name, model_name in correctors.items():
-        if model_name in element_list:
-            initial_settings = model.get_element_parameters(model_name)
-            corrector_device = SNS_Corrector(name, model_name, initial_dict=initial_settings)
-            server.add_device(corrector_device)
+    for name, device_dict in correctors.items():
+        ele_name = device_dict["PyORBIT_Name"]
+        polarity = device_dict["Polarity"]
+        if ele_name in element_list:
+            initial_field = model.get_element_parameters(ele_name)['B']
+            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in mag_ps:
+                ps_name = device_dict["Power_Supply"]
+                power_supply = server.devices[ps_name]
+                power_supply.settings['B_Set'].set_default_value(initial_field)
+                corrector_device = Corrector(name, ele_name, power_supply=power_supply, polarity=polarity)
+                server.add_device(corrector_device)
 
     wire_scanners = devices_dict["Wire_Scanner"]
     for name, model_name in wire_scanners.items():
