@@ -82,7 +82,6 @@ class Corrector(Device):
     field_key = 'B'  # [T]
 
     def __init__(self, name: str, model_name: str, power_supply: Device, polarity: Literal[-1, 1] = None):
-
         self.model_name = model_name
         self.power_supply = power_supply
 
@@ -90,10 +89,10 @@ class Corrector(Device):
 
         self.pol_transform = LinearTInv(scaler=polarity)
 
-        field_noise = AbsNoise(noise=Quadrupole.field_noise)
+        field_noise = AbsNoise(noise=Corrector.field_noise)
 
         # Registers the device's PVs with the server
-        self.register_readback(Quadrupole.field_readback_pv, noise=field_noise)
+        self.register_readback(Corrector.field_readback_pv, noise=field_noise)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the setting PV names are associated with their model keys.
@@ -111,6 +110,31 @@ class Corrector(Device):
         rb_field = abs(self.get_settings()[self.model_name][Corrector.field_key])
         rb_param = self.readbacks[Corrector.field_readback_pv]
         rb_param.set_param(rb_field)
+
+
+class Bend(Device):
+    # EPICS PV names
+    field_readback_pv = 'B'  # [T]
+    field_noise = 1e-6  # [T/m]
+
+    # PyORBIT parameter keys
+    field_key = 'B'  # [T]
+
+    def __init__(self, name: str, model_name: str, power_supply: Device):
+        self.model_name = model_name
+        self.power_supply = power_supply
+
+        super().__init__(name, self.model_name, self.power_supply)
+
+        field_noise = AbsNoise(noise=Bend.field_noise)
+
+        # Registers the device's PVs with the server
+        self.register_readback(Bend.field_readback_pv, noise=field_noise)
+
+    def update_readbacks(self):
+        field = self.power_supply.get_setting(Magnet_Power_Supply.field_set_pv)
+        rb_param = self.readbacks[Bend.field_readback_pv]
+        rb_param.set_param(field)
 
 
 class Cavity(Device):

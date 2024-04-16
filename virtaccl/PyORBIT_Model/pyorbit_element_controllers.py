@@ -24,6 +24,7 @@ class PyorbitElementTypes:
     """PyORBIT keys for parameters we want to pass to the virtual accelerator."""
     quad_params = ['dB/dr']
     corrector_params = ['B']
+    bend_params = []
     cavity_params = ['phase', 'amp']
     bpm_params = ['frequency', 'x_avg', 'y_avg', 'phi_avg', 'amp_avg', 'energy', 'beta', 'part_num']
     ws_params = ['x_histogram', 'y_histogram', 'x_avg', 'y_avg']
@@ -41,11 +42,12 @@ class PyorbitElementTypes:
     param_ref_dict = {quad_key: quad_params,
                       cavity_key: cavity_params,
                       corrector_key: corrector_params,
+                      bend_key: bend_params,
                       BPM_key: bpm_params,
                       WS_key: ws_params}
 
     """Classes that can change the beam."""
-    optic_classes = (quad_key, cavity_key, corrector_key)
+    optic_classes = (quad_key, cavity_key, corrector_key, bend_key)
 
     """Classes that measure the beam."""
     diagnostic_classes = (BPM_key, WS_key)

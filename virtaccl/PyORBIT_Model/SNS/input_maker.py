@@ -46,19 +46,20 @@ def main():
     quad_doublets = {'SCL': ['01', '02', '03', '04', '05', '06', '07', '08', '09', '12', '13', '14', '15', '16',
                              '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29']}
 
-    quad_sets = {'CCL_Mag:PS_Q104t111': {'hor': ['104', '106', '108', '110'], 'ver': ['105', '107', '109', '111']},
-                 'CCL_Mag:PS_Q112t207': {'hor': ['112', '202', '204', '206'], 'ver': ['201', '203', '205', '207']},
-                 'CCL_Mag:PS_Q208t303': {'hor': ['208', '210', '212', '302'], 'ver': ['209', '211', '301', '303']},
-                 'CCL_Mag:PS_Q304t311': {'hor': ['304', '306', '308', '310'], 'ver': ['305', '307', '309', '311']},
-                 'CCL_Mag:PS_Q312t407': {'hor': ['312', '402', '404', '406'], 'ver': ['401', '403', '405', '407']},
-                 'SCL_Mag:PS_QH32a33': ['32', '33'], 'HEBT_Mag:PS_QH04a06': ['04', '06'],
-                 'HEBT_Mag:PS_QH12t18e': ['12', '14', '16', '18'], 'HEBT_Mag:PS_QV13t19o': ['13', '15', '17', '19']}
+    mag_sets = {'CCL_Mag:PS_Q104t111': {'hor': ['104', '106', '108', '110'], 'ver': ['105', '107', '109', '111']},
+                'CCL_Mag:PS_Q112t207': {'hor': ['112', '202', '204', '206'], 'ver': ['201', '203', '205', '207']},
+                'CCL_Mag:PS_Q208t303': {'hor': ['208', '210', '212', '302'], 'ver': ['209', '211', '301', '303']},
+                'CCL_Mag:PS_Q304t311': {'hor': ['304', '306', '308', '310'], 'ver': ['305', '307', '309', '311']},
+                'CCL_Mag:PS_Q312t407': {'hor': ['312', '402', '404', '406'], 'ver': ['401', '403', '405', '407']},
+                'SCL_Mag:PS_QH32a33': ['32', '33'], 'HEBT_Mag:PS_QH04a06': ['04', '06'],
+                'HEBT_Mag:PS_QH12t18e': ['12', '14', '16', '18'], 'HEBT_Mag:PS_QV13t19o': ['13', '15', '17', '19'],
+                'HEBT_Mag:PS_DH12t18': ['12', '13', '14', '15', '16', '17', '18'],
+                'HEBT_Mag:PS_QV25t31o': ['25', '27', '29', '31'], 'HEBT_Mag:PS_QH26a28a32': ['26', '28', '32']}
 
     cavity_key = 'RF_Cavity'
     quad_key = 'Quadrupole'
-    q_sets_h_key = 'Positive'
-    q_sets_v_key = 'Negative'
     corrector_key = 'Corrector'
+    bend_key = 'Bend'
     BPM_key = 'BPM'
     pBPM_key = 'Physics_BPM'
     WS_key = 'Wire_Scanner'
@@ -70,6 +71,7 @@ def main():
     devices = {cavity_key: {},
                quad_key: {},
                corrector_key: {},
+               bend_key: {},
                WS_key: {},
                BPM_key: {},
                PS_key: [],
@@ -108,108 +110,122 @@ def main():
                 elif 'QV' in or_name:
                     devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: 1}
 
-            elif 'CCL_Mag:' in or_name and (q_num in quad_sets['CCL_Mag:PS_Q104t111']['hor'] or
-                                            q_num in quad_sets['CCL_Mag:PS_Q104t111']['ver']):
+            elif 'CCL_Mag:' in or_name and (q_num in mag_sets['CCL_Mag:PS_Q104t111']['hor'] or
+                                            q_num in mag_sets['CCL_Mag:PS_Q104t111']['ver']):
                 ps_name = 'CCL_Mag:PS_Q104t111'
                 pv_name = or_name
                 shunt_name = f"{split_name[0]}:ShntC_{split_name[1]}"
                 if ps_name not in devices[PS_key]:
                     devices[PS_key].append(ps_name)
                 devices[PS_key].append(shunt_name)
-                if q_num in quad_sets['CCL_Mag:PS_Q104t111']['hor']:
+                if q_num in mag_sets['CCL_Mag:PS_Q104t111']['hor']:
                     devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, shunt_key: shunt_name,
                                                   polarity_key: -1}
                 else:
                     devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, shunt_key: shunt_name,
                                                   polarity_key: 1}
 
-            elif 'CCL_Mag:' in or_name and (q_num in quad_sets['CCL_Mag:PS_Q112t207']['hor'] or
-                                            q_num in quad_sets['CCL_Mag:PS_Q112t207']['ver']):
+            elif 'CCL_Mag:' in or_name and (q_num in mag_sets['CCL_Mag:PS_Q112t207']['hor'] or
+                                            q_num in mag_sets['CCL_Mag:PS_Q112t207']['ver']):
                 ps_name = 'CCL_Mag:PS_Q112t207'
                 pv_name = or_name
                 shunt_name = f"{split_name[0]}:ShntC_{split_name[1]}"
                 if ps_name not in devices[PS_key]:
                     devices[PS_key].append(ps_name)
                 devices[PS_key].append(shunt_name)
-                if q_num in quad_sets['CCL_Mag:PS_Q112t207']['hor']:
+                if q_num in mag_sets['CCL_Mag:PS_Q112t207']['hor']:
                     devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, shunt_key: shunt_name,
                                                   polarity_key: -1}
                 else:
                     devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, shunt_key: shunt_name,
                                                   polarity_key: 1}
 
-            elif 'CCL_Mag:' in or_name and (q_num in quad_sets['CCL_Mag:PS_Q208t303']['hor'] or
-                                            q_num in quad_sets['CCL_Mag:PS_Q208t303']['ver']):
+            elif 'CCL_Mag:' in or_name and (q_num in mag_sets['CCL_Mag:PS_Q208t303']['hor'] or
+                                            q_num in mag_sets['CCL_Mag:PS_Q208t303']['ver']):
                 ps_name = 'CCL_Mag:PS_Q208t303'
                 pv_name = or_name
                 shunt_name = f"{split_name[0]}:ShntC_{split_name[1]}"
                 if ps_name not in devices[PS_key]:
                     devices[PS_key].append(ps_name)
                 devices[PS_key].append(shunt_name)
-                if q_num in quad_sets['CCL_Mag:PS_Q208t303']['hor']:
+                if q_num in mag_sets['CCL_Mag:PS_Q208t303']['hor']:
                     devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, shunt_key: shunt_name,
                                                   polarity_key: -1}
                 else:
                     devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, shunt_key: shunt_name,
                                                   polarity_key: 1}
 
-            elif 'CCL_Mag:' in or_name and (q_num in quad_sets['CCL_Mag:PS_Q304t311']['hor'] or
-                                            q_num in quad_sets['CCL_Mag:PS_Q304t311']['ver']):
+            elif 'CCL_Mag:' in or_name and (q_num in mag_sets['CCL_Mag:PS_Q304t311']['hor'] or
+                                            q_num in mag_sets['CCL_Mag:PS_Q304t311']['ver']):
                 ps_name = 'CCL_Mag:PS_Q304t311'
                 pv_name = or_name
                 shunt_name = f"{split_name[0]}:ShntC_{split_name[1]}"
                 if ps_name not in devices[PS_key]:
                     devices[PS_key].append(ps_name)
                 devices[PS_key].append(shunt_name)
-                if q_num in quad_sets['CCL_Mag:PS_Q304t311']['hor']:
+                if q_num in mag_sets['CCL_Mag:PS_Q304t311']['hor']:
                     devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, shunt_key: shunt_name,
                                                   polarity_key: -1}
                 else:
                     devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, shunt_key: shunt_name,
                                                   polarity_key: 1}
 
-            elif 'CCL_Mag:' in or_name and (q_num in quad_sets['CCL_Mag:PS_Q312t407']['hor'] or
-                                            q_num in quad_sets['CCL_Mag:PS_Q312t407']['ver']):
+            elif 'CCL_Mag:' in or_name and (q_num in mag_sets['CCL_Mag:PS_Q312t407']['hor'] or
+                                            q_num in mag_sets['CCL_Mag:PS_Q312t407']['ver']):
                 ps_name = 'CCL_Mag:PS_Q312t407'
                 pv_name = or_name
                 shunt_name = f"{split_name[0]}:ShntC_{split_name[1]}"
                 if ps_name not in devices[PS_key]:
                     devices[PS_key].append(ps_name)
                 devices[PS_key].append(shunt_name)
-                if q_num in quad_sets['CCL_Mag:PS_Q312t407']['hor']:
+                if q_num in mag_sets['CCL_Mag:PS_Q312t407']['hor']:
                     devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, shunt_key: shunt_name,
                                                   polarity_key: -1}
                 else:
                     devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, shunt_key: shunt_name,
                                                   polarity_key: 1}
 
-            elif 'SCL_Mag:QH' in or_name and q_num in quad_sets['SCL_Mag:PS_QH32a33']:
+            elif 'SCL_Mag:QH' in or_name and q_num in mag_sets['SCL_Mag:PS_QH32a33']:
                 pv_name = or_name
                 ps_name = 'SCL_Mag:PS_QH32a33'
                 if ps_name not in devices[PS_key]:
                     devices[PS_key].append(ps_name)
                 devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: -1}
 
-            elif 'HEBT_Mag:QH' in or_name and q_num in quad_sets['HEBT_Mag:PS_QH04a06']:
+            elif 'HEBT_Mag:QH' in or_name and q_num in mag_sets['HEBT_Mag:PS_QH04a06']:
                 pv_name = or_name
                 ps_name = 'HEBT_Mag:PS_QH04a06'
                 if ps_name not in devices[PS_key]:
                     devices[PS_key].append(ps_name)
                 devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: -1}
 
-            elif 'HEBT_Mag:QH' in or_name and q_num in quad_sets['HEBT_Mag:PS_QH12t18e']:
+            elif 'HEBT_Mag:QH' in or_name and q_num in mag_sets['HEBT_Mag:PS_QH12t18e']:
                 pv_name = or_name
                 ps_name = 'HEBT_Mag:PS_QH12t18e'
                 if ps_name not in devices[PS_key]:
                     devices[PS_key].append(ps_name)
                 devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: -1}
 
-            elif 'HEBT_Mag:QV' in or_name and q_num in quad_sets['HEBT_Mag:PS_QV13t19o']:
+            elif 'HEBT_Mag:QV' in or_name and q_num in mag_sets['HEBT_Mag:PS_QV13t19o']:
                 pv_name = or_name
                 ps_name = 'HEBT_Mag:PS_QV13t19o'
                 if ps_name not in devices[PS_key]:
                     devices[PS_key].append(ps_name)
                 devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: 1}
+
+            elif 'HEBT_Mag:QV' in or_name and q_num in mag_sets['HEBT_Mag:PS_QV25t31o']:
+                pv_name = or_name
+                ps_name = 'HEBT_Mag:PS_QV25t31o'
+                if ps_name not in devices[PS_key]:
+                    devices[PS_key].append(ps_name)
+                devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: 1}
+
+            elif 'HEBT_Mag:QH' in or_name and q_num in mag_sets['HEBT_Mag:PS_QH26a28a32']:
+                pv_name = or_name
+                ps_name = 'HEBT_Mag:PS_QH26a28a32'
+                if ps_name not in devices[PS_key]:
+                    devices[PS_key].append(ps_name)
+                devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: -1}
 
             else:
                 pv_name = or_name
@@ -226,6 +242,20 @@ def main():
             ps_name = f"{split_name[0]}:PS_{split_name[1]}"
             devices[corrector_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: -1}
             devices[PS_key].append(ps_name)
+
+        elif ele_type == bend_key:
+            pv_name = or_name
+            split_name = or_name.split(':')
+            b_num = split_name[1][-2:]
+            if b_num in mag_sets['HEBT_Mag:PS_DH12t18']:
+                ps_name = 'HEBT_Mag:PS_DH12t18'
+                if ps_name not in devices[PS_key]:
+                    devices[PS_key].append(ps_name)
+                devices[bend_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name}
+            else:
+                ps_name = f"{split_name[0]}:PS_{split_name[1]}"
+                devices[bend_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name}
+                devices[PS_key].append(ps_name)
 
         elif ele_type == WS_key:
             pv_name = or_name
