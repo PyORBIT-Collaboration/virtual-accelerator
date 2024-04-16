@@ -39,21 +39,21 @@ def main():
 
     # Number (in Hz) determining the update rate for the virtual accelerator.
     parser.add_argument('--refresh_rate', default=1.0, type=float,
-                        help='Rate (in Hz) at which the virtual accelerator updates.')
+                        help='Rate (in Hz) at which the virtual accelerator updates (default=1.0).')
 
     # Lattice xml input file and the sequences desired from that file.
     parser.add_argument('--lattice', default=loc / 'PyORBIT_Model/SNS/sns_sts_linac.xml', type=str,
                         help='Pathname of lattice file')
     parser.add_argument("--start", default="MEBT", type=str,
-                        help='Desired subsection of the lattice to start the model with.')
-    parser.add_argument("--end", default="HEBT2", type=str,
-                        help='Desired subsection of the lattice to end the model with.')
+                        help='Desired subsection of the lattice to start the model with (default=MEBT).')
+    parser.add_argument("end", nargs='?', default="HEBT2", type=str,
+                        help='Desired subsection of the lattice to end the model with (default=HEBT2).')
 
     # Desired initial bunch file and the desired number of particles from that file.
     parser.add_argument('--bunch', default=loc / 'PyORBIT_Model/SNS/MEBT_in.dat', type=str,
                         help='Pathname of input bunch file.')
     parser.add_argument('--particle_number', default=1000, type=int,
-                        help='Number of particles to use.')
+                        help='Number of particles to use (default=1000).')
 
     # Json file that contains a dictionary connecting EPICS name of devices with their phase offset.
     parser.add_argument('--phase_offset', default=None, type=str,
