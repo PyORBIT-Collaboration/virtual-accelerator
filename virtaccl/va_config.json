@@ -932,27 +932,27 @@
         },
         "HEBT_Mag:QV25": {
             "PyORBIT_Name": "HEBT_Mag:QV25",
-            "Power_Supply": "HEBT_Mag:PS_QV25",
+            "Power_Supply": "HEBT_Mag:PS_QV25t31o",
             "Polarity": 1
         },
         "HEBT_Mag:QH26": {
             "PyORBIT_Name": "HEBT_Mag:QH26",
-            "Power_Supply": "HEBT_Mag:PS_QH26",
+            "Power_Supply": "HEBT_Mag:PS_QH26a28a32",
             "Polarity": -1
         },
         "HEBT_Mag:QV27": {
             "PyORBIT_Name": "HEBT_Mag:QV27",
-            "Power_Supply": "HEBT_Mag:PS_QV27",
+            "Power_Supply": "HEBT_Mag:PS_QV25t31o",
             "Polarity": 1
         },
         "HEBT_Mag:QH28": {
             "PyORBIT_Name": "HEBT_Mag:QH28",
-            "Power_Supply": "HEBT_Mag:PS_QH28",
+            "Power_Supply": "HEBT_Mag:PS_QH26a28a32",
             "Polarity": -1
         },
         "HEBT_Mag:QV29": {
             "PyORBIT_Name": "HEBT_Mag:QV29",
-            "Power_Supply": "HEBT_Mag:PS_QV29",
+            "Power_Supply": "HEBT_Mag:PS_QV25t31o",
             "Polarity": 1
         },
         "HEBT_Mag:QH30": {
@@ -962,12 +962,12 @@
         },
         "HEBT_Mag:QV31": {
             "PyORBIT_Name": "HEBT_Mag:QV31",
-            "Power_Supply": "HEBT_Mag:PS_QV31",
+            "Power_Supply": "HEBT_Mag:PS_QV25t31o",
             "Polarity": 1
         },
         "HEBT_Mag:QH32": {
             "PyORBIT_Name": "HEBT_Mag:QH32",
-            "Power_Supply": "HEBT_Mag:PS_QH32",
+            "Power_Supply": "HEBT_Mag:PS_QH26a28a32",
             "Polarity": -1
         },
         "HEBT_Mag:QV33": {
@@ -1760,31 +1760,31 @@
         },
         "HEBT_Mag:DH12": {
             "PyORBIT_Name": "HEBT_Mag:DH12",
-            "Power_Supply": "HEBT_Mag:PS_DH12"
+            "Power_Supply": "HEBT_Mag:PS_DH12t18"
         },
         "HEBT_Mag:DH13": {
             "PyORBIT_Name": "HEBT_Mag:DH13",
-            "Power_Supply": "HEBT_Mag:PS_DH13"
+            "Power_Supply": "HEBT_Mag:PS_DH12t18"
         },
         "HEBT_Mag:DH14": {
             "PyORBIT_Name": "HEBT_Mag:DH14",
-            "Power_Supply": "HEBT_Mag:PS_DH14"
+            "Power_Supply": "HEBT_Mag:PS_DH12t18"
         },
         "HEBT_Mag:DH15": {
             "PyORBIT_Name": "HEBT_Mag:DH15",
-            "Power_Supply": "HEBT_Mag:PS_DH15"
+            "Power_Supply": "HEBT_Mag:PS_DH12t18"
         },
         "HEBT_Mag:DH16": {
             "PyORBIT_Name": "HEBT_Mag:DH16",
-            "Power_Supply": "HEBT_Mag:PS_DH16"
+            "Power_Supply": "HEBT_Mag:PS_DH12t18"
         },
         "HEBT_Mag:DH17": {
             "PyORBIT_Name": "HEBT_Mag:DH17",
-            "Power_Supply": "HEBT_Mag:PS_DH17"
+            "Power_Supply": "HEBT_Mag:PS_DH12t18"
         },
         "HEBT_Mag:DH18": {
             "PyORBIT_Name": "HEBT_Mag:DH18",
-            "Power_Supply": "HEBT_Mag:PS_DH18"
+            "Power_Supply": "HEBT_Mag:PS_DH12t18"
         },
         "HEBT_Mag:DH25": {
             "PyORBIT_Name": "HEBT_Mag:DH25",
@@ -2184,18 +2184,12 @@
         "HEBT_Mag:PS_QV11",
         "HEBT_Mag:PS_DH11",
         "HEBT_Mag:PS_QH12t18e",
-        "HEBT_Mag:PS_DH12",
+        "HEBT_Mag:PS_DH12t18",
         "HEBT_Mag:PS_QV13t19o",
-        "HEBT_Mag:PS_DH13",
         "HEBT_Mag:PS_DCH14",
-        "HEBT_Mag:PS_DH14",
         "HEBT_Mag:PS_DCV15",
-        "HEBT_Mag:PS_DH15",
         "HEBT_Mag:PS_DCH16",
-        "HEBT_Mag:PS_DH16",
         "HEBT_Mag:PS_DCV17",
-        "HEBT_Mag:PS_DH17",
-        "HEBT_Mag:PS_DH18",
         "HEBT_Mag:PS_QH20",
         "HEBT_Mag:PS_QV21",
         "HEBT_Mag:PS_DCV21",
@@ -2205,19 +2199,14 @@
         "HEBT_Mag:PS_DCV23",
         "HEBT_Mag:PS_QH24",
         "HEBT_Mag:PS_DCH24",
-        "HEBT_Mag:PS_QV25",
+        "HEBT_Mag:PS_QV25t31o",
         "HEBT_Mag:PS_DH25",
-        "HEBT_Mag:PS_QH26",
-        "HEBT_Mag:PS_QV27",
-        "HEBT_Mag:PS_QH28",
+        "HEBT_Mag:PS_QH26a28a32",
         "HEBT_Mag:PS_DCH28",
-        "HEBT_Mag:PS_QV29",
         "HEBT_Mag:PS_DCV29",
         "HEBT_Mag:PS_QH30",
         "HEBT_Mag:PS_DCH30",
-        "HEBT_Mag:PS_QV31",
         "HEBT_Mag:PS_DCV31",
-        "HEBT_Mag:PS_QH32",
         "HEBT_Mag:PS_QV33",
         "HEBT_Mag:PS_QH34",
         "HEBT_Mag:PS_InjSptm",
