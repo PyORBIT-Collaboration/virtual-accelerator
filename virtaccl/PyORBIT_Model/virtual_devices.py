@@ -442,7 +442,7 @@ class Magnet_Power_Supply(Device):
         self.register_setting(Magnet_Power_Supply.field_high_limit_pv, default=Magnet_Power_Supply.field_limits[1])
         self.register_setting(Magnet_Power_Supply.field_low_limit_pv, default=Magnet_Power_Supply.field_limits[0])
 
-        self.register_setting(Magnet_Power_Supply.book_pv, default=0)
+        self.register_readback(Magnet_Power_Supply.book_pv, field_param)
 
 
 # An unrealistic device associated with BPMs in the PyORBIT model that tracks values that cannot be measured directly.

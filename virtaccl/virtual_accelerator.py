@@ -29,7 +29,8 @@ def load_config(filename: Path):
 def main():
     loc = Path(__file__).parent
     va_version = version('virtaccl')
-    parser = argparse.ArgumentParser(description='Run the SNS PyORBIT virtual accelerator server. Version ' + va_version)
+    parser = argparse.ArgumentParser(
+        description='Run the SNS PyORBIT virtual accelerator server. Version ' + va_version)
     # parser.add_argument('--prefix', '-p', default='test', type=str, help='Prefix for PVs')
 
     # Json file that contains a dictionary connecting EPICS name of devices with their associated element model names.
@@ -43,10 +44,10 @@ def main():
     # Lattice xml input file and the sequences desired from that file.
     parser.add_argument('--lattice', default=loc / 'PyORBIT_Model/SNS/sns_sts_linac.xml', type=str,
                         help='Pathname of lattice file')
-    parser.add_argument("--sequences", nargs='*',
-                        help='Desired sections from lattice listed in order without commas',
-                        default=["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
-                                 "SCLMed", "SCLHigh", "HEBT1"])
+    parser.add_argument("--start", default="MEBT", type=str,
+                        help='Desired subsection of the lattice to start the model with.')
+    parser.add_argument("--end", default="HEBT2", type=str,
+                        help='Desired subsection of the lattice to end the model with.')
 
     # Desired initial bunch file and the desired number of particles from that file.
     parser.add_argument('--bunch', default=loc / 'PyORBIT_Model/SNS/MEBT_in.dat', type=str,
@@ -73,7 +74,14 @@ def main():
     update_period = 1 / args.refresh_rate
 
     lattice_file = args.lattice
-    subsections = args.sequences
+    all_sections = ["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
+                    "SCLMed", "SCLHigh", "HEBT1", "HEBT2"]
+    sec_start = all_sections.index(args.start)
+    sec_end = all_sections.index(args.end)
+    subsections = all_sections[sec_start:sec_end + 1]
+    if not subsections:
+        print("Error: No subsections of the lattice selectable using current arguments.")
+        sys.exit()
 
     sns_linac_factory = SNS_LinacLatticeFactory()
     sns_linac_factory.setMaxDriftLength(0.01)
@@ -160,13 +168,13 @@ def main():
                 if "Power_Shunt" in device_dict and device_dict["Power_Shunt"] in mag_ps:
                     shunt_name = device_dict["Power_Shunt"]
                     ps_quads[ps_name]["quads"] |= \
-                        {name:  {'or_name': ele_name,'shunt': shunt_name, 'dB/dr': abs(initial_settings['dB/dr']),
-                                 'polarity': polarity}}
+                        {name: {'or_name': ele_name, 'shunt': shunt_name, 'dB/dr': abs(initial_settings['dB/dr']),
+                                'polarity': polarity}}
                     ps_quads[ps_name]["avg_field"] += abs(initial_settings['dB/dr'])
                 else:
                     ps_quads[ps_name]["quads"] |= \
-                        {name:  {'or_name': ele_name,'shunt': 'none', 'dB/dr': abs(initial_settings['dB/dr']),
-                                 'polarity': polarity}}
+                        {name: {'or_name': ele_name, 'shunt': 'none', 'dB/dr': abs(initial_settings['dB/dr']),
+                                'polarity': polarity}}
                     ps_quads[ps_name]["avg_field"] += abs(initial_settings['dB/dr'])
 
     for ps_name, ps_dict in ps_quads.items():
