@@ -131,6 +131,11 @@ class Bend(Device):
         # Registers the device's PVs with the server
         self.register_readback(Bend.field_readback_pv, noise=field_noise)
 
+    def update_readbacks(self):
+        field = self.power_supply.get_setting(Magnet_Power_Supply.field_set_pv)
+        rb_param = self.readbacks[Bend.field_readback_pv]
+        rb_param.set_param(field)
+
 
 class Cavity(Device):
     # EPICS PV names
