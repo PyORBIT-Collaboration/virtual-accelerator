@@ -1,4 +1,5 @@
 import sys
+import time
 from datetime import datetime
 from typing import Optional, Union, List, Dict, Any
 from pathlib import Path
@@ -356,6 +357,8 @@ class OrbitModel(Model):
             pass
 
         else:
+            track_start_time = time.time()
+
             # I wanted to freeze the lattice to make sure no modifications could be made to it while it is tracking.
             # Still trying to figure out the best way to do so.
             # frozen_lattice = copy.deepcopy(self.accLattice)
@@ -390,8 +393,9 @@ class OrbitModel(Model):
 
             # Track bunch
             frozen_lattice.trackBunch(tracked_bunch, paramsDict=self.model_params, index_start=upstream_index)
+            track_time_taken = time.time() - track_start_time
             if self.debug:
-                print("Bunch tracked")
+                print(f"Bunch tracked. Tracking time was {round(track_time_taken, 3)} seconds")
 
             # Clear the set of changes
             self.current_changes = set()
@@ -403,6 +407,8 @@ class OrbitModel(Model):
             print('Create initial bunch in order to start tracking.')
 
         else:
+            track_start_time = time.time()
+
             # I wanted to freeze the lattice to make sure no modifications could be made to it while it is tracking.
             # Still trying to figure out the best way to do so.
             # frozen_lattice = copy.deepcopy(self.accLattice)
@@ -415,9 +421,10 @@ class OrbitModel(Model):
                 print("Tracking bunch from start...")
 
             # Track bunch
-            frozen_lattice.trackBunch(tracked_bunch, paramsDict=self.model_params, )
+            frozen_lattice.trackBunch(tracked_bunch, paramsDict=self.model_params)
+            track_time_taken = time.time() - track_start_time
             if self.debug:
-                print("Bunch tracked")
+                print(f"Bunch tracked. Tracking time was {round(track_time_taken, 3)} seconds")
 
             # Clear the set of changes
             self.current_changes = set()
