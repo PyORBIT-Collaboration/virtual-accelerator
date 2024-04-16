@@ -32,14 +32,14 @@ To see help:
 virtual_accelerator -h
 ```
 
-Run default MEBT -> HEBT
+Run default MEBT -> HEBT2
 ```bash
 virtual_accelerator
 ```
 
 Run MEBT only (with printing all PVs)
 ```bash
-   virtual_accelerator --debug --bunch MEBT_in.dat MEBT
+   virtual_accelerator --debug --bunch MEBT_in.dat --end MEBT
 ```
 
 ### Run standard examples 
