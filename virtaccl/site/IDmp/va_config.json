@@ -1,10 +1,22 @@
 {
     "Quadrupole": {
-        "IDmp_Mag:PS_QV01": "Quad"
+        "IDmp_Mag:QV01":{
+            "PyORBIT_Name": "Quad",
+            "Power_Supply": "IDmp_Mag:PS_QV01",
+            "Polarity": -1
+        }
     },
     "Corrector": {
-        "IDmp_Mag:PS_DCH01": "HCorrector",
-        "IDmp_Mag:PS_DCV01": "VCorrector"
+        "IDmp_Mag:DCH01": {
+            "PyORBIT_Name": "HCorrector",
+            "Power_Supply": "IDmp_Mag:PS_DCH01",
+            "Polarity": 1
+        },
+        "IDmp_Mag:DCV01": {
+            "PyORBIT_Name": "VCorrector",
+            "Power_Supply": "IDmp_Mag:PS_DCV01",
+            "Polarity": 1
+        }
     },
     "Wire_Scanner": {
         "IDmp_Diag:WS01": "WS01"
@@ -15,6 +27,13 @@
         "IDmp_Diag:BPM01b": "BPM02",
         "IDmp_Diag:BPM01c": "BPM03"
     },
+
+    "Power_Supply": [
+        "IDmp_Mag:PS_QV01",
+        "IDmp_Mag:PS_DCH01",
+        "IDmp_Mag:PS_DCV01"
+    ],
+
     "Physics_BPM": {
         "IDmp_Phys:BPM00": "BPM00",
         "IDmp_Phys:BPM01a": "BPM01",

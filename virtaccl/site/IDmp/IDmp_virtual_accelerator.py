@@ -6,10 +6,8 @@ import argparse
 from pathlib import Path
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
-from virtaccl.PyORBIT_Model.virtual_devices import BPM, Quadrupole_Doublet, P_BPM, \
-    Quadrupole_Set
-from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Dummy_ICS, SNS_Quadrupole, \
-    SNS_Corrector, SNS_WireScanner
+from virtaccl.PyORBIT_Model.virtual_devices import Quadrupole, Corrector, Magnet_Power_Supply, WireScanner, BPM, P_BPM
+from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Dummy_ICS
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 
@@ -64,39 +62,54 @@ def main():
         with open(offset_file, "r") as json_file:
             offset_dict = json.load(json_file)
 
-    for device_type, devices in devices_dict.items():
-        for name, model_name in devices.items():
+    mag_ps = devices_dict["Power_Supply"]
 
-            if not isinstance(model_name, list):
-                model_names = [model_name]
-            else:
-                model_names = model_name
+    quads = devices_dict["Quadrupole"]
+    for name, device_dict in quads.items():
+        ele_name = device_dict["PyORBIT_Name"]
+        polarity = device_dict["Polarity"]
+        if ele_name in element_list:
+            initial_field = abs(model.get_element_parameters(ele_name)['dB/dr'])
+            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in mag_ps:
+                ps_name = device_dict["Power_Supply"]
+                ps_device = Magnet_Power_Supply(ps_name, initial_field)
+                server.add_device(ps_device)
+                corrector_device = Quadrupole(name, ele_name, power_supply=ps_device, polarity=polarity)
+                server.add_device(corrector_device)
 
-            if all(names in element_list for names in model_names):
-                if device_type == "Quadrupole":
-                    initial_settings = model.get_element_parameters(model_name)
-                    quad_device = SNS_Quadrupole(name, model_name, initial_dict=initial_settings)
-                    server.add_device(quad_device)
+    correctors = devices_dict["Corrector"]
+    for name, device_dict in correctors.items():
+        ele_name = device_dict["PyORBIT_Name"]
+        polarity = device_dict["Polarity"]
+        if ele_name in element_list:
+            initial_field = abs(model.get_element_parameters(ele_name)['B'])
+            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in mag_ps:
+                ps_name = device_dict["Power_Supply"]
+                ps_device = Magnet_Power_Supply(ps_name, initial_field)
+                server.add_device(ps_device)
+                corrector_device = Corrector(name, ele_name, power_supply=ps_device, polarity=polarity)
+                server.add_device(corrector_device)
 
-                if device_type == "Corrector":
-                    initial_settings = model.get_element_parameters(model_name)
-                    corrector_device = SNS_Corrector(name, model_name, initial_dict=initial_settings)
-                    server.add_device(corrector_device)
+    wire_scanners = devices_dict["Wire_Scanner"]
+    for name, model_name in wire_scanners.items():
+        if model_name in element_list:
+            ws_device = WireScanner(name, model_name)
+            server.add_device(ws_device)
 
-                if device_type == "Wire_Scanner":
-                    ws_device = SNS_WireScanner(name, model_name)
-                    server.add_device(ws_device)
+    bpms = devices_dict["BPM"]
+    for name, model_name in bpms.items():
+        if model_name in element_list:
+            phase_offset = 0
+            if offset_file is not None:
+                phase_offset = offset_dict[name]
+            bpm_device = BPM(name, model_name, phase_offset=phase_offset)
+            server.add_device(bpm_device)
 
-                if device_type == "BPM":
-                    phase_offset = 0
-                    if offset_file is not None:
-                        phase_offset = offset_dict[name]
-                    bpm_device = BPM(name, model_name, phase_offset=phase_offset)
-                    server.add_device(bpm_device)
-
-                if device_type == "Physics_BPM":
-                    pbpm_device = P_BPM(name, model_name)
-                    server.add_device(pbpm_device)
+    pbpms = devices_dict["Physics_BPM"]
+    for name, model_name in pbpms.items():
+        if model_name in element_list:
+            pbpm_device = P_BPM(name, model_name)
+            server.add_device(pbpm_device)
 
     dummy_device = SNS_Dummy_BCM("Ring_Diag:BCM_D09", 'HEBT_Diag:BPM11')
     server.add_device(dummy_device)
