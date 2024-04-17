@@ -39,7 +39,7 @@ virtual_accelerator
 
 Run MEBT only (with printing all PVs)
 ```bash
-   virtual_accelerator --debug --bunch MEBT_in.dat --end MEBT
+   virtual_accelerator --debug --bunch MEBT_in.dat MEBT
 ```
 
 ### Run standard examples 
