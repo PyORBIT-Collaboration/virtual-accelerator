@@ -430,13 +430,13 @@ class Magnet_Power_Supply(Device):
 
     book_pv = 'B_Book'
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, init_field=None):
         super().__init__(name)
 
         field_noise = AbsNoise(noise=1e-6)
 
         # Registers the device's PVs with the server.
-        field_param = self.register_setting(Magnet_Power_Supply.field_set_pv, default=0)
+        field_param = self.register_setting(Magnet_Power_Supply.field_set_pv, default=init_field)
         self.register_readback(Quadrupole.field_readback_pv, field_param, noise=field_noise)
 
         self.register_setting(Magnet_Power_Supply.field_high_limit_pv, default=Magnet_Power_Supply.field_limits[1])

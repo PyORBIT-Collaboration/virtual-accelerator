@@ -15,7 +15,7 @@ from orbit.core.linac import BaseRfGap, RfGapTTF
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.PyORBIT_Model.virtual_devices import Cavity, BPM, Quadrupole, Corrector, P_BPM, \
-    WireScanner, Magnet_Power_Supply
+    WireScanner, Magnet_Power_Supply, Bend
 from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
@@ -39,21 +39,21 @@ def main():
 
     # Number (in Hz) determining the update rate for the virtual accelerator.
     parser.add_argument('--refresh_rate', default=1.0, type=float,
-                        help='Rate (in Hz) at which the virtual accelerator updates.')
+                        help='Rate (in Hz) at which the virtual accelerator updates (default=1.0).')
 
     # Lattice xml input file and the sequences desired from that file.
     parser.add_argument('--lattice', default=loc / 'PyORBIT_Model/SNS/sns_sts_linac.xml', type=str,
                         help='Pathname of lattice file')
     parser.add_argument("--start", default="MEBT", type=str,
-                        help='Desired subsection of the lattice to start the model with.')
-    parser.add_argument("--end", default="HEBT2", type=str,
-                        help='Desired subsection of the lattice to end the model with.')
+                        help='Desired subsection of the lattice to start the model with (default=MEBT).')
+    parser.add_argument("end", nargs='?', default="HEBT2", type=str,
+                        help='Desired subsection of the lattice to end the model with (default=HEBT2).')
 
     # Desired initial bunch file and the desired number of particles from that file.
     parser.add_argument('--bunch', default=loc / 'PyORBIT_Model/SNS/MEBT_in.dat', type=str,
                         help='Pathname of input bunch file.')
     parser.add_argument('--particle_number', default=1000, type=int,
-                        help='Number of particles to use.')
+                        help='Number of particles to use (default=1000).')
 
     # Json file that contains a dictionary connecting EPICS name of devices with their phase offset.
     parser.add_argument('--phase_offset', default=None, type=str,
@@ -153,8 +153,6 @@ def main():
     mag_ps = devices_dict["Power_Supply"]
     ps_quads = {}
     for name in mag_ps:
-        ps_device = Magnet_Power_Supply(name)
-        server.add_device(ps_device)
         ps_quads[name] = {"quads": {}, "avg_field": 0}
 
     quads = devices_dict["Quadrupole"]
@@ -181,20 +179,20 @@ def main():
         if ps_dict["quads"]:
             ps_dict["avg_field"] /= len(ps_dict["quads"])
             ps_field = ps_dict["avg_field"]
-            power_supply = server.devices[ps_name]
-            power_supply.settings['B_Set'].set_default_value(ps_field)
+            ps_device = Magnet_Power_Supply(ps_name, ps_field)
+            server.add_device(ps_device)
             for quad_name, quad_model in ps_dict["quads"].items():
                 if quad_model['shunt'] == 'none':
-                    quad_device = Quadrupole(quad_name, quad_model['or_name'], power_supply=power_supply,
+                    quad_device = Quadrupole(quad_name, quad_model['or_name'], power_supply=ps_device,
                                              polarity=quad_model['polarity'])
                 else:
                     shunt_name = quad_model['shunt']
-                    power_shunt = server.devices[shunt_name]
                     field = quad_model['dB/dr']
                     shunt_field = field - ps_field
-                    power_shunt.settings['B_Set'].set_default_value(shunt_field)
-                    quad_device = Quadrupole(quad_name, quad_model['or_name'], power_supply=power_supply,
-                                             power_shunt=power_shunt, polarity=quad_model['polarity'])
+                    shunt_device = Magnet_Power_Supply(shunt_name, shunt_field)
+                    server.add_device(shunt_device)
+                    quad_device = Quadrupole(quad_name, quad_model['or_name'], power_supply=ps_device,
+                                             power_shunt=shunt_device, polarity=quad_model['polarity'])
                 server.add_device(quad_device)
 
     correctors = devices_dict["Corrector"]
@@ -205,10 +203,22 @@ def main():
             initial_field = model.get_element_parameters(ele_name)['B']
             if "Power_Supply" in device_dict and device_dict["Power_Supply"] in mag_ps:
                 ps_name = device_dict["Power_Supply"]
-                power_supply = server.devices[ps_name]
-                power_supply.settings['B_Set'].set_default_value(initial_field)
-                corrector_device = Corrector(name, ele_name, power_supply=power_supply, polarity=polarity)
+                ps_device = Magnet_Power_Supply(ps_name, initial_field)
+                server.add_device(ps_device)
+                corrector_device = Corrector(name, ele_name, power_supply=ps_device, polarity=polarity)
                 server.add_device(corrector_device)
+
+    bends = devices_dict["Bend"]
+    for name, device_dict in bends.items():
+        ele_name = device_dict["PyORBIT_Name"]
+        if ele_name in element_list:
+            initial_field = 0
+            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in mag_ps:
+                ps_name = device_dict["Power_Supply"]
+                ps_device = Magnet_Power_Supply(ps_name, initial_field)
+                server.add_device(ps_device)
+                bend_device = Bend(name, ele_name, power_supply=ps_device)
+                server.add_device(bend_device)
 
     wire_scanners = devices_dict["Wire_Scanner"]
     for name, model_name in wire_scanners.items():
