@@ -60,9 +60,12 @@ def main():
                         help='Pathname of phase offset file.')
 
     # Desired amount of output.
-    parser.add_argument('--debug', dest='debug', action='store_true', help="Some debug info will be printed.")
+    parser.add_argument('--debug', dest='debug', action='store_true',
+                        help="Some debug info will be printed.")
     parser.add_argument('--production', dest='debug', action='store_false',
                         help="DEFAULT: No additional info printed.")
+    parser.add_argument('--print_settings', dest='print_settings', action='store_true',
+                        help="Will only print setting PVs. Will NOT run the virtual accelerator. (Default is off)")
 
     args = parser.parse_args()
     debug = args.debug
@@ -245,6 +248,11 @@ def main():
     server.add_device(dummy_device)
     dummy_device = SNS_Dummy_ICS("ICS_Tim")
     server.add_device(dummy_device)
+
+    if args.print_settings:
+        for setting in server.get_setting_pvs():
+            print(setting)
+        sys.exit()
 
     if debug:
         print(server)
