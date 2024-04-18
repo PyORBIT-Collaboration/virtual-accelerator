@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <sns>
- <LDmp bpmFrequency="4.025E8" len="36.9" name="LDmp" >
+ <LDmp bpmFrequency="4.025E8" length="36.9" name="LDmp" >
   <accElement name="LDmp_START" length="0.0" pos="0.0" type="MARKER">
    <parameters/>
   </accElement>
@@ -46,7 +46,7 @@
   <accElement length="0.0" name="LDmp_Diag:BCM05" pos="20.3" type="MARKER">
    <parameters/>
   </accElement>
-  <accElement length="0.505" name="LDmp_Mag:QV06" pos="21.026905z" type="QUAD">
+  <accElement length="0.505" name="LDmp_Mag:QV06" pos="21.026905" type="QUAD">
    <parameters aperture="0.1238" aprt_type="1" field="1.55628"/>
   </accElement>
   <accElement length="0.0" name="LDmp_Diag:BPM06" pos="21.410102" type="MARKER">
