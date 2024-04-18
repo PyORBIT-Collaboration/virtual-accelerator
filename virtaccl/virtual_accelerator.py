@@ -46,7 +46,7 @@ def main():
                         help='Pathname of lattice file')
     parser.add_argument("--start", default="MEBT", type=str,
                         help='Desired subsection of the lattice to start the model with (default=MEBT).')
-    parser.add_argument("end", nargs='?', default="HEBT2", type=str,
+    parser.add_argument("end", nargs='?', default="HEBT1", type=str,
                         help='Desired subsection of the lattice to end the model with (default=HEBT2).')
 
     # Desired initial bunch file and the desired number of particles from that file.
@@ -80,7 +80,10 @@ def main():
     all_sections = ["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
                     "SCLMed", "SCLHigh", "HEBT1", "HEBT2"]
     sec_start = all_sections.index(args.start)
-    sec_end = all_sections.index(args.end)
+    if args.start == "HEBT2":
+        sec_end = all_sections.index("HEBT2")
+    else:
+        sec_end = all_sections.index(args.end)
     subsections = all_sections[sec_start:sec_end + 1]
     if not subsections:
         print("Error: No subsections of the lattice selectable using current arguments.")
