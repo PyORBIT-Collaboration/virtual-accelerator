@@ -115,6 +115,13 @@ class Server:
         for k, v in values.items():
             self.setParam(k, v, timestamp)
 
+    def get_setting_pvs(self):
+        setting_pvs = []
+        for device_name, device in self.devices.items():
+            for reason, param in device.settings.items():
+                setting_pvs.append(param.get_pv())
+        return setting_pvs
+
     def run(self):
         pass
 

@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<sns>
+ <LDmp bpmFrequency="4.025E8" length="36.9" name="LDmp" >
+  <accElement name="LDmp_START" length="0.0" pos="0.0" type="MARKER">
+   <parameters/>
+  </accElement>
+  <accElement length="0.0" name="LDmp_Diag:BPM01" pos="7.143708" type="MARKER">
+   <parameters/>
+  </accElement>
+  <accElement length="0.505" name="LDmp_Mag:QH01" pos="7.526905" type="QUAD">
+   <parameters aperture="0.1238" aprt_type="1" field="-1.85437"/>
+  </accElement>
+  <accElement length="0.0" name="LDmp_Diag:EMC01_X" pos="9.0482" type="MARKER">
+   <parameters/>
+  </accElement>
+  <accElement length="0.0" name="LDmp_Diag:EMC01_Y" pos="9.0482" type="MARKER">
+   <parameters/>
+  </accElement>
+  <accElement length="0.505" name="LDmp_Mag:QV02" pos="11.026905" type="QUAD">
+   <parameters aperture="0.1238" aprt_type="1" field="3.04948"/>
+  </accElement>
+  <accElement length="0.0" name="LDmp_Diag:BPM02" pos="11.410102" type="MARKER">
+   <parameters/>
+  </accElement>
+  <accElement length="0.505" name="LDmp_Mag:QV03" pos="13.526905" type="QUAD">
+   <parameters aperture="0.1238" aprt_type="1" field="1.55628"/>
+  </accElement>
+  <accElement length="0.0" name="LDmp_Diag:BPM03" pos="13.910102" type="MARKER">
+   <parameters/>
+  </accElement>
+  <accElement length="0.505" name="LDmp_Mag:QV04" pos="16.026905" type="QUAD">
+   <parameters aperture="0.1238" aprt_type="1" field="0.20973"/>
+  </accElement>
+  <accElement length="0.0" name="LDmp_Diag:BPM04" pos="16.410102" type="MARKER">
+   <parameters/>
+  </accElement>
+  <accElement length="0.505" name="LDmp_Mag:QH05" pos="18.526905" type="QUAD">
+   <parameters aperture="0.1238" aprt_type="1" field="-1.85437"/>
+  </accElement>
+  <accElement length="0.0" name="LDmp_Diag:BPM05" pos="18.910102" type="MARKER">
+   <parameters/>
+  </accElement>
+  <accElement length="0.0" name="LDmp_Mag:DCH05" pos="19.047097" type="DCH">
+   <parameters B="0.0" effLength="0.33"/>
+  </accElement>
+  <accElement length="0.0" name="LDmp_Diag:BCM05" pos="20.3" type="MARKER">
+   <parameters/>
+  </accElement>
+  <accElement length="0.505" name="LDmp_Mag:QV06" pos="21.026905" type="QUAD">
+   <parameters aperture="0.1238" aprt_type="1" field="1.55628"/>
+  </accElement>
+  <accElement length="0.0" name="LDmp_Diag:BPM06" pos="21.410102" type="MARKER">
+   <parameters/>
+  </accElement>
+  <accElement length="0.0" name="LDmp_Mag:DCV06" pos="21.547097" type="DCH">
+   <parameters B="0.0" effLength="0.33"/>
+  </accElement>
+  <accElement length="0.0" name="LDmp_Diag:WS06" pos="22.879492" type="MARKER">
+   <parameters/>
+  </accElement>
+  <accElement length="0.0" name="LDmp_Vac:VIW01" pos="23.482577" type="MARKER">
+   <parameters/>
+  </accElement>
+ </LDmp>
+</sns>
