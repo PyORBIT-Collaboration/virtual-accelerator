@@ -55,11 +55,11 @@ class Quadrupole(Device):
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
     def get_settings(self):
-        new_field = self.power_supply.get_setting(Magnet_Power_Supply.field_set_pv)
+        new_field = self.power_supply.get_setting(Quadrupole_Power_Supply.field_set_pv)
         new_field = self.pol_transform.real(new_field)
 
         if self.power_shunt:
-            shunt_field = self.power_shunt.get_setting(Magnet_Power_Supply.field_set_pv)
+            shunt_field = self.power_shunt.get_setting(Quadrupole_Power_Supply.field_set_pv)
             shunt_field = self.pol_transform.real(shunt_field)
             new_field += shunt_field
 
@@ -99,7 +99,7 @@ class Corrector(Device):
     # These settings have been limited by field_limits, meaning that if the server has a value outside that range, the
     # model will receive the max or min limit defined above.
     def get_settings(self):
-        new_field = self.power_supply.get_setting(Magnet_Power_Supply.field_set_pv)
+        new_field = self.power_supply.get_setting(Corrector_Power_Supply.field_set_pv)
         new_field = self.pol_transform.real(new_field)
 
         params_dict = {Corrector.field_key: new_field}
@@ -417,16 +417,11 @@ class WireScanner(Device):
         self.update_measurement(WireScanner.y_avg_pv, ws_params[WireScanner.y_avg_key])
 
 
-class Magnet_Power_Supply(Device):
+class Quadrupole_Power_Supply(Device):
     # EPICS PV names
     field_set_pv = 'B_Set'  # [T/m]
     field_readback_pv = 'B'  # [T/m]
     field_noise = 1e-6  # [T/m]
-
-    # Initial field limits
-    field_high_limit_pv = 'B_Set.HOPR'
-    field_low_limit_pv = 'B_Set.LOPR'
-    field_limits = [-100.0, 100.0]  # [T]
 
     book_pv = 'B_Book'
 
@@ -436,13 +431,59 @@ class Magnet_Power_Supply(Device):
         field_noise = AbsNoise(noise=1e-6)
 
         # Registers the device's PVs with the server.
-        field_param = self.register_setting(Magnet_Power_Supply.field_set_pv, default=init_field)
-        self.register_readback(Quadrupole.field_readback_pv, field_param, noise=field_noise)
+        field_param = self.register_setting(Quadrupole_Power_Supply.field_set_pv, default=init_field)
+        self.register_readback(Quadrupole_Power_Supply.field_readback_pv, field_param, noise=field_noise)
 
-        self.register_setting(Magnet_Power_Supply.field_high_limit_pv, default=Magnet_Power_Supply.field_limits[1])
-        self.register_setting(Magnet_Power_Supply.field_low_limit_pv, default=Magnet_Power_Supply.field_limits[0])
+        self.register_readback(Quadrupole_Power_Supply.book_pv, field_param)
 
-        self.register_readback(Magnet_Power_Supply.book_pv, field_param)
+
+class Bend_Power_Supply(Device):
+    # EPICS PV names
+    field_set_pv = 'B_Set'  # [T/m]
+    field_readback_pv = 'B'  # [T/m]
+    field_noise = 1e-6  # [T/m]
+
+    book_pv = 'B_Book'
+
+    def __init__(self, name: str, init_field=None):
+        super().__init__(name)
+
+        field_noise = AbsNoise(noise=1e-6)
+
+        # Registers the device's PVs with the server.
+        field_param = self.register_setting(Quadrupole_Power_Supply.field_set_pv, default=init_field)
+        self.register_readback(Quadrupole_Power_Supply.field_readback_pv, field_param, noise=field_noise)
+
+        self.register_readback(Quadrupole_Power_Supply.book_pv, field_param)
+
+
+class Corrector_Power_Supply(Device):
+    # EPICS PV names
+    field_set_pv = 'B_Set'  # [T/m]
+    field_readback_pv = 'B'  # [T/m]
+    field_noise = 1e-6  # [T/m]
+
+    # Initial field limits
+    field_high_limit_pv = 'B_Set.HOPR'
+    field_low_limit_pv = 'B_Set.LOPR'
+    field_limits = [-0.1, 0.1]  # [T]
+
+    book_pv = 'B_Book'
+
+    def __init__(self, name: str, init_field=None):
+        super().__init__(name)
+
+        field_noise = AbsNoise(noise=1e-6)
+
+        # Registers the device's PVs with the server.
+        field_param = self.register_setting(Corrector_Power_Supply.field_set_pv, default=init_field)
+        self.register_readback(Corrector_Power_Supply.field_readback_pv, field_param, noise=field_noise)
+
+        self.register_setting(Corrector_Power_Supply.field_high_limit_pv,
+                              default=Corrector_Power_Supply.field_limits[1])
+        self.register_setting(Corrector_Power_Supply.field_low_limit_pv, default=Corrector_Power_Supply.field_limits[0])
+
+        self.register_readback(Corrector_Power_Supply.book_pv, field_param)
 
 
 # An unrealistic device associated with BPMs in the PyORBIT model that tracks values that cannot be measured directly.

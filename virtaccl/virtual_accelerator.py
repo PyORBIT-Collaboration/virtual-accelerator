@@ -15,7 +15,7 @@ from orbit.core.linac import BaseRfGap, RfGapTTF
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.PyORBIT_Model.virtual_devices import Cavity, BPM, Quadrupole, Corrector, P_BPM, \
-    WireScanner, Magnet_Power_Supply, Bend
+    WireScanner, Quadrupole_Power_Supply, Corrector_Power_Supply, Bend_Power_Supply, Bend
 from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
@@ -156,9 +156,9 @@ def main():
             rf_device = SNS_Cavity(name, model_name, initial_dict=initial_settings, phase_offset=phase_offset)
             server.add_device(rf_device)
 
-    mag_ps = devices_dict["Power_Supply"]
+    quad_ps_names = devices_dict["Quadrupole_Power_Supply"]
     ps_quads = {}
-    for name in mag_ps:
+    for name in quad_ps_names:
         ps_quads[name] = {"quads": {}, "avg_field": 0}
 
     quads = devices_dict["Quadrupole"]
@@ -167,9 +167,9 @@ def main():
         polarity = device_dict["Polarity"]
         if ele_name in element_list:
             initial_settings = model.get_element_parameters(ele_name)
-            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in mag_ps:
+            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in quad_ps_names:
                 ps_name = device_dict["Power_Supply"]
-                if "Power_Shunt" in device_dict and device_dict["Power_Shunt"] in mag_ps:
+                if "Power_Shunt" in device_dict and device_dict["Power_Shunt"] in quad_ps_names:
                     shunt_name = device_dict["Power_Shunt"]
                     ps_quads[ps_name]["quads"] |= \
                         {name: {'or_name': ele_name, 'shunt': shunt_name, 'dB/dr': abs(initial_settings['dB/dr']),
@@ -185,7 +185,7 @@ def main():
         if ps_dict["quads"]:
             ps_dict["avg_field"] /= len(ps_dict["quads"])
             ps_field = ps_dict["avg_field"]
-            ps_device = Magnet_Power_Supply(ps_name, ps_field)
+            ps_device = Quadrupole_Power_Supply(ps_name, ps_field)
             server.add_device(ps_device)
             for quad_name, quad_model in ps_dict["quads"].items():
                 if quad_model['shunt'] == 'none':
@@ -195,7 +195,7 @@ def main():
                     shunt_name = quad_model['shunt']
                     field = quad_model['dB/dr']
                     shunt_field = field - ps_field
-                    shunt_device = Magnet_Power_Supply(shunt_name, shunt_field)
+                    shunt_device = Quadrupole_Power_Supply(shunt_name, shunt_field)
                     server.add_device(shunt_device)
                     quad_device = Quadrupole(quad_name, quad_model['or_name'], power_supply=ps_device,
                                              power_shunt=shunt_device, polarity=quad_model['polarity'])
@@ -207,9 +207,9 @@ def main():
         polarity = device_dict["Polarity"]
         if ele_name in element_list:
             initial_field = model.get_element_parameters(ele_name)['B']
-            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in mag_ps:
+            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in devices_dict["Corrector_Power_Supply"]:
                 ps_name = device_dict["Power_Supply"]
-                ps_device = Magnet_Power_Supply(ps_name, initial_field)
+                ps_device = Corrector_Power_Supply(ps_name, initial_field)
                 server.add_device(ps_device)
                 corrector_device = Corrector(name, ele_name, power_supply=ps_device, polarity=polarity)
                 server.add_device(corrector_device)
@@ -219,9 +219,9 @@ def main():
         ele_name = device_dict["PyORBIT_Name"]
         if ele_name in element_list:
             initial_field = 0
-            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in mag_ps:
+            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in devices_dict["Bend_Power_Supply"]:
                 ps_name = device_dict["Power_Supply"]
-                ps_device = Magnet_Power_Supply(ps_name, initial_field)
+                ps_device = Bend_Power_Supply(ps_name, initial_field)
                 server.add_device(ps_device)
                 bend_device = Bend(name, ele_name, power_supply=ps_device)
                 server.add_device(bend_device)
