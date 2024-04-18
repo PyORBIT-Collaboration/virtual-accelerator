@@ -47,7 +47,7 @@ def main():
     parser.add_argument("--start", default="MEBT", type=str,
                         help='Desired subsection of the lattice to start the model with (default=MEBT).')
     parser.add_argument("end", nargs='?', default="HEBT1", type=str,
-                        help='Desired subsection of the lattice to end the model with (default=HEBT2).')
+                        help='Desired subsection of the lattice to end the model with (default=HEBT1).')
 
     # Desired initial bunch file and the desired number of particles from that file.
     parser.add_argument('--bunch', default=loc / 'PyORBIT_Model/SNS/MEBT_in.dat', type=str,
