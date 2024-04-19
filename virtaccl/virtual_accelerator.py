@@ -9,7 +9,8 @@ from pathlib import Path
 from importlib.metadata import version
 
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
-from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
+# from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
+from virtaccl.PyORBIT_Model.pyorbit_lattice_factory import PyORBIT_Lattice_Factory
 
 from orbit.core.bunch import Bunch
 from orbit.core.linac import BaseRfGap, RfGapTTF
@@ -43,7 +44,7 @@ def main():
                         help='Rate (in Hz) at which the virtual accelerator updates (default=1.0).')
 
     # Lattice xml input file and the sequences desired from that file.
-    parser.add_argument('--lattice', default=loc / 'PyORBIT_Model/SNS/sns_sts_linac.xml', type=str,
+    parser.add_argument('--lattice', default=loc / 'PyORBIT_Model/SNS/sns_linac.xml', type=str,
                         help='Pathname of lattice file')
     parser.add_argument("--start", default="MEBT", type=str,
                         help='Desired subsection of the lattice to start the model with (default=MEBT).')
@@ -78,21 +79,49 @@ def main():
     update_period = 1 / args.refresh_rate
 
     lattice_file = args.lattice
-    all_sections = ["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
-                    "SCLMed", "SCLHigh", "HEBT1", "HEBT2"]
-    sec_start = all_sections.index(args.start)
-    if args.start == "HEBT2":
-        sec_end = all_sections.index("HEBT2")
+    linac_sections = ["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
+                      "SCLMed", "SCLHigh", "HEBT1"]
+    linac_dump_section = ["LDmp"]
+    to_ring_sections = ["HEBT2"]
+    start_section = args.start
+    end_section = args.end
+    model_sections = []
+    if start_section in linac_sections:
+        start_ind = linac_sections.index(start_section)
+        if end_section in linac_sections:
+            end_ind = linac_sections.index(end_section)
+            model_sections += linac_sections[start_ind:end_ind + 1]
+        else:
+            model_sections += linac_sections[start_ind:]
+            if end_section in linac_dump_section:
+                model_sections += linac_dump_section
+            elif end_section in to_ring_sections:
+                end_ind = to_ring_sections.index(end_section)
+                model_sections += to_ring_sections[:end_ind + 1]
+            else:
+                print("End section not found in SNS lattice.")
+                sys.exit()
+    elif start_section in linac_dump_section:
+        model_sections += linac_dump_section
+    elif start_section in to_ring_sections:
+        start_ind = to_ring_sections.index(start_section)
+        if end_section in to_ring_sections:
+            end_ind = to_ring_sections.index(end_section)
+            model_sections += to_ring_sections[start_ind:end_ind + 1]
+        else:
+            # print("End section not found in SNS lattice.")
+            # sys.exit()
+            # Will probably use the above eventually, but will use this for now:
+            model_sections += to_ring_sections[start_ind:]
     else:
-        sec_end = all_sections.index(args.end)
-    subsections = all_sections[sec_start:sec_end + 1]
-    if not subsections:
-        print("Error: No subsections of the lattice selectable using current arguments.")
+        print("Start section not found in SNS lattice.")
+    if not model_sections:
+        print("Bad section designations")
         sys.exit()
 
-    sns_linac_factory = SNS_LinacLatticeFactory()
-    sns_linac_factory.setMaxDriftLength(0.01)
-    model_lattice = sns_linac_factory.getLinacAccLattice(subsections, lattice_file)
+    lattice_factory = PyORBIT_Lattice_Factory()
+    lattice_factory.setMaxDriftLength(0.01)
+    model_lattice = lattice_factory.getLinacAccLattice(model_sections, lattice_file)
     cppGapModel = BaseRfGap
     # cppGapModel = RfGapTTF
     rf_gaps = model_lattice.getRF_Gaps()
@@ -102,8 +131,8 @@ def main():
     # for cavity in cavities:
     #     if 'SCL' in cavity.getName():
     #         cavity.setAmp(0.0)
-    # Add_quad_apertures_to_lattice(model_lattice)
-    # Add_rfgap_apertures_to_lattice(model_lattice)
+    Add_quad_apertures_to_lattice(model_lattice)
+    Add_rfgap_apertures_to_lattice(model_lattice)
 
     bunch_file = Path(args.bunch)
     part_num = args.particle_number
@@ -170,7 +199,8 @@ def main():
             initial_field_str = abs(model.get_element_parameters(ele_name)['dB/dr'])
             if "Power_Supply" in device_dict and device_dict["Power_Supply"] in quad_ps_names:
                 ps_name = device_dict["Power_Supply"]
-                if "Power_Shunt" in device_dict and device_dict["Power_Shunt"] in devices_dict["Quadrupole_Power_Shunt"]:
+                if "Power_Shunt" in device_dict and device_dict["Power_Shunt"] in devices_dict[
+                    "Quadrupole_Power_Shunt"]:
                     shunt_name = device_dict["Power_Shunt"]
                     ps_quads[ps_name]["quads"] |= \
                         {name: {'or_name': ele_name, 'shunt': shunt_name, 'dB/dr': initial_field_str,
