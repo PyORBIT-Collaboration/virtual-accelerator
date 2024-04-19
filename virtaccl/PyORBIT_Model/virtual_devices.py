@@ -437,6 +437,26 @@ class Quadrupole_Power_Supply(Device):
         self.register_readback(Quadrupole_Power_Supply.book_pv, field_param)
 
 
+class Quadrupole_Power_Shunt(Device):
+    # EPICS PV names
+    field_set_pv = 'B_Set'  # [T/m]
+    field_readback_pv = 'B'  # [T/m]
+    field_noise = 1e-6  # [T/m]
+
+    book_pv = 'B_Book'
+
+    def __init__(self, name: str, init_field=None):
+        super().__init__(name)
+
+        field_noise = AbsNoise(noise=1e-6)
+
+        # Registers the device's PVs with the server.
+        field_param = self.register_setting(Quadrupole_Power_Supply.field_set_pv, default=init_field)
+        self.register_readback(Quadrupole_Power_Supply.field_readback_pv, field_param, noise=field_noise)
+
+        self.register_readback(Quadrupole_Power_Supply.book_pv, field_param)
+
+
 class Bend_Power_Supply(Device):
     # EPICS PV names
     field_set_pv = 'B_Set'  # [T/m]

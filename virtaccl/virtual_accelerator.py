@@ -15,7 +15,7 @@ from orbit.core.linac import BaseRfGap, RfGapTTF
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.PyORBIT_Model.virtual_devices import Cavity, BPM, Quadrupole, Corrector, P_BPM, \
-    WireScanner, Quadrupole_Power_Supply, Corrector_Power_Supply, Bend_Power_Supply, Bend
+    WireScanner, Quadrupole_Power_Supply, Corrector_Power_Supply, Bend_Power_Supply, Bend, Quadrupole_Power_Shunt
 from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
@@ -195,7 +195,7 @@ def main():
                     shunt_name = quad_model['shunt']
                     field = quad_model['dB/dr']
                     shunt_field = field - ps_field
-                    shunt_device = Quadrupole_Power_Supply(shunt_name, shunt_field)
+                    shunt_device = Quadrupole_Power_Shunt(shunt_name, shunt_field)
                     server.add_device(shunt_device)
                     quad_device = Quadrupole(quad_name, quad_model['or_name'], power_supply=ps_device,
                                              power_shunt=shunt_device, polarity=quad_model['polarity'])
