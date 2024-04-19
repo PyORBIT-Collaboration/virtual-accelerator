@@ -1,6 +1,7 @@
 # Channel access server used to generate fake PV signals analogous to accelerator components.
 # The main body of the script instantiates PVs from a file passed by command line argument.
 import json
+import math
 import sys
 import time
 import argparse
@@ -159,32 +160,33 @@ def main():
     quad_ps_names = devices_dict["Quadrupole_Power_Supply"]
     ps_quads = {}
     for name in quad_ps_names:
-        ps_quads[name] = {"quads": {}, "avg_field": 0}
+        ps_quads[name] = {"quads": {}, "min_field": math.inf}
 
     quads = devices_dict["Quadrupole"]
     for name, device_dict in quads.items():
         ele_name = device_dict["PyORBIT_Name"]
         polarity = device_dict["Polarity"]
         if ele_name in element_list:
-            initial_settings = model.get_element_parameters(ele_name)
+            initial_field_str = abs(model.get_element_parameters(ele_name)['dB/dr'])
             if "Power_Supply" in device_dict and device_dict["Power_Supply"] in quad_ps_names:
                 ps_name = device_dict["Power_Supply"]
                 if "Power_Shunt" in device_dict and device_dict["Power_Shunt"] in devices_dict["Quadrupole_Power_Shunt"]:
                     shunt_name = device_dict["Power_Shunt"]
                     ps_quads[ps_name]["quads"] |= \
-                        {name: {'or_name': ele_name, 'shunt': shunt_name, 'dB/dr': abs(initial_settings['dB/dr']),
+                        {name: {'or_name': ele_name, 'shunt': shunt_name, 'dB/dr': initial_field_str,
                                 'polarity': polarity}}
-                    ps_quads[ps_name]["avg_field"] += abs(initial_settings['dB/dr'])
+                    if ps_quads[ps_name]["min_field"] > initial_field_str:
+                        ps_quads[ps_name]["min_field"] = initial_field_str
                 else:
                     ps_quads[ps_name]["quads"] |= \
-                        {name: {'or_name': ele_name, 'shunt': 'none', 'dB/dr': abs(initial_settings['dB/dr']),
+                        {name: {'or_name': ele_name, 'shunt': 'none', 'dB/dr': initial_field_str,
                                 'polarity': polarity}}
-                    ps_quads[ps_name]["avg_field"] += abs(initial_settings['dB/dr'])
+                    if ps_quads[ps_name]["min_field"] > initial_field_str:
+                        ps_quads[ps_name]["min_field"] = initial_field_str
 
     for ps_name, ps_dict in ps_quads.items():
         if ps_dict["quads"]:
-            ps_dict["avg_field"] /= len(ps_dict["quads"])
-            ps_field = ps_dict["avg_field"]
+            ps_field = ps_dict["min_field"]
             ps_device = Quadrupole_Power_Supply(ps_name, ps_field)
             server.add_device(ps_device)
             for quad_name, quad_model in ps_dict["quads"].items():
