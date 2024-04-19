@@ -169,7 +169,7 @@ def main():
             initial_settings = model.get_element_parameters(ele_name)
             if "Power_Supply" in device_dict and device_dict["Power_Supply"] in quad_ps_names:
                 ps_name = device_dict["Power_Supply"]
-                if "Power_Shunt" in device_dict and device_dict["Power_Shunt"] in quad_ps_names:
+                if "Power_Shunt" in device_dict and device_dict["Power_Shunt"] in devices_dict["Quadrupole_Power_Shunt"]:
                     shunt_name = device_dict["Power_Shunt"]
                     ps_quads[ps_name]["quads"] |= \
                         {name: {'or_name': ele_name, 'shunt': shunt_name, 'dB/dr': abs(initial_settings['dB/dr']),
