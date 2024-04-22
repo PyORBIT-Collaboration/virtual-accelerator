@@ -47,9 +47,9 @@ def main():
     parser.add_argument('--lattice', default=loc / 'PyORBIT_Model/SNS/sns_linac.xml', type=str,
                         help='Pathname of lattice file')
     parser.add_argument("--start", default="MEBT", type=str,
-                        help='Desired subsection of the lattice to start the model with (default=MEBT).')
+                        help='Desired sequence of the lattice to start the model with (default=MEBT).')
     parser.add_argument("end", nargs='?', default="HEBT1", type=str,
-                        help='Desired subsection of the lattice to end the model with (default=HEBT1).')
+                        help='Desired sequence of the lattice to end the model with (default=HEBT1).')
 
     # Desired initial bunch file and the desired number of particles from that file.
     parser.add_argument('--bunch', default=loc / 'PyORBIT_Model/SNS/MEBT_in.dat', type=str,
@@ -79,49 +79,49 @@ def main():
     update_period = 1 / args.refresh_rate
 
     lattice_file = args.lattice
-    linac_sections = ["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
+    linac_sequences = ["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
                       "SCLMed", "SCLHigh", "HEBT1"]
-    linac_dump_section = ["LDmp"]
-    to_ring_sections = ["HEBT2"]
-    start_section = args.start
-    end_section = args.end
-    model_sections = []
-    if start_section in linac_sections:
-        start_ind = linac_sections.index(start_section)
-        if end_section in linac_sections:
-            end_ind = linac_sections.index(end_section)
-            model_sections += linac_sections[start_ind:end_ind + 1]
+    linac_dump_sequence = ["LDmp"]
+    to_ring_sequences = ["HEBT2"]
+    start_sequence = args.start
+    end_sequence = args.end
+    model_sequences = []
+    if start_sequence in linac_sequences:
+        start_ind = linac_sequences.index(start_sequence)
+        if end_sequence in linac_sequences:
+            end_ind = linac_sequences.index(end_sequence)
+            model_sequences += linac_sequences[start_ind:end_ind + 1]
         else:
-            model_sections += linac_sections[start_ind:]
-            if end_section in linac_dump_section:
-                model_sections += linac_dump_section
-            elif end_section in to_ring_sections:
-                end_ind = to_ring_sections.index(end_section)
-                model_sections += to_ring_sections[:end_ind + 1]
+            model_sequences += linac_sequences[start_ind:]
+            if end_sequence in linac_dump_sequence:
+                model_sequences += linac_dump_sequence
+            elif end_sequence in to_ring_sequences:
+                end_ind = to_ring_sequences.index(end_sequence)
+                model_sequences += to_ring_sequences[:end_ind + 1]
             else:
-                print("End section not found in SNS lattice.")
+                print("End sequence not found in SNS lattice.")
                 sys.exit()
-    elif start_section in linac_dump_section:
-        model_sections += linac_dump_section
-    elif start_section in to_ring_sections:
-        start_ind = to_ring_sections.index(start_section)
-        if end_section in to_ring_sections:
-            end_ind = to_ring_sections.index(end_section)
-            model_sections += to_ring_sections[start_ind:end_ind + 1]
+    elif start_sequence in linac_dump_sequence:
+        model_sequences += linac_dump_sequence
+    elif start_sequence in to_ring_sequences:
+        start_ind = to_ring_sequences.index(start_sequence)
+        if end_sequence in to_ring_sequences:
+            end_ind = to_ring_sequences.index(end_sequence)
+            model_sequences += to_ring_sequences[start_ind:end_ind + 1]
         else:
-            # print("End section not found in SNS lattice.")
+            # print("End sequence not found in SNS lattice.")
             # sys.exit()
             # Will probably use the above eventually, but will use this for now:
-            model_sections += to_ring_sections[start_ind:]
+            model_sequences += to_ring_sequences[start_ind:]
     else:
-        print("Start section not found in SNS lattice.")
-    if not model_sections:
-        print("Bad section designations")
+        print("Start sequence not found in SNS lattice.")
+    if not model_sequences:
+        print("Bad sequence designations")
         sys.exit()
 
     lattice_factory = PyORBIT_Lattice_Factory()
     lattice_factory.setMaxDriftLength(0.01)
-    model_lattice = lattice_factory.getLinacAccLattice(model_sections, lattice_file)
+    model_lattice = lattice_factory.getLinacAccLattice(model_sequences, lattice_file)
     cppGapModel = BaseRfGap
     # cppGapModel = RfGapTTF
     rf_gaps = model_lattice.getRF_Gaps()
