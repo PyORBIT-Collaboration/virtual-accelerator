@@ -80,7 +80,7 @@ def main():
 
     lattice_file = args.lattice
     linac_sequences = ["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
-                      "SCLMed", "SCLHigh", "HEBT1"]
+                       "SCLMed", "SCLHigh", "HEBT1"]
     linac_dump_sequence = ["LDmp"]
     to_ring_sequences = ["HEBT2"]
     start_sequence = args.start
