@@ -865,120 +865,35 @@
             "Power_Supply": "HEBT_Mag:PS_QV11",
             "Polarity": 1
         },
-        "HEBT_Mag:QH12": {
-            "PyORBIT_Name": "HEBT_Mag:QH12",
-            "Power_Supply": "HEBT_Mag:PS_QH12t18e",
+        "LDmp_Mag:QH01": {
+            "PyORBIT_Name": "LDmp_Mag:QH01",
+            "Power_Supply": "LDmp_Mag:PS_QH01",
             "Polarity": -1
         },
-        "HEBT_Mag:QV13": {
-            "PyORBIT_Name": "HEBT_Mag:QV13",
-            "Power_Supply": "HEBT_Mag:PS_QV13t19o",
+        "LDmp_Mag:QV02": {
+            "PyORBIT_Name": "LDmp_Mag:QV02",
+            "Power_Supply": "LDmp_Mag:PS_QV02",
             "Polarity": 1
         },
-        "HEBT_Mag:QH14": {
-            "PyORBIT_Name": "HEBT_Mag:QH14",
-            "Power_Supply": "HEBT_Mag:PS_QH12t18e",
-            "Polarity": -1
-        },
-        "HEBT_Mag:QV15": {
-            "PyORBIT_Name": "HEBT_Mag:QV15",
-            "Power_Supply": "HEBT_Mag:PS_QV13t19o",
+        "LDmp_Mag:QV03": {
+            "PyORBIT_Name": "LDmp_Mag:QV03",
+            "Power_Supply": "LDmp_Mag:PS_QV03",
             "Polarity": 1
         },
-        "HEBT_Mag:QH16": {
-            "PyORBIT_Name": "HEBT_Mag:QH16",
-            "Power_Supply": "HEBT_Mag:PS_QH12t18e",
-            "Polarity": -1
-        },
-        "HEBT_Mag:QV17": {
-            "PyORBIT_Name": "HEBT_Mag:QV17",
-            "Power_Supply": "HEBT_Mag:PS_QV13t19o",
+        "LDmp_Mag:QV04": {
+            "PyORBIT_Name": "LDmp_Mag:QV04",
+            "Power_Supply": "LDmp_Mag:PS_QV04",
             "Polarity": 1
         },
-        "HEBT_Mag:QH18": {
-            "PyORBIT_Name": "HEBT_Mag:QH18",
-            "Power_Supply": "HEBT_Mag:PS_QH12t18e",
+        "LDmp_Mag:QH05": {
+            "PyORBIT_Name": "LDmp_Mag:QH05",
+            "Power_Supply": "LDmp_Mag:PS_QH05",
             "Polarity": -1
         },
-        "HEBT_Mag:QV19": {
-            "PyORBIT_Name": "HEBT_Mag:QV19",
-            "Power_Supply": "HEBT_Mag:PS_QV13t19o",
+        "LDmp_Mag:QV06": {
+            "PyORBIT_Name": "LDmp_Mag:QV06",
+            "Power_Supply": "LDmp_Mag:PS_QV06",
             "Polarity": 1
-        },
-        "HEBT_Mag:QH20": {
-            "PyORBIT_Name": "HEBT_Mag:QH20",
-            "Power_Supply": "HEBT_Mag:PS_QH20",
-            "Polarity": -1
-        },
-        "HEBT_Mag:QV21": {
-            "PyORBIT_Name": "HEBT_Mag:QV21",
-            "Power_Supply": "HEBT_Mag:PS_QV21",
-            "Polarity": 1
-        },
-        "HEBT_Mag:QH22": {
-            "PyORBIT_Name": "HEBT_Mag:QH22",
-            "Power_Supply": "HEBT_Mag:PS_QH22",
-            "Polarity": -1
-        },
-        "HEBT_Mag:QV23": {
-            "PyORBIT_Name": "HEBT_Mag:QV23",
-            "Power_Supply": "HEBT_Mag:PS_QV23",
-            "Polarity": 1
-        },
-        "HEBT_Mag:QH24": {
-            "PyORBIT_Name": "HEBT_Mag:QH24",
-            "Power_Supply": "HEBT_Mag:PS_QH24",
-            "Polarity": -1
-        },
-        "HEBT_Mag:QV25": {
-            "PyORBIT_Name": "HEBT_Mag:QV25",
-            "Power_Supply": "HEBT_Mag:PS_QV25t31o",
-            "Polarity": 1
-        },
-        "HEBT_Mag:QH26": {
-            "PyORBIT_Name": "HEBT_Mag:QH26",
-            "Power_Supply": "HEBT_Mag:PS_QH26a28a32",
-            "Polarity": -1
-        },
-        "HEBT_Mag:QV27": {
-            "PyORBIT_Name": "HEBT_Mag:QV27",
-            "Power_Supply": "HEBT_Mag:PS_QV25t31o",
-            "Polarity": 1
-        },
-        "HEBT_Mag:QH28": {
-            "PyORBIT_Name": "HEBT_Mag:QH28",
-            "Power_Supply": "HEBT_Mag:PS_QH26a28a32",
-            "Polarity": -1
-        },
-        "HEBT_Mag:QV29": {
-            "PyORBIT_Name": "HEBT_Mag:QV29",
-            "Power_Supply": "HEBT_Mag:PS_QV25t31o",
-            "Polarity": 1
-        },
-        "HEBT_Mag:QH30": {
-            "PyORBIT_Name": "HEBT_Mag:QH30",
-            "Power_Supply": "HEBT_Mag:PS_QH30",
-            "Polarity": -1
-        },
-        "HEBT_Mag:QV31": {
-            "PyORBIT_Name": "HEBT_Mag:QV31",
-            "Power_Supply": "HEBT_Mag:PS_QV25t31o",
-            "Polarity": 1
-        },
-        "HEBT_Mag:QH32": {
-            "PyORBIT_Name": "HEBT_Mag:QH32",
-            "Power_Supply": "HEBT_Mag:PS_QH26a28a32",
-            "Polarity": -1
-        },
-        "HEBT_Mag:QV33": {
-            "PyORBIT_Name": "HEBT_Mag:QV33",
-            "Power_Supply": "HEBT_Mag:PS_QV33",
-            "Polarity": 1
-        },
-        "HEBT_Mag:QH34": {
-            "PyORBIT_Name": "HEBT_Mag:QH34",
-            "Power_Supply": "HEBT_Mag:PS_QH34",
-            "Polarity": -1
         }
     },
     "Corrector": {
@@ -1692,113 +1607,18 @@
             "Power_Supply": "HEBT_Mag:PS_DCH08",
             "Polarity": -1
         },
-        "HEBT_Mag:DCH14": {
-            "PyORBIT_Name": "HEBT_Mag:DCH14",
-            "Power_Supply": "HEBT_Mag:PS_DCH14",
+        "LDmp_Mag:DCH05": {
+            "PyORBIT_Name": "LDmp_Mag:DCH05",
+            "Power_Supply": "LDmp_Mag:PS_DCH05",
             "Polarity": -1
         },
-        "HEBT_Mag:DCV15": {
-            "PyORBIT_Name": "HEBT_Mag:DCV15",
-            "Power_Supply": "HEBT_Mag:PS_DCV15",
-            "Polarity": -1
-        },
-        "HEBT_Mag:DCH16": {
-            "PyORBIT_Name": "HEBT_Mag:DCH16",
-            "Power_Supply": "HEBT_Mag:PS_DCH16",
-            "Polarity": -1
-        },
-        "HEBT_Mag:DCV17": {
-            "PyORBIT_Name": "HEBT_Mag:DCV17",
-            "Power_Supply": "HEBT_Mag:PS_DCV17",
-            "Polarity": -1
-        },
-        "HEBT_Mag:DCV21": {
-            "PyORBIT_Name": "HEBT_Mag:DCV21",
-            "Power_Supply": "HEBT_Mag:PS_DCV21",
-            "Polarity": -1
-        },
-        "HEBT_Mag:DCH22": {
-            "PyORBIT_Name": "HEBT_Mag:DCH22",
-            "Power_Supply": "HEBT_Mag:PS_DCH22",
-            "Polarity": -1
-        },
-        "HEBT_Mag:DCV23": {
-            "PyORBIT_Name": "HEBT_Mag:DCV23",
-            "Power_Supply": "HEBT_Mag:PS_DCV23",
-            "Polarity": -1
-        },
-        "HEBT_Mag:DCH24": {
-            "PyORBIT_Name": "HEBT_Mag:DCH24",
-            "Power_Supply": "HEBT_Mag:PS_DCH24",
-            "Polarity": -1
-        },
-        "HEBT_Mag:DCH28": {
-            "PyORBIT_Name": "HEBT_Mag:DCH28",
-            "Power_Supply": "HEBT_Mag:PS_DCH28",
-            "Polarity": -1
-        },
-        "HEBT_Mag:DCV29": {
-            "PyORBIT_Name": "HEBT_Mag:DCV29",
-            "Power_Supply": "HEBT_Mag:PS_DCV29",
-            "Polarity": -1
-        },
-        "HEBT_Mag:DCH30": {
-            "PyORBIT_Name": "HEBT_Mag:DCH30",
-            "Power_Supply": "HEBT_Mag:PS_DCH30",
-            "Polarity": -1
-        },
-        "HEBT_Mag:DCV31": {
-            "PyORBIT_Name": "HEBT_Mag:DCV31",
-            "Power_Supply": "HEBT_Mag:PS_DCV31",
+        "LDmp_Mag:DCV06": {
+            "PyORBIT_Name": "LDmp_Mag:DCV06",
+            "Power_Supply": "LDmp_Mag:PS_DCV06",
             "Polarity": -1
         }
     },
-    "Bend": {
-        "HEBT_Mag:DH11": {
-            "PyORBIT_Name": "HEBT_Mag:DH11",
-            "Power_Supply": "HEBT_Mag:PS_DH11"
-        },
-        "HEBT_Mag:DH12": {
-            "PyORBIT_Name": "HEBT_Mag:DH12",
-            "Power_Supply": "HEBT_Mag:PS_DH12t18"
-        },
-        "HEBT_Mag:DH13": {
-            "PyORBIT_Name": "HEBT_Mag:DH13",
-            "Power_Supply": "HEBT_Mag:PS_DH12t18"
-        },
-        "HEBT_Mag:DH14": {
-            "PyORBIT_Name": "HEBT_Mag:DH14",
-            "Power_Supply": "HEBT_Mag:PS_DH12t18"
-        },
-        "HEBT_Mag:DH15": {
-            "PyORBIT_Name": "HEBT_Mag:DH15",
-            "Power_Supply": "HEBT_Mag:PS_DH12t18"
-        },
-        "HEBT_Mag:DH16": {
-            "PyORBIT_Name": "HEBT_Mag:DH16",
-            "Power_Supply": "HEBT_Mag:PS_DH12t18"
-        },
-        "HEBT_Mag:DH17": {
-            "PyORBIT_Name": "HEBT_Mag:DH17",
-            "Power_Supply": "HEBT_Mag:PS_DH12t18"
-        },
-        "HEBT_Mag:DH18": {
-            "PyORBIT_Name": "HEBT_Mag:DH18",
-            "Power_Supply": "HEBT_Mag:PS_DH12t18"
-        },
-        "HEBT_Mag:DH25": {
-            "PyORBIT_Name": "HEBT_Mag:DH25",
-            "Power_Supply": "HEBT_Mag:PS_DH25"
-        },
-        "HEBT_Mag:InjSptm": {
-            "PyORBIT_Name": "HEBT_Mag:InjSptm",
-            "Power_Supply": "HEBT_Mag:PS_InjSptm"
-        },
-        "Ring_Mag:DH_A11": {
-            "PyORBIT_Name": "Ring_Mag:DH_A11",
-            "Power_Supply": "Ring_Mag:PS_DH_A11"
-        }
-    },
+    "Bend": {},
     "Wire_Scanner": {
         "MEBT_Diag:WS01": "MEBT_Diag:WS01",
         "MEBT_Diag:WS04a": "MEBT_Diag:WS04a",
@@ -1825,12 +1645,7 @@
         "HEBT_Diag:WS03": "HEBT_Diag:WS03",
         "HEBT_Diag:WS04": "HEBT_Diag:WS04",
         "HEBT_Diag:WS09": "HEBT_Diag:WS09",
-        "HEBT_Diag:WS16": "HEBT_Diag:WS16",
-        "HEBT_Diag:WS20": "HEBT_Diag:WS20",
-        "HEBT_Diag:WS21": "HEBT_Diag:WS21",
-        "HEBT_Diag:WS22": "HEBT_Diag:WS22",
-        "HEBT_Diag:WS23": "HEBT_Diag:WS23",
-        "HEBT_Diag:WS32": "HEBT_Diag:WS32"
+        "LDmp_Diag:WS06": "LDmp_Diag:WS06"
     },
     "BPM": {
         "MEBT_Diag:BPM01": "MEBT_Diag:BPM01",
@@ -1904,24 +1719,12 @@
         "HEBT_Diag:BPM09": "HEBT_Diag:BPM09",
         "HEBT_Diag:BPM10": "HEBT_Diag:BPM10",
         "HEBT_Diag:BPM11": "HEBT_Diag:BPM11",
-        "HEBT_Diag:BPM16": "HEBT_Diag:BPM16",
-        "HEBT_Diag:BPM17": "HEBT_Diag:BPM17",
-        "HEBT_Diag:BPM18": "HEBT_Diag:BPM18",
-        "HEBT_Diag:BPM19": "HEBT_Diag:BPM19",
-        "HEBT_Diag:BPM20": "HEBT_Diag:BPM20",
-        "HEBT_Diag:BPM21": "HEBT_Diag:BPM21",
-        "HEBT_Diag:BPM22": "HEBT_Diag:BPM22",
-        "HEBT_Diag:BPM23": "HEBT_Diag:BPM23",
-        "HEBT_Diag:BPM24": "HEBT_Diag:BPM24",
-        "HEBT_Diag:BPM25": "HEBT_Diag:BPM25",
-        "HEBT_Diag:BPM26": "HEBT_Diag:BPM26",
-        "HEBT_Diag:BPM27": "HEBT_Diag:BPM27",
-        "HEBT_Diag:BPM28": "HEBT_Diag:BPM28",
-        "HEBT_Diag:BPM29": "HEBT_Diag:BPM29",
-        "HEBT_Diag:BPM30": "HEBT_Diag:BPM30",
-        "HEBT_Diag:BPM31": "HEBT_Diag:BPM31",
-        "HEBT_Diag:BPM32": "HEBT_Diag:BPM32",
-        "HEBT_Diag:BPM33": "HEBT_Diag:BPM33"
+        "LDmp_Diag:BPM01": "LDmp_Diag:BPM01",
+        "LDmp_Diag:BPM02": "LDmp_Diag:BPM02",
+        "LDmp_Diag:BPM03": "LDmp_Diag:BPM03",
+        "LDmp_Diag:BPM04": "LDmp_Diag:BPM04",
+        "LDmp_Diag:BPM05": "LDmp_Diag:BPM05",
+        "LDmp_Diag:BPM06": "LDmp_Diag:BPM06"
     },
     "Quadrupole_Power_Supply": [
         "MEBT_Mag:PS_QH01",
@@ -2000,18 +1803,12 @@
         "HEBT_Mag:PS_QV09",
         "HEBT_Mag:PS_QH10",
         "HEBT_Mag:PS_QV11",
-        "HEBT_Mag:PS_QH12t18e",
-        "HEBT_Mag:PS_QV13t19o",
-        "HEBT_Mag:PS_QH20",
-        "HEBT_Mag:PS_QV21",
-        "HEBT_Mag:PS_QH22",
-        "HEBT_Mag:PS_QV23",
-        "HEBT_Mag:PS_QH24",
-        "HEBT_Mag:PS_QV25t31o",
-        "HEBT_Mag:PS_QH26a28a32",
-        "HEBT_Mag:PS_QH30",
-        "HEBT_Mag:PS_QV33",
-        "HEBT_Mag:PS_QH34"
+        "LDmp_Mag:PS_QH01",
+        "LDmp_Mag:PS_QV02",
+        "LDmp_Mag:PS_QV03",
+        "LDmp_Mag:PS_QV04",
+        "LDmp_Mag:PS_QH05",
+        "LDmp_Mag:PS_QV06"
     ],
     "Quadrupole_Power_Shunt": [
         "CCL_Mag:ShntC_QTH104",
@@ -2198,26 +1995,10 @@
         "HEBT_Mag:PS_DCH06",
         "HEBT_Mag:PS_DCV07",
         "HEBT_Mag:PS_DCH08",
-        "HEBT_Mag:PS_DCH14",
-        "HEBT_Mag:PS_DCV15",
-        "HEBT_Mag:PS_DCH16",
-        "HEBT_Mag:PS_DCV17",
-        "HEBT_Mag:PS_DCV21",
-        "HEBT_Mag:PS_DCH22",
-        "HEBT_Mag:PS_DCV23",
-        "HEBT_Mag:PS_DCH24",
-        "HEBT_Mag:PS_DCH28",
-        "HEBT_Mag:PS_DCV29",
-        "HEBT_Mag:PS_DCH30",
-        "HEBT_Mag:PS_DCV31"
+        "LDmp_Mag:PS_DCH05",
+        "LDmp_Mag:PS_DCV06"
     ],
-    "Bend_Power_Supply": [
-        "HEBT_Mag:PS_DH11",
-        "HEBT_Mag:PS_DH12t18",
-        "HEBT_Mag:PS_DH25",
-        "HEBT_Mag:PS_InjSptm",
-        "Ring_Mag:PS_DH_A11"
-    ],
+    "Bend_Power_Supply": [],
     "Physics_BPM": {
         "MEBT_Phys:BPM01": "MEBT_Diag:BPM01",
         "MEBT_Phys:BPM04": "MEBT_Diag:BPM04",
@@ -2290,23 +2071,11 @@
         "HEBT_Phys:BPM09": "HEBT_Diag:BPM09",
         "HEBT_Phys:BPM10": "HEBT_Diag:BPM10",
         "HEBT_Phys:BPM11": "HEBT_Diag:BPM11",
-        "HEBT_Phys:BPM16": "HEBT_Diag:BPM16",
-        "HEBT_Phys:BPM17": "HEBT_Diag:BPM17",
-        "HEBT_Phys:BPM18": "HEBT_Diag:BPM18",
-        "HEBT_Phys:BPM19": "HEBT_Diag:BPM19",
-        "HEBT_Phys:BPM20": "HEBT_Diag:BPM20",
-        "HEBT_Phys:BPM21": "HEBT_Diag:BPM21",
-        "HEBT_Phys:BPM22": "HEBT_Diag:BPM22",
-        "HEBT_Phys:BPM23": "HEBT_Diag:BPM23",
-        "HEBT_Phys:BPM24": "HEBT_Diag:BPM24",
-        "HEBT_Phys:BPM25": "HEBT_Diag:BPM25",
-        "HEBT_Phys:BPM26": "HEBT_Diag:BPM26",
-        "HEBT_Phys:BPM27": "HEBT_Diag:BPM27",
-        "HEBT_Phys:BPM28": "HEBT_Diag:BPM28",
-        "HEBT_Phys:BPM29": "HEBT_Diag:BPM29",
-        "HEBT_Phys:BPM30": "HEBT_Diag:BPM30",
-        "HEBT_Phys:BPM31": "HEBT_Diag:BPM31",
-        "HEBT_Phys:BPM32": "HEBT_Diag:BPM32",
-        "HEBT_Phys:BPM33": "HEBT_Diag:BPM33"
+        "LDmp_Phys:BPM01": "LDmp_Diag:BPM01",
+        "LDmp_Phys:BPM02": "LDmp_Diag:BPM02",
+        "LDmp_Phys:BPM03": "LDmp_Diag:BPM03",
+        "LDmp_Phys:BPM04": "LDmp_Diag:BPM04",
+        "LDmp_Phys:BPM05": "LDmp_Diag:BPM05",
+        "LDmp_Phys:BPM06": "LDmp_Diag:BPM06"
     }
 }

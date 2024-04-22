@@ -4,7 +4,7 @@ from pathlib import Path
 from random import random
 import argparse
 
-from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
+from virtaccl.PyORBIT_Model.pyorbit_lattice_factory import PyORBIT_Lattice_Factory
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 
@@ -21,12 +21,12 @@ def main():
     parser.add_argument('--file', '-f', default='va_config.json', type=str,
                         help='Pathname of resulting config json file.')
 
-    parser.add_argument('--lattice', default='PyORBIT_Model/SNS/sns_sts_linac.xml', type=str,
+    parser.add_argument('--lattice', default='PyORBIT_Model/SNS/sns_linac.xml', type=str,
                         help='Pathname of lattice file')
 
     parser.add_argument("Sequences", nargs='*', help='Sequences',
                         default=["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
-                                 "SCLMed", "SCLHigh", "HEBT1", "HEBT2"])
+                                 "SCLMed", "SCLHigh", "HEBT1", "HEBT2", "LDmp"])
 
     parser.add_argument('--phase_offset', default=None, type=str,
                         help='Pathname of resulting randomized phase offset file for cavities and BPMs.')
@@ -38,7 +38,7 @@ def main():
     subsections = args.Sequences
     offset_file = args.phase_offset
 
-    sns_linac_factory = SNS_LinacLatticeFactory()
+    sns_linac_factory = PyORBIT_Lattice_Factory()
     model_lattice = sns_linac_factory.getLinacAccLattice(subsections, lattice_file)
 
     model = OrbitModel(model_lattice)

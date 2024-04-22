@@ -396,6 +396,7 @@ class OrbitModel(Model):
             track_time_taken = time.time() - track_start_time
             if self.debug:
                 print(f"Bunch tracked. Tracking time was {round(track_time_taken, 3)} seconds")
+                tracked_bunch.dumpBunch('end_bunch.dat')
 
             # Clear the set of changes
             self.current_changes = set()
@@ -425,6 +426,7 @@ class OrbitModel(Model):
             track_time_taken = time.time() - track_start_time
             if self.debug:
                 print(f"Bunch tracked. Tracking time was {round(track_time_taken, 3)} seconds")
+                tracked_bunch.dumpBunch('end_bunch.dat')
 
             # Clear the set of changes
             self.current_changes = set()
