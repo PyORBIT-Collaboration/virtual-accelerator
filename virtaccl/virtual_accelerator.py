@@ -9,6 +9,8 @@ from pathlib import Path
 from importlib.metadata import version
 
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
+
+from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass
 # from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
 from virtaccl.PyORBIT_Model.pyorbit_lattice_factory import PyORBIT_Lattice_Factory
 
@@ -261,12 +263,17 @@ def main():
     wire_scanners = devices_dict["Wire_Scanner"]
     for name, model_name in wire_scanners.items():
         if model_name in element_list:
+            ws_child = WSclass(model_name)
+            model.add_child_node(model_name, ws_child)
             ws_device = WireScanner(name, model_name)
             server.add_device(ws_device)
 
     bpms = devices_dict["BPM"]
+    pbpms = devices_dict["Physics_BPM"]
     for name, model_name in bpms.items():
         if model_name in element_list:
+            bpm_child = BPMclass(model_name)
+            model.add_child_node(model_name, bpm_child)
             phase_offset = 0
             if offset_file is not None:
                 phase_offset = offset_dict[name]

@@ -9,7 +9,7 @@ from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 from orbit.core.bunch import Bunch
 
 from .pyorbit_element_controllers import PyorbitNode, PyorbitChild, PyorbitCavity
-from .pyorbit_child_nodes import BPMclass, WSclass, BunchCopyClass, RF_Gap_Aperture
+from .pyorbit_child_nodes import BPMclass, WSclass, BunchCopyClass, RF_Gap_Aperture, Screen
 
 from virtaccl.model import Model
 
@@ -40,7 +40,7 @@ class OrbitModel(Model):
         self.accLattice = input_lattice
         # Here we specify the node types in PyORBIT we don't need to worry about and start a set to make sure each
         # element we do care about has a unique name.
-        ignored_nodes = {'baserfgap', 'drift', 'tilt', 'fringe', 'markerLinacNode', 'baseLinacNode'}
+        ignored_nodes = {'baserfgap', 'drift', 'tilt', 'fringe', 'baseLinacNode'}
         unique_elements = set()
 
         # Set up a dictionary to reference different objects within the lattice by their name. Not all elements are
@@ -53,12 +53,6 @@ class OrbitModel(Model):
         def add_child_nodes(ancestor_node, children_nodes, element_dictionary):
             for child in children_nodes:
                 child_type = child.getType()
-                if child_type == 'markerLinacNode':
-                    child_name = child.getName()
-                    if 'BPM' in child_name:
-                        child.addChildNode(BPMclass(child_name), child.ENTRANCE)
-                    if 'WS' in child_name:
-                        child.addChildNode(WSclass(child_name), child.ENTRANCE)
                 if not any(substring in child_type for substring in ignored_nodes):
                     child_name = child.getName()
                     if child_name not in unique_elements:
@@ -74,12 +68,6 @@ class OrbitModel(Model):
         list_of_nodes = self.accLattice.getNodes()
         for node in list_of_nodes:
             node_type = node.getType()
-            if node_type == 'markerLinacNode':
-                node_name = node.getName()
-                if 'BPM' in node_name:
-                    node.addChildNode(BPMclass(node_name), node.ENTRANCE)
-                if 'WS' in node_name:
-                    node.addChildNode(WSclass(node_name), node.ENTRANCE)
             if not any(substring in node_type for substring in ignored_nodes):
                 element_name = node.getName()
                 if element_name not in unique_elements:
@@ -183,6 +171,17 @@ class OrbitModel(Model):
 
         return self.pyorbit_dictionary
 
+    def get_element_controller(self, element_name: str) -> _element_ref_hint:
+        """Returns the controller for the given PyORBIT model.
+
+        Results
+        ----------
+        out : PyorbitElement
+            The controller for the named PyORBIT element.
+        """
+
+        return self.pyorbit_dictionary[element_name]
+
     def get_parameter(self, element_name: str, parameter_key: str):
         """Returns a parameter value for an element in the model.
 
@@ -263,6 +262,34 @@ class OrbitModel(Model):
             return_dict[element_name] = pyorbit_dict[element_name].get_parameter_dict()
 
         return return_dict
+
+    def add_child_node(self, parent_name: str, child_node: Union[BPMclass, WSclass, Screen]):
+        """Adds a child node to a node in the lattice and a reference in the element dictionary. If the name of the child
+         is taken by another node that is not a marker, the child will not be added.
+
+        Parameters
+        ----------
+        parent_name: basestring
+            Name of the parent node that the child will be attached to. Can be the name of a child node itself.
+        child_node: PyORBIT class
+            Instance of a class that will become the child. Needs to contain a "trackActions" function that defines how
+            the bunch is tracked through the child and a "getName" function that returns a string of the node's name.
+        """
+
+        child_name = child_node.getName()
+        if child_name in self.get_element_list():
+            if not self.get_element_controller(child_name).is_marker():
+                print(f'Warning: "{child_name}" has the same name as another element, which is not a marker node. '
+                      f'{child_name} was not added to the model.')
+                return
+
+        parent = self.get_element_controller(parent_name)
+        if isinstance(parent, PyorbitChild):
+            ancestor = parent.get_ancestor_node()
+        else:
+            ancestor = parent.get_element()
+        ancestor.addChildNode(child_node, ancestor.ENTRANCE)
+        self.get_element_dictionary()[child_name] = PyorbitChild(child_node, ancestor)
 
     def get_settings(self, setting_names: list[str] = None) -> Dict[str, Dict[str, Any]]:
         """Returns a parameter dictionary for the setting elements in the model.

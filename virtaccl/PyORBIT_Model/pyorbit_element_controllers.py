@@ -21,6 +21,7 @@ class PyorbitElementTypes:
     WS_key = 'Wire_Scanner'
     bend_key = 'Bend'
     screen_key = 'Screen'
+    marker_key = 'Marker'
 
     """PyORBIT keys for parameters we want to pass to the virtual accelerator."""
     quad_params = ['dB/dr']
@@ -30,6 +31,7 @@ class PyorbitElementTypes:
     bpm_params = ['frequency', 'x_avg', 'y_avg', 'phi_avg', 'amp_avg', 'energy', 'beta', 'part_num']
     ws_params = ['x_histogram', 'y_histogram', 'x_avg', 'y_avg']
     screen_params = ['xy_histogram', 'x_avg', 'y_avg']
+    marker_params = []
 
     """Dictionary to keep track of different PyORBIT class types."""
     pyorbit_class_names = {Quad: quad_key,
@@ -39,7 +41,8 @@ class PyorbitElementTypes:
                            BPMclass: BPM_key,
                            WSclass: WS_key,
                            Bend: bend_key,
-                           Screen: screen_key}
+                           Screen: screen_key,
+                           MarkerLinacNode: marker_key}
 
     """Dictionary to keep the above parameters with their designated classes."""
     param_ref_dict = {quad_key: quad_params,
@@ -48,13 +51,14 @@ class PyorbitElementTypes:
                       bend_key: bend_params,
                       BPM_key: bpm_params,
                       WS_key: ws_params,
-                      screen_key: screen_params}
+                      screen_key: screen_params,
+                      marker_key: marker_params}
 
     """Classes that can change the beam."""
     optic_classes = (quad_key, cavity_key, corrector_key, bend_key)
 
     """Classes that measure the beam."""
-    diagnostic_classes = (BPM_key, WS_key, screen_key)
+    diagnostic_classes = (BPM_key, WS_key, screen_key, marker_key)
 
     """Type hint definitions"""
     node_classes = Union[Quad, BaseRF_Gap, MarkerLinacNode, Bend]
@@ -95,7 +99,7 @@ class PyorbitElement:
     def get_name(self) -> str:
         """Return the name of the element in PyORBIT.
 
-        Results
+        Returns
         ----------
         out : string
             Name of the element.
@@ -106,7 +110,7 @@ class PyorbitElement:
     def get_type(self) -> str:
         """Return the key associated with the the type of the element in PyORBIT.
 
-        Results
+        Returns
         ----------
         out : string
             Key of the element's type.
@@ -118,7 +122,7 @@ class PyorbitElement:
         """Returns the dictionary of parameters of the element from PyORBIT coinciding the parameters defined in
         PyorbitElementTypes.param_ref_dict.
 
-        Results
+        Returns
         ----------
         out : dictionary
             The element's parameter dictionary
@@ -152,7 +156,7 @@ class PyorbitElement:
     def get_parameter(self, param_key: str):
         """Returns the value of the parameter for the element for the given parameter key.
 
-        Results
+        Returns
         ----------
         out : any
             The value of the given parameter.
@@ -188,13 +192,27 @@ class PyorbitElement:
         """Returns a boolean depending on if the element is designated as an optic or not.
         PyorbitElementTypes.optic_classes determines which element types are designated as optics.
 
-        Results
+        Returns
         ----------
         out : bool
             True if the element is designated as an optic, false if not.
         """
 
         return self.is_optic_bool
+
+    def is_marker(self) -> bool:
+        """Returns a boolean depending on if the element is a marker node on the lattice.
+
+        Returns
+        ----------
+        out : bool
+            True if the element is a marker, false if not.
+        """
+
+        if self.element_type == PyorbitElementTypes.marker_key:
+            return True
+        else:
+            return False
 
 
 class PyorbitNode(PyorbitElement):
@@ -215,7 +233,7 @@ class PyorbitNode(PyorbitElement):
     def get_element(self) -> node_types:
         """Returns the node.
 
-        Results
+        Returns
         ----------
         out : PyorbitElementTypes.node_classes
             The instance of the node given when initialized.
@@ -226,7 +244,7 @@ class PyorbitNode(PyorbitElement):
     def get_position(self) -> float:
         """Returns the position of the node in meters.
 
-        Results
+        Returns
         ----------
         out : float
             The position of the node from the start of its sequence in meters.
@@ -239,7 +257,7 @@ class PyorbitNode(PyorbitElement):
         """Returns the node on the lattice this node is located at. This is for other classes and just returns the
         original node here.
 
-        Results
+        Returns
         ----------
         out : PyorbitElementTypes.node_classes
             The instance of the node given when initialized.
@@ -267,7 +285,7 @@ class PyorbitCavity(PyorbitElement):
     def get_element(self) -> cavity_type:
         """Returns the cavity.
 
-        Results
+        Returns
         ----------
         out : RF_Cavity
             The instance of the cavity given when initialized.
@@ -278,7 +296,7 @@ class PyorbitCavity(PyorbitElement):
     def get_first_node(self) -> rf_gap_type:
         """Returns the first RF gap node of the cavity.
 
-        Results
+        Returns
         ----------
         out : BaseRF_Gap
             The instance of the first RF gap node associated with the cavity given when initialized.
@@ -290,7 +308,7 @@ class PyorbitCavity(PyorbitElement):
     def get_tracking_node(self) -> rf_gap_type:
         """Returns the node directly on the lattice that begins the cavity. This uses get_first_node to do so.
 
-        Results
+        Returns
         ----------
         out : BaseRF_Gap
             The instance of the RF gap node at the entrance of the cavity given when initialized.
@@ -302,7 +320,7 @@ class PyorbitCavity(PyorbitElement):
     def get_position(self) -> float:
         """Returns the position of the entrance of the cavity in meters.
 
-        Results
+        Returns
         ----------
         out : float
             The position of the first RF gap node associated with the cavity relative to its sequence in meters.
@@ -335,7 +353,7 @@ class PyorbitChild(PyorbitElement):
     def get_element(self) -> child_types:
         """Returns the child node.
 
-        Results
+        Returns
         ----------
         out : PyorbitElementTypes.child_types
             The instance of the child node given when initialized.
@@ -346,7 +364,7 @@ class PyorbitChild(PyorbitElement):
     def get_ancestor_node(self) -> node_types:
         """Returns the ancestor node.
 
-        Results
+        Returns
         ----------
         out : PyorbitElementTypes.node_types
             The instance of the node on the lattice through which the child node is reached.
@@ -357,7 +375,7 @@ class PyorbitChild(PyorbitElement):
     def get_tracking_node(self) -> node_types:
         """Returns the node on the lattice that the child is under. In this case, the ancestor node.
 
-        Results
+        Returns
         ----------
         out : PyorbitElementTypes.node_types
             The instance of the node on the lattice through which the child node is reached.
@@ -368,7 +386,7 @@ class PyorbitChild(PyorbitElement):
     def get_position(self) -> float:
         """Returns the position of the child node in meters.
 
-        Results
+        Returns
         ----------
         out : float
             The position of the ancestor node relative to its sequence in meters.

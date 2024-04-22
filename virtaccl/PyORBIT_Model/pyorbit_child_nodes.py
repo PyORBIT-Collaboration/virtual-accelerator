@@ -26,7 +26,6 @@ class BPMclass:
         sync_energy = sync_part.kinEnergy()
         if part_num > 0:
             rf_freq = self.parameters['frequency']
-            BPM_name = paramsDict["parentNode"].getName()
             initial_beam_current = paramsDict["beam_current"]
             initial_number = paramsDict['initial_particle_number']
             current = part_num / initial_number * initial_beam_current
@@ -122,7 +121,6 @@ class WSclass:
         x_array = np.zeros(part_num)
         y_array = np.zeros(part_num)
         if part_num > 0:
-            WS_name = paramsDict["parentNode"].getName()
             sync_part = bunch.getSyncParticle()
             sync_beta = sync_part.beta()
             sync_energy = sync_part.kinEnergy()
@@ -203,7 +201,6 @@ class Screen:
         x_array = np.zeros(part_num)
         y_array = np.zeros(part_num)
         if part_num > 0:
-            Screen_name = paramsDict["parentNode"].getName()
             sync_part = bunch.getSyncParticle()
             sync_beta = sync_part.beta()
             sync_energy = sync_part.kinEnergy()
