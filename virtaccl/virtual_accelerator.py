@@ -159,17 +159,6 @@ def main():
     model.set_beam_current(38.0e-3)  # Set the initial beam current in Amps.
     element_list = model.get_element_list()
 
-    # Give BPMs their proper frequencies
-    bpm_frequencies = {'MEBT': 805e6, 'DTL': 805e6, 'CCL': 402.5e6, 'SCL': 402.5e6, 'HEBT': 402.5e6}
-    for element in element_list:
-        if 'BPM' in element:
-            for seq, freq in bpm_frequencies.items():
-                if seq in element:
-                    model.get_element_dictionary()[element].set_parameter('frequency', freq)
-
-    # Retrack the bunch to update BPMs with their new frequencies.
-    model.force_track()
-
     server = Server()
 
     offset_file = args.phase_offset
@@ -268,11 +257,15 @@ def main():
             ws_device = WireScanner(name, model_name)
             server.add_device(ws_device)
 
+    bpm_frequencies = {'MEBT': 805e6, 'DTL': 805e6, 'CCL': 402.5e6, 'SCL': 402.5e6, 'HEBT': 402.5e6}
     bpms = devices_dict["BPM"]
-    pbpms = devices_dict["Physics_BPM"]
     for name, model_name in bpms.items():
         if model_name in element_list:
-            bpm_child = BPMclass(model_name)
+            if 'MEBT' or 'DTL' in model_name:
+                freq =  805e6
+            else:
+                freq = 402.5e6
+            bpm_child = BPMclass(model_name, freq)
             model.add_child_node(model_name, bpm_child)
             phase_offset = 0
             if offset_file is not None:
@@ -290,6 +283,9 @@ def main():
     server.add_device(dummy_device)
     dummy_device = SNS_Dummy_ICS("ICS_Tim")
     server.add_device(dummy_device)
+
+    # Retrack the bunch to update all diagnostics
+    model.force_track()
 
     if args.print_settings:
         for setting in server.get_setting_pvs():
