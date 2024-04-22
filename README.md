@@ -32,7 +32,7 @@ To see help:
 virtual_accelerator -h
 ```
 
-Run default MEBT -> HEBT2
+Run default MEBT -> HEBT1
 ```bash
 virtual_accelerator
 ```
