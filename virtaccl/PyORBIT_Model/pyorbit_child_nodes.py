@@ -26,7 +26,6 @@ class BPMclass:
         sync_energy = sync_part.kinEnergy()
         if part_num > 0:
             rf_freq = self.parameters['frequency']
-            BPM_name = paramsDict["parentNode"].getName()
             initial_beam_current = paramsDict["beam_current"]
             initial_number = paramsDict['initial_particle_number']
             current = part_num / initial_number * initial_beam_current
@@ -122,7 +121,6 @@ class WSclass:
         x_array = np.zeros(part_num)
         y_array = np.zeros(part_num)
         if part_num > 0:
-            WS_name = paramsDict["parentNode"].getName()
             sync_part = bunch.getSyncParticle()
             sync_beta = sync_part.beta()
             sync_energy = sync_part.kinEnergy()
@@ -161,12 +159,76 @@ class WSclass:
             self.parameters['x_avg'] = 0
             self.parameters['y_avg'] = 0
 
-
     def getXHistogram(self):
         return self.parameters['x_histogram']
 
     def getYHistogram(self):
         return self.parameters['y_histogram']
+
+    def getXAvg(self):
+        return self.parameters['x_avg']
+
+    def getYAvg(self):
+        return self.parameters['y_avg']
+
+    def getParam(self, param: str):
+        return self.parameters[param]
+
+    def getParamsDict(self) -> dict:
+        return self.parameters
+
+    def getType(self):
+        return self.node_type
+
+    def getName(self):
+        return self.child_name
+
+    def getAllChildren(self):
+        return []
+
+
+# Class for wire scanners. This class simply returns histograms of the vertical and horizontal positions.
+class Screen:
+    def __init__(self, child_name: str, bin_number: int = 50):
+        self.parameters = {'xy_histogram': np.zeros((50, 50)), 'x_avg': 0.0, 'y_avg': 0.0}
+        self.child_name = child_name
+        self.bin_number = bin_number
+        self.node_type = 'Screen'
+
+    def trackActions(self, actionsContainer, paramsDict):
+        bunch = paramsDict["bunch"]
+        part_num = bunch.getSizeGlobal()
+        x_array = np.zeros(part_num)
+        y_array = np.zeros(part_num)
+        if part_num > 0:
+            sync_part = bunch.getSyncParticle()
+            sync_beta = sync_part.beta()
+            sync_energy = sync_part.kinEnergy()
+            x_avg = 0
+            y_avg = 0
+            for n in range(part_num):
+                x, y, z = bunch.x(n), bunch.y(n), bunch.z(n)
+                x_array[n] = x
+                y_array[n] = y
+                x_avg += x
+                y_avg += y
+
+            xy_hist, y_edges, x_edges = np.histogram2d(y_array, x_array, bins=self.bin_number)
+
+            x_avg /= part_num
+            y_avg /= part_num
+
+            self.parameters['xy_histogram'] = xy_hist
+            self.parameters['x_avg'] = x_avg
+            self.parameters['y_avg'] = y_avg
+
+        else:
+            self.parameters['xy_histogram'] = np.zeros((50, 50))
+            self.parameters['x_avg'] = 0
+            self.parameters['y_avg'] = 0
+
+    def getXYHistogram(self):
+        return self.parameters['xy_histogram']
 
     def getXAvg(self):
         return self.parameters['x_avg']

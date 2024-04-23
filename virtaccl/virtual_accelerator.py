@@ -9,6 +9,8 @@ from pathlib import Path
 from importlib.metadata import version
 
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
+
+from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass
 # from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
 from virtaccl.PyORBIT_Model.pyorbit_lattice_factory import PyORBIT_Lattice_Factory
 
@@ -56,6 +58,10 @@ def main():
                         help='Pathname of input bunch file.')
     parser.add_argument('--particle_number', default=1000, type=int,
                         help='Number of particles to use (default=1000).')
+    parser.add_argument('--save_bunch', const='end_bunch.dat', nargs='?', type=str,
+                        help="Saves the bunch at the end of the lattice after each track in the given location. "
+                             "If no location is given, the bunch is saved as 'end_bunch.dat' in the working directory. "
+                             "(Default is that the bunch is not saved.)")
 
     # Json file that contains a dictionary connecting EPICS name of devices with their phase offset.
     parser.add_argument('--phase_offset', default=None, type=str,
@@ -71,6 +77,7 @@ def main():
 
     args = parser.parse_args()
     debug = args.debug
+    save_bunch = args.save_bunch
 
     config_file = Path(args.file)
     with open(config_file, "r") as json_file:
@@ -80,7 +87,7 @@ def main():
 
     lattice_file = args.lattice
     linac_sequences = ["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
-                      "SCLMed", "SCLHigh", "HEBT1"]
+                       "SCLMed", "SCLHigh", "HEBT1"]
     linac_dump_sequence = ["LDmp"]
     to_ring_sequences = ["HEBT2"]
     start_sequence = args.start
@@ -153,20 +160,9 @@ def main():
                 bunch_in.deleteParticleFast(n)
         bunch_in.compress()
 
-    model = OrbitModel(model_lattice, bunch_in, debug=debug)
+    model = OrbitModel(model_lattice, bunch_in, debug=debug, save_bunch=save_bunch)
     model.set_beam_current(38.0e-3)  # Set the initial beam current in Amps.
     element_list = model.get_element_list()
-
-    # Give BPMs their proper frequencies
-    bpm_frequencies = {'MEBT': 805e6, 'DTL': 805e6, 'CCL': 402.5e6, 'SCL': 402.5e6, 'HEBT': 402.5e6}
-    for element in element_list:
-        if 'BPM' in element:
-            for seq, freq in bpm_frequencies.items():
-                if seq in element:
-                    model.get_element_dictionary()[element].set_parameter('frequency', freq)
-
-    # Retrack the bunch to update BPMs with their new frequencies.
-    model.force_track()
 
     server = Server()
 
@@ -261,16 +257,22 @@ def main():
     wire_scanners = devices_dict["Wire_Scanner"]
     for name, model_name in wire_scanners.items():
         if model_name in element_list:
+            ws_child = WSclass(model_name)
+            model.add_child_node(model_name, ws_child)
             ws_device = WireScanner(name, model_name)
             server.add_device(ws_device)
 
     bpms = devices_dict["BPM"]
-    for name, model_name in bpms.items():
-        if model_name in element_list:
+    for name, device_dict in bpms.items():
+        ele_name = device_dict["PyORBIT_Name"]
+        if ele_name in element_list:
+            freq = device_dict["Frequency"]
+            bpm_child = BPMclass(ele_name, freq)
+            model.add_child_node(ele_name, bpm_child)
             phase_offset = 0
             if offset_file is not None:
                 phase_offset = offset_dict[name]
-            bpm_device = BPM(name, model_name, phase_offset=phase_offset)
+            bpm_device = BPM(name, ele_name, phase_offset=phase_offset)
             server.add_device(bpm_device)
 
     pbpms = devices_dict["Physics_BPM"]
@@ -283,6 +285,9 @@ def main():
     server.add_device(dummy_device)
     dummy_device = SNS_Dummy_ICS("ICS_Tim")
     server.add_device(dummy_device)
+
+    # Retrack the bunch to update all diagnostics
+    model.force_track()
 
     if args.print_settings:
         for setting in server.get_setting_pvs():
