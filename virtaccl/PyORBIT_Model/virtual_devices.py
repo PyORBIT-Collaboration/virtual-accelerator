@@ -144,13 +144,12 @@ class Cavity(Device):
     amp_goal_pv = 'cavAmpGoal'  # [arb. units]
     blank_pv = 'BlnkBeam'  # [0 or 1]
 
-    design_amp = 15.0  # [MV]
-
     # PyORBIT parameter keys
     phase_key = 'phase'  # [radians]
     amp_key = 'amp'  # [arb. units]
 
-    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None, phase_offset=0):
+    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None, phase_offset=0,
+                 design_amp=15):
         if model_name is None:
             self.model_name = name
         else:
@@ -165,12 +164,14 @@ class Cavity(Device):
             initial_phase = 0
             initial_amp = 1.0
 
+        self.design_amp = design_amp  # [MV]
+
         # Create old amp variable for ramping
         self.old_amp = initial_amp
 
         # Adds a phase offset. Default is 0 offset.
         offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
-        amp_transform = LinearTInv(scaler=Cavity.design_amp)
+        amp_transform = LinearTInv(scaler=design_amp)
 
         initial_phase = offset_transform.raw(initial_phase)
         initial_amp = amp_transform.raw(initial_amp)

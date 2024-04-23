@@ -172,14 +172,17 @@ def main():
             offset_dict = json.load(json_file)
 
     cavities = devices_dict["RF_Cavity"]
-    for name, model_name in cavities.items():
-        if model_name in element_list:
-            initial_settings = model.get_element_parameters(model_name)
+    for name, device_dict in cavities.items():
+        ele_name = device_dict["PyORBIT_Name"]
+        if ele_name in element_list:
+            amplitude = device_dict["Design_Amplitude"]
+            initial_settings = model.get_element_parameters(ele_name)
             initial_settings['amp'] = 1
             phase_offset = 0
             if offset_file is not None:
                 phase_offset = offset_dict[name]
-            rf_device = SNS_Cavity(name, model_name, initial_dict=initial_settings, phase_offset=phase_offset)
+            rf_device = SNS_Cavity(name, ele_name, initial_dict=initial_settings, phase_offset=phase_offset,
+                                   design_amp=amplitude)
             server.add_device(rf_device)
 
     quad_ps_names = devices_dict["Quadrupole_Power_Supply"]
