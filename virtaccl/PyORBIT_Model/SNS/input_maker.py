@@ -56,6 +56,8 @@ def main():
                 'HEBT_Mag:PS_DH12t18': ['12', '13', '14', '15', '16', '17', '18'],
                 'HEBT_Mag:PS_QV25t31o': ['25', '27', '29', '31'], 'HEBT_Mag:PS_QH26a28a32': ['26', '28', '32']}
 
+    bpm_frequencies = {'MEBT': 805e6, 'DTL': 805e6, 'CCL': 402.5e6, 'SCL': 402.5e6, 'HEBT': 402.5e6}
+
     cavity_key = 'RF_Cavity'
     quad_key = 'Quadrupole'
     corrector_key = 'Corrector'
@@ -71,6 +73,8 @@ def main():
     pyorbit_key = 'PyORBIT_Name'
     polarity_key = 'Polarity'
     PS_key = 'Power_Supply'
+    freq_key = 'Frequency'
+    marker_key = 'Marker'
 
     devices = {cavity_key: {},
                quad_key: {},
@@ -264,18 +268,22 @@ def main():
                 devices[bend_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name}
                 devices[BPS_key].append(ps_name)
 
-        elif ele_type == WS_key:
-            pv_name = or_name
-            devices[WS_key][pv_name] = or_name
+        elif ele_type == marker_key:
+            if 'WS' in or_name:
+                pv_name = or_name
+                devices[WS_key][pv_name] = or_name
+            elif 'BPM' in or_name:
+                pv_name = or_name
+                frequency = 402.5e6
+                for seq, freq in bpm_frequencies.items():
+                    if seq in pv_name:
+                        frequency = freq
+                devices[BPM_key][pv_name] = {pyorbit_key: or_name, freq_key: frequency}
+                if offset_file is not None:
+                    offsets[pv_name] = (2 * random() - 1) * 180
 
-        elif ele_type == BPM_key:
-            pv_name = or_name
-            devices[BPM_key][pv_name] = or_name
-            if offset_file is not None:
-                offsets[pv_name] = (2 * random() - 1) * 180
-
-            pv_name = pv_name.replace('Diag', 'Phys')
-            devices[pBPM_key][pv_name] = or_name
+                pv_name = pv_name.replace('Diag', 'Phys')
+                devices[pBPM_key][pv_name] = or_name
 
     with open(config_file, "w") as json_file:
         json.dump(devices, json_file, indent=4)

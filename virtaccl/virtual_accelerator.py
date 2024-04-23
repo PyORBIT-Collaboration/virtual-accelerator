@@ -257,20 +257,17 @@ def main():
             ws_device = WireScanner(name, model_name)
             server.add_device(ws_device)
 
-    bpm_frequencies = {'MEBT': 805e6, 'DTL': 805e6, 'CCL': 402.5e6, 'SCL': 402.5e6, 'HEBT': 402.5e6}
     bpms = devices_dict["BPM"]
-    for name, model_name in bpms.items():
-        if model_name in element_list:
-            if 'MEBT' or 'DTL' in model_name:
-                freq =  805e6
-            else:
-                freq = 402.5e6
-            bpm_child = BPMclass(model_name, freq)
-            model.add_child_node(model_name, bpm_child)
+    for name, device_dict in bpms.items():
+        ele_name = device_dict["PyORBIT_Name"]
+        if ele_name in element_list:
+            freq = device_dict["Frequency"]
+            bpm_child = BPMclass(ele_name, freq)
+            model.add_child_node(ele_name, bpm_child)
             phase_offset = 0
             if offset_file is not None:
                 phase_offset = offset_dict[name]
-            bpm_device = BPM(name, model_name, phase_offset=phase_offset)
+            bpm_device = BPM(name, ele_name, phase_offset=phase_offset)
             server.add_device(bpm_device)
 
     pbpms = devices_dict["Physics_BPM"]
