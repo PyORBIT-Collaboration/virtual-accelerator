@@ -56,7 +56,7 @@ def main():
                 'HEBT_Mag:PS_DH12t18': ['12', '13', '14', '15', '16', '17', '18'],
                 'HEBT_Mag:PS_QV25t31o': ['25', '27', '29', '31'], 'HEBT_Mag:PS_QH26a28a32': ['26', '28', '32']}
 
-    bpm_frequencies = {'MEBT': 805e6, 'DTL': 805e6, 'CCL': 402.5e6, 'SCL': 402.5e6, 'HEBT': 402.5e6}
+    bpm_frequencies = {'MEBT': 805e6, 'DTL': 805e6, 'CCL': 402.5e6, 'SCL': 402.5e6, 'HEBT': 402.5e6, 'LDmp': 402.5e6}
 
     cavity_key = 'RF_Cavity'
     quad_key = 'Quadrupole'

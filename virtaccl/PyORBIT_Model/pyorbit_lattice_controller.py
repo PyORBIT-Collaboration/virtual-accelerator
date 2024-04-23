@@ -33,9 +33,10 @@ class OrbitModel(Model):
     _element_ref_hint = Union[PyorbitNode, PyorbitCavity, PyorbitChild]
     _element_dict_hint = Dict[str, _element_ref_hint]
 
-    def __init__(self, input_lattice: LinacAccLattice, input_bunch: Bunch = None, debug: bool = False):
+    def __init__(self, input_lattice: LinacAccLattice, input_bunch: Bunch = None, debug: bool = False, save_bunch=None):
         super().__init__()
         self.debug = debug
+        self.save_bunch = save_bunch
 
         self.accLattice = input_lattice
         # Here we specify the node types in PyORBIT we don't need to worry about and start a set to make sure each
@@ -423,7 +424,9 @@ class OrbitModel(Model):
             track_time_taken = time.time() - track_start_time
             if self.debug:
                 print(f"Bunch tracked. Tracking time was {round(track_time_taken, 3)} seconds")
-                tracked_bunch.dumpBunch('end_bunch.dat')
+            if self.save_bunch:
+                tracked_bunch.dumpBunch(self.save_bunch)
+                print(f'Final bunch saved as "{self.save_bunch}"')
 
             # Clear the set of changes
             self.current_changes = set()
@@ -453,7 +456,9 @@ class OrbitModel(Model):
             track_time_taken = time.time() - track_start_time
             if self.debug:
                 print(f"Bunch tracked. Tracking time was {round(track_time_taken, 3)} seconds")
-                tracked_bunch.dumpBunch('end_bunch.dat')
+            if self.save_bunch:
+                tracked_bunch.dumpBunch(self.save_bunch)
+                print(f'Final bunch saved as "{self.save_bunch}"')
 
             # Clear the set of changes
             self.current_changes = set()

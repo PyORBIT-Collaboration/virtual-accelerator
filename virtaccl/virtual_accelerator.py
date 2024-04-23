@@ -58,6 +58,10 @@ def main():
                         help='Pathname of input bunch file.')
     parser.add_argument('--particle_number', default=1000, type=int,
                         help='Number of particles to use (default=1000).')
+    parser.add_argument('--save_bunch', const='end_bunch.dat', nargs='?', type=str,
+                        help="Saves the bunch at the end of the lattice after each track in the given location. "
+                             "If no location is given, the bunch is saved as 'end_bunch.dat' in the working directory. "
+                             "(Default is that the bunch is not saved.)")
 
     # Json file that contains a dictionary connecting EPICS name of devices with their phase offset.
     parser.add_argument('--phase_offset', default=None, type=str,
@@ -73,6 +77,7 @@ def main():
 
     args = parser.parse_args()
     debug = args.debug
+    save_bunch = args.save_bunch
 
     config_file = Path(args.file)
     with open(config_file, "r") as json_file:
@@ -155,7 +160,7 @@ def main():
                 bunch_in.deleteParticleFast(n)
         bunch_in.compress()
 
-    model = OrbitModel(model_lattice, bunch_in, debug=debug)
+    model = OrbitModel(model_lattice, bunch_in, debug=debug, save_bunch=save_bunch)
     model.set_beam_current(38.0e-3)  # Set the initial beam current in Amps.
     element_list = model.get_element_list()
 
