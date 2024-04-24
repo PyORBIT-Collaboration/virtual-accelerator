@@ -34,11 +34,10 @@ class BPMclass:
             x_avg, y_avg, z_avg, z_rms = 0, 0, 0, 0
             for n in range(part_num):
                 x, y, z = bunch.x(n), bunch.y(n), bunch.z(n)
-                if not (math.isnan(x) or math.isnan(y) or math.isnan(z)):
-                    x_avg += x
-                    y_avg += y
-                    z_avg += z
-                    z_rms += z * z
+                x_avg += x
+                y_avg += y
+                z_avg += z
+                z_rms += z * z
             x_avg /= part_num
             y_avg /= part_num
             z_avg /= part_num
