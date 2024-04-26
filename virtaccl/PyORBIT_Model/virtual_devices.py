@@ -5,6 +5,8 @@ from random import randint, random
 from typing import Dict, Any, Union, Literal
 
 import numpy as np
+from matplotlib import pyplot as plt
+from scipy.interpolate import interp2d
 
 from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTInv, LinearTInv
 
@@ -418,15 +420,23 @@ class Screen(Device):
 
     # PyORBIT parameter keys
     hist_key = 'xy_histogram'  # [au]
+    x_axis_key = 'x_axis'  # [m]
+    y_axis_key = 'y_axis'  # [m]
     x_key = 'x_avg'  # [m]
     y_key = 'y_avg'  # [m]
 
-    def __init__(self, name: str, model_name: str = None):
+    def __init__(self, name: str, model_name: str = None, x_pixels: int = 600, y_pixels: int = 960,
+                 x_scale=100, y_scale=100):
         if model_name is None:
             self.model_name = name
         else:
             self.model_name = model_name
         super().__init__(name, self.model_name)
+
+        self.x_pixels = x_pixels
+        self.y_pixels = y_pixels
+        self.x_scale = x_scale
+        self.y_scale = y_scale
 
         # Creates flat noise for associated PVs.
         image_noise = AbsNoise(noise=Screen.image_noise)
@@ -434,22 +444,37 @@ class Screen(Device):
         # Registers the device's PVs with the server.
         self.register_measurement(Screen.x_profile_pv, noise=image_noise)
         self.register_measurement(Screen.y_profile_pv, noise=image_noise)
+        self.register_measurement(Screen.image_pv, noise=image_noise)
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
     def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
         screen_params = new_params[self.model_name]
         xy_hist = screen_params[Screen.hist_key]
-        print(xy_hist)
-        sys.exit()
+        x_axis = screen_params[Screen.x_axis_key] * 1000
+        y_axis = screen_params[Screen.y_axis_key] * 1000
 
-        x_avg = screen_params[BPM.x_key]
-        y_avg = screen_params[BPM.y_key]
-        phase_avg = screen_params[BPM.phase_key]
+        # Calculate bin centers
+        x_centers = (x_axis[:-1] + x_axis[1:]) / 2
+        y_centers = (y_axis[:-1] + y_axis[1:]) / 2
 
-        self.update_measurement(BPM.x_pv, x_avg)
-        self.update_measurement(BPM.y_pv, y_avg)
-        self.update_measurement(BPM.phase_pv, phase_avg)
+        # Create linearly interpolated function
+        interp_func = interp2d(x_centers, y_centers, xy_hist, kind='linear', fill_value=False)
+
+        # Define new grid for higher resolution
+        x_axis_new = np.linspace(-self.x_scale / 2, self.x_scale / 2, self.x_pixels)
+        y_axis_new = np.linspace(-self.y_scale / 2, self.y_scale / 2, self.y_pixels)
+
+        # Interpolate histogram to higher resolution
+        xy_hist_new = interp_func(x_axis_new, y_axis_new)
+
+        image_list = xy_hist_new.flatten()
+        x_profile = np.sum(xy_hist_new, axis=0).tolist()
+        y_profile = np.sum(xy_hist_new, axis=1).tolist()
+
+        self.update_measurement(Screen.image_pv, image_list)
+        self.update_measurement(Screen.x_profile_pv, x_profile)
+        self.update_measurement(Screen.x_profile_pv, y_profile)
 
 
 class Quadrupole_Power_Supply(Device):

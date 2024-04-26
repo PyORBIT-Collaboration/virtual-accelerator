@@ -193,8 +193,10 @@ class WSclass:
 
 # Class for wire scanners. This class simply returns histograms of the vertical and horizontal positions.
 class ScreenClass:
-    def __init__(self, child_name: str, x_bin_number: int = 50, y_bin_number: int = 50):
-        self.parameters = {'xy_histogram': np.zeros((x_bin_number, y_bin_number)), 'x_avg': 0.0, 'y_avg': 0.0}
+    def __init__(self, child_name: str, x_bin_number: int = 10, y_bin_number: int = 10):
+        self.parameters = {'xy_histogram': np.zeros((2, 2)),
+                           'x_axis': np.array([-10, 10]), 'y_axis': np.array([-10, 10]),
+                           'x_avg': 0.0, 'y_avg': 0.0}
         self.child_name = child_name
         self.x_number = x_bin_number
         self.y_number = y_bin_number
@@ -226,11 +228,15 @@ class ScreenClass:
             y_avg /= part_num
 
             self.parameters['xy_histogram'] = xy_hist
+            self.parameters['x_axis'] = x_edges
+            self.parameters['y_axis'] = y_edges
             self.parameters['x_avg'] = x_avg
             self.parameters['y_avg'] = y_avg
 
         else:
-            self.parameters['xy_histogram'] = np.zeros((50, 50))
+            self.parameters['xy_histogram'] = np.zeros((2, 2))
+            self.parameters['x_axis'] = np.array([-10, 10])
+            self.parameters['y_axis'] = np.array([-10, 10])
             self.parameters['x_avg'] = 0
             self.parameters['y_avg'] = 0
 

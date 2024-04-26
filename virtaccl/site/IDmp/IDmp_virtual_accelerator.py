@@ -8,7 +8,7 @@ from pathlib import Path
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.PyORBIT_Model.virtual_devices import (Quadrupole, Corrector, Quadrupole_Power_Supply, WireScanner, BPM,
-                                                    P_BPM)
+                                                    P_BPM, Screen)
 from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Dummy_ICS
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
@@ -105,6 +105,12 @@ def main():
                 phase_offset = offset_dict[name]
             bpm_device = BPM(name, model_name, phase_offset=phase_offset)
             server.add_device(bpm_device)
+
+    screen = devices_dict["Screen"]
+    for name, model_name in screen.items():
+        if model_name in element_list:
+            screen_device = Screen(name, model_name)
+            server.add_device(screen_device)
 
     pbpms = devices_dict["Physics_BPM"]
     for name, model_name in pbpms.items():
