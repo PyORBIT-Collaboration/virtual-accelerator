@@ -283,15 +283,6 @@ class BPM(Device):
         self.update_measurement(BPM.y_pv, y_avg)
         self.update_measurement(BPM.phase_pv, phase_avg)
 
-    def get_settings(self):
-        params_dict = {}
-        for setting in self.settings:
-            param_value = self.get_setting(setting)
-            if setting == BPM.oeda_pv:
-                pass
-        model_dict = {self.model_name: params_dict}
-        return model_dict
-
 
 class WireScanner(Device):
     # EPICS PV names
@@ -416,6 +407,49 @@ class WireScanner(Device):
 
         self.update_measurement(WireScanner.x_avg_pv, ws_params[WireScanner.x_avg_key])
         self.update_measurement(WireScanner.y_avg_pv, ws_params[WireScanner.y_avg_key])
+
+
+class Screen(Device):
+    # EPICS PV names
+    x_profile_pv = 'resultsHorProf'  # [au]
+    y_profile_pv = 'resultsVerProf'  # [au]
+    image_pv = 'resultsImg'  # [au]
+    image_noise = 1e-8  # [au]
+
+    # PyORBIT parameter keys
+    hist_key = 'xy_histogram'  # [au]
+    x_key = 'x_avg'  # [m]
+    y_key = 'y_avg'  # [m]
+
+    def __init__(self, name: str, model_name: str = None):
+        if model_name is None:
+            self.model_name = name
+        else:
+            self.model_name = model_name
+        super().__init__(name, self.model_name)
+
+        # Creates flat noise for associated PVs.
+        image_noise = AbsNoise(noise=Screen.image_noise)
+
+        # Registers the device's PVs with the server.
+        self.register_measurement(Screen.x_profile_pv, noise=image_noise)
+        self.register_measurement(Screen.y_profile_pv, noise=image_noise)
+
+    # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
+    # This is where the measurement PV name is associated with it's model key.
+    def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
+        screen_params = new_params[self.model_name]
+        xy_hist = screen_params[Screen.hist_key]
+        print(xy_hist)
+        sys.exit()
+
+        x_avg = screen_params[BPM.x_key]
+        y_avg = screen_params[BPM.y_key]
+        phase_avg = screen_params[BPM.phase_key]
+
+        self.update_measurement(BPM.x_pv, x_avg)
+        self.update_measurement(BPM.y_pv, y_avg)
+        self.update_measurement(BPM.phase_pv, phase_avg)
 
 
 class Quadrupole_Power_Supply(Device):

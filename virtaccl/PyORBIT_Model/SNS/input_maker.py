@@ -81,6 +81,7 @@ def main():
     freq_key = 'Frequency'
     marker_key = 'Marker'
     amp_key = 'Design_Amplitude'
+    screen_key = 'Screen'
 
     devices = {cavity_key: {},
                quad_key: {},
@@ -88,6 +89,7 @@ def main():
                bend_key: {},
                WS_key: {},
                BPM_key: {},
+               screen_key: {},
                QPS_key: [],
                QPShunt_key: [],
                CPS_key: [],
@@ -290,6 +292,7 @@ def main():
             if 'WS' in or_name:
                 pv_name = or_name
                 devices[WS_key][pv_name] = or_name
+
             elif 'BPM' in or_name:
                 pv_name = or_name
                 frequency = 402.5e6
@@ -299,7 +302,6 @@ def main():
                 devices[BPM_key][pv_name] = {pyorbit_key: or_name, freq_key: frequency}
                 if offset_file is not None:
                     offsets[pv_name] = (2 * random() - 1) * 180
-
                 pv_name = pv_name.replace('Diag', 'Phys')
                 devices[pBPM_key][pv_name] = or_name
 

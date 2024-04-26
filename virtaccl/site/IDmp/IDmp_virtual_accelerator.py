@@ -1,12 +1,14 @@
 # Channel access server used to generate fake PV signals analogous to accelerator components.
 # The main body of the script instantiates PVs from a file passed by command line argument.
 import json
+import sys
 import time
 import argparse
 from pathlib import Path
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
-from virtaccl.PyORBIT_Model.virtual_devices import Quadrupole, Corrector, Magnet_Power_Supply, WireScanner, BPM, P_BPM
+from virtaccl.PyORBIT_Model.virtual_devices import (Quadrupole, Corrector, Quadrupole_Power_Supply, WireScanner, BPM,
+                                                    P_BPM)
 from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Dummy_ICS
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
@@ -50,7 +52,6 @@ def main():
     part_num = args.particle_number
 
     lattice, bunch = get_IDMP_lattice_and_bunch(part_num, x_off=2, xp_off=0.3)
-
     model = OrbitModel(lattice, bunch, debug=debug)
     model.set_beam_current(38.0e-3)  # Set the initial beam current in Amps.
     element_list = model.get_element_list()
@@ -72,7 +73,7 @@ def main():
             initial_field = abs(model.get_element_parameters(ele_name)['dB/dr'])
             if "Power_Supply" in device_dict and device_dict["Power_Supply"] in mag_ps:
                 ps_name = device_dict["Power_Supply"]
-                ps_device = Magnet_Power_Supply(ps_name, initial_field)
+                ps_device = Quadrupole_Power_Supply(ps_name, initial_field)
                 server.add_device(ps_device)
                 corrector_device = Quadrupole(name, ele_name, power_supply=ps_device, polarity=polarity)
                 server.add_device(corrector_device)
@@ -85,7 +86,7 @@ def main():
             initial_field = abs(model.get_element_parameters(ele_name)['B'])
             if "Power_Supply" in device_dict and device_dict["Power_Supply"] in mag_ps:
                 ps_name = device_dict["Power_Supply"]
-                ps_device = Magnet_Power_Supply(ps_name, initial_field)
+                ps_device = Quadrupole_Power_Supply(ps_name, initial_field)
                 server.add_device(ps_device)
                 corrector_device = Corrector(name, ele_name, power_supply=ps_device, polarity=polarity)
                 server.add_device(corrector_device)

@@ -3,7 +3,7 @@ from typing import Union, Dict, Any
 from orbit.py_linac.lattice.LinacAccNodes import Quad, MarkerLinacNode, DCorrectorV, DCorrectorH, Bend
 from orbit.py_linac.lattice.LinacRfGapNodes import BaseRF_Gap
 from orbit.py_linac.lattice.LinacAccLatticeLib import RF_Cavity
-from .pyorbit_child_nodes import BPMclass, WSclass, Screen
+from .pyorbit_child_nodes import BPMclass, WSclass, ScreenClass
 
 """A collection of PyORBIT classes (useful for hinting) and PyORBIT keys we are using."""
 
@@ -41,7 +41,7 @@ class PyorbitElementTypes:
                            BPMclass: BPM_key,
                            WSclass: WS_key,
                            Bend: bend_key,
-                           Screen: screen_key,
+                           ScreenClass: screen_key,
                            MarkerLinacNode: marker_key}
 
     """Dictionary to keep the above parameters with their designated classes."""
