@@ -95,7 +95,18 @@ class AbsNoise(Noise):
         self.count = count
 
     def add_noise(self, x):
-        noise = self.noise * (random_sample(self.count) - 0.5)
+        noise = self.noise * (random_sample(self.count) * 2 - 1)
+        return x + noise
+
+
+class PosNoise(Noise):
+    def __init__(self, noise=0.0, count=1, **kw):
+        super().__init__(**kw)
+        self.noise = noise
+        self.count = count
+
+    def add_noise(self, x):
+        noise = self.noise * random_sample(self.count)
         return x + noise
 
 
