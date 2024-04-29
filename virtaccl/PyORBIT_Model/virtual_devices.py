@@ -5,7 +5,6 @@ from random import randint, random
 from typing import Dict, Any, Union, Literal
 
 import numpy as np
-from matplotlib import pyplot as plt
 from scipy.interpolate import interp2d
 
 from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTInv, LinearTInv, PosNoise
