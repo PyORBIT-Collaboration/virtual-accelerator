@@ -1,3 +1,4 @@
+import sys
 import time
 import math
 from random import randint, random
@@ -26,11 +27,13 @@ from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTIn
 
 class SNS_Cavity(Cavity):
     # EPICS PV names
+    net_power_pv = 'NetPwr'
     mode_pv = 'AFF_Mode'
     reset_pv = 'AFF_Reset'
     MPS_pv = 'FPAR_LDmp_swmask_set'
 
-    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None, phase_offset=0):
+    def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None, phase_offset=0,
+                 design_amp=15):
         if model_name is None:
             self.model_name = name
         else:
@@ -45,24 +48,29 @@ class SNS_Cavity(Cavity):
             initial_phase = 0
             initial_amp = 1.0
 
+        self.design_amp = design_amp  # [MV]
+
         # Create old amp variable for ramping
         self.old_amp = initial_amp
 
         # Adds a phase offset. Default is 0 offset.
         offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
-        amp_transform = LinearTInv(scaler=Cavity.design_amp)
+        amp_transform = LinearTInv(scaler=self.design_amp)
 
         initial_phase = offset_transform.raw(initial_phase)
         initial_amp = amp_transform.raw(initial_amp)
 
         mps_name = name.replace('FCM', 'HPM', 1)
+        net_pwr_name = name.split(':')[0] + ':Cav' + name[-1]
 
         # Registers the device's PVs with the server
         self.register_setting(Cavity.phase_pv, default=initial_phase, transform=offset_transform)
-        self.register_setting(Cavity.amp_pv, default=initial_amp, transform=amp_transform)
+        amp_setting = self.register_setting(Cavity.amp_pv, default=initial_amp, transform=amp_transform)
         self.register_setting(Cavity.amp_goal_pv, default=initial_amp, transform=amp_transform)
         self.register_setting(Cavity.blank_pv, default=0.0)
 
+        if 'SCL' not in name:
+            self.register_readback(SNS_Cavity.net_power_pv, amp_setting, name_override=net_pwr_name)
         self.register_setting(SNS_Cavity.mode_pv, default=0.0)
         self.register_setting(SNS_Cavity.reset_pv, default=0.0)
         self.register_setting(SNS_Cavity.MPS_pv, default=0.0, name_override=mps_name)

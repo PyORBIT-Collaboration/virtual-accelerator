@@ -28,6 +28,10 @@
         "IDmp_Diag:BPM01c": "BPM03"
     },
 
+    "Screen": {
+        "IDmp_Diag:RII01": "Screen"
+    },
+
     "Power_Supply": [
         "IDmp_Mag:PS_QV01",
         "IDmp_Mag:PS_DCH01",

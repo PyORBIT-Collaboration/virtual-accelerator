@@ -19,6 +19,8 @@ class BPMclass:
         self.si_e_charge = 1.6021773e-19
 
     def trackActions(self, actionsContainer, paramsDict):
+        if "bunch" not in paramsDict:
+            return
         bunch = paramsDict["bunch"]
         part_num = bunch.getSizeGlobal()
         sync_part = bunch.getSyncParticle()
@@ -41,8 +43,8 @@ class BPMclass:
             x_avg /= part_num
             y_avg /= part_num
             z_avg /= part_num
-            phi_rms = phase_coeff * math.sqrt(z_rms / part_num)
             phi_avg = (phase_coeff * z_avg + sync_phase) % (2 * math.pi) - math.pi
+            phi_rms = phase_coeff * math.sqrt((z_rms / part_num) - z_avg * z_avg)
             amp = abs(current * math.exp(-phi_rms * phi_rms / 2))
             self.parameters['x_avg'] = x_avg
             self.parameters['y_avg'] = y_avg
@@ -116,6 +118,8 @@ class WSclass:
         self.node_type = 'WireScanner'
 
     def trackActions(self, actionsContainer, paramsDict):
+        if "bunch" not in paramsDict:
+            return
         bunch = paramsDict["bunch"]
         part_num = bunch.getSizeGlobal()
         x_array = np.zeros(part_num)
@@ -188,14 +192,19 @@ class WSclass:
 
 
 # Class for wire scanners. This class simply returns histograms of the vertical and horizontal positions.
-class Screen:
-    def __init__(self, child_name: str, bin_number: int = 50):
-        self.parameters = {'xy_histogram': np.zeros((50, 50)), 'x_avg': 0.0, 'y_avg': 0.0}
+class ScreenClass:
+    def __init__(self, child_name: str, x_bin_number: int = 10, y_bin_number: int = 10):
+        self.parameters = {'xy_histogram': np.zeros((2, 2)),
+                           'x_axis': np.array([-10, 10]), 'y_axis': np.array([-10, 10]),
+                           'x_avg': 0.0, 'y_avg': 0.0}
         self.child_name = child_name
-        self.bin_number = bin_number
+        self.x_number = x_bin_number
+        self.y_number = y_bin_number
         self.node_type = 'Screen'
 
     def trackActions(self, actionsContainer, paramsDict):
+        if "bunch" not in paramsDict:
+            return
         bunch = paramsDict["bunch"]
         part_num = bunch.getSizeGlobal()
         x_array = np.zeros(part_num)
@@ -213,17 +222,21 @@ class Screen:
                 x_avg += x
                 y_avg += y
 
-            xy_hist, y_edges, x_edges = np.histogram2d(y_array, x_array, bins=self.bin_number)
+            xy_hist, y_edges, x_edges = np.histogram2d(y_array, x_array, bins=[self.x_number, self.y_number])
 
             x_avg /= part_num
             y_avg /= part_num
 
             self.parameters['xy_histogram'] = xy_hist
+            self.parameters['x_axis'] = x_edges
+            self.parameters['y_axis'] = y_edges
             self.parameters['x_avg'] = x_avg
             self.parameters['y_avg'] = y_avg
 
         else:
-            self.parameters['xy_histogram'] = np.zeros((50, 50))
+            self.parameters['xy_histogram'] = np.zeros((2, 2))
+            self.parameters['x_axis'] = np.array([-10, 10])
+            self.parameters['y_axis'] = np.array([-10, 10])
             self.parameters['x_avg'] = 0
             self.parameters['y_avg'] = 0
 

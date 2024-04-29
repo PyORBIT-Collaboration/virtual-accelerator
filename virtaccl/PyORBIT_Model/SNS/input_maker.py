@@ -58,6 +58,11 @@ def main():
 
     bpm_frequencies = {'MEBT': 805e6, 'DTL': 805e6, 'CCL': 402.5e6, 'SCL': 402.5e6, 'HEBT': 402.5e6, 'LDmp': 402.5e6}
 
+    cavity_amps = {'MEBT1': 0.450, 'MEBT2': 0.314, 'MEBT3': 0.445, 'MEBT4': 0.600,
+                   'DTL1': 0.192, 'DTL2': 0.495, 'DTL3': 0.457, 'DTL4': 0.615, 'DTL5': 0.570, 'DTL6': 0.525,
+                   'CCL1': 0.811, 'CCL2': 0.793, 'CCL3': 0.689, 'CCL4': 0.788,
+                   'SCLMed': 14.9339, 'SCL:Cav12a': 21.875, 'SCLHigh': 22.807}
+
     cavity_key = 'RF_Cavity'
     quad_key = 'Quadrupole'
     corrector_key = 'Corrector'
@@ -75,6 +80,8 @@ def main():
     PS_key = 'Power_Supply'
     freq_key = 'Frequency'
     marker_key = 'Marker'
+    amp_key = 'Design_Amplitude'
+    screen_key = 'Screen'
 
     devices = {cavity_key: {},
                quad_key: {},
@@ -82,6 +89,7 @@ def main():
                bend_key: {},
                WS_key: {},
                BPM_key: {},
+               screen_key: {},
                QPS_key: [],
                QPShunt_key: [],
                CPS_key: [],
@@ -95,12 +103,24 @@ def main():
         # except SCL cavities: SCL:Cav03a
         ele_type = ele_ref.get_type()
         if ele_type == cavity_key:
+            amplitude = None
             if 'SCL:Cav' in or_name:
                 pv_name = "SCL_LLRF:FCM" + or_name[-3:]
+                if or_name == 'SCL:Cav12a':
+                    amplitude = cavity_amps['SCL:Cav12a']
+                elif ele_ref.get_first_node().getSequence().getName() == 'SCLMed':
+                    amplitude = cavity_amps['SCLMed']
+                elif ele_ref.get_first_node().getSequence().getName() == 'SCLHigh':
+                    amplitude = cavity_amps['SCLHigh']
             else:
                 pv_name = or_name[:-1] + "_LLRF:FCM" + or_name[-1:]
-
-            devices[cavity_key][pv_name] = or_name
+                for cav, amp in cavity_amps.items():
+                    if cav in or_name:
+                        amplitude = amp
+            if amplitude:
+                devices[cavity_key][pv_name] = {pyorbit_key: or_name, amp_key: amplitude}
+            else:
+                devices[cavity_key][pv_name] = or_name
             if offset_file is not None:
                 offsets[pv_name] = (2 * random() - 1) * 180
 
@@ -272,6 +292,7 @@ def main():
             if 'WS' in or_name:
                 pv_name = or_name
                 devices[WS_key][pv_name] = or_name
+
             elif 'BPM' in or_name:
                 pv_name = or_name
                 frequency = 402.5e6
@@ -281,7 +302,6 @@ def main():
                 devices[BPM_key][pv_name] = {pyorbit_key: or_name, freq_key: frequency}
                 if offset_file is not None:
                     offsets[pv_name] = (2 * random() - 1) * 180
-
                 pv_name = pv_name.replace('Diag', 'Phys')
                 devices[pBPM_key][pv_name] = or_name
 

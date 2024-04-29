@@ -17,6 +17,8 @@ from orbit.py_linac.lattice.LinacAccNodes import Quad, Drift, DCorrectorH, DCorr
 
 # Import AccActionsContainer, a method to add functionality throughout the accelerator.
 from orbit.lattice import AccActionsContainer
+
+from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass, ScreenClass
 from virtaccl.PyORBIT_Model.sns_linac_bunch_generator import SNS_Linac_BunchGenerator
 
 
@@ -26,12 +28,15 @@ def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0,
     dch_field = 0.0
     dcv_field = -0.0
     mag_len = 0.673
+    bpm_frequency = 402.5e6
 
     # List to contain the drift and quadrupole nodes.
     list_of_nodes = []
 
-    BPM00 = MarkerLinacNode("BPM00")
-    list_of_nodes.append(BPM00)
+    BPM00_marker = MarkerLinacNode("BPM00m")
+    BPM00 = BPMclass("BPM00", frequency=bpm_frequency)
+    BPM00_marker.addChildNode(BPM00, BPM00_marker.ENTRANCE)
+    list_of_nodes.append(BPM00_marker)
 
     D1 = Drift("Drift1")
     D1.setLength(10.029 - 6.48 - mag_len / 2)
@@ -46,8 +51,10 @@ def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0,
     D2.setLength(10.278 - 10.029 - mag_len / 2)
     list_of_nodes.append(D2)
 
-    BPM01 = MarkerLinacNode("BPM01")
-    list_of_nodes.append(BPM01)
+    BPM01_marker = MarkerLinacNode("BPM01m")
+    BPM01 = BPMclass("BPM01", frequency=bpm_frequency)
+    BPM01_marker.addChildNode(BPM01, BPM01_marker.ENTRANCE)
+    list_of_nodes.append(BPM01_marker)
 
     D3 = Drift("Drift3")
     D3.setLength(10.6825 - 10.278)
@@ -67,26 +74,37 @@ def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0,
     D4.setLength(14.672 - 10.6825)
     list_of_nodes.append(D4)
 
-    BPM02 = MarkerLinacNode("BPM02")
-    list_of_nodes.append(BPM02)
+    BPM02_marker = MarkerLinacNode("BPM02m")
+    BPM02 = BPMclass("BPM02", frequency=bpm_frequency)
+    BPM02_marker.addChildNode(BPM02, BPM02_marker.ENTRANCE)
+    list_of_nodes.append(BPM02_marker)
 
     D5 = Drift("Drift5")
     D5.setLength(16.612 - 14.672)
     list_of_nodes.append(D5)
 
-    WS01 = MarkerLinacNode("WS01")
-    list_of_nodes.append(WS01)
+    WS01_marker = MarkerLinacNode("WS01m")
+    WS01 = WSclass("WS01")
+    WS01_marker.addChildNode(WS01, WS01_marker.ENTRANCE)
+    list_of_nodes.append(WS01_marker)
 
     D6 = Drift("Drift6")
     D6.setLength(17.380 - 16.612)
     list_of_nodes.append(D6)
 
-    BPM03 = MarkerLinacNode("BPM03")
-    list_of_nodes.append(BPM03)
+    BPM03_marker = MarkerLinacNode("BPM03m")
+    BPM03 = BPMclass("BPM03", frequency=bpm_frequency)
+    BPM03_marker.addChildNode(BPM03, BPM03_marker.ENTRANCE)
+    list_of_nodes.append(BPM03_marker)
 
     D7 = Drift("Drift7")
     D7.setLength(12.998)
     list_of_nodes.append(D7)
+
+    Screen_marker = MarkerLinacNode("Screen_m")
+    Screen = ScreenClass("Screen")
+    Screen_marker.addChildNode(Screen, Screen_marker.ENTRANCE)
+    list_of_nodes.append(Screen_marker)
 
     # Dump
 
@@ -122,7 +140,7 @@ def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0,
     # ---make emittances un-normalized XAL units [m*rad]
     emittX = 1.0e-6 * emittX / (gamma * beta)
     emittY = 1.0e-6 * emittY / (gamma * beta)
-    emittZ = 1.0e-6 * emittZ / (gamma**3 * beta)
+    emittZ = 1.0e-6 * emittZ / (gamma ** 3 * beta)
     # print(" ========= XAL Twiss ===========")
     # print(" aplha beta emitt[mm*mrad] X= %6.4f %6.4f %6.4f " % (alphaX, betaX, emittX * 1.0e6))
     # print(" aplha beta emitt[mm*mrad] Y= %6.4f %6.4f %6.4f " % (alphaY, betaY, emittY * 1.0e6))
@@ -132,8 +150,8 @@ def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0,
     sizeZ = math.sqrt(emittZ * betaZ) * 1.0e3
 
     # ---- transform to pyORBIT emittance[GeV*m]
-    emittZ = emittZ * gamma**3 * beta**2 * mass
-    betaZ = betaZ / (gamma**3 * beta**2 * mass)
+    emittZ = emittZ * gamma ** 3 * beta ** 2 * mass
+    betaZ = betaZ / (gamma ** 3 * beta ** 2 * mass)
 
     print(" ========= PyORBIT Twiss ===========")
     print(" aplha beta emitt[mm*mrad] X= %6.4f %6.4f %6.4f " % (alphaX, betaX, emittX * 1.0e6))
@@ -160,10 +178,9 @@ def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0,
     bunch_in.charge(+1)
     for n in range(particle_number):
         x, xp, y, yp = bunch_in.x(n), bunch_in.xp(n), bunch_in.y(n), bunch_in.yp(n)
-        bunch_in.x(n, x + x_off/1000)
-        bunch_in.xp(n, xp + xp_off/1000)
-        bunch_in.y(n, y + y_off/1000)
-        bunch_in.yp(n, yp + yp_off/1000)
-
+        bunch_in.x(n, x + x_off / 1000)
+        bunch_in.xp(n, xp + xp_off / 1000)
+        bunch_in.y(n, y + y_off / 1000)
+        bunch_in.yp(n, yp + yp_off / 1000)
 
     return my_lattice, bunch_in
