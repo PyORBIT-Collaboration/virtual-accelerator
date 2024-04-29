@@ -442,9 +442,9 @@ class Screen(Device):
         image_noise = AbsNoise(noise=Screen.image_noise)
 
         # Registers the device's PVs with the server.
-        self.register_measurement(Screen.x_profile_pv, noise=image_noise)
-        self.register_measurement(Screen.y_profile_pv, noise=image_noise)
-        self.register_measurement(Screen.image_pv, noise=image_noise)
+        self.register_measurement(Screen.x_profile_pv, definition={'count': x_pixels})
+        self.register_measurement(Screen.y_profile_pv, definition={'count': y_pixels})
+        self.register_measurement(Screen.image_pv, definition={'count': x_pixels * y_pixels})
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
@@ -474,7 +474,7 @@ class Screen(Device):
 
         self.update_measurement(Screen.image_pv, image_list)
         self.update_measurement(Screen.x_profile_pv, x_profile)
-        self.update_measurement(Screen.x_profile_pv, y_profile)
+        self.update_measurement(Screen.y_profile_pv, y_profile)
 
 
 class Quadrupole_Power_Supply(Device):
