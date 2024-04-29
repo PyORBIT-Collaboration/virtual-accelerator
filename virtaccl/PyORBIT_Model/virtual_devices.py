@@ -8,7 +8,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy.interpolate import interp2d
 
-from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTInv, LinearTInv
+from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTInv, LinearTInv, PosNoise
 
 
 # Here are the device definitions that take the information from PyORBIT and translates/packages it into information for
@@ -252,7 +252,7 @@ class BPM(Device):
         # Creates flat noise for associated PVs.
         xy_noise = AbsNoise(noise=BPM.xy_noise)
         phase_noise = AbsNoise(noise=BPM.phase_noise)
-        amp_noise = AbsNoise(noise=BPM.amp_noise)
+        amp_noise = PosNoise(noise=BPM.amp_noise)
 
         # Adds a phase offset. Default is 0 offset.
         offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
@@ -439,9 +439,9 @@ class Screen(Device):
         self.y_scale = y_scale
 
         # Creates flat noise for associated PVs.
-        x_noise = AbsNoise(noise=Screen.image_noise, count=x_pixels)
-        y_noise = AbsNoise(noise=Screen.image_noise, count=y_pixels)
-        image_noise = AbsNoise(noise=Screen.image_noise, count=x_pixels*y_pixels)
+        x_noise = PosNoise(noise=Screen.image_noise, count=x_pixels)
+        y_noise = PosNoise(noise=Screen.image_noise, count=y_pixels)
+        image_noise = PosNoise(noise=Screen.image_noise, count=x_pixels*y_pixels)
 
         # Registers the device's PVs with the server.
         self.register_measurement(Screen.x_profile_pv, definition={'count': x_pixels}, noise=x_noise)
