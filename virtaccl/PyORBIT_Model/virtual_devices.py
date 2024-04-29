@@ -439,12 +439,14 @@ class Screen(Device):
         self.y_scale = y_scale
 
         # Creates flat noise for associated PVs.
-        image_noise = AbsNoise(noise=Screen.image_noise)
+        x_noise = AbsNoise(noise=Screen.image_noise, count=x_pixels)
+        y_noise = AbsNoise(noise=Screen.image_noise, count=y_pixels)
+        image_noise = AbsNoise(noise=Screen.image_noise, count=x_pixels*y_pixels)
 
         # Registers the device's PVs with the server.
-        self.register_measurement(Screen.x_profile_pv, definition={'count': x_pixels})
-        self.register_measurement(Screen.y_profile_pv, definition={'count': y_pixels})
-        self.register_measurement(Screen.image_pv, definition={'count': x_pixels * y_pixels})
+        self.register_measurement(Screen.x_profile_pv, definition={'count': x_pixels}, noise=x_noise)
+        self.register_measurement(Screen.y_profile_pv, definition={'count': y_pixels}, noise=y_noise)
+        self.register_measurement(Screen.image_pv, definition={'count': x_pixels * y_pixels}, noise=image_noise)
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
@@ -469,8 +471,8 @@ class Screen(Device):
         xy_hist_new = interp_func(x_axis_new, y_axis_new)
 
         image_list = xy_hist_new.flatten()
-        x_profile = np.sum(xy_hist_new, axis=0).tolist()
-        y_profile = np.sum(xy_hist_new, axis=1).tolist()
+        x_profile = np.sum(xy_hist_new, axis=0)
+        y_profile = np.sum(xy_hist_new, axis=1)
 
         self.update_measurement(Screen.image_pv, image_list)
         self.update_measurement(Screen.x_profile_pv, x_profile)
