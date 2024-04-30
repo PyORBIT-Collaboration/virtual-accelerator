@@ -1351,7 +1351,7 @@
         },
         "LDmp_Mag:QH01": {
             "PyORBIT_Name": "LDmp_Mag:QH01",
-            "Power_Supply": "LDmp_Mag:PS_QH01",
+            "Power_Supply": "LDmp_Mag:PS_QH01a05",
             "Polarity": -1
         },
         "LDmp_Mag:QV02": {
@@ -1361,7 +1361,7 @@
         },
         "LDmp_Mag:QV03": {
             "PyORBIT_Name": "LDmp_Mag:QV03",
-            "Power_Supply": "LDmp_Mag:PS_QV03",
+            "Power_Supply": "LDmp_Mag:PS_QV03a06",
             "Polarity": 1
         },
         "LDmp_Mag:QV04": {
@@ -1371,12 +1371,12 @@
         },
         "LDmp_Mag:QH05": {
             "PyORBIT_Name": "LDmp_Mag:QH05",
-            "Power_Supply": "LDmp_Mag:PS_QH05",
+            "Power_Supply": "LDmp_Mag:PS_QH01a05",
             "Polarity": -1
         },
         "LDmp_Mag:QV06": {
             "PyORBIT_Name": "LDmp_Mag:QV06",
-            "Power_Supply": "LDmp_Mag:PS_QV06",
+            "Power_Supply": "LDmp_Mag:PS_QV03a06",
             "Polarity": 1
         }
     },
@@ -2624,6 +2624,7 @@
             "Frequency": 402500000.0
         }
     },
+    "Screen": {},
     "Quadrupole_Power_Supply": [
         "MEBT_Mag:PS_QH01",
         "MEBT_Mag:PS_QV02",
@@ -2713,12 +2714,10 @@
         "HEBT_Mag:PS_QH30",
         "HEBT_Mag:PS_QV33",
         "HEBT_Mag:PS_QH34",
-        "LDmp_Mag:PS_QH01",
+        "LDmp_Mag:PS_QH01a05",
         "LDmp_Mag:PS_QV02",
-        "LDmp_Mag:PS_QV03",
-        "LDmp_Mag:PS_QV04",
-        "LDmp_Mag:PS_QH05",
-        "LDmp_Mag:PS_QV06"
+        "LDmp_Mag:PS_QV03a06",
+        "LDmp_Mag:PS_QV04"
     ],
     "Quadrupole_Power_Shunt": [
         "CCL_Mag:ShntC_QTH104",
