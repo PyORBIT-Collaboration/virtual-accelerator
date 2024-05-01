@@ -400,10 +400,10 @@ class WireScanner(Device):
 
         # Find the location of the vertical wire. Then interpolate the histogram from the model at that value.
         x_pos = WireScanner.wire_coeff * wire_pos + WireScanner.x_offset
-        x_value = np.interp(x_pos, x_hist[:, 0], x_hist[:, 1])
+        x_value = np.interp(x_pos, x_hist[:, 0], x_hist[:, 1], left=0, right=0)
         self.update_measurement(WireScanner.x_charge_pv, x_value)
         y_pos = WireScanner.wire_coeff * wire_pos + WireScanner.y_offset
-        y_value = np.interp(y_pos, y_hist[:, 0], y_hist[:, 1])
+        y_value = np.interp(y_pos, y_hist[:, 0], y_hist[:, 1], left=0, right=0)
         self.update_measurement(WireScanner.y_charge_pv, y_value)
 
         self.update_measurement(WireScanner.x_avg_pv, ws_params[WireScanner.x_avg_key])

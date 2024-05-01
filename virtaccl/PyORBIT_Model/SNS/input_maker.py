@@ -54,7 +54,8 @@ def main():
                 'SCL_Mag:PS_QH32a33': ['32', '33'], 'HEBT_Mag:PS_QH04a06': ['04', '06'],
                 'HEBT_Mag:PS_QH12t18e': ['12', '14', '16', '18'], 'HEBT_Mag:PS_QV13t19o': ['13', '15', '17', '19'],
                 'HEBT_Mag:PS_DH12t18': ['12', '13', '14', '15', '16', '17', '18'],
-                'HEBT_Mag:PS_QV25t31o': ['25', '27', '29', '31'], 'HEBT_Mag:PS_QH26a28a32': ['26', '28', '32']}
+                'HEBT_Mag:PS_QV25t31o': ['25', '27', '29', '31'], 'HEBT_Mag:PS_QH26a28a32': ['26', '28', '32'],
+                'LDmp_Mag:PS_QH01a05': ['01', '05'], 'LDmp_Mag:PS_QV03a06': ['03', '06']}
 
     bpm_frequencies = {'MEBT': 805e6, 'DTL': 805e6, 'CCL': 402.5e6, 'SCL': 402.5e6, 'HEBT': 402.5e6, 'LDmp': 402.5e6}
 
@@ -257,6 +258,20 @@ def main():
                 if ps_name not in devices[QPS_key]:
                     devices[QPS_key].append(ps_name)
                 devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: -1}
+
+            elif 'LDmp_Mag:QH' in or_name and q_num in mag_sets['LDmp_Mag:PS_QH01a05']:
+                pv_name = or_name
+                ps_name = 'LDmp_Mag:PS_QH01a05'
+                if ps_name not in devices[QPS_key]:
+                    devices[QPS_key].append(ps_name)
+                devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: -1}
+
+            elif 'LDmp_Mag:QV' in or_name and q_num in mag_sets['LDmp_Mag:PS_QV03a06']:
+                pv_name = or_name
+                ps_name = 'LDmp_Mag:PS_QV03a06'
+                if ps_name not in devices[QPS_key]:
+                    devices[QPS_key].append(ps_name)
+                devices[quad_key][pv_name] = {pyorbit_key: or_name, PS_key: ps_name, polarity_key: 1}
 
             else:
                 pv_name = or_name
