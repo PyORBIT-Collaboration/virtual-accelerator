@@ -101,6 +101,14 @@ class Corrector(Device):
     # model will receive the max or min limit defined above.
     def get_settings(self):
         new_field = self.power_supply.get_setting(Corrector_Power_Supply.field_set_pv)
+
+        field_limit_high = self.power_supply.get_setting(Corrector_Power_Supply.field_high_limit_pv)
+        field_limit_low = self.power_supply.get_setting(Corrector_Power_Supply.field_low_limit_pv)
+        if new_field > field_limit_high:
+            new_field = field_limit_high
+        elif new_field < field_limit_low:
+            new_field = field_limit_low
+
         new_field = self.pol_transform.real(new_field)
 
         params_dict = {Corrector.field_key: new_field}

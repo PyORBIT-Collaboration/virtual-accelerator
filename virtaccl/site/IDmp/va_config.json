@@ -32,8 +32,11 @@
         "IDmp_Diag:RII01": "Screen"
     },
 
-    "Power_Supply": [
-        "IDmp_Mag:PS_QV01",
+    "Quadrupole_Power_Supply": [
+        "IDmp_Mag:PS_QV01"
+    ],
+
+    "Corrector_Power_Supply": [
         "IDmp_Mag:PS_DCH01",
         "IDmp_Mag:PS_DCV01"
     ],

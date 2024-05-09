@@ -7,8 +7,8 @@ import argparse
 from pathlib import Path
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
-from virtaccl.PyORBIT_Model.virtual_devices import (Quadrupole, Corrector, Quadrupole_Power_Supply, WireScanner, BPM,
-                                                    P_BPM, Screen)
+from virtaccl.PyORBIT_Model.virtual_devices import (Quadrupole, Corrector, Quadrupole_Power_Supply,
+                                                    Corrector_Power_Supply, WireScanner, BPM, P_BPM, Screen)
 from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Dummy_ICS
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
@@ -63,30 +63,30 @@ def main():
         with open(offset_file, "r") as json_file:
             offset_dict = json.load(json_file)
 
-    mag_ps = devices_dict["Power_Supply"]
-
+    quad_ps = devices_dict["Quadrupole_Power_Supply"]
     quads = devices_dict["Quadrupole"]
     for name, device_dict in quads.items():
         ele_name = device_dict["PyORBIT_Name"]
         polarity = device_dict["Polarity"]
         if ele_name in element_list:
             initial_field = abs(model.get_element_parameters(ele_name)['dB/dr'])
-            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in mag_ps:
+            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in quad_ps:
                 ps_name = device_dict["Power_Supply"]
                 ps_device = Quadrupole_Power_Supply(ps_name, initial_field)
                 server.add_device(ps_device)
                 corrector_device = Quadrupole(name, ele_name, power_supply=ps_device, polarity=polarity)
                 server.add_device(corrector_device)
 
+    corr_ps = devices_dict["Corrector_Power_Supply"]
     correctors = devices_dict["Corrector"]
     for name, device_dict in correctors.items():
         ele_name = device_dict["PyORBIT_Name"]
         polarity = device_dict["Polarity"]
         if ele_name in element_list:
             initial_field = abs(model.get_element_parameters(ele_name)['B'])
-            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in mag_ps:
+            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in corr_ps:
                 ps_name = device_dict["Power_Supply"]
-                ps_device = Quadrupole_Power_Supply(ps_name, initial_field)
+                ps_device = Corrector_Power_Supply(ps_name, initial_field)
                 server.add_device(ps_device)
                 corrector_device = Corrector(name, ele_name, power_supply=ps_device, polarity=polarity)
                 server.add_device(corrector_device)
