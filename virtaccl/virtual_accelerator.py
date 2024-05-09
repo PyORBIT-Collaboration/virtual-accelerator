@@ -2,6 +2,7 @@
 # The main body of the script instantiates PVs from a file passed by command line argument.
 import json
 import math
+import os
 import sys
 import time
 import argparse
@@ -74,6 +75,8 @@ def main():
                         help="DEFAULT: No additional info printed.")
     parser.add_argument('--print_settings', dest='print_settings', action='store_true',
                         help="Will only print setting PVs. Will NOT run the virtual accelerator. (Default is off)")
+
+    os.environ['EPICS_CA_MAX_ARRAY_BYTES'] = '10000000'
 
     args = parser.parse_args()
     debug = args.debug

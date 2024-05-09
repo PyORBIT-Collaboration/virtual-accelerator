@@ -1,6 +1,7 @@
 # Channel access server used to generate fake PV signals analogous to accelerator components.
 # The main body of the script instantiates PVs from a file passed by command line argument.
 import json
+import os
 import sys
 import time
 import argparse
@@ -40,6 +41,8 @@ def main():
     parser.add_argument('--debug', dest='debug', action='store_true', help="Some debug info will be printed.")
     parser.add_argument('--production', dest='debug', action='store_false',
                         help="DEFAULT: No additional info printed.")
+
+    os.environ['EPICS_CA_MAX_ARRAY_BYTES'] = '10000000'
 
     args = parser.parse_args()
     debug = args.debug
