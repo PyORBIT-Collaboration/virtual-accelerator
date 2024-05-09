@@ -12,6 +12,19 @@ class Transform:
         return x
 
 
+class NormalizePeak(Transform):
+    def __init__(self, max_value=1, reason_rb=None):
+        self._max = max_value
+        self._reason_rb = reason_rb
+
+    def raw(self, x):
+        coeff = self._max / max(x)
+        return x * coeff
+
+    def calculate_rb(self, x):
+        return self.raw(x)
+
+
 class LinearT(Transform):
     def __init__(self, offset=0.0, scaler=1.0, reason_rb=None):
         self._offset = offset

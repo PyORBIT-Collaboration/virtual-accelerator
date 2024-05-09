@@ -62,7 +62,7 @@ def main():
     cavity_amps = {'MEBT1': 0.450, 'MEBT2': 0.314, 'MEBT3': 0.445, 'MEBT4': 0.600,
                    'DTL1': 0.192, 'DTL2': 0.495, 'DTL3': 0.457, 'DTL4': 0.615, 'DTL5': 0.570, 'DTL6': 0.525,
                    'CCL1': 0.811, 'CCL2': 0.793, 'CCL3': 0.689, 'CCL4': 0.788,
-                   'SCLMed': 14.9339, 'SCL:Cav12a': 21.875, 'SCLHigh': 22.807}
+                   'SCLMed': 15.000, 'SCL:Cav12a': 15.000, 'SCLHigh': 15.000}
 
     cavity_key = 'RF_Cavity'
     quad_key = 'Quadrupole'
