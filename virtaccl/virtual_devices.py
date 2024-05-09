@@ -18,7 +18,11 @@ class NormalizePeak(Transform):
         self._reason_rb = reason_rb
 
     def raw(self, x):
-        coeff = self._max / max(x)
+        sig_max = max(x)
+        if sig_max > 0:
+            coeff = self._max / max(x)
+        else:
+            coeff = 0
         return x * coeff
 
     def calculate_rb(self, x):
