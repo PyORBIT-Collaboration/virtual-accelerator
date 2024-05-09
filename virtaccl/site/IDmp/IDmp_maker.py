@@ -3,7 +3,6 @@ import math
 import sys
 
 import numpy as np
-from matplotlib import pyplot as plt
 from orbit.bunch_generators import TwissContainer, WaterBagDist3D
 
 # Import Bunch to be able to build a bunch.
