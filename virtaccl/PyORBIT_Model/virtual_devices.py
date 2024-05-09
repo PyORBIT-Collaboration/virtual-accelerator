@@ -7,7 +7,7 @@ from typing import Dict, Any, Union, Literal
 import numpy as np
 from scipy.interpolate import interp2d
 
-from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTInv, LinearTInv, PosNoise
+from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTInv, LinearTInv, PosNoise, NormalizePeak
 
 
 # Here are the device definitions that take the information from PyORBIT and translates/packages it into information for
@@ -442,10 +442,16 @@ class Screen(Device):
         y_noise = PosNoise(noise=Screen.image_noise, count=y_pixels)
         image_noise = PosNoise(noise=Screen.image_noise, count=x_pixels*y_pixels)
 
+        signal_max = 254
+        signal_normalize = NormalizePeak(max_value=signal_max)
+
         # Registers the device's PVs with the server.
-        self.register_measurement(Screen.x_profile_pv, definition={'count': x_pixels}, noise=x_noise)
-        self.register_measurement(Screen.y_profile_pv, definition={'count': y_pixels}, noise=y_noise)
-        self.register_measurement(Screen.image_pv, definition={'count': x_pixels * y_pixels}, noise=image_noise)
+        self.register_measurement(Screen.x_profile_pv, definition={'type': 'char', 'count': x_pixels}, noise=x_noise,
+                                  transform=signal_normalize)
+        self.register_measurement(Screen.y_profile_pv, definition={'type': 'char', 'count': y_pixels}, noise=y_noise,
+                                  transform=signal_normalize)
+        self.register_measurement(Screen.image_pv, definition={'type': 'char', 'count': x_pixels * y_pixels},
+                                  noise=image_noise, transform=signal_normalize)
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
