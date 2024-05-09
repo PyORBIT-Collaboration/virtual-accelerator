@@ -58,439 +58,439 @@
         },
         "SCL_LLRF:FCM01a": {
             "PyORBIT_Name": "SCL:Cav01a",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM01b": {
             "PyORBIT_Name": "SCL:Cav01b",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM01c": {
             "PyORBIT_Name": "SCL:Cav01c",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM02a": {
             "PyORBIT_Name": "SCL:Cav02a",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM02b": {
             "PyORBIT_Name": "SCL:Cav02b",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM02c": {
             "PyORBIT_Name": "SCL:Cav02c",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM03a": {
             "PyORBIT_Name": "SCL:Cav03a",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM03b": {
             "PyORBIT_Name": "SCL:Cav03b",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM03c": {
             "PyORBIT_Name": "SCL:Cav03c",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM04a": {
             "PyORBIT_Name": "SCL:Cav04a",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM04b": {
             "PyORBIT_Name": "SCL:Cav04b",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM04c": {
             "PyORBIT_Name": "SCL:Cav04c",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM05a": {
             "PyORBIT_Name": "SCL:Cav05a",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM05b": {
             "PyORBIT_Name": "SCL:Cav05b",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM05c": {
             "PyORBIT_Name": "SCL:Cav05c",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM06a": {
             "PyORBIT_Name": "SCL:Cav06a",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM06b": {
             "PyORBIT_Name": "SCL:Cav06b",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM06c": {
             "PyORBIT_Name": "SCL:Cav06c",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM07a": {
             "PyORBIT_Name": "SCL:Cav07a",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM07b": {
             "PyORBIT_Name": "SCL:Cav07b",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM07c": {
             "PyORBIT_Name": "SCL:Cav07c",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM08a": {
             "PyORBIT_Name": "SCL:Cav08a",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM08b": {
             "PyORBIT_Name": "SCL:Cav08b",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM08c": {
             "PyORBIT_Name": "SCL:Cav08c",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM09a": {
             "PyORBIT_Name": "SCL:Cav09a",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM09b": {
             "PyORBIT_Name": "SCL:Cav09b",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM09c": {
             "PyORBIT_Name": "SCL:Cav09c",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM10a": {
             "PyORBIT_Name": "SCL:Cav10a",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM10b": {
             "PyORBIT_Name": "SCL:Cav10b",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM10c": {
             "PyORBIT_Name": "SCL:Cav10c",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM11a": {
             "PyORBIT_Name": "SCL:Cav11a",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM11b": {
             "PyORBIT_Name": "SCL:Cav11b",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM11c": {
             "PyORBIT_Name": "SCL:Cav11c",
-            "Design_Amplitude": 14.9339
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM12a": {
             "PyORBIT_Name": "SCL:Cav12a",
-            "Design_Amplitude": 21.875
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM12b": {
             "PyORBIT_Name": "SCL:Cav12b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM12c": {
             "PyORBIT_Name": "SCL:Cav12c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM12d": {
             "PyORBIT_Name": "SCL:Cav12d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM13a": {
             "PyORBIT_Name": "SCL:Cav13a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM13b": {
             "PyORBIT_Name": "SCL:Cav13b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM13c": {
             "PyORBIT_Name": "SCL:Cav13c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM13d": {
             "PyORBIT_Name": "SCL:Cav13d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM14a": {
             "PyORBIT_Name": "SCL:Cav14a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM14b": {
             "PyORBIT_Name": "SCL:Cav14b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM14c": {
             "PyORBIT_Name": "SCL:Cav14c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM14d": {
             "PyORBIT_Name": "SCL:Cav14d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM15a": {
             "PyORBIT_Name": "SCL:Cav15a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM15b": {
             "PyORBIT_Name": "SCL:Cav15b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM15c": {
             "PyORBIT_Name": "SCL:Cav15c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM15d": {
             "PyORBIT_Name": "SCL:Cav15d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM16a": {
             "PyORBIT_Name": "SCL:Cav16a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM16b": {
             "PyORBIT_Name": "SCL:Cav16b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM16c": {
             "PyORBIT_Name": "SCL:Cav16c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM16d": {
             "PyORBIT_Name": "SCL:Cav16d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM17a": {
             "PyORBIT_Name": "SCL:Cav17a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM17b": {
             "PyORBIT_Name": "SCL:Cav17b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM17c": {
             "PyORBIT_Name": "SCL:Cav17c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM17d": {
             "PyORBIT_Name": "SCL:Cav17d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM18a": {
             "PyORBIT_Name": "SCL:Cav18a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM18b": {
             "PyORBIT_Name": "SCL:Cav18b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM18c": {
             "PyORBIT_Name": "SCL:Cav18c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM18d": {
             "PyORBIT_Name": "SCL:Cav18d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM19a": {
             "PyORBIT_Name": "SCL:Cav19a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM19b": {
             "PyORBIT_Name": "SCL:Cav19b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM19c": {
             "PyORBIT_Name": "SCL:Cav19c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM19d": {
             "PyORBIT_Name": "SCL:Cav19d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM20a": {
             "PyORBIT_Name": "SCL:Cav20a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM20b": {
             "PyORBIT_Name": "SCL:Cav20b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM20c": {
             "PyORBIT_Name": "SCL:Cav20c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM20d": {
             "PyORBIT_Name": "SCL:Cav20d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM21a": {
             "PyORBIT_Name": "SCL:Cav21a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM21b": {
             "PyORBIT_Name": "SCL:Cav21b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM21c": {
             "PyORBIT_Name": "SCL:Cav21c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM21d": {
             "PyORBIT_Name": "SCL:Cav21d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM22a": {
             "PyORBIT_Name": "SCL:Cav22a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM22b": {
             "PyORBIT_Name": "SCL:Cav22b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM22c": {
             "PyORBIT_Name": "SCL:Cav22c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM22d": {
             "PyORBIT_Name": "SCL:Cav22d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM23a": {
             "PyORBIT_Name": "SCL:Cav23a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM23b": {
             "PyORBIT_Name": "SCL:Cav23b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM23c": {
             "PyORBIT_Name": "SCL:Cav23c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM23d": {
             "PyORBIT_Name": "SCL:Cav23d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM25a": {
             "PyORBIT_Name": "SCL:Cav25a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM25b": {
             "PyORBIT_Name": "SCL:Cav25b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM25c": {
             "PyORBIT_Name": "SCL:Cav25c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM25d": {
             "PyORBIT_Name": "SCL:Cav25d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM27a": {
             "PyORBIT_Name": "SCL:Cav27a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM27b": {
             "PyORBIT_Name": "SCL:Cav27b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM27c": {
             "PyORBIT_Name": "SCL:Cav27c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM27d": {
             "PyORBIT_Name": "SCL:Cav27d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM28a": {
             "PyORBIT_Name": "SCL:Cav28a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM28b": {
             "PyORBIT_Name": "SCL:Cav28b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM28c": {
             "PyORBIT_Name": "SCL:Cav28c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM28d": {
             "PyORBIT_Name": "SCL:Cav28d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM29a": {
             "PyORBIT_Name": "SCL:Cav29a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM29b": {
             "PyORBIT_Name": "SCL:Cav29b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM29c": {
             "PyORBIT_Name": "SCL:Cav29c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM29d": {
             "PyORBIT_Name": "SCL:Cav29d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM30a": {
             "PyORBIT_Name": "SCL:Cav30a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM30b": {
             "PyORBIT_Name": "SCL:Cav30b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM30c": {
             "PyORBIT_Name": "SCL:Cav30c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM30d": {
             "PyORBIT_Name": "SCL:Cav30d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM31a": {
             "PyORBIT_Name": "SCL:Cav31a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM31b": {
             "PyORBIT_Name": "SCL:Cav31b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM31c": {
             "PyORBIT_Name": "SCL:Cav31c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM31d": {
             "PyORBIT_Name": "SCL:Cav31d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM32a": {
             "PyORBIT_Name": "SCL:Cav32a",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM32b": {
             "PyORBIT_Name": "SCL:Cav32b",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM32c": {
             "PyORBIT_Name": "SCL:Cav32c",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         },
         "SCL_LLRF:FCM32d": {
             "PyORBIT_Name": "SCL:Cav32d",
-            "Design_Amplitude": 22.807
+            "Design_Amplitude": 15.0
         }
     },
     "Quadrupole": {
