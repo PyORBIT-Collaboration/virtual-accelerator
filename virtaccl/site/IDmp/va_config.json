@@ -13,13 +13,23 @@
     },
     "Corrector": {
         "IDmp_Mag:DCH01": {
-            "PyORBIT_Name": "HCorrector",
+            "PyORBIT_Name": "HCorrector1",
             "Power_Supply": "IDmp_Mag:PS_DCH01",
             "Polarity": 1
         },
         "IDmp_Mag:DCV01": {
-            "PyORBIT_Name": "VCorrector",
+            "PyORBIT_Name": "VCorrector1",
             "Power_Supply": "IDmp_Mag:PS_DCV01",
+            "Polarity": 1
+        },
+        "IDmp_Mag:DCH02": {
+            "PyORBIT_Name": "HCorrector2",
+            "Power_Supply": "IDmp_Mag:PS_DCH02",
+            "Polarity": 1
+        },
+        "IDmp_Mag:DCV02": {
+            "PyORBIT_Name": "VCorrector2",
+            "Power_Supply": "IDmp_Mag:PS_DCV02",
             "Polarity": 1
         }
     },
@@ -44,7 +54,9 @@
 
     "Corrector_Power_Supply": [
         "IDmp_Mag:PS_DCH01",
-        "IDmp_Mag:PS_DCV01"
+        "IDmp_Mag:PS_DCV01",
+        "IDmp_Mag:PS_DCH02",
+        "IDmp_Mag:PS_DCV02"
     ],
 
     "Physics_BPM": {
