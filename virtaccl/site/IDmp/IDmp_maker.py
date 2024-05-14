@@ -24,8 +24,8 @@ from virtaccl.PyORBIT_Model.sns_linac_bunch_generator import SNS_Linac_BunchGene
 def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0, yp_off=0):
     # Field strength and length of the quadrupoles
     quad_field = 0.5
-    dch_field = 0.0
-    dcv_field = -0.0
+    dch_field = 0.01
+    dcv_field = -0.02
     mag_len = 0.673
     bpm_frequency = 402.5e6
 
@@ -44,56 +44,66 @@ def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0,
     Q1 = Quad("Quad1")
     Q1.setLength(mag_len)
     Q1.setField(-quad_field)
+
+    DCH1 = DCorrectorH("HCorrector1")
+    DCH1.setParam("effLength", mag_len)
+    DCH1.setField(dch_field)
+    Q1.addChildNode(DCH1, Q1.EXIT)
+
+    DCV1 = DCorrectorV("VCorrector1")
+    DCV1.setParam("effLength", mag_len)
+    DCV1.setField(dcv_field)
+    Q1.addChildNode(DCV1, Q1.EXIT)
+
     BPM01 = BPMclass("BPM01", frequency=bpm_frequency)
     Q1.addChildNode(BPM01, Q1.EXIT)
+
     list_of_nodes.append(Q1)
 
     D2 = Drift("Drift2")
-    D2.setLength(10.6825 - (10.029 + mag_len / 2))
+    D2.setLength((13.599 - mag_len / 2) - (10.029 + mag_len / 2))
     list_of_nodes.append(D2)
-
-    DCH = DCorrectorH("HCorrector")
-    DCH.setParam("effLength", mag_len)
-    DCH.setField(dch_field)
-    list_of_nodes.append(DCH)
-
-    DCV = DCorrectorV("VCorrector")
-    DCV.setParam("effLength", mag_len)
-    DCV.setField(dcv_field)
-    list_of_nodes.append(DCV)
-
-    D3 = Drift("Drift3")
-    D3.setLength((13.59872 - mag_len / 2) - 10.6825)
-    list_of_nodes.append(D3)
 
     Q2 = Quad("Quad2")
     Q2.setLength(mag_len)
     Q2.setField(quad_field)
+
+    DCH2 = DCorrectorH("HCorrector2")
+    DCH2.setParam("effLength", mag_len)
+    DCH2.setField(-dch_field)
+    Q2.addChildNode(DCH2, Q2.EXIT)
+
+    DCV2 = DCorrectorV("VCorrector2")
+    DCV2.setParam("effLength", mag_len)
+    DCV2.setField(-dcv_field)
+    Q2.addChildNode(DCV2, Q2.EXIT)
+
     BPM02 = BPMclass("BPM02", frequency=bpm_frequency)
     Q2.addChildNode(BPM02, Q2.EXIT)
+
     list_of_nodes.append(Q2)
 
-    D4 = Drift("Drift4")
-    D4.setLength(16.612 - (13.59872 + mag_len / 2))
-    list_of_nodes.append(D4)
+    D3 = Drift("Drift3")
+    D3.setLength(16.612 - (13.59872 + mag_len / 2))
+    list_of_nodes.append(D3)
 
     WS01_marker = MarkerLinacNode("WS01m")
     WS01 = WSclass("WS01")
     WS01_marker.addChildNode(WS01, WS01_marker.ENTRANCE)
     list_of_nodes.append(WS01_marker)
 
-    D5 = Drift("Drift5")
-    D5.setLength(17.380 - 16.612)
-    list_of_nodes.append(D5)
+    D4 = Drift("Drift4")
+    D4.setLength(17.380 - 16.612)
+    list_of_nodes.append(D4)
 
     BPM03_marker = MarkerLinacNode("BPM03m")
     BPM03 = BPMclass("BPM03", frequency=bpm_frequency)
     BPM03_marker.addChildNode(BPM03, BPM03_marker.ENTRANCE)
     list_of_nodes.append(BPM03_marker)
 
-    D6 = Drift("Drift6")
-    D6.setLength(12.998)
-    list_of_nodes.append(D6)
+    D5 = Drift("Drift5")
+    D5.setLength(12.998)
+    list_of_nodes.append(D5)
 
     Screen_marker = MarkerLinacNode("Screen_m")
     Screen = ScreenClass("Screen")

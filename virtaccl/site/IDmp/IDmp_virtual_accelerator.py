@@ -86,7 +86,7 @@ def main():
         ele_name = device_dict["PyORBIT_Name"]
         polarity = device_dict["Polarity"]
         if ele_name in element_list:
-            initial_field = abs(model.get_element_parameters(ele_name)['B'])
+            initial_field = model.get_element_parameters(ele_name)['B']
             if "Power_Supply" in device_dict and device_dict["Power_Supply"] in corr_ps:
                 ps_name = device_dict["Power_Supply"]
                 ps_device = Corrector_Power_Supply(ps_name, initial_field)
