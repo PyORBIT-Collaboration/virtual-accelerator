@@ -1,9 +1,14 @@
 {
     "Quadrupole": {
         "IDmp_Mag:QV01":{
-            "PyORBIT_Name": "Quad",
+            "PyORBIT_Name": "Quad1",
             "Power_Supply": "IDmp_Mag:PS_QV01",
             "Polarity": -1
+        },
+        "IDmp_Mag:QH02":{
+            "PyORBIT_Name": "Quad2",
+            "Power_Supply": "IDmp_Mag:PS_QH02",
+            "Polarity": 1
         }
     },
     "Corrector": {
@@ -33,7 +38,8 @@
     },
 
     "Quadrupole_Power_Supply": [
-        "IDmp_Mag:PS_QV01"
+        "IDmp_Mag:PS_QV01",
+        "IDmp_Mag:PS_QH02"
     ],
 
     "Corrector_Power_Supply": [
