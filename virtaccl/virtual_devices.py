@@ -1,4 +1,5 @@
 import math
+import numpy as np
 from numpy.random import random_sample
 from typing import Optional, Union, List, Dict, Any
 
@@ -18,9 +19,9 @@ class NormalizePeak(Transform):
         self._reason_rb = reason_rb
 
     def raw(self, x):
-        sig_max = max(x)
+        sig_max = np.amax(x)
         if sig_max > 0:
-            coeff = self._max / max(x)
+            coeff = self._max / np.amax(x)
         else:
             coeff = 0
         return x * coeff
@@ -106,13 +107,13 @@ class Noise:
 
 
 class AbsNoise(Noise):
-    def __init__(self, noise=0.0, count=1, **kw):
+    def __init__(self, noise=0.0, shape=1, **kw):
         super().__init__(**kw)
         self.noise = noise
-        self.count = count
+        self.shape = shape
 
     def add_noise(self, x):
-        noise = self.noise * (random_sample(self.count) * 2 - 1)
+        noise = self.noise * (random_sample(self.shape) * 2 - 1)
         return x + noise
 
 
