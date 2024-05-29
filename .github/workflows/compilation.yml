@@ -13,13 +13,13 @@ jobs:
   apple-silicon:
     runs-on: macos-14
     steps:
-      - name: Install packages
-        run: |
-          .github/workflows/install-packages.sh
-
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Install packages
+        run: |
+          .github/workflows/install-packages.sh
 
       - name: Build
         run: |
