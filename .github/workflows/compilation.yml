@@ -1,0 +1,34 @@
+name: build-virac
+
+on:
+  push:
+    tags:
+      - '*'
+    branches:
+      - '*'
+
+jobs:
+
+
+  apple-silicon:
+    runs-on: macos-14
+    steps:
+      - name: Install packages
+        run: |
+          .github/workflows/install-packages.sh
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        run: |
+          .github/workflows/pip-build.sh
+
+      - name: Test
+        run: |
+          .github/workflows/pip-tests.sh
+
+      - name: Print Versions
+        run: |
+          .github/workflows/pip-versions.sh      
