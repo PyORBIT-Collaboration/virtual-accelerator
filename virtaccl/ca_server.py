@@ -122,6 +122,24 @@ class Server:
                 setting_pvs.append(param.get_pv())
         return setting_pvs
 
+    def get_measurement_pvs(self):
+        measurement_pvs = []
+        for device_name, device in self.devices.items():
+            for reason, param in device.measurements.items():
+                measurement_pvs.append(param.get_pv())
+        return measurement_pvs
+
+    def get_readback_pvs(self):
+        readback_pvs = []
+        for device_name, device in self.devices.items():
+            for reason, param in device.readbacks.items():
+                readback_pvs.append(param.get_pv())
+        return readback_pvs
+
+    def get_pvs(self):
+        pvs = self.get_setting_pvs() +self.get_measurement_pvs() + self.get_readback_pvs()
+        return pvs
+
     def run(self):
         pass
 

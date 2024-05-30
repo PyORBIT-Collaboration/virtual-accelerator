@@ -75,6 +75,8 @@ def main():
                         help="DEFAULT: No additional info printed.")
     parser.add_argument('--print_settings', dest='print_settings', action='store_true',
                         help="Will only print setting PVs. Will NOT run the virtual accelerator. (Default is off)")
+    parser.add_argument('--print_pvs', dest='print_pvs', action='store_true',
+                        help="Will print all PVs. Will NOT run the virtual accelerator. (Default is off)")
 
     os.environ['EPICS_CA_MAX_ARRAY_BYTES'] = '10000000'
 
@@ -298,6 +300,10 @@ def main():
     if args.print_settings:
         for setting in server.get_setting_pvs():
             print(setting)
+        sys.exit()
+    elif args.print_pvs:
+        for pv in server.get_pvs():
+            print(pv)
         sys.exit()
 
     if debug:
