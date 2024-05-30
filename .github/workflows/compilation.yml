@@ -27,11 +27,18 @@ jobs:
 
       - name: Build
         run: |
-          .github/workflows/pip-build.sh
+          python3 -m venv .po3_va
+          source .po3_va/bin/activate
+          pip install -U pip
+          pip install git+https://github.com/PyORBIT-Collaboration/PyORBIT3
+          pip install .
 
       - name: Test
         run: |
-          .github/workflows/pip-tests.sh
+          source .po3_va/bin/activate
+          virtual_accelerator &
+          cd virtaccl/examples/Corrector.py || exit
+          python Corrector.py
 
       - name: Print Versions
         run: |
