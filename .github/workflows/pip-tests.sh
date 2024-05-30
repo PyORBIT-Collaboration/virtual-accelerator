@@ -1,4 +1,4 @@
 . .po3_va/bin/activate
 virtual_accelerator &
-cd virtaccl/examples/Corrector.py || exit
+cd virtaccl/examples || exit
 python Corrector.py

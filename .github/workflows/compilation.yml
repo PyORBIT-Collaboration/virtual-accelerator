@@ -27,7 +27,7 @@ jobs:
 
       - name: Build
         run: |
-          python3 -m venv .po3_va
+          python3.9 -m venv .po3_va
           source .po3_va/bin/activate
           pip install -U pip
           pip install git+https://github.com/PyORBIT-Collaboration/PyORBIT3
@@ -37,7 +37,7 @@ jobs:
         run: |
           source .po3_va/bin/activate
           virtual_accelerator &
-          cd virtaccl/examples/Corrector.py || exit
+          cd virtaccl/examples || exit
           python Corrector.py
 
       - name: Print Versions
