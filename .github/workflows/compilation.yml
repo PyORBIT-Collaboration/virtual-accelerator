@@ -13,13 +13,17 @@ jobs:
   apple-silicon:
     runs-on: macos-14
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Install packages
         run: |
-          .github/workflows/install-packages.sh
+          brew reinstall pkg-config fftw
+          git clone --recursive https://github.com/epics-base/epics-base.git
+          cd epics-base || exit
+          make
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Build
         run: |
