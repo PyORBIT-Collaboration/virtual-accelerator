@@ -10,16 +10,13 @@ on:
 jobs:
 
 
-  apple-silicon:
-    runs-on: macos-14
+  centos-stream:
+    runs-on: ubuntu-latest
     steps:
 
       - name: Install packages
         run: |
           brew reinstall pkg-config fftw
-          git clone --recursive https://github.com/epics-base/epics-base.git
-          cd epics-base || exit
-          make
 
       - uses: actions/checkout@v4
         with:
@@ -27,18 +24,11 @@ jobs:
 
       - name: Build
         run: |
-          python3.9 -m venv .po3_va
-          source .po3_va/bin/activate
-          pip install -U pip
-          pip install git+https://github.com/PyORBIT-Collaboration/PyORBIT3
-          pip install .
+          .github/workflows/pip-build.sh
 
       - name: Test
         run: |
-          source .po3_va/bin/activate
-          virtual_accelerator &
-          cd virtaccl/examples || exit
-          python Corrector.py
+          .github/workflows/pip-tests.sh
 
       - name: Print Versions
         run: |
