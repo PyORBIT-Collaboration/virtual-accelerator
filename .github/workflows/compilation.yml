@@ -26,10 +26,15 @@ jobs:
          - name: Build
            run: |
              .github/workflows/pip-build.sh
+             .github/workflows/pip-build-previous.sh
 
-         - name: Test
+         - name: Corrector Test
            run: |
-             .github/workflows/pip-tests.sh
+             .github/workflows/corrector-test.sh
+
+         - name: Previous PVs Test
+           run: |
+             .github/workflows/pv-test.sh
 
          - name: Print Versions
            run: |
