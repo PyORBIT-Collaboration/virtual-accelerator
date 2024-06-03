@@ -25,6 +25,7 @@ jobs:
             fetch-depth: 0
          - name: Build
            run: |
+             git config --global --add safe.directory /.github/workspace
              .github/workflows/pip-build.sh
              .github/workflows/pip-build-previous.sh
 
