@@ -1,0 +1,42 @@
+name: build-virac
+
+on:
+  push:
+    tags:
+      - '*'
+    branches:
+      - '*'
+
+jobs:
+
+
+  centos-stream:
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/centos/centos:stream9
+    steps:
+         - name: Install packages
+           run: |
+             dnf group install -y "Development Tools"
+             dnf install -y python3-devel fftw3-devel
+
+         - uses: actions/checkout@v4
+           with:
+            fetch-depth: 0
+         - name: Build
+           run: |
+             git config --global --add safe.directory /__w/virtual-accelerator/virtual-accelerator
+             .github/workflows/pip-build.sh
+             .github/workflows/pip-build-previous.sh
+
+         - name: Corrector Test
+           run: |
+             .github/workflows/corrector-test.sh
+
+         - name: Previous PVs Test
+           run: |
+             .github/workflows/pv-test.sh
+
+         - name: Print Versions
+           run: |
+             .github/workflows/pip-versions.sh            
