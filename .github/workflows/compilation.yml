@@ -25,7 +25,7 @@ jobs:
             fetch-depth: 0
          - name: Build
            run: |
-             git config --global --add safe.directory .
+             git config --global --add safe.directory /__w/virtual-accelerator/virtual-accelerator
              .github/workflows/pip-build.sh
              .github/workflows/pip-build-previous.sh
 
