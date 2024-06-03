@@ -6,7 +6,10 @@ It's advised to use a virtual environment, either venv or conda.
 Clone this repository and install with pip. 
 You need to have PyORBIT installed in the same virtual environment.
 
-If you are installing on a macOS, you will need to install EPICS as well.
+If you are installing on a macOS, you will need to install EPICS as well, and then add the following line to your bash_profile.
+```bash
+export PYEPICS_LIBCA=${EPICS_BASE}/lib/${EPICS_HOST_ARCH}/libca.dylib
+```
 
 ```bash
 pip install -e .
