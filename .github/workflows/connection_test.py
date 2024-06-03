@@ -8,6 +8,5 @@ for line in Lines:
     pv_name = line[0]
     pv = epics.PV(pv_name)
     if pv.get() is None:
-        print("Some old PVs not found!")
-        sys.exit()
+        raise ValueError("An error occurred: Some old PVs no longer connected.")
 print("All old PVs found!")
