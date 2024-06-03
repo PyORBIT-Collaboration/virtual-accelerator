@@ -1,10 +1,16 @@
 # Virtual Accelerator
 
 ## Installation
-It's advised to use virtual environment either venv or conda.
+It's advised to use a virtual environment, either venv or conda.
 
 Clone this repository and install with pip. 
 You need to have PyORBIT installed in the same virtual environment.
+
+If you are installing on a macOS, you will need to install EPICS as well: https://epics-controls.org/resources-and-support/documents/getting-started/.
+After following all the instructions, add the following line to your bash_profile:
+```bash
+export PYEPICS_LIBCA=${EPICS_BASE}/lib/${EPICS_HOST_ARCH}/libca.dylib
+```
 
 ```bash
 pip install -e .
