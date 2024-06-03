@@ -2,3 +2,4 @@
 python -V
 pip -V
 gcc -v
+python -m setuptools_scm
