@@ -47,7 +47,7 @@ class Server:
 
     def _CA_events(self, server):
         while True:
-            server.process(0.1)
+            server.process(0.001)
 
     def setParam(self, reason, value, timestamp=None):
         self.driver.setParam(reason, value, timestamp)
