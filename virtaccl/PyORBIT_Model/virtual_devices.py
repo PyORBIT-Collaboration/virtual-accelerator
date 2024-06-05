@@ -116,7 +116,7 @@ class Corrector(Device):
         return model_dict
 
     def update_readbacks(self):
-        rb_field = abs(self.get_settings()[self.model_name][Corrector.field_key])
+        rb_field = self.get_settings()[self.model_name][Corrector.field_key]
         rb_param = self.readbacks[Corrector.field_readback_pv]
         rb_param.set_param(rb_field)
 
