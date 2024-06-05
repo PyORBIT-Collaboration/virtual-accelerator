@@ -39,15 +39,16 @@ class TDriver(Driver):
 
 
 class Server:
-    def __init__(self, prefix=''):
+    def __init__(self, prefix='', process_delay=0.1):
         self.prefix = prefix
         self.driver = None
         self.pv_db = dict()
         self.devices: Dict[str, Device] = {}
+        self.process_delay = process_delay
 
     def _CA_events(self, server):
         while True:
-            server.process(0.1)
+            server.process(self.process_delay)
 
     def setParam(self, reason, value, timestamp=None):
         self.driver.setParam(reason, value, timestamp)
