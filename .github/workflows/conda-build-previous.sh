@@ -1,3 +1,4 @@
+. /opt/conda/etc/profile.d/conda.sh
 PREVIOUS_COMMIT=$(git rev-parse HEAD^1)
 echo "Previous commit SHA: $PREVIOUS_COMMIT"
 git checkout $PREVIOUS_COMMIT
