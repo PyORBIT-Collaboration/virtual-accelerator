@@ -32,7 +32,6 @@ jobs:
          - name: Build
            run: |
              git config --global --add safe.directory /__w/virtual-accelerator/virtual-accelerator
-             .github/workflows/conda-build-previous.sh
              .github/workflows/conda-build.sh
 
          - name: Corrector Test
