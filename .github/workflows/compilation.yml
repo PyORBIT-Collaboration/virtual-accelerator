@@ -10,24 +10,29 @@ on:
 jobs:
 
 
-  centos-stream:
+  ubuntu:
     runs-on: ubuntu-latest
     container:
-      image: quay.io/centos/centos:stream9
+      image: ubuntu:latest
     steps:
-         - name: Install packages
+         - name: Install Conda
            run: |
-             dnf group install -y "Development Tools"
-             dnf install -y python3-devel fftw3-devel
+             apt update -y
+             apt install -y curl gpg git build-essential
+             curl https://repo.anaconda.com/pkgs/misc/gpgkeys/anaconda.asc | gpg --dearmor > conda.gpg
+             install -o root -g root -m 644 conda.gpg /usr/share/keyrings/conda-archive-keyring.gpg
+             echo "deb [arch=amd64 signed-by=/usr/share/keyrings/conda-archive-keyring.gpg] https://repo.anaconda.com/pkgs/misc/debrepo/conda stable main" > /etc/apt/sources.list.d/conda.list
+             apt update -y
+             apt install -y conda
 
          - uses: actions/checkout@v4
            with:
             fetch-depth: 0
+
          - name: Build
            run: |
              git config --global --add safe.directory /__w/virtual-accelerator/virtual-accelerator
-             .github/workflows/pip-build.sh
-             .github/workflows/pip-build-previous.sh
+             .github/workflows/conda-build.sh
 
          - name: Corrector Test
            run: |
@@ -39,4 +44,4 @@ jobs:
 
          - name: Print Versions
            run: |
-             .github/workflows/pip-versions.sh            
+             .github/workflows/conda-versions.sh  
