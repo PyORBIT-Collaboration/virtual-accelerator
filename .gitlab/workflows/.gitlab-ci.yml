@@ -1,0 +1,41 @@
+stages:
+  - install
+  - build
+  - test
+  - versions
+
+variables:
+  IMAGE: quay.io/centos/centos:stream9
+
+install_packages:
+  stage: install
+  image: $IMAGE
+  script:
+    - dnf group install -y "Development Tools"
+    - dnf install -y python3-devel fftw3-devel
+
+checkout_and_build:
+  stage: build
+  image: $IMAGE
+  script:
+    - git config --global --add safe.directory $CI_PROJECT_DIR
+    - ./.gitlab/pip-build.sh
+    - ./.gitlab/pip-build-previous.sh
+
+corrector_test:
+  stage: test
+  image: $IMAGE
+  script:
+    - ./.gitlab/corrector-test.sh
+
+previous_pvs_test:
+  stage: test
+  image: $IMAGE
+  script:
+    - ./.gitlab/pv-test.sh
+
+print_versions:
+  stage: versions
+  image: $IMAGE
+  script:
+    - ./.gitlab/pip-versions.sh

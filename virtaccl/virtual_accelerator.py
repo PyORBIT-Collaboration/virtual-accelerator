@@ -75,6 +75,14 @@ def main():
                         help="DEFAULT: No additional info printed.")
     parser.add_argument('--print_settings', dest='print_settings', action='store_true',
                         help="Will only print setting PVs. Will NOT run the virtual accelerator. (Default is off)")
+    parser.add_argument('--print_pvs', dest='print_pvs', action='store_true',
+                        help="Will print all PVs. Will NOT run the virtual accelerator. (Default is off)")
+
+    # Number (in seconds) that determine some delay parameter in the server. Not exactly sure how it works, so use at
+    # your own risk.
+    parser.add_argument('--ca_proc', default=0.1, type=float,
+                        help='Number (in seconds) that determine some delay parameter in the server. Not exactly sure '
+                             'how it works, so use at your own risk. (Default=0.1)')
 
     os.environ['EPICS_CA_MAX_ARRAY_BYTES'] = '10000000'
 
@@ -167,7 +175,8 @@ def main():
     model.set_beam_current(38.0e-3)  # Set the initial beam current in Amps.
     element_list = model.get_element_list()
 
-    server = Server()
+    delay = args.ca_proc
+    server = Server(process_delay=delay)
 
     offset_file = args.phase_offset
     if offset_file is not None:
@@ -298,6 +307,10 @@ def main():
     if args.print_settings:
         for setting in server.get_setting_pvs():
             print(setting)
+        sys.exit()
+    elif args.print_pvs:
+        for pv in server.get_pvs():
+            print(pv)
         sys.exit()
 
     if debug:

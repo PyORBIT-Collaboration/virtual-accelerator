@@ -39,15 +39,16 @@ class TDriver(Driver):
 
 
 class Server:
-    def __init__(self, prefix=''):
+    def __init__(self, prefix='', process_delay=0.1):
         self.prefix = prefix
         self.driver = None
         self.pv_db = dict()
         self.devices: Dict[str, Device] = {}
+        self.process_delay = process_delay
 
     def _CA_events(self, server):
         while True:
-            server.process(0.1)
+            server.process(self.process_delay)
 
     def setParam(self, reason, value, timestamp=None):
         self.driver.setParam(reason, value, timestamp)
@@ -121,6 +122,24 @@ class Server:
             for reason, param in device.settings.items():
                 setting_pvs.append(param.get_pv())
         return setting_pvs
+
+    def get_measurement_pvs(self):
+        measurement_pvs = []
+        for device_name, device in self.devices.items():
+            for reason, param in device.measurements.items():
+                measurement_pvs.append(param.get_pv())
+        return measurement_pvs
+
+    def get_readback_pvs(self):
+        readback_pvs = []
+        for device_name, device in self.devices.items():
+            for reason, param in device.readbacks.items():
+                readback_pvs.append(param.get_pv())
+        return readback_pvs
+
+    def get_pvs(self):
+        pvs = self.get_setting_pvs() +self.get_measurement_pvs() + self.get_readback_pvs()
+        return pvs
 
     def run(self):
         pass

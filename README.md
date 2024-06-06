@@ -1,10 +1,20 @@
 # Virtual Accelerator
 
 ## Installation
-It's advised to use virtual environment either venv or conda.
 
-Clone this repository and install with pip. 
+### Prerequisites 
+It's advised to use a virtual environment, either venv or conda. 
+You also need compilers required for [PyORBIT3](https://github.com/PyORBIT-Collaboration/PyORBIT3)
+
+### Installing with pip 
 You need to have PyORBIT installed in the same virtual environment.
+If you are installing on a macOS, you will need to install EPICS as well: https://epics-controls.org/resources-and-support/documents/getting-started/.
+After following all the instructions, add the following line to your bash_profile:
+```bash
+export PYEPICS_LIBCA=${EPICS_BASE}/lib/${EPICS_HOST_ARCH}/libca.dylib
+```
+Using conda is advised on the latest Mac architecture. See below for installation with conda.
+
 
 ```bash
 pip install -e .
@@ -23,7 +33,25 @@ or even without cloning the repository
 pip install git+https://URL_OF_YOUR_REPO/virtual-accelerator.git
 ```
 
+### Installing with conda
+This will install EPICS, PyORBIT3 and virtual accelerator, also it will define needed environament variables. You will have the standard EPICS command line tools installed as well.
+
+```bash
+conda env create -f virac.yml
+conda activate virac
+```
+
+
 ## Run
+
+### Client environemnt setup
+Your client environment, the one that connects to virtaul accelerator, should have **localhost**  included in CA search, so some setup may be needed.<br>
+For example following will ensure that the client connects to virtual accelerator only while allowing large array transfers.
+```bash
+export EPICS_CA_ADDR_LIST=localhost
+export EPICS_CA_AUTO_ADDR_LIST=NO
+export EPICS_CA_MAX_ARRAY_BYTES=10000000
+```
 
 ### Default SNS virtual accelerator
 

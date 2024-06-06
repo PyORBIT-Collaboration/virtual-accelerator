@@ -1,0 +1,13 @@
+name: virac
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+- python>=3.9
+- fftw
+- pkg-config
+- pyepics
+- pip
+- pip:
+  - git+https://github.com/PyORBIT-Collaboration/PyORBIT3.git
+  - .

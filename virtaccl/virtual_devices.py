@@ -245,18 +245,19 @@ class Device:
         self.settings[reason] = param
         return param
 
-    def register_readback(self, reason: str, setting: Parameter = None, transform=None, noise=None, name_override=None):
+    def register_readback(self, reason: str, setting: Parameter = None, definition=None, transform=None, noise=None,
+                          name_override=None):
+        rb_def = {}
+        if definition is not None:
+            rb_def = definition
+        elif setting is not None:
+            rb_def = setting.get_definition()
+        param = Parameter(reason, definition=rb_def, transform=transform, noise=noise, name_override=name_override)
+        param.device = self
+        self.readbacks[reason] = param
         if setting is not None:
-            definition = setting.get_definition()
-            param = Parameter(reason, definition, transform=transform, noise=noise, name_override=name_override)
-            param.device = self
             param.setting_param = setting
-            self.readbacks[reason] = param
-        else:
-            param = Parameter(reason, definition={}, transform=transform, noise=noise, name_override=name_override)
-            param.device = self
-            self.readbacks[reason] = param
-            return param
+        return param
 
     def get_setting(self, reason):
         return self.settings[reason].get_param()

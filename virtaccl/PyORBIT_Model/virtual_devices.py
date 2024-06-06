@@ -119,7 +119,7 @@ class Corrector(Device):
         return model_dict
 
     def update_readbacks(self):
-        rb_field = abs(self.get_settings()[self.model_name][Corrector.field_key])
+        rb_field = self.get_settings()[self.model_name][Corrector.field_key]
         rb_param = self.readbacks[Corrector.field_readback_pv]
         rb_param.set_param(rb_field)
 
@@ -427,6 +427,8 @@ class Screen(Device):
     y_profile_pv = 'resultsVerProf'  # [au]
     image_pv = 'resultsImg'  # [au]
     image_noise = 5  # [au]
+    x_axis_pv = 'resultsHorProfX'  # [mm]
+    y_axis_pv = 'resultsVerProfX'  # [mm]
 
     # PyORBIT parameter keys
     hist_key = 'xy_histogram'  # [au]
@@ -443,10 +445,14 @@ class Screen(Device):
             self.model_name = model_name
         super().__init__(name, self.model_name)
 
-        self.x_pixels = x_pixels
-        self.y_pixels = y_pixels
-        self.x_scale = x_scale
-        self.y_scale = y_scale
+        x_pixels = x_pixels
+        y_pixels = y_pixels
+        x_scale = x_scale
+        y_scale = y_scale
+
+        # Define new grid for higher resolution
+        self.x_axis_new = np.linspace(-x_scale / 2, x_scale / 2, x_pixels)
+        self.y_axis_new = np.linspace(-y_scale / 2, y_scale / 2, y_pixels)
 
         # Creates flat noise for associated PVs.
         self.image_noise = PosNoise(noise=Screen.image_noise, count=(y_pixels, x_pixels))
@@ -458,6 +464,9 @@ class Screen(Device):
         self.register_measurement(Screen.x_profile_pv, definition={'count': x_pixels})
         self.register_measurement(Screen.y_profile_pv, definition={'count': y_pixels})
         self.register_measurement(Screen.image_pv, definition={'type': 'char', 'count': x_pixels * y_pixels})
+
+        self.register_readback(Screen.x_axis_pv, definition={'count': x_pixels})
+        self.register_readback(Screen.y_axis_pv, definition={'count': y_pixels})
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
@@ -474,12 +483,8 @@ class Screen(Device):
         # Create linearly interpolated function
         interp_func = interp2d(x_centers, y_centers, xy_hist, kind='linear', fill_value=False)
 
-        # Define new grid for higher resolution
-        x_axis_new = np.linspace(-self.x_scale / 2, self.x_scale / 2, self.x_pixels)
-        y_axis_new = np.linspace(-self.y_scale / 2, self.y_scale / 2, self.y_pixels)
-
         # Interpolate histogram to higher resolution
-        xy_hist_new = interp_func(x_axis_new, y_axis_new)
+        xy_hist_new = interp_func(self.x_axis_new, self.y_axis_new)
         xy_hist_new = self.image_noise.add_noise(xy_hist_new)
         xy_hist_new = self.signal_normalize.raw(xy_hist_new)
 
@@ -490,6 +495,10 @@ class Screen(Device):
         self.update_measurement(Screen.image_pv, image_list)
         self.update_measurement(Screen.x_profile_pv, x_profile)
         self.update_measurement(Screen.y_profile_pv, y_profile)
+
+    def update_readbacks(self):
+        self.update_readback(Screen.x_axis_pv, self.x_axis_new)
+        self.update_readback(Screen.y_axis_pv, self.y_axis_new)
 
 
 class Quadrupole_Power_Supply(Device):
