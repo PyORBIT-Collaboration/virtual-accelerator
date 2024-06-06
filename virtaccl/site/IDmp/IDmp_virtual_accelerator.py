@@ -30,7 +30,7 @@ def main():
     parser.add_argument('--refresh_rate', default=1.0, type=float,
                         help='Rate (in Hz) at which the virtual accelerator updates.')
 
-    parser.add_argument('--particle_number', default=1000, type=int,
+    parser.add_argument('--particle_number', default=100000, type=int,
                         help='Number of particles to use.')
 
     # Json file that contains a dictionary connecting EPICS name of devices with their phase offset.
