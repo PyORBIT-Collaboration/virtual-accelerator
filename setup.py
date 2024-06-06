@@ -26,6 +26,7 @@ setuptools.setup(
         "console_scripts": [
             "virtual_accelerator = virtaccl.virtual_accelerator:main",
             "idmp_va = virtaccl.site.IDmp.IDmp_virtual_accelerator:main",
+            "btf_va = virtaccl.btf.btf_virtual_accelerator:main",
         ]},
 
     packages=setuptools.find_packages(),

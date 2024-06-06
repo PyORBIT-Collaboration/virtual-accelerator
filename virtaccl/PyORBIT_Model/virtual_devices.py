@@ -28,9 +28,11 @@ class Quadrupole(Device):
     # EPICS PV names
     field_readback_pv = 'B'  # [T/m]
     field_noise = 1e-6  # [T/m]
+    current_readback_pv = 'I' # [Amps]
 
     # PyORBIT parameter keys
     field_key = 'dB/dr'  # [T/m]
+    current_key = 'current' # [Amps]
 
     def __init__(self, name: str, model_name: str, power_supply: Device, power_shunt: Device = None,
                  polarity: Literal[-1, 1] = None):
@@ -52,6 +54,7 @@ class Quadrupole(Device):
 
         # Registers the device's PVs with the server
         self.register_readback(Quadrupole.field_readback_pv, noise=field_noise)
+        self.register_readback(Quadrupole.current_readback_pv)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
@@ -497,7 +500,7 @@ class Quadrupole_Power_Supply(Device):
 
     book_pv = 'B_Book'
 
-    def __init__(self, name: str, init_field=None):
+    def __init__(self, name: str, init_field=None, init_current=None):
         super().__init__(name)
 
         field_noise = AbsNoise(noise=1e-6)

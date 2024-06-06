@@ -10,6 +10,7 @@ from orbit.core.bunch import Bunch
 
 from .pyorbit_element_controllers import PyorbitNode, PyorbitChild, PyorbitCavity
 from .pyorbit_child_nodes import BPMclass, WSclass, BunchCopyClass, RF_Gap_Aperture, ScreenClass
+from .BTF.btf_child_nodes import BTF_FCclass
 
 from virtaccl.model import Model
 
@@ -264,7 +265,7 @@ class OrbitModel(Model):
 
         return return_dict
 
-    def add_child_node(self, parent_name: str, child_node: Union[BPMclass, WSclass, ScreenClass]):
+    def add_child_node(self, parent_name: str, child_node: Union[BPMclass, WSclass, ScreenClass, BTF_FCclass]):
         """Adds a child node to a node in the lattice and a reference in the element dictionary. If the name of the child
          is taken by another node that is not a marker, the child will not be added.
 
