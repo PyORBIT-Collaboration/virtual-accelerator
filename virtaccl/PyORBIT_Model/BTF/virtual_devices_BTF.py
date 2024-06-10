@@ -92,6 +92,50 @@ class BTF_Dummy_Corrector(Device):
 class BTF_FC(Device):
     #EPICS PV names
     current_pv = 'WF' # [A?]
+    state_set_pv = 'State_Set'
+    state_readback_pv = 'State'
+
+    #PyORBIT parameter keys
+    current_key = 'current'
+    state_key = 'state'
+
+    def __init__(self, name: str, model_name: str = None, init_state=None):
+        
+        self.model_name = model_name
+        super().__init__(name, self.model_name)
+
+        # Registers the device's PVs with the server
+        self.register_measurement(BTF_FC.current_pv)
+        
+        state_param = self.register_setting(BTF_FC.state_set_pv, default=init_state)
+        self.register_readback(BTF_FC.state_readback_pv, state_param)
+
+    # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
+    # where the PV names are associated with their model keys.
+    def get_settings(self):
+        new_state = self.get_setting(BTF_FC.state_set_pv)
+         
+        params_dict = {BTF_FC.state_key: new_state}
+        model_dict = {self.model_name: params_dict}
+        print(model_dict)
+        return model_dict
+
+    def update_readbacks(self):
+        fc_state = self.get_settings()[self.model_name][BTF_FC.state_key]
+        rb_param = self.readbacks[BTF_FC.state_readback_pv]
+        rb_param.set_param(fc_state)
+        
+    # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
+    # This is where the measurement PV name is associated with it's model key.
+    def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
+        fc_params = new_params[self.model_name]
+        current = fc_params[BTF_FC.current_key]
+        self.update_measurement(BTF_FC.current_pv, current)
+
+
+class BTF_BCM(Device):
+    #EPICS PV names
+    current_pv = 'WF' # [A?]
 
     #PyORBIT parameter keys
     current_key = 'current'
@@ -104,15 +148,88 @@ class BTF_FC(Device):
         super().__init__(name, self.model_name)
 
         # Registers the device's PVs with the server
-        self.register_measurement(BTF_FC.current_pv)
+        self.register_measurement(BTF_BCM.current_pv)
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
     def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
-        fc_params = new_params[self.model_name]
-        current = fc_params[BTF_FC.current_key]
-        self.update_measurement(BTF_FC.current_pv, current)
+        bcm_params = new_params[self.model_name]
+        current = bcm_params[BTF_BCM.current_key]
+        self.update_measurement(BTF_BCM.current_pv, current)
+
+class BTF_Quadrupole(Device):
+    # EPICS PV names
+    field_readback_pv = 'B' # [T/m]
+    field_noise = 1e-6 # [T/m]
+
+    # PyORBIT parameter keys
+    field_key = 'dB/dr'
+
+    def __init__ (self, name: str, model_name: str, power_supply: Device, polarity: Literal[-1,1] = None, coeff_a=None, coeff_b=None, length=None):
+
+        self.model_name = model_name
+        self.power_supply = power_supply
+        self.coeff_a = coeff_a
+        self.coeff_b = coeff_b
+        self.length = length
+
+        connected_devices = power_supply
+
+        super().__init__(name, self.model_name, connected_devices)
+
+        self.pol_transfrom = LinearTInv(scaler=polarity)
+        field_noise = AbsNoise(noise=BTF_Quadrupole.field_noise)
+
+        # Registers the device's PVs with the server
+        self.register_readback(BTF_Quadrupole.field_readback_pv, noise=field_noise)
+
+    # Return the setting value of the PV name for the device as a dictionary using the model key and it's values.
+    # This is where the PV names are associated with their model keys.
+    def get_settings(self):
+        new_current = self.power_supply.get_setting(BTF_Quadrupole_Power_Supply.current_set_pv)
+        sign = np.sign(new_current)
+        new_current = np.abs(new_current)
+
+        GL = sign*(self.coeff_a*new_current + self.coeff_b*new_current**2)
+
+        new_field = - GL/self.length
+
+        if self.model_name == 'MEBT:QV02':
+            new_field = -new_field
+
+        params_dict = {BTF_Quadrupole.field_key: new_field}
+        model_dict = {self.model_name: params_dict}
+        return model_dict
+
+    def update_readbacks(self):
+        rb_field = abs(self.get_settings()[self.model_name][BTF_Quadrupole.field_key])
+        rb_param = self.readbacks[BTF_Quadrupole.field_readback_pv]
+        rb_param.set_param(rb_field)
 
 
+
+class BTF_Quadrupole_Power_Supply(Device):
+    #field_set_pv = 'B_Set'  # [T/m]
+    #field_readback_pv = 'B'  # [T/m]
+    #field_noise = 1e-6  # [T/m]
     
+    current_set_pv = 'I_Set' # [Amps]
+    current_readback_pv = 'I' # [Amps]
 
+    book_pv = 'B_Book'
+
+    def __init__(self, name: str, init_current=None):
+        super().__init__(name)
+
+        field_noise = AbsNoise(noise=1e-6)
+
+        # Registers the device's PVs with the server.
+        #field_param = self.register_setting(BTF_Quadrupole_Power_Supply.field_set_pv, default=init_field)
+        #self.register_readback(BTF_Quadrupole_Power_Supply.field_readback_pv, field_param, noise=field_noise)
+
+        #self.register_readback(BTF_Quadrupole_Power_Supply.book_pv, field_param)
+        
+        current_param = self.register_setting(BTF_Quadrupole_Power_Supply.current_set_pv, default=init_current)
+        self.register_readback(BTF_Quadrupole_Power_Supply.current_readback_pv, current_param)
+        
+        self.register_readback(BTF_Quadrupole_Power_Supply.book_pv, current_param)

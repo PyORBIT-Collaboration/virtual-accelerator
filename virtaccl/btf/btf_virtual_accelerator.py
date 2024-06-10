@@ -20,8 +20,8 @@ from orbit.core.linac import BaseRfGap, RfGapTTF
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.PyORBIT_Model.virtual_devices import BPM, Quadrupole, P_BPM, Quadrupole_Power_Supply, Bend_Power_Supply, Bend
-from virtaccl.PyORBIT_Model.BTF.virtual_devices_BTF import BTF_Dummy_Corrector, BTF_FC
-from virtaccl.PyORBIT_Model.BTF.btf_child_nodes import BTF_FCclass
+from virtaccl.PyORBIT_Model.BTF.virtual_devices_BTF import BTF_Dummy_Corrector, BTF_FC, BTF_Quadrupole, BTF_Quadrupole_Power_Supply, BTF_BCM
+from virtaccl.PyORBIT_Model.BTF.btf_child_nodes import BTF_FCclass, BTF_BCMclass
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 
@@ -164,15 +164,33 @@ def main():
     if offset_file is not None:
         with open(offset_file, "r") as json_file:
             offset_dict = json.load(json_file)
-
+    
     quad_ps = devices_dict["Quadrupole_Power_Supply"]
     quads = devices_dict["Quadrupole"]
     for name, device_dict in quads.items():
         ele_name = device_dict["PyORBIT_Name"]
         polarity = device_dict["Polarity"]
+        initial_current = device_dict["Current"]
+        coeff_a = device_dict["coeff_a"]
+        coeff_b = device_dict["coeff_b"]
+        #length = device_dict["length"]
+        if ele_name in element_list:
+            length = model.get_element_dictionary()[ele_name].get_element().getLength()
+            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in quad_ps:
+                ps_name = device_dict["Power_Supply"]
+                ps_device = BTF_Quadrupole_Power_Supply(ps_name, initial_current)
+                server.add_device(ps_device)
+                quadrupole_device = BTF_Quadrupole(name, ele_name, power_supply=ps_device, polarity=polarity, coeff_a = coeff_a, coeff_b = coeff_b, length=length)
+                server.add_device(quadrupole_device)
+
+    fq_quad_ps = devices_dict["FQ_Quadrupole_Power_Supply"]
+    fq_quads = devices_dict["FQ_Quadrupole"]
+    for name, device_dict in fq_quads.items():
+        ele_name = device_dict["PyORBIT_Name"]
+        polarity = device_dict["Polarity"]
         if ele_name in element_list:
             initial_field = abs(model.get_element_parameters(ele_name)['dB/dr'])
-            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in quad_ps:
+            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in fq_quad_ps:
                 ps_name = device_dict["Power_Supply"]
                 ps_device = Quadrupole_Power_Supply(ps_name, initial_field)
                 server.add_device(ps_device)
@@ -201,28 +219,30 @@ def main():
     fc = devices_dict["FC"]
     for name, device_dict in fc.items():
         ele_name = device_dict["PyORBIT_Name"]
+        initial_state = device_dict["State"]
         if ele_name in element_list:
             fc_child = BTF_FCclass(ele_name)
             model.add_child_node(ele_name, fc_child)
-            fc_device = BTF_FC(name, ele_name)
+            fc_device = BTF_FC(name, ele_name, initial_state)
             server.add_device(fc_device)
 
     bs = devices_dict["BS"]
     for name, device_dict in bs.items():
         ele_name = device_dict["PyORBIT_Name"]
+        initial_state = device_dict["State"]
         if ele_name in element_list:
             bs_child = BTF_FCclass(ele_name)
             model.add_child_node(ele_name, bs_child)
-            bs_device = BTF_FC(name, ele_name)
+            bs_device = BTF_FC(name, ele_name, initial_state)
             server.add_device(bs_device)
 
     bcm = devices_dict["BCM"]
     for name, device_dict in bcm.items():
         ele_name = device_dict["PyORBIT_Name"]
         if ele_name in element_list:
-            bcm_child = BTF_FCclass(ele_name)
+            bcm_child = BTF_BCMclass(ele_name)
             model.add_child_node(ele_name, bcm_child)
-            bcm_device = BTF_FC(name, ele_name)
+            bcm_device = BTF_BCM(name, ele_name)
             server.add_device(bcm_device)
 
     bpms = devices_dict["BPM"]
@@ -267,6 +287,7 @@ def main():
         new_params = server.get_settings()
         server.update_readbacks()
         model.update_optics(new_params)
+        print(model.get_parameter('MEBT:FC12','state'))
         model.track()
         new_measurements = model.get_measurements()
         server.update_measurements(new_measurements)

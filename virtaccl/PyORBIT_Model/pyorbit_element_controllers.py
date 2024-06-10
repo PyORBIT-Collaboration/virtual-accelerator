@@ -4,7 +4,7 @@ from orbit.py_linac.lattice.LinacAccNodes import Quad, MarkerLinacNode, DCorrect
 from orbit.py_linac.lattice.LinacRfGapNodes import BaseRF_Gap
 from orbit.py_linac.lattice.LinacAccLatticeLib import RF_Cavity
 from .pyorbit_child_nodes import BPMclass, WSclass, ScreenClass
-from .BTF.btf_child_nodes import BTF_FCclass
+from .BTF.btf_child_nodes import BTF_FCclass, BTF_BCMclass
 
 """A collection of PyORBIT classes (useful for hinting) and PyORBIT keys we are using."""
 
@@ -24,6 +24,7 @@ class PyorbitElementTypes:
     screen_key = 'Screen'
     marker_key = 'Marker'
     FC_key = 'BTF_FC'
+    BCM_key = 'BTF_BCM'
 
     """PyORBIT keys for parameters we want to pass to the virtual accelerator."""
     quad_params = ['dB/dr']
@@ -34,7 +35,8 @@ class PyorbitElementTypes:
     ws_params = ['x_histogram', 'y_histogram', 'x_avg', 'y_avg']
     screen_params = ['xy_histogram', 'x_axis', 'y_axis', 'x_avg', 'y_avg']
     marker_params = []
-    fc_params = ['current']
+    fc_params = ['current', 'state']
+    bcm_params = ['current']
 
     """Dictionary to keep track of different PyORBIT class types."""
     pyorbit_class_names = {Quad: quad_key,
@@ -46,7 +48,8 @@ class PyorbitElementTypes:
                            Bend: bend_key,
                            ScreenClass: screen_key,
                            MarkerLinacNode: marker_key,
-                           BTF_FCclass: FC_key}
+                           BTF_FCclass: FC_key,
+                           BTF_BCMclass: BCM_key}
 
     """Dictionary to keep the above parameters with their designated classes."""
     param_ref_dict = {quad_key: quad_params,
@@ -57,13 +60,14 @@ class PyorbitElementTypes:
                       WS_key: ws_params,
                       screen_key: screen_params,
                       marker_key: marker_params,
-                      FC_key: fc_params}
+                      FC_key: fc_params,
+                      BCM_key: bcm_params}
 
     """Classes that can change the beam."""
     optic_classes = (quad_key, cavity_key, corrector_key, bend_key)
 
     """Classes that measure the beam."""
-    diagnostic_classes = (BPM_key, WS_key, screen_key, marker_key, FC_key)
+    diagnostic_classes = (BPM_key, WS_key, screen_key, marker_key, FC_key, BCM_key)
 
     """Type hint definitions"""
     node_classes = Union[Quad, BaseRF_Gap, MarkerLinacNode, Bend]
