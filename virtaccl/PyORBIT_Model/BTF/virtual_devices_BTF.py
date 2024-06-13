@@ -23,10 +23,6 @@ from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTIn
 # server. The strings denoted with a "_key" are the keys for parameters in PyORBIT for that device. These need to match
 # the keys PyORBIT uses in the paramsDict for that devices corresponding PyORBIT element.
 
-#class FC_BTF(Device):
-#    # EPICS PV names
-#    waveform = 'WF'
-
 class BTF_Dummy_Corrector(Device):
     # EPICS PV names
     field_set_pv = 'B_Set' # [T/m]
@@ -55,43 +51,130 @@ class BTF_Dummy_Corrector(Device):
 
         self.register_readback(BTF_Dummy_Corrector.book_pv, field_param)
 
-#class BTF_Dummy_Screen(Device):
-#    # EPICS PV names
-#    position_set_pv = 'DesitinationSet'
-#    position_readback_pv = 'PositionSync'
-#    command_pv = 'Command'
-#
-#    def __init__(self, name:str, init_position=None, init_command=None):
-#        super().__init__(name)
-#
-#        # Registers the device's PVs with the server
-#        position_param = self.register_setting(BTF_Dummy_Screen.position_set_pv, default=init_position)
-#        self.register_readback(BTF_Dummy_Screen.position_readback_pv, position_param)
-#        
-#        self.register_setting(BTF_Dummy_Screen.command_Set_pv, default=init_command)
-#        
-#    def get_settings(self):
-#
-#
-#    def update_readbacks(self):
-#        command_status = self.get_setting[BTF_Dummy_Screen.command_readback_pv]
-#
-#        if command_status == 'Move':
-#            position = self.get_setting(BTF_Dummy_Screen.position_set_pv)
-#            rb_param = self.readbacks[BTF_Dummy_Screen.position_readback_pv]
-#            rb_param.set_param(position)
-#
-#        if command_status == 'Park':
-#            position = -60
-#            rb_param = self.readbacks[BTF_Dummy_Screen.position_readback_pv]
-#            rb_param.set_param(position)
-#
-#        if command_status == 'Stop':
-#            position = self.get_setting
+class BTF_Screen(Device):
+    # EPICS PV names
+    position_set_pv = 'DestinationSet' #[mm]
+    position_readback_pv = 'Position' # [mm]
+    speed_set_pv = 'Speed_Set' # [mm/s]
+    speed_readback_pv = 'Speed' # [mm/s]
+    state_set_pv = 'COMMAND'
+    state_readback_pv = 'COMMAND_RB'
+
+    # PyORBIT parameter keys
+    state_key = 'state'
+
+    # Device keys
+    position_key = 'screen_position' # [m]
+    speed_key = 'screen_speed' # [m]
+    state_key = 'screen_state'
+
+    def __init__(self, name: str, model_name: str, initial_dict: Dict[str, Any] = None):
+        self.model_name = model_name
+        super().__init__(name, self.model_name)
+
+        # Changes the units from meters to millimeters for associated PVs.
+        self.milli_units = LinearTInv(scaler=1e3)
+        
+        # Sets initial values for parameters.
+        if initial_dict is not None:
+            initial_position = initial_dict[BTF_Screen.position_key]
+            initial_speed = initial_dict[BTF_Screen.speed_key]
+            initial_state = initial_dict[BTF_Screen.state_key]
+        else:
+            initial_position = -0.07  # [m]
+            initial_speed = 0.0015  # [mm/s]
+            initial_state = 0
+
+        # Defines internal parameters to keep track of the screen position
+        self.last_screen_pos = initial_position
+        self.last_screen_time = time.time()
+        self.screen_speed = initial_speed
+        self.current_state = initial_state
+
+        initial_position = self.milli_units.raw(initial_position)
+        initial_speed = self.milli_units.raw(initial_speed)
+
+        # Creates flat noise for associated PVs
+        pos_noise = AbsNoise(noise=1e-6)
+
+        # Registers the device's PVs with the server
+        speed_param = self.register_setting(BTF_Screen.speed_set_pv, default=initial_speed, transform=self.milli_units)
+        self.register_readback(BTF_Screen.speed_readback_pv, speed_param, transform=self.milli_units)
+
+        pos_param = self.register_setting(BTF_Screen.position_set_pv, default = initial_position, transform = self.milli_units)
+        self.register_readback(BTF_Screen.position_readback_pv, pos_param, transform=self.milli_units, noise=pos_noise)
+
+        state_param = self.register_setting(BTF_Screen.state_set_pv, default = initial_state)
+        self.register_readback(BTF_Screen.state_readback_pv, state_param)
+
+    # Function to find the position of the virtual screen using time of flight from the previous position and the speed of the screen
+    def get_screen_position(self):
+        last_pos = self.last_screen_pos
+        last_time = self.last_screen_time
+
+        current_state = self.get_setting(BTF_Screen.state_set_pv)
+        screen_speed = self.get_setting(BTF_Screen.speed_set_pv)
+
+        if current_state == 1:
+            pos_goal = self.get_setting(BTF_Screen.position_set_pv)
+
+            direction = np.sign(pos_goal - last_pos)
+            current_time = time.time()
+            screen_pos = direction * screen_speed * (current_time - last_time) + last_pos
+
+            if last_pos == pos_goal:
+                screen_pos = pos_goal
+            elif direction < 0 and screen_pos < pos_goal:
+                screen_pos = pos_goal
+            elif direction > 0 and screen_pos > pos_goal:
+                screen_pos = pos_goal
+
+        elif current_state == 2:
+            screen_pos = last_pos
+            current_time = time.time()
+
+        elif current_state == 0:
+            pos_goal = -0.070
+
+            direction = np.sign(pos_goal - last_pos)
+            current_time = time.time()
+            screen_pos = direction * screen_speed * (current_time - last_time) + last_pos
+
+            if last_pos == pos_goal:
+                screen_pos = pos_goal
+            elif direction < 0 and screen_pos < pos_goal:
+                screen_pos = pos_goal
+            elif direction > 0 and screen_pos > pos_goal:
+                screen_pos = pos_goal
+
+        else:
+            screen_pos = last_pos
+            current_time = time.time()
+        
+        # Reset variables for the next calculation
+        self.last_screen_time = current_time
+        self.last_screen_pos = screen_pos
+
+        return screen_pos
+
+    # Return the setting value of the PV name for the device as a dictionary using the model key and it's value.
+    # This is where the setting PV names are associated with their model keys
+    def get_settings(self):
+        screen_goal = self.settings[BTF_Screen.position_set_pv].get_param()
+        screen_speed = self.settings[BTF_Screen.speed_set_pv].get_param()
+        params_dict = {BTF_Screen.position_key: screen_goal, BTF_Screen.speed_key: screen_speed}
+        model_dict = {self.model_name: params_dict}
+        return model_dict
+
+    # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model
+    def update_readbacks(self):
+        screen_pos = BTF_Screen.get_screen_position(self)
+        self.update_readback(BTF_Screen.position_readback_pv, screen_pos)
+
 
 class BTF_FC(Device):
     #EPICS PV names
-    current_pv = 'WF' # [A?]
+    current_pv = 'WF' # [A]
     state_set_pv = 'State_Set'
     state_readback_pv = 'State'
 
@@ -113,23 +196,29 @@ class BTF_FC(Device):
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
     def get_settings(self):
-        new_state = self.get_setting(BTF_FC.state_set_pv)
+        #new_state = self.get_setting(BTF_FC.state_set_pv)
+        new_state = self.settings[BTF_FC.state_set_pv].get_param()
          
         params_dict = {BTF_FC.state_key: new_state}
-        model_dict = {self.model_name: params_dict}
-        print(model_dict)
+        model_dict = {self.model_name+'o': params_dict}
+        #print(model_dict)
         return model_dict
 
     def update_readbacks(self):
-        fc_state = self.get_settings()[self.model_name][BTF_FC.state_key]
+        fc_state = self.get_settings()[self.model_name+'o'][BTF_FC.state_key]
         rb_param = self.readbacks[BTF_FC.state_readback_pv]
         rb_param.set_param(fc_state)
         
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
     def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
-        fc_params = new_params[self.model_name]
-        current = fc_params[BTF_FC.current_key]
+        current_state = self.settings[BTF_FC.state_set_pv].get_param()
+        
+        if current_state == 1:
+            fc_params = new_params[self.model_name]
+            current = fc_params[BTF_FC.current_key]
+        else:
+            current = 0
         self.update_measurement(BTF_FC.current_pv, current)
 
 

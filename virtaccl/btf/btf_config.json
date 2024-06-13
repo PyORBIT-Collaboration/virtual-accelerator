@@ -6,8 +6,7 @@
 			"Polarity": -1,
 			"Current": 150.61,
 			"coeff_a": 0.00715,
-			"coeff_b": 0,
-			"length": 0.061
+			"coeff_b": 0
 		},
 		"BTF_MEBT_Mag:QV02": {
                         "PyORBIT_Name": "MEBT:QV02",
@@ -15,8 +14,7 @@
                         "Polarity": 1,
 			"Current": 275.24,
                         "coeff_a": 0.00445,
-                        "coeff_b": 0,
-                        "length": 0.066
+                        "coeff_b": 0
                 },
 		"BTF_MEBT_Mag:QH03": {
                         "PyORBIT_Name": "MEBT:QH03",
@@ -24,8 +22,7 @@
                         "Polarity": -1,
 			"Current": 6.755,
                         "coeff_a": 0.163,
-                        "coeff_b": -0.00035,
-                        "length": 0.096
+                        "coeff_b": -0.00035
                 },
 		"BTF_MEBT_Mag:QV04": {
                         "PyORBIT_Name": "MEBT:QV04",
@@ -33,8 +30,7 @@
                         "Polarity": 1,
 			"Current": -4.20,
                         "coeff_a": 0.163,
-                        "coeff_b": -0.00035,
-                        "length": 0.096
+                        "coeff_b": -0.00035
                 },
 		"BTF_MEBT_Mag:QH05": {
                         "PyORBIT_Name": "MEBT:QH05",
@@ -42,8 +38,7 @@
                         "Polarity": 1,
 			"Current": 0.8,
                         "coeff_a": 0.0759,
-                        "coeff_b": -0.000387,
-                        "length": 0.096
+                        "coeff_b": -0.000387
                 },
 		"BTF_MEBT_Mag:QV06": {
                         "PyORBIT_Name": "MEBT:QV06",
@@ -51,8 +46,7 @@
                         "Polarity": -1,
 			"Current": 1.100,
                         "coeff_a": 0.0759,
-                        "coeff_b": -0.000387,
-                        "length": 0.096
+                        "coeff_b": -0.000387
                 },
 		"BTF_MEBT_Mag:QV07": {
                         "PyORBIT_Name": "MEBT:QV07",
@@ -60,8 +54,7 @@
                         "Polarity": 1,
 			"Current": 0.0,
                         "coeff_a": 0.163,
-                        "coeff_b": -0.00035,
-                        "length": 0.096
+                        "coeff_b": -0.00035
                 },
 		"BTF_MEBT_Mag:QH08": {
                         "PyORBIT_Name": "MEBT:QH08",
@@ -69,8 +62,7 @@
                         "Polarity": 1,
 			"Current": 0.0,
                         "coeff_a": 0.2191,
-                        "coeff_b": -0.000373,
-                        "length": 0.146
+                        "coeff_b": -0.000373
                 },
 		"BTF_MEBT_Mag:QV10": {
                         "PyORBIT_Name": "MEBT:QV10",
@@ -78,8 +70,7 @@
                         "Polarity": 1,
 			"Current": -4.00,
                         "coeff_a": 0.163,
-                        "coeff_b": -0.00035,
-                        "length": 0.096
+                        "coeff_b": -0.00035
                 },
 		"BTF_MEBT_Mag:QH11": {
                         "PyORBIT_Name": "MEBT:QH11",
@@ -87,8 +78,7 @@
                         "Polarity": -1,
 			"Current": 4.709,
                         "coeff_a": 0.2191,
-                        "coeff_b": -0.000373,
-                        "length": 0.146
+                        "coeff_b": -0.000373
                 },
 		"BTF_MEBT_Mag:QV12": {
                         "PyORBIT_Name": "MEBT:QV12",
@@ -96,8 +86,7 @@
                         "Polarity": 1,
 			"Current": -4.3,
                         "coeff_a": 0.2191,
-                        "coeff_b": -0.000373,
-                        "length": 0.146
+                        "coeff_b": -0.000373
                 },
 		"BTF_MEBT_Mag:QH13": {
                         "PyORBIT_Name": "MEBT:QH13",
@@ -105,8 +94,7 @@
                         "Polarity": -1,
 			"Current": 3.9,
                         "coeff_a": 0.2191,
-                        "coeff_b": -0.000373,
-                        "length": 0.146
+                        "coeff_b": -0.000373
                 },
 		"BTF_MEBT_Mag:QH33": {
                         "PyORBIT_Name": "MEBT:QH33",
@@ -114,8 +102,7 @@
                         "Polarity": -1,
 			"Current": 6.2,
                         "coeff_a": 0.2191,
-                        "coeff_b": -0.000373,
-                        "length": 0.146
+                        "coeff_b": -0.000373
                 },
 		"BTF_MEBT_Mag:QV34": {
                         "PyORBIT_Name": "MEBT:QV34",
@@ -123,8 +110,7 @@
                         "Polarity": 1,
 			"Current": 0.000,
                         "coeff_a": 0.2191,
-                        "coeff_b": -0.000373,
-                        "length": 0.146
+                        "coeff_b": -0.000373
                 },
 		"BTF_MEBT_Mag:QH35": {
                         "PyORBIT_Name": "MEBT:QH35",
@@ -132,8 +118,7 @@
                         "Polarity": -1,
 			"Current": -6.40,
                         "coeff_a": 0.163,
-                        "coeff_b": -0.00035,
-                        "length": 0.096
+                        "coeff_b": -0.00035
                 },
 		"BTF_MEBT_Mag:QV36": {
                         "PyORBIT_Name": "MEBT:QV36",
@@ -141,8 +126,7 @@
                         "Polarity": 1,
 			"Current": 3.95,
                         "coeff_a": 0.163,
-                        "coeff_b": -0.00035,
-                        "length": 0.096
+                        "coeff_b": -0.00035
 		}
 	},
 	"FQ_Quadrupole": {
@@ -330,10 +314,12 @@
 	"BS": {
 		"ITSF_Diag:BS36": {
 			"PyORBIT_Name": "MEBT:BS36",
+			"Object_Name": "MEBT:BS36o",
 			"State": 1
 		},
 		"ITSF_Diag:BS08_S": {
 			"PyORBIT_Name": "MEBT:BS08_S",
+			"Object_Name": "MEBT:BS08_So",
 			"State": 1
 		}
 	},
@@ -348,6 +334,7 @@
 	"FC": {
 		"ITSF_Diag:FC12": {
 			"PyORBIT_Name": "MEBT:FC12",
+			"Object_Name": "MEBT:FC12o",
 			"State": 0
 		}
 	},

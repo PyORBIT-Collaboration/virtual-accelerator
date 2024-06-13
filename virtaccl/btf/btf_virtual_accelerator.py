@@ -20,8 +20,8 @@ from orbit.core.linac import BaseRfGap, RfGapTTF
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.PyORBIT_Model.virtual_devices import BPM, Quadrupole, P_BPM, Quadrupole_Power_Supply, Bend_Power_Supply, Bend
-from virtaccl.PyORBIT_Model.BTF.virtual_devices_BTF import BTF_Dummy_Corrector, BTF_FC, BTF_Quadrupole, BTF_Quadrupole_Power_Supply, BTF_BCM
-from virtaccl.PyORBIT_Model.BTF.btf_child_nodes import BTF_FCclass, BTF_BCMclass
+from virtaccl.PyORBIT_Model.BTF.virtual_devices_BTF import BTF_Dummy_Corrector, BTF_FC, BTF_Quadrupole, BTF_Quadrupole_Power_Supply, BTF_BCM, BTF_Screen
+from virtaccl.PyORBIT_Model.BTF.btf_child_nodes import BTF_FCclass, BTF_BCMclass, BTF_FC_Objectclass
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 
@@ -219,20 +219,26 @@ def main():
     fc = devices_dict["FC"]
     for name, device_dict in fc.items():
         ele_name = device_dict["PyORBIT_Name"]
+        obj_name = device_dict["Object_Name"]
         initial_state = device_dict["State"]
         if ele_name in element_list:
             fc_child = BTF_FCclass(ele_name)
             model.add_child_node(ele_name, fc_child)
+            fc_obj_child = BTF_FC_Objectclass(obj_name)
+            model.add_child_node(ele_name, fc_obj_child)
             fc_device = BTF_FC(name, ele_name, initial_state)
             server.add_device(fc_device)
 
     bs = devices_dict["BS"]
     for name, device_dict in bs.items():
         ele_name = device_dict["PyORBIT_Name"]
+        obj_name = device_dict["Object_Name"]
         initial_state = device_dict["State"]
         if ele_name in element_list:
             bs_child = BTF_FCclass(ele_name)
             model.add_child_node(ele_name, bs_child)
+            bs_obj_child = BTF_FC_Objectclass(obj_name)
+            model.add_child_node(ele_name, bs_obj_child)
             bs_device = BTF_FC(name, ele_name, initial_state)
             server.add_device(bs_device)
 
@@ -258,7 +264,12 @@ def main():
             bpm_device = BPM(name, ele_name, phase_offset=phase_offset)
             server.add_device(bpm_device)
 
-
+    screens = devices_dict["Screen"]
+    for name, device_dict in screens.items():
+        ele_name = device_dict["PyORBIT_Name"]
+        if ele_name in element_list:
+            screen_device = BTF_Screen(name, ele_name)
+            server.add_device(screen_device)
 
 
     # Retrack the bunch to update all diagnostics
@@ -287,7 +298,6 @@ def main():
         new_params = server.get_settings()
         server.update_readbacks()
         model.update_optics(new_params)
-        print(model.get_parameter('MEBT:FC12','state'))
         model.track()
         new_measurements = model.get_measurements()
         server.update_measurements(new_measurements)
