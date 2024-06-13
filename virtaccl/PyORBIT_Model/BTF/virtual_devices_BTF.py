@@ -51,7 +51,7 @@ class BTF_Dummy_Corrector(Device):
 
         self.register_readback(BTF_Dummy_Corrector.book_pv, field_param)
 
-class BTF_Screen(Device):
+class BTF_Actuator(Device):
     # EPICS PV names
     position_set_pv = 'DestinationSet' #[mm]
     position_readback_pv = 'Position' # [mm]
@@ -64,9 +64,8 @@ class BTF_Screen(Device):
     state_key = 'state'
 
     # Device keys
-    position_key = 'screen_position' # [m]
-    speed_key = 'screen_speed' # [m]
-    state_key = 'screen_state'
+    position_key = 'position' # [m]
+    speed_key = 'speed' # [m/s]
 
     def __init__(self, name: str, model_name: str, initial_dict: Dict[str, Any] = None):
         self.model_name = model_name
@@ -77,9 +76,9 @@ class BTF_Screen(Device):
         
         # Sets initial values for parameters.
         if initial_dict is not None:
-            initial_position = initial_dict[BTF_Screen.position_key]
-            initial_speed = initial_dict[BTF_Screen.speed_key]
-            initial_state = initial_dict[BTF_Screen.state_key]
+            initial_position = initial_dict[BTF_Actuator.position_key]
+            initial_speed = initial_dict[BTF_Actuator.speed_key]
+            initial_state = initial_dict[BTF_Actuator.state_key]
         else:
             initial_position = -0.07  # [m]
             initial_speed = 0.0015  # [mm/s]
@@ -98,26 +97,31 @@ class BTF_Screen(Device):
         pos_noise = AbsNoise(noise=1e-6)
 
         # Registers the device's PVs with the server
-        speed_param = self.register_setting(BTF_Screen.speed_set_pv, default=initial_speed, transform=self.milli_units)
-        self.register_readback(BTF_Screen.speed_readback_pv, speed_param, transform=self.milli_units)
+        speed_param = self.register_setting(BTF_Actuator.speed_set_pv, default=initial_speed, transform=self.milli_units)
+        self.register_readback(BTF_Actuator.speed_readback_pv, speed_param, transform=self.milli_units)
 
-        pos_param = self.register_setting(BTF_Screen.position_set_pv, default = initial_position, transform = self.milli_units)
-        self.register_readback(BTF_Screen.position_readback_pv, pos_param, transform=self.milli_units, noise=pos_noise)
+        pos_param = self.register_setting(BTF_Actuator.position_set_pv, default = initial_position, transform = self.milli_units)
+        self.register_readback(BTF_Actuator.position_readback_pv, pos_param, transform=self.milli_units, noise=pos_noise)
 
-        state_param = self.register_setting(BTF_Screen.state_set_pv, default = initial_state)
-        self.register_readback(BTF_Screen.state_readback_pv, state_param)
+        state_param = self.register_setting(BTF_Actuator.state_set_pv, default = initial_state)
+        self.register_readback(BTF_Actuator.state_readback_pv, state_param)
 
     # Function to find the position of the virtual screen using time of flight from the previous position and the speed of the screen
     def get_screen_position(self):
         last_pos = self.last_screen_pos
         last_time = self.last_screen_time
 
-        current_state = self.get_setting(BTF_Screen.state_set_pv)
-        screen_speed = self.get_setting(BTF_Screen.speed_set_pv)
+        current_state = self.get_setting(BTF_Actuator.state_set_pv)
+        screen_speed = self.get_setting(BTF_Actuator.speed_set_pv)
 
         if current_state == 1:
-            pos_goal = self.get_setting(BTF_Screen.position_set_pv)
+            pos_goal = self.get_setting(BTF_Actuator.position_set_pv)
 
+            if pos_goal > -0.016:
+                pos_goal = -0.016# limit of actual BTF actuator when screen is fully inserted
+            else:
+                pos_goal = pos_goal
+            
             direction = np.sign(pos_goal - last_pos)
             current_time = time.time()
             screen_pos = direction * screen_speed * (current_time - last_time) + last_pos
@@ -134,7 +138,7 @@ class BTF_Screen(Device):
             current_time = time.time()
 
         elif current_state == 0:
-            pos_goal = -0.070
+            pos_goal = -0.070 # position of parked BTF actuator
 
             direction = np.sign(pos_goal - last_pos)
             current_time = time.time()
@@ -160,16 +164,16 @@ class BTF_Screen(Device):
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value.
     # This is where the setting PV names are associated with their model keys
     def get_settings(self):
-        screen_goal = self.settings[BTF_Screen.position_set_pv].get_param()
-        screen_speed = self.settings[BTF_Screen.speed_set_pv].get_param()
-        params_dict = {BTF_Screen.position_key: screen_goal, BTF_Screen.speed_key: screen_speed}
+        screen_position = self.last_screen_pos
+        screen_speed = self.settings[BTF_Actuator.speed_set_pv].get_param()
+        params_dict = {BTF_Actuator.position_key: screen_position, BTF_Actuator.speed_key: screen_speed}
         model_dict = {self.model_name: params_dict}
         return model_dict
 
     # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model
     def update_readbacks(self):
-        screen_pos = BTF_Screen.get_screen_position(self)
-        self.update_readback(BTF_Screen.position_readback_pv, screen_pos)
+        screen_pos = BTF_Actuator.get_screen_position(self)
+        self.update_readback(BTF_Actuator.position_readback_pv, screen_pos)
 
 
 class BTF_FC(Device):

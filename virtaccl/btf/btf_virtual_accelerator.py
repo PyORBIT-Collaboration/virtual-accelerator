@@ -20,8 +20,8 @@ from orbit.core.linac import BaseRfGap, RfGapTTF
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.PyORBIT_Model.virtual_devices import BPM, Quadrupole, P_BPM, Quadrupole_Power_Supply, Bend_Power_Supply, Bend
-from virtaccl.PyORBIT_Model.BTF.virtual_devices_BTF import BTF_Dummy_Corrector, BTF_FC, BTF_Quadrupole, BTF_Quadrupole_Power_Supply, BTF_BCM, BTF_Screen
-from virtaccl.PyORBIT_Model.BTF.btf_child_nodes import BTF_FCclass, BTF_BCMclass, BTF_FC_Objectclass
+from virtaccl.PyORBIT_Model.BTF.virtual_devices_BTF import BTF_Dummy_Corrector, BTF_FC, BTF_Quadrupole, BTF_Quadrupole_Power_Supply, BTF_BCM, BTF_Actuator
+from virtaccl.PyORBIT_Model.BTF.btf_child_nodes import BTF_FCclass, BTF_BCMclass, BTF_FC_Objectclass, BTF_Screenclass
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 
@@ -267,8 +267,11 @@ def main():
     screens = devices_dict["Screen"]
     for name, device_dict in screens.items():
         ele_name = device_dict["PyORBIT_Name"]
+        axis = device_dict["Axis"] # determines whether screen is moving horizontally of vertically
         if ele_name in element_list:
-            screen_device = BTF_Screen(name, ele_name)
+            screen_child = BTF_Screenclass(ele_name, axis)
+            model.add_child_node(ele_name, screen_child)
+            screen_device = BTF_Actuator(name, ele_name)
             server.add_device(screen_device)
 
 

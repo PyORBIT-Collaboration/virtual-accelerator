@@ -108,6 +108,7 @@ class BTF_BCMclass:
         if "bunch" not in paramsDict:
             return
         bunch = paramsDict["bunch"]
+        
         part_num = bunch.getSizeGlobal()
         if part_num > 0:
             initial_beam_current = paramsDict["beam_current"]
@@ -138,6 +139,66 @@ class BTF_BCMclass:
     def getAllChildren(self):
         return []
 
-class BTF_Screen:
-    def __init__(self, child_name: str):
-        self.parameters
+class BTF_Screenclass:
+    def __init__(self, child_name: str, screen_axis = None):
+        self.parameters = {'speed': 0.0, 'position': -0.07, 'axis': screen_axis} # axis determines is screen is inserted horizontally (0), or vertically (1)
+        self.child_name = child_name
+        self.node_type = 'BTF_Screen'
+        self.si_e_charge = 1.6021773e-19
+
+    def trackActions(self, actionsCOntainer, paramsDict):
+        if "bunch" not in paramsDict:
+            return
+        bunch = paramsDict["bunch"]
+        
+        current_position = self.parameters['position'] + 0.030 # Bunch is centered at 0, a constant is added as screen position can only reach -16
+        axis = self.parameters['axis']
+        part_num = bunch.getSizeGlobal()
+        
+        if part_num > 0:
+            if axis == 0:
+                for n in range(part_num):
+                    x = bunch.x(n)
+                    if x < current_position:
+                        bunch.deleteParticleFast(n)
+            elif axis == 1:
+                for n in range(part_num):
+                    y = bunch.y(n)
+                    if y < current_position:
+                        bunch.deleteParticleFast(n)
+            else:
+                print('screen axis not set correctly')
+    
+    def getSpeed(self):
+        return self.parameters['speed']
+
+    def getPosition(self):
+        return self.parameters['position']
+
+    def getAxis(self):
+        return self.parameters['axis']
+
+    def getParam(self, param: str):
+        return self.parameters[param]
+
+    def setParam(self, param: str, new_param):
+        self.parameters[param] = new_param
+
+    def getParamsDict(self) -> dict:
+        return self.parameters
+
+    def getType(self):
+        return self.node_type
+
+    def getName(self):
+        return self.child_name
+
+    def getAllChildren(self):
+        return []
+
+
+
+
+
+
+

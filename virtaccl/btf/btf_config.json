@@ -290,25 +290,32 @@
 	},
 	"Screen": {
 		"ITSF_Diag:VS06b": {
-			"PyORBIT_Name": "MEBT:VS06b"
+			"PyORBIT_Name": "MEBT:VS06b",
+			"Axis": 0
 		},
 		"ITSF_Diag:VS14": {
-                        "PyORBIT_Name": "MEBT:VS14"
+                        "PyORBIT_Name": "MEBT:VS14",
+			"Axis": 1
                 },
                 "ITSF_Diag:VS22": {
-                        "PyORBIT_Name": "MEBT:VS22"
+                        "PyORBIT_Name": "MEBT:VS22",
+			"Axis": 1
                 },
                 "ITSF_Diag:VS30": {
-                        "PyORBIT_Name": "MEBT:VS30"
+                        "PyORBIT_Name": "MEBT:VS30",
+			"Axis": 1
                 },
-                "ITSF_Diag:VS14": {
-                        "PyORBIT_Name": "MEBT:VS36"
+                "ITSF_Diag:VS36": {
+                        "PyORBIT_Name": "MEBT:VS36",
+			"Axis": 0
                 },
                 "ITSF_Diag:VS06": {
-                        "PyORBIT_Name": "MEBT:VS06"
+                        "PyORBIT_Name": "MEBT:VS06",
+                        "Axis": 0
                 },
                 "ITSF_Diag:VS08_S": {
-                        "PyORBIT_Name": "MEBT:VS08_S"
+                        "PyORBIT_Name": "MEBT:VS08_S",
+                        "Axis": 0
                 }
 	},
 	"BS": {

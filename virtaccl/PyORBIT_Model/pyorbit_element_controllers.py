@@ -4,7 +4,7 @@ from orbit.py_linac.lattice.LinacAccNodes import Quad, MarkerLinacNode, DCorrect
 from orbit.py_linac.lattice.LinacRfGapNodes import BaseRF_Gap
 from orbit.py_linac.lattice.LinacAccLatticeLib import RF_Cavity
 from .pyorbit_child_nodes import BPMclass, WSclass, ScreenClass
-from .BTF.btf_child_nodes import BTF_FCclass, BTF_BCMclass, BTF_FC_Objectclass
+from .BTF.btf_child_nodes import BTF_FCclass, BTF_BCMclass, BTF_FC_Objectclass, BTF_Screenclass
 
 """A collection of PyORBIT classes (useful for hinting) and PyORBIT keys we are using."""
 
@@ -26,6 +26,7 @@ class PyorbitElementTypes:
     FC_key = 'BTF_FC'
     BCM_key = 'BTF_BCM'
     FC_Obj_key = 'BTF_FC_Object'
+    BTF_screen_key = 'BTF_Screen'
 
     """PyORBIT keys for parameters we want to pass to the virtual accelerator."""
     quad_params = ['dB/dr']
@@ -39,6 +40,7 @@ class PyorbitElementTypes:
     fc_params = ['current']
     bcm_params = ['current']
     fc_obj_params = ['state']
+    btf_screen_params = ['speed', 'position']
 
     """Dictionary to keep track of different PyORBIT class types."""
     pyorbit_class_names = {Quad: quad_key,
@@ -52,7 +54,8 @@ class PyorbitElementTypes:
                            MarkerLinacNode: marker_key,
                            BTF_FCclass: FC_key,
                            BTF_BCMclass: BCM_key,
-                           BTF_FC_Objectclass: FC_Obj_key}
+                           BTF_FC_Objectclass: FC_Obj_key,
+                           BTF_Screenclass: BTF_screen_key}
 
     """Dictionary to keep the above parameters with their designated classes."""
     param_ref_dict = {quad_key: quad_params,
@@ -65,10 +68,11 @@ class PyorbitElementTypes:
                       marker_key: marker_params,
                       FC_key: fc_params,
                       BCM_key: bcm_params,
-                      FC_Obj_key: fc_obj_params}
+                      FC_Obj_key: fc_obj_params,
+                      BTF_screen_key: btf_screen_params}
 
     """Classes that can change the beam."""
-    optic_classes = (quad_key, cavity_key, corrector_key, bend_key, FC_Obj_key)
+    optic_classes = (quad_key, cavity_key, corrector_key, bend_key, FC_Obj_key, BTF_screen_key)
 
     """Classes that measure the beam."""
     diagnostic_classes = (BPM_key, WS_key, screen_key, marker_key, FC_key, BCM_key)
