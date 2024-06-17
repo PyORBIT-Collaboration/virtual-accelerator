@@ -59,6 +59,8 @@ def main():
                         help='Pathname of input bunch file.')
     parser.add_argument('--particle_number', default=1000, type=int,
                         help='Number of particles to use (default=1000).')
+    parser.add_argument('--beam_current', default=38.0, type=float,
+                        help='Initial beam current in mA. (default=38.0).')
     parser.add_argument('--save_bunch', const='end_bunch.dat', nargs='?', type=str,
                         help="Saves the bunch at the end of the lattice after each track in the given location. "
                              "If no location is given, the bunch is saved as 'end_bunch.dat' in the working directory. "
@@ -172,7 +174,8 @@ def main():
         bunch_in.compress()
 
     model = OrbitModel(model_lattice, bunch_in, debug=debug, save_bunch=save_bunch)
-    model.set_beam_current(38.0e-3)  # Set the initial beam current in Amps.
+    beam_current = args.beam_current
+    model.set_beam_current(beam_current / 1000)  # Set the initial beam current in Amps.
     element_list = model.get_element_list()
 
     delay = args.ca_proc
