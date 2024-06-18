@@ -21,7 +21,7 @@ from orbit.core.linac import BaseRfGap, RfGapTTF
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.PyORBIT_Model.virtual_devices import BPM, Quadrupole, P_BPM, Quadrupole_Power_Supply, Bend_Power_Supply, Bend
 from virtaccl.PyORBIT_Model.BTF.virtual_devices_BTF import BTF_Dummy_Corrector, BTF_FC, BTF_Quadrupole, BTF_Quadrupole_Power_Supply, BTF_BCM, BTF_Actuator
-from virtaccl.PyORBIT_Model.BTF.btf_child_nodes import BTF_FCclass, BTF_BCMclass, BTF_FC_Objectclass, BTF_Screenclass
+from virtaccl.PyORBIT_Model.BTF.btf_child_nodes import BTF_FCclass, BTF_BCMclass, BTF_FC_Objectclass, BTF_Screenclass, BTF_Slitclass
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 
@@ -169,7 +169,6 @@ def main():
     quads = devices_dict["Quadrupole"]
     for name, device_dict in quads.items():
         ele_name = device_dict["PyORBIT_Name"]
-        polarity = device_dict["Polarity"]
         initial_current = device_dict["Current"]
         coeff_a = device_dict["coeff_a"]
         coeff_b = device_dict["coeff_b"]
@@ -180,7 +179,7 @@ def main():
                 ps_name = device_dict["Power_Supply"]
                 ps_device = BTF_Quadrupole_Power_Supply(ps_name, initial_current)
                 server.add_device(ps_device)
-                quadrupole_device = BTF_Quadrupole(name, ele_name, power_supply=ps_device, polarity=polarity, coeff_a = coeff_a, coeff_b = coeff_b, length=length)
+                quadrupole_device = BTF_Quadrupole(name, ele_name, power_supply=ps_device, coeff_a = coeff_a, coeff_b = coeff_b, length=length)
                 server.add_device(quadrupole_device)
 
     fq_quad_ps = devices_dict["FQ_Quadrupole_Power_Supply"]
@@ -268,11 +267,27 @@ def main():
     for name, device_dict in screens.items():
         ele_name = device_dict["PyORBIT_Name"]
         axis = device_dict["Axis"] # determines whether screen is moving horizontally of vertically
+        park_spot = device_dict["Park_Location"]
+        speed = device_dict["Standard_Speed"]
+        limit = device_dict["Actuator_Limit"]
         if ele_name in element_list:
             screen_child = BTF_Screenclass(ele_name, axis)
             model.add_child_node(ele_name, screen_child)
-            screen_device = BTF_Actuator(name, ele_name)
+            screen_device = BTF_Actuator(name, ele_name, park_location = park_spot, speed = speed, limit = limit)
             server.add_device(screen_device)
+
+    slits = devices_dict["Slit"]
+    for name, device_dict in slits.items():
+        ele_name = device_dict["PyORBIT_Name"]
+        axis = device_dict["Axis"]
+        park_spot = device_dict["Park_Location"]
+        speed = device_dict["Standard_Speed"]
+        limit = device_dict["Actuator_Limit"]
+        if ele_name in element_list:
+            slit_child = BTF_Slitclass(ele_name, axis)
+            model.add_child_node(ele_name, slit_child)
+            slit_device = BTF_Actuator(name, ele_name, park_location = park_spot, speed = speed, limit = limit)
+            server.add_device(slit_device)
 
 
     # Retrack the bunch to update all diagnostics

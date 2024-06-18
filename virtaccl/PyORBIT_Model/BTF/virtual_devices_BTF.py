@@ -60,33 +60,38 @@ class BTF_Actuator(Device):
     state_set_pv = 'COMMAND'
     state_readback_pv = 'COMMAND_RB'
 
-    # PyORBIT parameter keys
-    state_key = 'state'
-
     # Device keys
     position_key = 'position' # [m]
     speed_key = 'speed' # [m/s]
 
-    def __init__(self, name: str, model_name: str, initial_dict: Dict[str, Any] = None):
+    def __init__(self, name: str, model_name: str, park_location = None, speed = None, limit = None):
         self.model_name = model_name
+        self.park_location = park_location
+        self.speed = speed
+        self.limit = limit
         super().__init__(name, self.model_name)
 
         # Changes the units from meters to millimeters for associated PVs.
         self.milli_units = LinearTInv(scaler=1e3)
         
         # Sets initial values for parameters.
-        if initial_dict is not None:
-            initial_position = initial_dict[BTF_Actuator.position_key]
-            initial_speed = initial_dict[BTF_Actuator.speed_key]
-            initial_state = initial_dict[BTF_Actuator.state_key]
-        else:
-            initial_position = -0.07  # [m]
-            initial_speed = 0.0015  # [mm/s]
-            initial_state = 0
+        initial_state = 0
+        initial_position = self.park_location
+        initial_speed = self.speed
+
+        if park_location is None or speed is None or limit is None:
+            print('Missing initial conditions for',self.model_name+',','using preset values')
+            print('park_location', park_location)
+            print('speed', speed)
+            print('limit', limit)
+            initial_position = -0.07
+            initial_speed = 0.0015
+            self.limit = -0.016
+            self.park_location = -0.07
 
         # Defines internal parameters to keep track of the screen position
-        self.last_screen_pos = initial_position
-        self.last_screen_time = time.time()
+        self.last_actuator_pos = initial_position
+        self.last_actuator_time = time.time()
         self.screen_speed = initial_speed
         self.current_state = initial_state
 
@@ -107,34 +112,44 @@ class BTF_Actuator(Device):
         self.register_readback(BTF_Actuator.state_readback_pv, state_param)
 
     # Function to find the position of the virtual screen using time of flight from the previous position and the speed of the screen
-    def get_screen_position(self):
-        last_pos = self.last_screen_pos
-        last_time = self.last_screen_time
+    def get_actuator_position(self):
+        last_pos = self.last_actuator_pos
+        last_time = self.last_actuator_time
 
         current_state = self.get_setting(BTF_Actuator.state_set_pv)
-        screen_speed = self.get_setting(BTF_Actuator.speed_set_pv)
+        actuator_speed = self.get_setting(BTF_Actuator.speed_set_pv)
+
+        # Limit the speed of the actuator to the maximum speed of physical actuator
+        if actuator_speed > self.speed:
+            actuator_speed = self.speed
 
         if current_state == 1:
             pos_goal = self.get_setting(BTF_Actuator.position_set_pv)
 
-            if pos_goal > -0.016:
-                pos_goal = -0.016# limit of actual BTF actuator when screen is fully inserted
-            else:
-                pos_goal = pos_goal
-            
+            # Defining where the actuator reaches the limit it can insert and should not be moved past
+            # Multiple cases needed to ensure it correctly determines limit
+            if self.limit < 0 and self.park_location < 0 and pos_goal > self.limit:
+                pos_goal = self.limit
+            elif self.limit < 0 and self.park_location > 0 and pos_goal < self.limit:
+                pos_goal = self.limit
+            elif self.limit > 0  and self.park_location < 0 and pos_goal > self.limit:
+                pos_goal = self.limit
+            elif self.limit > 0 and self.park_location > 0 and pos_goal < self.limit:
+                pos_goal = self.limit
+
             direction = np.sign(pos_goal - last_pos)
             current_time = time.time()
-            screen_pos = direction * screen_speed * (current_time - last_time) + last_pos
+            actuator_pos = direction * actuator_speed * (current_time - last_time) + last_pos
 
             if last_pos == pos_goal:
-                screen_pos = pos_goal
-            elif direction < 0 and screen_pos < pos_goal:
-                screen_pos = pos_goal
-            elif direction > 0 and screen_pos > pos_goal:
-                screen_pos = pos_goal
+                actuator_pos = pos_goal
+            elif direction < 0 and actuator_pos < pos_goal:
+                actuator_pos = pos_goal
+            elif direction > 0 and actuator_pos > pos_goal:
+                actuator_pos = pos_goal
 
         elif current_state == 2:
-            screen_pos = last_pos
+            actuator_pos = last_pos
             current_time = time.time()
 
         elif current_state == 0:
@@ -142,38 +157,38 @@ class BTF_Actuator(Device):
 
             direction = np.sign(pos_goal - last_pos)
             current_time = time.time()
-            screen_pos = direction * screen_speed * (current_time - last_time) + last_pos
+            actuator_pos = direction * actuator_speed * (current_time - last_time) + last_pos
 
             if last_pos == pos_goal:
-                screen_pos = pos_goal
-            elif direction < 0 and screen_pos < pos_goal:
-                screen_pos = pos_goal
-            elif direction > 0 and screen_pos > pos_goal:
-                screen_pos = pos_goal
+                actuator_pos = pos_goal
+            elif direction < 0 and actuator_pos < pos_goal:
+                actuator_pos = pos_goal
+            elif direction > 0 and actuator_pos > pos_goal:
+                actuator_pos = pos_goal
 
         else:
-            screen_pos = last_pos
+            actuator_pos = last_pos
             current_time = time.time()
         
         # Reset variables for the next calculation
-        self.last_screen_time = current_time
-        self.last_screen_pos = screen_pos
+        self.last_actuator_time = current_time
+        self.last_actuator_pos = actuator_pos
 
-        return screen_pos
+        return actuator_pos
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value.
     # This is where the setting PV names are associated with their model keys
     def get_settings(self):
-        screen_position = self.last_screen_pos
-        screen_speed = self.settings[BTF_Actuator.speed_set_pv].get_param()
-        params_dict = {BTF_Actuator.position_key: screen_position, BTF_Actuator.speed_key: screen_speed}
+        actuator_position = self.last_actuator_pos
+        actuator_speed = self.settings[BTF_Actuator.speed_set_pv].get_param()
+        params_dict = {BTF_Actuator.position_key: actuator_position, BTF_Actuator.speed_key: actuator_speed}
         model_dict = {self.model_name: params_dict}
         return model_dict
 
     # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model
     def update_readbacks(self):
-        screen_pos = BTF_Actuator.get_screen_position(self)
-        self.update_readback(BTF_Actuator.position_readback_pv, screen_pos)
+        actuator_pos = BTF_Actuator.get_actuator_position(self)
+        self.update_readback(BTF_Actuator.position_readback_pv, actuator_pos)
 
 
 class BTF_FC(Device):
@@ -200,16 +215,14 @@ class BTF_FC(Device):
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
     def get_settings(self):
-        #new_state = self.get_setting(BTF_FC.state_set_pv)
         new_state = self.settings[BTF_FC.state_set_pv].get_param()
          
         params_dict = {BTF_FC.state_key: new_state}
-        model_dict = {self.model_name+'o': params_dict}
-        #print(model_dict)
+        model_dict = {self.model_name+'_obj': params_dict}
         return model_dict
 
     def update_readbacks(self):
-        fc_state = self.get_settings()[self.model_name+'o'][BTF_FC.state_key]
+        fc_state = self.get_settings()[self.model_name+'_obj'][BTF_FC.state_key]
         rb_param = self.readbacks[BTF_FC.state_readback_pv]
         rb_param.set_param(fc_state)
         
@@ -258,7 +271,7 @@ class BTF_Quadrupole(Device):
     # PyORBIT parameter keys
     field_key = 'dB/dr'
 
-    def __init__ (self, name: str, model_name: str, power_supply: Device, polarity: Literal[-1,1] = None, coeff_a=None, coeff_b=None, length=None):
+    def __init__ (self, name: str, model_name: str, power_supply: Device, coeff_a=None, coeff_b=None, length=None):
 
         self.model_name = model_name
         self.power_supply = power_supply
@@ -270,7 +283,6 @@ class BTF_Quadrupole(Device):
 
         super().__init__(name, self.model_name, connected_devices)
 
-        self.pol_transfrom = LinearTInv(scaler=polarity)
         field_noise = AbsNoise(noise=BTF_Quadrupole.field_noise)
 
         # Registers the device's PVs with the server
@@ -301,28 +313,14 @@ class BTF_Quadrupole(Device):
 
 
 
-class BTF_Quadrupole_Power_Supply(Device):
-    #field_set_pv = 'B_Set'  # [T/m]
-    #field_readback_pv = 'B'  # [T/m]
-    #field_noise = 1e-6  # [T/m]
-    
+class BTF_Quadrupole_Power_Supply(Device):    
     current_set_pv = 'I_Set' # [Amps]
     current_readback_pv = 'I' # [Amps]
-
-    book_pv = 'B_Book'
 
     def __init__(self, name: str, init_current=None):
         super().__init__(name)
 
         field_noise = AbsNoise(noise=1e-6)
 
-        # Registers the device's PVs with the server.
-        #field_param = self.register_setting(BTF_Quadrupole_Power_Supply.field_set_pv, default=init_field)
-        #self.register_readback(BTF_Quadrupole_Power_Supply.field_readback_pv, field_param, noise=field_noise)
-
-        #self.register_readback(BTF_Quadrupole_Power_Supply.book_pv, field_param)
-        
         current_param = self.register_setting(BTF_Quadrupole_Power_Supply.current_set_pv, default=init_current)
         self.register_readback(BTF_Quadrupole_Power_Supply.current_readback_pv, current_param)
-        
-        self.register_readback(BTF_Quadrupole_Power_Supply.book_pv, current_param)

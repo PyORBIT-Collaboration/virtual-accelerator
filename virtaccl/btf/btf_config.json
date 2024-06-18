@@ -3,7 +3,6 @@
 		"BTF_MEBT_Mag:QH01": {
 			"PyORBIT_Name": "MEBT:QH01",
 			"Power_Supply": "BTF_MEBT_Mag:PS_QH01",
-			"Polarity": -1,
 			"Current": 150.61,
 			"coeff_a": 0.00715,
 			"coeff_b": 0
@@ -11,7 +10,6 @@
 		"BTF_MEBT_Mag:QV02": {
                         "PyORBIT_Name": "MEBT:QV02",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QV02",
-                        "Polarity": 1,
 			"Current": 275.24,
                         "coeff_a": 0.00445,
                         "coeff_b": 0
@@ -19,7 +17,6 @@
 		"BTF_MEBT_Mag:QH03": {
                         "PyORBIT_Name": "MEBT:QH03",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QH03",
-                        "Polarity": -1,
 			"Current": 6.755,
                         "coeff_a": 0.163,
                         "coeff_b": -0.00035
@@ -27,7 +24,6 @@
 		"BTF_MEBT_Mag:QV04": {
                         "PyORBIT_Name": "MEBT:QV04",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QV04",
-                        "Polarity": 1,
 			"Current": -4.20,
                         "coeff_a": 0.163,
                         "coeff_b": -0.00035
@@ -35,7 +31,6 @@
 		"BTF_MEBT_Mag:QH05": {
                         "PyORBIT_Name": "MEBT:QH05",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QH05",
-                        "Polarity": 1,
 			"Current": 0.8,
                         "coeff_a": 0.0759,
                         "coeff_b": -0.000387
@@ -43,7 +38,6 @@
 		"BTF_MEBT_Mag:QV06": {
                         "PyORBIT_Name": "MEBT:QV06",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QV06",
-                        "Polarity": -1,
 			"Current": 1.100,
                         "coeff_a": 0.0759,
                         "coeff_b": -0.000387
@@ -51,7 +45,6 @@
 		"BTF_MEBT_Mag:QV07": {
                         "PyORBIT_Name": "MEBT:QV07",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QV07",
-                        "Polarity": 1,
 			"Current": 0.0,
                         "coeff_a": 0.163,
                         "coeff_b": -0.00035
@@ -59,7 +52,6 @@
 		"BTF_MEBT_Mag:QH08": {
                         "PyORBIT_Name": "MEBT:QH08",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QH08",
-                        "Polarity": 1,
 			"Current": 0.0,
                         "coeff_a": 0.2191,
                         "coeff_b": -0.000373
@@ -67,7 +59,6 @@
 		"BTF_MEBT_Mag:QV10": {
                         "PyORBIT_Name": "MEBT:QV10",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QV10",
-                        "Polarity": 1,
 			"Current": -4.00,
                         "coeff_a": 0.163,
                         "coeff_b": -0.00035
@@ -75,7 +66,6 @@
 		"BTF_MEBT_Mag:QH11": {
                         "PyORBIT_Name": "MEBT:QH11",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QH11",
-                        "Polarity": -1,
 			"Current": 4.709,
                         "coeff_a": 0.2191,
                         "coeff_b": -0.000373
@@ -83,7 +73,6 @@
 		"BTF_MEBT_Mag:QV12": {
                         "PyORBIT_Name": "MEBT:QV12",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QV12",
-                        "Polarity": 1,
 			"Current": -4.3,
                         "coeff_a": 0.2191,
                         "coeff_b": -0.000373
@@ -91,7 +80,6 @@
 		"BTF_MEBT_Mag:QH13": {
                         "PyORBIT_Name": "MEBT:QH13",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QH13",
-                        "Polarity": -1,
 			"Current": 3.9,
                         "coeff_a": 0.2191,
                         "coeff_b": -0.000373
@@ -99,7 +87,6 @@
 		"BTF_MEBT_Mag:QH33": {
                         "PyORBIT_Name": "MEBT:QH33",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QH33",
-                        "Polarity": -1,
 			"Current": 6.2,
                         "coeff_a": 0.2191,
                         "coeff_b": -0.000373
@@ -107,7 +94,6 @@
 		"BTF_MEBT_Mag:QV34": {
                         "PyORBIT_Name": "MEBT:QV34",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QV34",
-                        "Polarity": 1,
 			"Current": 0.000,
                         "coeff_a": 0.2191,
                         "coeff_b": -0.000373
@@ -115,7 +101,6 @@
 		"BTF_MEBT_Mag:QH35": {
                         "PyORBIT_Name": "MEBT:QH35",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QH35",
-                        "Polarity": -1,
 			"Current": -6.40,
                         "coeff_a": 0.163,
                         "coeff_b": -0.00035
@@ -123,7 +108,6 @@
 		"BTF_MEBT_Mag:QV36": {
                         "PyORBIT_Name": "MEBT:QV36",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QV36",
-                        "Polarity": 1,
 			"Current": 3.95,
                         "coeff_a": 0.163,
                         "coeff_b": -0.00035
@@ -264,69 +248,168 @@
 	},
 	"Slit": {
 		"ITSF_Diag:Slit_HZ04": {
-			"PyORBIT_Name": "MEBT:HZ04"
+			"PyORBIT_Name": "MEBT:HZ04",
+                        "Axis": 1,
+                        "Axis_Polarity": 1,
+                        "Park_Location": -70,
+                        "Actuator_Limit": -16,
+                        "Interaction_Start": -30,
+                        "Standard_Speed": 2.5,
+			"Edge_to_Slit": 10,
+			"Slit_Width": 0.2
 		},
 		"ITSF_Diag:Slit_VT04": {
-                        "PyORBIT_Name": "MEBT:VT04"
+                        "PyORBIT_Name": "MEBT:VT04",
+                        "Axis": 0,
+                        "Axis_Polarity": 1,
+                        "Park_Location": -70,
+                        "Actuator_Limit": -16,
+                        "Interaction_Start": -30,
+                        "Standard_Speed": 2.5,
+                        "Edge_to_Slit": 10,
+                        "Slit_Width": 0.2
                 },
 		"ITSF_Diag:Slit_HZ06": {
-                        "PyORBIT_Name": "MEBT:HZ06"
+                        "PyORBIT_Name": "MEBT:HZ06",
+                        "Axis": 1,
+                        "Axis_Polarity": 1,
+                        "Park_Location": -70,
+                        "Actuator_Limit": -16,
+                        "Interaction_Start": -30,
+                        "Standard_Speed": 2.5,
+                        "Edge_to_Slit": 10,
+                        "Slit_Width": 0.2
                 },
 		"ITSF_Diag:Slit_VT06": {
-                        "PyORBIT_Name": "MEBT:VT06"
+                        "PyORBIT_Name": "MEBT:VT06",
+                        "Axis": 0,
+                        "Axis_Polarity": 1,
+                        "Park_Location": -70,
+                        "Actuator_Limit": -16,
+                        "Interaction_Start": -30,
+                        "Standard_Speed": 2.5,
+                        "Edge_to_Slit": 10,
+                        "Slit_Width": 0.2
                 },
 		"ITSF_Diag:Slit_HZ36a": {
-                        "PyORBIT_Name": "MEBT:HZ36a"
+                        "PyORBIT_Name": "MEBT:HZ36a",
+                        "Axis": 1,
+                        "Axis_Polarity": 1,
+                        "Park_Location": -70,
+                        "Actuator_Limit": -16,
+                        "Interaction_Start": -30,
+                        "Standard_Speed": 2.5,
+                        "Edge_to_Slit": 10,
+                        "Slit_Width": 0.2
                 },
 		"ITSF_Diag:Slit_VT36a": {
-                        "PyORBIT_Name": "MEBT:VT36a"
+                        "PyORBIT_Name": "MEBT:VT36a",
+                        "Axis": 0,
+                        "Axis_Polarity": 1,
+                        "Park_Location": -70,
+                        "Actuator_Limit": -16,
+                        "Interaction_Start": -30,
+                        "Standard_Speed": 2.5,
+                        "Edge_to_Slit": 10,
+                        "Slit_Width": 0.2
                 },
 		"ITSF_Diag:Slit_HZ36b": {
-                       "PyORBIT_Name": "MEBT:HZ36b"
+                       "PyORBIT_Name": "MEBT:HZ36b",
+                        "Axis": 1,
+                        "Axis_Polarity": 1,
+                        "Park_Location": -70,
+                        "Actuator_Limit": -16,
+                        "Interaction_Start": -30,
+                        "Standard_Speed": 2.5,
+                        "Edge_to_Slit": 10,
+                        "Slit_Width": 0.2
                 },
 		"ITSF_Diag:Slit_VT36b": {
-                        "PyORBIT_Name": "MEBT:VT36b"
+                        "PyORBIT_Name": "MEBT:VT36b",
+                        "Axis": 0,
+                        "Axis_Polarity": 1,
+                        "Park_Location": -70,
+                        "Actuator_Limit": -16,
+                        "Interaction_Start": -30,
+                        "Standard_Speed": 2.5,
+                        "Edge_to_Slit": 10,
+                        "Slit_Width": 0.2
                 }
 	},
 	"Screen": {
 		"ITSF_Diag:VS06b": {
 			"PyORBIT_Name": "MEBT:VS06b",
-			"Axis": 0
+			"Axis": 0,
+			"Axis_Polarity": 1,
+			"Park_Location": -70,
+			"Actuator_Limit": -16,
+			"Interaction_Start": -30,
+			"Standard_Speed": 1.5
 		},
 		"ITSF_Diag:VS14": {
                         "PyORBIT_Name": "MEBT:VS14",
-			"Axis": 1
+			"Axis": 1,
+                        "Axis_Polarity": 1,
+                        "Park_Location": -70,
+                        "Actuator_Limit": -16,
+                        "Interaction_Start": -30,
+                        "Standard_Speed": 1.5
                 },
                 "ITSF_Diag:VS22": {
                         "PyORBIT_Name": "MEBT:VS22",
-			"Axis": 1
+			"Axis": 1,
+                        "Axis_Polarity": 1,
+                        "Park_Location": -70,
+                        "Actuator_Limit": -16,
+                        "Interaction_Start": -30,
+                        "Standard_Speed": 1.5
                 },
                 "ITSF_Diag:VS30": {
                         "PyORBIT_Name": "MEBT:VS30",
-			"Axis": 1
+			"Axis": 1,
+                        "Axis_Polarity": 1,
+                        "Park_Location": -70,
+                        "Actuator_Limit": -16,
+                        "Interaction_Start": -30,
+                        "Standard_Speed": 1.5
                 },
                 "ITSF_Diag:VS36": {
                         "PyORBIT_Name": "MEBT:VS36",
-			"Axis": 0
+			"Axis": 0,
+                        "Axis_Polarity": 1,
+                        "Park_Location": -70,
+                        "Actuator_Limit": -16,
+                        "Interaction_Start": -30,
+                        "Standard_Speed": 1.5
                 },
                 "ITSF_Diag:VS06": {
                         "PyORBIT_Name": "MEBT:VS06",
-                        "Axis": 0
+                        "Axis": 0,
+                        "Axis_Polarity": 1,
+                        "Park_Location": -70,
+                        "Actuator_Limit": -16,
+                        "Interaction_Start": -30,
+                        "Standard_Speed": 1.5
                 },
                 "ITSF_Diag:VS08_S": {
                         "PyORBIT_Name": "MEBT:VS08_S",
-                        "Axis": 0
+                        "Axis": 0,
+                        "Axis_Polarity": 1,
+                        "Park_Location": -70,
+                        "Actuator_Limit": -16,
+                        "Interaction_Start": -30,
+                        "Standard_Speed": 1.5
                 }
 	},
 	"BS": {
 		"ITSF_Diag:BS36": {
 			"PyORBIT_Name": "MEBT:BS36",
-			"Object_Name": "MEBT:BS36o",
+			"Object_Name": "MEBT:BS36_obj",
 			"State": 1
 		},
 		"ITSF_Diag:BS08_S": {
 			"PyORBIT_Name": "MEBT:BS08_S",
-			"Object_Name": "MEBT:BS08_So",
+			"Object_Name": "MEBT:BS08_S_obj",
 			"State": 1
 		}
 	},
@@ -341,7 +424,7 @@
 	"FC": {
 		"ITSF_Diag:FC12": {
 			"PyORBIT_Name": "MEBT:FC12",
-			"Object_Name": "MEBT:FC12o",
+			"Object_Name": "MEBT:FC12_obj",
 			"State": 0
 		}
 	},

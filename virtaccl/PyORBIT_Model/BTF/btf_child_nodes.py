@@ -155,19 +155,20 @@ class BTF_Screenclass:
         axis = self.parameters['axis']
         part_num = bunch.getSizeGlobal()
         
-        if part_num > 0:
-            if axis == 0:
-                for n in range(part_num):
-                    x = bunch.x(n)
-                    if x < current_position:
-                        bunch.deleteParticleFast(n)
-            elif axis == 1:
-                for n in range(part_num):
-                    y = bunch.y(n)
-                    if y < current_position:
-                        bunch.deleteParticleFast(n)
-            else:
-                print('screen axis not set correctly')
+        if current_position > -0.01: # Only starts checking particle location if the screen is near the bunch
+            if part_num > 0:
+                if axis == 0:
+                    for n in range(part_num):
+                        x = bunch.x(n)
+                        if x < current_position:
+                            bunch.deleteParticleFast(n)
+                elif axis == 1:
+                    for n in range(part_num):
+                        y = bunch.y(n)
+                        if y < current_position:
+                            bunch.deleteParticleFast(n)
+                else:
+                    print('screen axis not set correctly')
     
     def getSpeed(self):
         return self.parameters['speed']
@@ -196,6 +197,71 @@ class BTF_Screenclass:
     def getAllChildren(self):
         return []
 
+class BTF_Slitclass:
+    def __init__(self, child_name: str, screen_axis = None):
+        self.parameters = {'speed': 0.0, 'position': -0.07, 'axis': screen_axis} # axis determines is screen is inserted horizontally (0), or vertically (1)
+        self.child_name = child_name
+        self.node_type = 'BTF_Slit'
+        self.si_e_charge = 1.6021773e-19
+
+    def trackActions(self, actionsCOntainer, paramsDict):
+        if "bunch" not in paramsDict:
+            return
+        bunch = paramsDict["bunch"]
+        
+        current_position = self.parameters['position'] + 0.030
+        axis = self.parameters['axis']
+        part_num = bunch.getSizeGlobal()
+        edge_position = self.parameters['position'] + 0.040
+        slit_width = 0.0002
+        
+        if edge_position > -0.01: # Only checks particles if edge of slit is near bunch
+            if part_num > 0:
+                if axis == 0:
+                    for n in range(part_num):
+                        x = bunch.x(n)
+                        # Check position of particle and determine if it makes it through slit
+                        if x < edge_position and x > current_position + slit_width * 0.5:
+                            bunch.deleteParticleFast(n)
+                        elif x < current_position - slit_width * 0.5:
+                            bunch.deleteParticleFast(n)
+                elif axis == 1:
+                    for n in range(part_num):
+                        y = bunch.y(n)
+                        # Check position of particle and determine if it makes it through slit
+                        if y < edge_position and y > current_position + slit_width * 0.5:
+                            bunch.deleteParticleFast(n)
+                        elif y < current_position - slit_width * 0.5:
+                            bunch.deleteParticleFast(n)
+                else:
+                    print('slit axis not set correctly')
+
+    def getSpeed(self):
+        return self.parameters['speed']
+
+    def getPosition(self):
+        return self.parameters['position']
+
+    def getAxis(self):
+        return self.parameters['axis']
+
+    def getParam(self, param: str):
+        return self.parameters[param]
+
+    def setParam(self, param: str, new_param):
+        self.parameters[param] = new_param
+
+    def getParamsDict(self) -> dict:
+        return self.parameters
+
+    def getType(self):
+        return self.node_type
+
+    def getName(self):
+        return self.child_name
+
+    def getAllChildren(self):
+        return []
 
 
 
