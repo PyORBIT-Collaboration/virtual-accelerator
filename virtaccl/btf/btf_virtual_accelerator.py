@@ -172,7 +172,6 @@ def main():
         initial_current = device_dict["Current"]
         coeff_a = device_dict["coeff_a"]
         coeff_b = device_dict["coeff_b"]
-        #length = device_dict["length"]
         if ele_name in element_list:
             length = model.get_element_dictionary()[ele_name].get_element().getLength()
             if "Power_Supply" in device_dict and device_dict["Power_Supply"] in quad_ps:
@@ -267,26 +266,23 @@ def main():
     for name, device_dict in screens.items():
         ele_name = device_dict["PyORBIT_Name"]
         axis = device_dict["Axis"] # determines whether screen is moving horizontally of vertically
-        park_spot = device_dict["Park_Location"]
-        speed = device_dict["Standard_Speed"]
-        limit = device_dict["Actuator_Limit"]
+        axis_polarity = device_dict["Axis_Polarity"]
         if ele_name in element_list:
-            screen_child = BTF_Screenclass(ele_name, axis)
+            screen_child = BTF_Screenclass(ele_name, screen_axis = axis, screen_polarity = axis_polarity)
             model.add_child_node(ele_name, screen_child)
-            screen_device = BTF_Actuator(name, ele_name, park_location = park_spot, speed = speed, limit = limit)
+            screen_device = BTF_Actuator(name, ele_name)
             server.add_device(screen_device)
 
     slits = devices_dict["Slit"]
     for name, device_dict in slits.items():
         ele_name = device_dict["PyORBIT_Name"]
         axis = device_dict["Axis"]
-        park_spot = device_dict["Park_Location"]
         speed = device_dict["Standard_Speed"]
         limit = device_dict["Actuator_Limit"]
         if ele_name in element_list:
             slit_child = BTF_Slitclass(ele_name, axis)
             model.add_child_node(ele_name, slit_child)
-            slit_device = BTF_Actuator(name, ele_name, park_location = park_spot, speed = speed, limit = limit)
+            slit_device = BTF_Actuator(name, ele_name, speed = speed, limit = limit)
             server.add_device(slit_device)
 
 

@@ -66,28 +66,30 @@ class BTF_Actuator(Device):
 
     def __init__(self, name: str, model_name: str, park_location = None, speed = None, limit = None):
         self.model_name = model_name
-        self.park_location = park_location
-        self.speed = speed
-        self.limit = limit
         super().__init__(name, self.model_name)
 
         # Changes the units from meters to millimeters for associated PVs.
         self.milli_units = LinearTInv(scaler=1e3)
         
         # Sets initial values for parameters.
+        if park_location is not None:
+            self.park_location = park_location
+        else:
+            self.park_location = -0.07
+
+        if speed is not None:
+            self.speed = speed
+        else:
+            self.speed = 0.0015
+
+        if limit is not None:
+            self.limit = limit
+        else:
+            self.limit = -0.016
+
         initial_state = 0
         initial_position = self.park_location
         initial_speed = self.speed
-
-        if park_location is None or speed is None or limit is None:
-            print('Missing initial conditions for',self.model_name+',','using preset values')
-            print('park_location', park_location)
-            print('speed', speed)
-            print('limit', limit)
-            initial_position = -0.07
-            initial_speed = 0.0015
-            self.limit = -0.016
-            self.park_location = -0.07
 
         # Defines internal parameters to keep track of the screen position
         self.last_actuator_pos = initial_position
@@ -153,7 +155,7 @@ class BTF_Actuator(Device):
             current_time = time.time()
 
         elif current_state == 0:
-            pos_goal = -0.070 # position of parked BTF actuator
+            pos_goal = self.park_location
 
             direction = np.sign(pos_goal - last_pos)
             current_time = time.time()

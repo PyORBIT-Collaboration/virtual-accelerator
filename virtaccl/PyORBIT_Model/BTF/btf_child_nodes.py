@@ -140,36 +140,72 @@ class BTF_BCMclass:
         return []
 
 class BTF_Screenclass:
-    def __init__(self, child_name: str, screen_axis = None):
-        self.parameters = {'speed': 0.0, 'position': -0.07, 'axis': screen_axis} # axis determines is screen is inserted horizontally (0), or vertically (1)
+    def __init__(self, child_name: str, screen_axis = None, screen_polarity = None, interaction = None):
+        self.parameters = {'speed': 0.0, 'position': -0.07, 'axis': screen_axis, 'axis_polarity': screen_polarity, 'interaction_start': interaction}
         self.child_name = child_name
         self.node_type = 'BTF_Screen'
         self.si_e_charge = 1.6021773e-19
+        self.near_bunch = 0.01 # value at which to start checking for particles
+        
+        # Set a standard value for the edge of the screen crossing the center of the bunch if none is specified
+        if self.parameters['interaction_start'] is None:
+            self.parameters['interaction_start'] = 0.03
 
-    def trackActions(self, actionsCOntainer, paramsDict):
+        if self.parameters['axis_polarity'] is None:
+            self.parameters['axis_polarity'] = 1
+            print('No axis polarity set for', child_name+',', 'using standard value')
+
+    def trackActions(self, actionsContainer, paramsDict):
         if "bunch" not in paramsDict:
             return
         bunch = paramsDict["bunch"]
         
-        current_position = self.parameters['position'] + 0.030 # Bunch is centered at 0, a constant is added as screen position can only reach -16
+        # Bunch is centered at 0, a constant is added as screen position can only reach -16
+        current_position = self.parameters['position'] + self.parameters['interaction_start']
+
+        # The current position is adjusted to be negative or positive depending on what side of the beam pipe the actuator is on
+        current_position = current_position * self.parameters['axis_polarity']
+
         axis = self.parameters['axis']
         part_num = bunch.getSizeGlobal()
-        
-        if current_position > -0.01: # Only starts checking particle location if the screen is near the bunch
-            if part_num > 0:
-                if axis == 0:
-                    for n in range(part_num):
-                        x = bunch.x(n)
-                        if x < current_position:
-                            bunch.deleteParticleFast(n)
-                elif axis == 1:
-                    for n in range(part_num):
-                        y = bunch.y(n)
-                        if y < current_position:
-                            bunch.deleteParticleFast(n)
-                else:
-                    print('screen axis not set correctly')
-    
+
+        # Creating statements that determine what part of the bunch the screen will be deleting
+        # Note this is set up assuming that all actuators work with an initial parked condition that is negative
+        # If their park location is positive this set of if statements will work incorrectly
+
+        if self.parameters['axis_polarity'] < 0:
+            if current_position < self.near_bunch:
+                if part_num > 0:
+                    if axis == 0:
+                        for n in range(part_num):
+                            x = bunch.x(n)
+                            if x > current_position:
+                                bunch.deleteParticleFast(n)
+                    elif axis == 1:
+                        for n in range(part_num):
+                            y = bunch.y(n)
+                            if y > current_position:
+                                bunch.deleteParticleFast(n)
+                    else:
+                        print('screen axis not set correctly for', child_name)
+
+        if self.parameters['axis_polarity'] > 0:
+            if current_position > -self.near_bunch:
+                if part_num > 0:
+                    if axis == 0:
+                        for n in range(part_num):
+                            x = bunch.x(n)
+                            if x < current_position:
+                                bunch.deleteParticleFast(n)
+                    elif axis == 1:
+                        for n in range(part_num):
+                            y = bunch.y(n)
+                            if y < current_position:
+                                bunch.deleteParticleFast(n)
+                    else:
+                        print('screen axis not set correctly for', child_name)
+
+
     def getSpeed(self):
         return self.parameters['speed']
 
@@ -198,8 +234,9 @@ class BTF_Screenclass:
         return []
 
 class BTF_Slitclass:
-    def __init__(self, child_name: str, screen_axis = None):
-        self.parameters = {'speed': 0.0, 'position': -0.07, 'axis': screen_axis} # axis determines is screen is inserted horizontally (0), or vertically (1)
+    def __init__(self, child_name: str, slit_axis = None):
+        self.parameters = {'speed': 0.0, 'position': -0.07, 'axis': slit_axis, 'axis_polarity': screen_polarity, 'interaction_start': interaction
+                           'edge_to_slit': edge_to_slit}
         self.child_name = child_name
         self.node_type = 'BTF_Slit'
         self.si_e_charge = 1.6021773e-19
