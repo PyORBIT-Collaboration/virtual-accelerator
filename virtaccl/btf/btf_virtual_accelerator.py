@@ -265,7 +265,7 @@ def main():
     screens = devices_dict["Screen"]
     for name, device_dict in screens.items():
         ele_name = device_dict["PyORBIT_Name"]
-        axis = device_dict["Axis"] # determines whether screen is moving horizontally of vertically
+        axis = device_dict["Axis"] 
         axis_polarity = device_dict["Axis_Polarity"]
         if ele_name in element_list:
             screen_child = BTF_Screenclass(ele_name, screen_axis = axis, screen_polarity = axis_polarity)
@@ -277,10 +277,11 @@ def main():
     for name, device_dict in slits.items():
         ele_name = device_dict["PyORBIT_Name"]
         axis = device_dict["Axis"]
+        axis_polarity = device_dict["Axis_Polarity"]
         speed = device_dict["Standard_Speed"]
         limit = device_dict["Actuator_Limit"]
         if ele_name in element_list:
-            slit_child = BTF_Slitclass(ele_name, axis)
+            slit_child = BTF_Slitclass(ele_name, slit_axis = axis, slit_polarity = axis_polarity)
             model.add_child_node(ele_name, slit_child)
             slit_device = BTF_Actuator(name, ele_name, speed = speed, limit = limit)
             server.add_device(slit_device)
