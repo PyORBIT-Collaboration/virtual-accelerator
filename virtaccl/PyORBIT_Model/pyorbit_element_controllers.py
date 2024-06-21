@@ -41,8 +41,8 @@ class PyorbitElementTypes:
     fc_params = ['current']
     bcm_params = ['current']
     fc_obj_params = ['state']
-    btf_screen_params = ['speed', 'position', 'axis']
-    btf_slit_params = ['speed', 'position', 'axis']
+    btf_screen_params = ['speed', 'position', 'axis', 'axis_polarity', 'interaction_start']
+    btf_slit_params = ['speed', 'position', 'axis', 'axis_polarity', 'interaction_start', 'edge_to_slit', 'slit_width']
 
     """Dictionary to keep track of different PyORBIT class types."""
     pyorbit_class_names = {Quad: quad_key,

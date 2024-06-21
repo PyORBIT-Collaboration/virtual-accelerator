@@ -169,6 +169,9 @@ class BTF_Screenclass:
         axis = self.parameters['axis']
         part_num = bunch.getSizeGlobal()
 
+        # Create a dummy value that is changed if particles are lost, changing this value causes a bunch.compress() to happen
+        value = 0
+
         # Creating statements that determine what part of the bunch the screen will be deleting
         # Note this is set up assuming that all actuators work with an initial parked condition that is negative
         # If their park location is positive this set of if statements will work incorrectly
@@ -178,11 +181,13 @@ class BTF_Screenclass:
                 for n in range(part_num):
                     x = bunch.x(n)
                     if x > current_position:
+                        value = 1
                         bunch.deleteParticleFast(n)
             elif axis == 1:
                 for n in range(part_num):
                     y = bunch.y(n)
                     if y > current_position:
+                        value = 1
                         bunch.deleteParticleFast(n)
             else:
                 print('screen axis not set correctly for', child_name)
@@ -192,15 +197,19 @@ class BTF_Screenclass:
                 for n in range(part_num):
                     x = bunch.x(n)
                     if x < current_position:
+                        value = 1
                         bunch.deleteParticleFast(n)
             elif axis == 1:
                 for n in range(part_num):
                     y = bunch.y(n)
                     if y < current_position:
+                        value = 1
                         bunch.deleteParticleFast(n)
             else:
                 print('screen axis not set correctly for', self.child_name)
 
+        if value == 1:
+            bunch.compress()
 
     def getSpeed(self):
         return self.parameters['speed']
@@ -210,6 +219,12 @@ class BTF_Screenclass:
 
     def getAxis(self):
         return self.parameters['axis']
+
+    def getAxis_Polarity(self):
+        return self.parameters['axis_polarity']
+
+    def getInteraction_Start(self):
+        return self.parameters['interaction_start']
 
     def getParam(self, param: str):
         return self.parameters[param]
@@ -270,6 +285,9 @@ class BTF_Slitclass:
         part_num = bunch.getSizeGlobal()
         slit_width = self.parameters['slit_width']
 
+        # Create a dummy value that is changed if particles are lost, changing this value causes a bunch.compress() to happen
+        value = 0
+
         # Creating statements that determine what part of the bunch the screen will be deleting
         # Note this is set up assuming that all actuators work with an initial parked condition that is negative
         # If their park location is positive this set of if statements will work incorrectly
@@ -279,17 +297,19 @@ class BTF_Slitclass:
                 for n in range(part_num):
                     x = bunch.x(n)
                     if x > current_position and x < slit_position - slit_width * 0.5:
+                        value = 1
                         bunch.deleteParticleFast(n)
                     elif x > slit_position + slit_width * 0.5:
+                        value = 1
                         bunch.deleteParticleFast(n)
             elif axis == 1:
                 for n in range(part_num):
                     y = bunch.y(n)
                     if y > current_position and y < slit_position - slit_width * 0.5:
-                        print('why',n)
+                        value = 1
                         bunch.deleteParticleFast(n)
                     elif y > slit_position + slit_width * 0.5:
-                        print('oh why',n)
+                        value = 1
                         bunch.deleteParticleFast(n)
             else:
                 print('slit axis not set correctly for', self.child_name)
@@ -299,20 +319,25 @@ class BTF_Slitclass:
                 for n in range(part_num):
                     x = bunch.x(n)
                     if x < current_position and x > slit_position + slit_width * 0.5:
+                        value = 1
                         bunch.deleteParticleFast(n)
-                        print('activated')
                     elif x < slit_position - slit_width * 0.5:
+                        value = 1
                         bunch.deleteParticleFast(n)
-                        print('me too')
             elif axis == 1:
                 for n in range(part_num):
                     y = bunch.y(n)
                     if y < current_position and y > slit_position + slit_width * 0.5:
+                        value = 1
                         bunch.deleteParticleFast(n)
                     elif y < slit_position - slit_width * 0.5:
+                        value = 1
                         bunch.deleteParticleFast(n)
             else:
                 print('slit axis not set correctly for', self.child_name)
+
+        if value == 1:
+            bunch.compress()
 
     def getSpeed(self):
         return self.parameters['speed']
@@ -322,6 +347,18 @@ class BTF_Slitclass:
 
     def getAxis(self):
         return self.parameters['axis']
+
+    def getAxis_Polarity(self):
+        return self.parameters['axis_polarity']
+
+    def getInteraction_Start(self):
+        return self.parameters['interaction_start']
+
+    def getEdge_to_Slit(self):
+        return self.parameters['edge_to_slit']
+
+    def getSlit_Width(self):
+        return self.parameters['slit_width']
 
     def getParam(self, param: str):
         return self.parameters[param]

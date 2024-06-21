@@ -135,6 +135,7 @@ def main():
     Add_quad_apertures_to_lattice(model_lattice)
     Add_rfgap_apertures_to_lattice(model_lattice)
 
+
     bunch_file = Path(args.bunch)
     part_num = args.particle_number
 
