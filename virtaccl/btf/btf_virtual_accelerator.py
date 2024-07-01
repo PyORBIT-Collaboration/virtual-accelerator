@@ -280,7 +280,7 @@ def main():
         axis = device_dict["Axis"]
         axis_polarity = device_dict["Axis_Polarity"]
         speed = device_dict["Standard_Speed"]
-        limit = device_dict["Actuator_Limit"]
+        limit= device_dict["Actuator_Limit"]
         if ele_name in element_list:
             slit_child = BTF_Slitclass(ele_name, slit_axis = axis, slit_polarity = axis_polarity)
             model.add_child_node(ele_name, slit_child)
