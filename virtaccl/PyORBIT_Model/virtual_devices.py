@@ -282,7 +282,7 @@ class BPM(Device):
         if amp < 1e-8:
             x_avg = (random() * 2 - 1) * 0.1
             y_avg = (random() * 2 - 1) * 0.1
-            phase_avg = (random() * 2 - 1) * 0.1
+            phase_avg = (random() * 2 - 1) * math.pi
         else:
             x_avg = bpm_params[BPM.x_key]
             y_avg = bpm_params[BPM.y_key]
