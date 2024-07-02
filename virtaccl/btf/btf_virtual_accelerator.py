@@ -13,17 +13,17 @@ from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, 
 
 from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass
 # from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
-from virtaccl.PyORBIT_Model.pyorbit_lattice_factory import PyORBIT_Lattice_Factory
+from virtaccl.PyORBIT_Model.BTF.btf_lattice_factory import PyORBIT_Lattice_Factory
 
 from orbit.core.bunch import Bunch
 from orbit.core.linac import BaseRfGap, RfGapTTF
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.PyORBIT_Model.virtual_devices import BPM, Quadrupole, P_BPM, Quadrupole_Power_Supply, Bend_Power_Supply, Bend
-from virtaccl.PyORBIT_Model.BTF.virtual_devices_BTF import BTF_Dummy_Corrector, BTF_FC, BTF_Quadrupole, BTF_Quadrupole_Power_Supply, BTF_BCM, BTF_Actuator
+from virtaccl.PyORBIT_Model.BTF.virtual_devices_BTF import BTF_FC, BTF_Quadrupole, BTF_Quadrupole_Power_Supply, BTF_BCM, BTF_Actuator, BTF_Corrector, BTF_Corrector_Power_Supply
 from virtaccl.PyORBIT_Model.BTF.btf_child_nodes import BTF_FCclass, BTF_BCMclass, BTF_FC_Objectclass, BTF_Screenclass, BTF_Slitclass
 
-from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
+from virtaccl.PyORBIT_Model.BTF.btf_lattice_controller import OrbitModel
 
 
 def load_config(filename: Path):
@@ -155,6 +155,10 @@ def main():
                 bunch_in.deleteParticleFast(n)
         bunch_in.compress()
 
+    # get sync particle momentum for use in corrector current conversion
+    syncPart = bunch_in.getSyncParticle()
+    momentum = syncPart.momentum()
+
     model = OrbitModel(model_lattice, bunch_in, debug=debug, save_bunch=save_bunch)
     model.set_beam_current(30.0e-3)  # Set the initial beam current in Amps.
     element_list = model.get_element_list()
@@ -196,12 +200,21 @@ def main():
                 quadrupole_device = Quadrupole(name, ele_name, power_supply=ps_device, polarity=polarity)
                 server.add_device(quadrupole_device)
 
-    dummy_correctors = devices_dict["Corrector_Power_Supply"]
-    for name in dummy_correctors:
-        initial_field = 0
-        ps_name = name
-        ps_device = BTF_Dummy_Corrector(ps_name, initial_field)
-        server.add_device(ps_device)
+    corr_ps = devices_dict["Corrector_Power_Supply"]
+    corrs = devices_dict["Corrector"]
+    for name, device_dict in corrs.items():
+        ele_name = device_dict["PyORBIT_Name"]
+        quad_name = device_dict["Quad_Name"]
+        corr_current = device_dict["Current"]
+        coeff = device_dict["coeff"]
+        if ele_name in element_list:
+            length = model.get_element_dictionary()[quad_name].get_element().getLength()
+            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in corr_ps:
+                ps_name = device_dict["Power_Supply"]
+                ps_device = BTF_Corrector_Power_Supply(ps_name, corr_current)
+                server.add_device(ps_device)
+                corrector_device = BTF_Corrector(name, ele_name, power_supply = ps_device, coeff = coeff, length=length, momentum = momentum)
+                server.add_device(corrector_device)
 
     bends = devices_dict["Bend"]
     for name, device_dict in bends.items():

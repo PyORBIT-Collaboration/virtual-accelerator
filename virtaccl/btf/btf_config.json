@@ -212,22 +212,46 @@
 	},
 	"Corrector": {
 		"BTF_MEBT_Mag:DCH01": {
-			"Power_Supply": "BTF_MEBT_Mag:PS_DCH01"
+			"PyORBIT_Name": "MEBT:DCH01",
+			"Quad_Name": "MEBT:QH01",
+			"Power_Supply": "BTF_MEBT_Mag:PS_DCH01",
+                        "Current": 1.5,
+                        "coeff": -0.369
 		},
 		"BTF_MEBT_Mag:DCV01": {
-			"Power_Supply": "BTF_MEBT_Mag:PS_DCV01"
+			"PyORBIT_Name": "MEBT:DCV01",
+			"Quad_Name": "MEBT:QH01",
+			"Power_Supply": "BTF_MEBT_Mag:PS_DCV01",
+                        "Current": 4.0,
+                        "coeff": -0.523
 		},
 		"BTF_MEBT_Mag:DCH02": {
-                        "Power_Supply": "BTF_MEBT_Mag:PS_DCH02"
+			"PyORBIT_Name": "MEBT:DCH02",
+			"Quad_Name": "MEBT:QV02",
+                        "Power_Supply": "BTF_MEBT_Mag:PS_DCH02",
+                        "Current": -4.00,
+                        "coeff": -0.381
                 },
                 "BTF_MEBT_Mag:DCV02": {
-                        "Power_Supply": "BTF_MEBT_Mag:PS_DCV02"
+			"PyORBIT_Name": "MEBT:DCV02",
+			"Quad_Name": "MEBT:QV02",
+                        "Power_Supply": "BTF_MEBT_Mag:PS_DCV02",
+                        "Current": 8.0,
+                        "coeff": -0.405
 		},
 		"BTF_MEBT_Mag:DCH36": {
-                        "Power_Supply": "BTF_MEBT_Mag:PS_DCH36"
+			"PyORBIT_Name": "MEBT:DCH36",
+			"Quad_Name": "MEBT:QV36",
+                        "Power_Supply": "BTF_MEBT_Mag:PS_DCH36",
+                        "Current": 0.0,
+                        "coeff": 0.5
                 },
                 "BTF_MEBT_Mag:DCV36": {
-                        "Power_Supply": "BTF_MEBT_Mag:PS_DCV36"
+			"PyORBIT_Name": "MEBT:DCV36",
+			"Quad_Name": "MEBT:QV36",
+                        "Power_Supply": "BTF_MEBT_Mag:PS_DCV36",
+                        "Current": 0.0,
+                        "coeff": -0.5
 		}
 	},
 	"Bend": {

@@ -64,17 +64,11 @@ class BTF_FC_Objectclass:
             return
         bunch = paramsDict["bunch"]
         part_num = bunch.getSizeGlobal()
-        dummt_value = 0
 
         live_state = self.parameters['state']
         if live_state == 1:
             if part_num > 0:
                 bunch.deleteAllParticles()
-            else:
-                dummy_value = 1
-
-        else:
-            dummy_value = 1
 
     def getState(self):
         return self.parameters['state']

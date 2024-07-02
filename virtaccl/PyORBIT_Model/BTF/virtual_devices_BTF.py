@@ -23,34 +23,6 @@ from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTIn
 # server. The strings denoted with a "_key" are the keys for parameters in PyORBIT for that device. These need to match
 # the keys PyORBIT uses in the paramsDict for that devices corresponding PyORBIT element.
 
-class BTF_Dummy_Corrector(Device):
-    # EPICS PV names
-    field_set_pv = 'B_Set' # [T/m]
-    field_readback_pv = 'B'  # [T/m]
-    field_noise = 1e-6  # [T/m]
-
-    # Initial field limits
-    field_high_limit_pv = 'B_Set.HOPR'
-    field_low_limit_pv = 'B_Set.LOPR'
-    field_limits = [-0.1, 0.1]  # [T]
-
-    book_pv = 'B_Book'
-
-    def __init__(self, name: str, init_field=None):
-        super().__init__(name)
-
-        field_noise = AbsNoise(noise=1e-6)
-
-        # Registers the device's PVs with the server.
-        field_param = self.register_setting(BTF_Dummy_Corrector.field_set_pv, default=init_field)
-        self.register_readback(BTF_Dummy_Corrector.field_readback_pv, field_param, noise=field_noise)
-
-        self.register_setting(BTF_Dummy_Corrector.field_high_limit_pv, default=BTF_Dummy_Corrector.field_limits[1])
-
-        self.register_setting(BTF_Dummy_Corrector.field_low_limit_pv, default=BTF_Dummy_Corrector.field_limits[0])
-
-        self.register_readback(BTF_Dummy_Corrector.book_pv, field_param)
-
 class BTF_Actuator(Device):
     # EPICS PV names
     position_set_pv = 'DestinationSet' #[mm]
@@ -326,3 +298,87 @@ class BTF_Quadrupole_Power_Supply(Device):
 
         current_param = self.register_setting(BTF_Quadrupole_Power_Supply.current_set_pv, default=init_current)
         self.register_readback(BTF_Quadrupole_Power_Supply.current_readback_pv, current_param)
+
+class BTF_Corrector(Device):
+    # EPICS PV names
+    field_readback_pv = 'B'  # [T]
+    field_noise = 1e-6  # [T/m]
+
+    # PyORBIT parameter keys
+    field_key = 'B'  # [T]
+
+    def __init__ (self, name: str, model_name: str, power_supply: Device, coeff=None, length=None, momentum=None):
+
+        self.model_name = model_name
+        self.power_supply = power_supply
+        self.coeff = coeff
+        self.length = length
+        self.momentum = momentum
+
+        super().__init__(name, self.model_name, self.power_supply)
+
+        field_noise = AbsNoise(noise=BTF_Corrector.field_noise)
+
+        # Registers the device's PVs with the server
+        self.register_readback(BTF_Corrector.field_readback_pv, noise=field_noise)
+
+    def get_settings(self):
+        new_current = self.power_supply.get_setting(BTF_Corrector_Power_Supply.current_set_pv)
+
+        new_field = (self.coeff * 1e-3 * new_current * self.momentum) / (self.length * 0.299792)
+
+        params_dict = {BTF_Corrector.field_key: new_field}
+        model_dict = {self.model_name: params_dict}
+        return model_dict
+
+    def update_readbacks(self):
+        rb_field = self.get_settings()[self.model_name][BTF_Corrector.field_key]
+        rb_param = self.readbacks[BTF_Corrector.field_readback_pv]
+        rb_param.set_param(rb_field)
+
+class BTF_Corrector_Power_Supply(Device):
+    current_set_pv = 'I_Set' # [Amps]
+    current_readback_pv = 'I' # [Amps]
+
+    def __init__(self, name: str, init_current=None):
+        super().__init__(name)
+
+        field_noise = AbsNoise(noise=1e-6)
+
+        current_param = self.register_setting(BTF_Corrector_Power_Supply.current_set_pv, default=init_current)
+        self.register_readback(BTF_Corrector_Power_Supply.current_readback_pv, current_param)
+
+
+#class BTF_Camera(Device):
+#    # EPICS PV names
+#    state_set_pv = 'State_Set'
+#    state_readback_pv = 'State'
+#    positions_pv = 'Pos'
+#
+#    # PyORBIT parameter keys
+#    particle_positions = 'part_list'
+#    state_key = 'state'
+#
+#    def __init__(self, name: str, model_name: str = None, init_state = None, cam_number = None):
+#        self.model_name = model_name
+#        self.cam_number = cam_number
+#        super().__init__(name, self.model_name)
+#
+#        # Registers the device's PVs with the server
+#        self.register_measurement(BTF_Camera.positions_pv)
+#
+#        state_param = self.register_setting(BTF_Camera.state_set_pv, default=init_state)
+#        self.register_readback(BTF_Camera.state_readback_pv, state_param)
+#
+#    # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
+#    # where the PV names are associated with their model keys
+#    def get_settings(self):
+#        new_state = self.settings[BTF_Camera.state_set_pv].get_param()
+#
+#        params_dict = {BTF_Camera.state_key: new_state}
+#        model_dict = {self.model_name: params_dict}
+#        return model_dict
+#
+#    def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
+
+
