@@ -273,7 +273,7 @@ class BPM(Device):
         self.register_setting(BPM.oeda_pv, default=0)
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
-    # This is where the measurement PV name is associated with it's model key.
+    # This is where the measurement PV name is associated with its model key.
     def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
         bpm_params = new_params[self.model_name]
         amp = bpm_params[BPM.amp_key]

@@ -9,7 +9,7 @@ from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 from orbit.core.bunch import Bunch
 
 from .pyorbit_element_controllers import PyorbitNode, PyorbitChild, PyorbitCavity
-from .pyorbit_child_nodes import BPMclass, WSclass, BunchCopyClass, RF_Gap_Aperture, ScreenClass
+from .pyorbit_child_nodes import BPMclass, WSclass, BunchCopyClass, RF_Gap_Aperture, ScreenClass, DumpBunchClass
 
 from virtaccl.model import Model
 
@@ -98,9 +98,10 @@ class OrbitModel(Model):
         self.bunch_dict = {'initial_bunch': Bunch()}
         for element_name, element_ref in self.pyorbit_dictionary.items():
             location_node = element_ref.get_tracking_node()
-            if element_name not in self.bunch_dict:
+            if element_name not in self.bunch_dict and element_ref.is_optic():
                 self.bunch_dict[element_name] = Bunch()
-                location_node.addChildNode(BunchCopyClass(element_name, self.bunch_dict), location_node.ENTRANCE)
+                location_node.addChildNode(BunchCopyClass(element_name + ':copyBunch', element_name, self.bunch_dict),
+                                           location_node.ENTRANCE)
 
         # A dictionary used in tracking to keep track of parameters useful to the model.
         self.model_params = {}
@@ -264,9 +265,9 @@ class OrbitModel(Model):
 
         return return_dict
 
-    def add_child_node(self, parent_name: str, child_node: Union[BPMclass, WSclass, ScreenClass]):
-        """Adds a child node to a node in the lattice and a reference in the element dictionary. If the name of the child
-         is taken by another node that is not a marker, the child will not be added.
+    def add_child_node(self, parent_name: str, child_node: Union[BPMclass, WSclass, ScreenClass, DumpBunchClass]):
+        """Adds a child node to a node in the lattice and a reference in the element dictionary. If the name of the
+        child is taken by another node that is not a marker, the child will not be added.
 
         Parameters
         ----------
@@ -484,8 +485,10 @@ class OrbitModel(Model):
                         print(f'Parameter key "{param}" not found in PyORBIT element "{element_name}".')
                     else:
                         current_value = element_ref.get_parameter(param)
+                        if isinstance(new_value, str):
+                            element_ref.set_parameter(param, new_value)
                         # Resolution at which point the parameter will be changed.
-                        if abs(new_value - current_value) > 1e-12:
+                        elif abs(new_value - current_value) > 1e-12:
                             element_ref.set_parameter(param, new_value)
                             self.current_changes.add(element_name)
                             if self.debug:

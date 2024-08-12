@@ -30,6 +30,8 @@ from orbit.lattice import AccNode
 # import pyORBIT Python utilities classes for objects with names, types, and dictionary parameters
 from orbit.utils import orbitFinalize
 
+from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass
+
 
 class PyORBIT_Lattice_Factory:
     """
@@ -69,6 +71,46 @@ class PyORBIT_Lattice_Factory:
             orbitFinalize(msg)
         # ----- let's parse the XML file
         acc_da = XmlDataAdaptor.adaptorForFile(xml_file_name)
+        return self.getLinacAccLatticeFromDA(names, acc_da)
+
+    def getLinacAccLattice_test(self, xml_file_name, end_name, start_name=None):
+        """
+        Returns the linac accelerator lattice for specified sequence names and for a specified XML file.
+        """
+        acc_da = XmlDataAdaptor.adaptorForFile(xml_file_name)
+        accSeq_da_arr = acc_da.childAdaptors()
+        names = []
+
+        name_to_find = end_name
+        names_flag = False
+        error_flag = False
+        while not names_flag and not error_flag:
+            error_flag = True
+            for seq in accSeq_da_arr:
+                if seq.getName() == name_to_find:
+                    names.append(seq.getName())
+                    if seq.getName() == start_name:
+                        names_flag = True
+                        error_flag = False
+                    elif seq.hasParam('predecessor'):
+                        error_flag = False
+                        name_to_find = seq.getParam('predecessor')
+                        if name_to_find == 'Start':
+                            names_flag = True
+                            error_flag = False
+                    else:
+                        names_flag = True
+        names.reverse()
+        if len(names) < 1:
+            msg = f'Error: Did not find the final sequence "{end_name}" in "{xml_file_name}".'
+            msg = msg + os.linesep
+            msg = msg + "Stop."
+            msg = msg + os.linesep
+            orbitFinalize(msg)
+        elif names[0] != start_name and start_name is not None:
+            print(f'Warning: Did not find starting sequence "{start_name}" in "{xml_file_name}" following predecessor '
+                  'arguments. Model lattice may not be as user intended.')
+
         return self.getLinacAccLatticeFromDA(names, acc_da)
 
     def getLinacAccLatticeFromDA(self, names, acc_da):
@@ -295,6 +337,11 @@ class PyORBIT_Lattice_Factory:
                         accNode.setParam("effLength", params_da.doubleValue("effLength"))
                         if params_da.hasAttribute("B"):
                             accNode.setParam("B", params_da.doubleValue("B"))
+                    elif node_type == "BPM":
+                        accNode = BPMclass(node_da.stringValue("name"))
+                        accNode.setParam("frequency", accSeq.getParam("bpmFrequency"))
+                    elif node_type == "WIRE":
+                        accNode = WSclass(node_da.stringValue("name"))
                     else:
                         accNode = MarkerLinacNode(node_da.stringValue("name"))
                     accNode.setParam("pos", node_pos)

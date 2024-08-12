@@ -14,7 +14,7 @@ original_val = caget(corrector_set)
 
 for i in range(5):
     caput(corrector_set, i/50)
-    sleep(1)
+    sleep(1.5)
     print(f'Corrector value: {caget(corrector)}')
     print(f'BPM value: {caget(bpm)}')
 

@@ -9,19 +9,21 @@ import argparse
 from pathlib import Path
 from importlib.metadata import version
 
+from orbit.lattice import AccNode
+from orbit.py_linac.lattice import LinacPhaseApertureNode, MarkerLinacNode
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
 
-from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass
+from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass, DumpBunchClass
 # from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
 from virtaccl.PyORBIT_Model.pyorbit_lattice_factory import PyORBIT_Lattice_Factory
 
 from orbit.core.bunch import Bunch
-from orbit.core.linac import BaseRfGap, RfGapTTF
+from orbit.core.linac import BaseRfGap, RfGapTTF, RfGapTTF_slow
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.PyORBIT_Model.virtual_devices import Cavity, BPM, Quadrupole, Corrector, P_BPM, \
     WireScanner, Quadrupole_Power_Supply, Corrector_Power_Supply, Bend_Power_Supply, Bend, Quadrupole_Power_Shunt
-from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS
+from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS, SNS_Bunch_Dumper
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 
@@ -99,58 +101,22 @@ def main():
     update_period = 1 / args.refresh_rate
 
     lattice_file = args.lattice
-    linac_sequences = ["MEBT", "DTL1", "DTL2", "DTL3", "DTL4", "DTL5", "DTL6", "CCL1", "CCL2", "CCL3", "CCL4",
-                       "SCLMed", "SCLHigh", "HEBT1"]
-    linac_dump_sequence = ["LDmp"]
-    to_ring_sequences = ["HEBT2"]
     start_sequence = args.start
     end_sequence = args.end
-    model_sequences = []
-    if start_sequence in linac_sequences:
-        start_ind = linac_sequences.index(start_sequence)
-        if end_sequence in linac_sequences:
-            end_ind = linac_sequences.index(end_sequence)
-            model_sequences += linac_sequences[start_ind:end_ind + 1]
-        else:
-            model_sequences += linac_sequences[start_ind:]
-            if end_sequence in linac_dump_sequence:
-                model_sequences += linac_dump_sequence
-            elif end_sequence in to_ring_sequences:
-                end_ind = to_ring_sequences.index(end_sequence)
-                model_sequences += to_ring_sequences[:end_ind + 1]
-            else:
-                print("End sequence not found in SNS lattice.")
-                sys.exit()
-    elif start_sequence in linac_dump_sequence:
-        model_sequences += linac_dump_sequence
-    elif start_sequence in to_ring_sequences:
-        start_ind = to_ring_sequences.index(start_sequence)
-        if end_sequence in to_ring_sequences:
-            end_ind = to_ring_sequences.index(end_sequence)
-            model_sequences += to_ring_sequences[start_ind:end_ind + 1]
-        else:
-            # print("End sequence not found in SNS lattice.")
-            # sys.exit()
-            # Will probably use the above eventually, but will use this for now:
-            model_sequences += to_ring_sequences[start_ind:]
-    else:
-        print("Start sequence not found in SNS lattice.")
-    if not model_sequences:
-        print("Bad sequence designations")
-        sys.exit()
 
     lattice_factory = PyORBIT_Lattice_Factory()
     lattice_factory.setMaxDriftLength(0.01)
-    model_lattice = lattice_factory.getLinacAccLattice(model_sequences, lattice_file)
+    model_lattice = lattice_factory.getLinacAccLattice_test(lattice_file, end_sequence, start_sequence)
     cppGapModel = BaseRfGap
     # cppGapModel = RfGapTTF
+    # cppGapModel = RfGapTTF_slow
     rf_gaps = model_lattice.getRF_Gaps()
     for rf_gap in rf_gaps:
         rf_gap.setCppGapModel(cppGapModel())
-    # cavities = model_lattice.getRF_Cavities()
-    # for cavity in cavities:
-    #     if 'SCL' in cavity.getName():
-    #         cavity.setAmp(0.0)
+        phaseAperture = LinacPhaseApertureNode(rf_gap.getRF_Cavity().getFrequency(), rf_gap.getName() + ":phaseAprt")
+        phaseAperture.setPosition(rf_gap.getPosition())
+        phaseAperture.setMinMaxPhase(-180.0 * 2, +180.0 * 2)
+        rf_gap.addChildNode(phaseAperture, AccNode.EXIT)
     Add_quad_apertures_to_lattice(model_lattice)
     Add_rfgap_apertures_to_lattice(model_lattice)
 
@@ -275,8 +241,6 @@ def main():
     wire_scanners = devices_dict["Wire_Scanner"]
     for name, model_name in wire_scanners.items():
         if model_name in element_list:
-            ws_child = WSclass(model_name)
-            model.add_child_node(model_name, ws_child)
             ws_device = WireScanner(name, model_name)
             server.add_device(ws_device)
 
@@ -284,9 +248,6 @@ def main():
     for name, device_dict in bpms.items():
         ele_name = device_dict["PyORBIT_Name"]
         if ele_name in element_list:
-            freq = device_dict["Frequency"]
-            bpm_child = BPMclass(ele_name, freq)
-            model.add_child_node(ele_name, bpm_child)
             phase_offset = 0
             if offset_file is not None:
                 phase_offset = offset_dict[name]
