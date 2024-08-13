@@ -26,7 +26,7 @@ from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTIn
 class BTF_Actuator(Device):
     # EPICS PV names
     position_set_pv = 'DestinationSet' #[mm]
-    position_readback_pv = 'Position' # [mm]
+    position_readback_pv = 'PositionSync' # [mm]
     speed_set_pv = 'Speed_Set' # [mm/s]
     speed_readback_pv = 'Speed' # [mm/s]
     state_set_pv = 'COMMAND'
@@ -167,7 +167,7 @@ class BTF_Actuator(Device):
 
 class BTF_FC(Device):
     #EPICS PV names
-    current_pv = 'WF' # [A]
+    current_pv = 'CurrentAvrGt' # [A]
     state_set_pv = 'State_Set'
     state_readback_pv = 'State'
 
@@ -193,6 +193,7 @@ class BTF_FC(Device):
          
         params_dict = {BTF_FC.state_key: new_state}
         model_dict = {self.model_name+'_obj': params_dict}
+        #print(model_dict)
         return model_dict
 
     def update_readbacks(self):
@@ -215,7 +216,7 @@ class BTF_FC(Device):
 
 class BTF_BCM(Device):
     #EPICS PV names
-    current_pv = 'WF' # [A?]
+    current_pv = 'CurrentAvrGt' # [A?]
 
     #PyORBIT parameter keys
     current_key = 'current'
@@ -349,36 +350,90 @@ class BTF_Corrector_Power_Supply(Device):
         self.register_readback(BTF_Corrector_Power_Supply.current_readback_pv, current_param)
 
 
-#class BTF_Camera(Device):
-#    # EPICS PV names
-#    state_set_pv = 'State_Set'
-#    state_readback_pv = 'State'
-#    positions_pv = 'Pos'
-#
-#    # PyORBIT parameter keys
-#    particle_positions = 'part_list'
-#    state_key = 'state'
-#
-#    def __init__(self, name: str, model_name: str = None, init_state = None, cam_number = None):
-#        self.model_name = model_name
-#        self.cam_number = cam_number
-#        super().__init__(name, self.model_name)
-#
-#        # Registers the device's PVs with the server
-#        self.register_measurement(BTF_Camera.positions_pv)
-#
-#        state_param = self.register_setting(BTF_Camera.state_set_pv, default=init_state)
-#        self.register_readback(BTF_Camera.state_readback_pv, state_param)
-#
-#    # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
-#    # where the PV names are associated with their model keys
-#    def get_settings(self):
-#        new_state = self.settings[BTF_Camera.state_set_pv].get_param()
-#
-#        params_dict = {BTF_Camera.state_key: new_state}
-#        model_dict = {self.model_name: params_dict}
-#        return model_dict
-#
-#    def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
+class BTF_Camera(Device):
+    # EPICS PV names
+    state_set_pv = 'State_Set'
+    state_readback_pv = 'State'
+    positions_pv = 'Image'
+
+    # PyORBIT parameter keys
+    particle_positions_key = 'part_list'
+    state_key = 'state'
+
+    def __init__(self, name: str, model_name: str, view_scrn: Device, init_state = None, screen_axis = None, screen_polarity = None, interaction = None):
+        self.model_name = model_name
+        self.view_scrn = view_scrn
+        self.screen_axis = screen_axis
+        self.screen_polarity = screen_polarity
+
+        self.interaction = interaction
+        if interaction is None:
+            self.interaction = 0.03
+
+        super().__init__(name, self.model_name, self.view_scrn)
+
+        # Registers the device's PVs with the server
+        self.register_measurement(BTF_Camera.positions_pv)
+
+        state_param = self.register_setting(BTF_Camera.state_set_pv, default=init_state)
+        self.register_readback(BTF_Camera.state_readback_pv, state_param)
+
+    # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
+    # where the PV names are associated with their model keys
+    def get_settings(self):
+        new_state = self.settings[BTF_Camera.state_set_pv].get_param()
+
+        params_dict = {BTF_Camera.state_key: new_state}
+        model_dict = {self.model_name: params_dict}
+        #print(model_dict)
+        return model_dict
+
+    def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
+        screen_position = self.view_scrn.get_actuator_position()
+        current_state = self.get_setting(BTF_Camera.state_set_pv)
+
+        cam_params = new_params[self.model_name]
+
+        part_pos = cam_params[BTF_Camera.particle_positions_key]
+        
+        test = 0
+
+        # Only keep particles that appear on the screen
+        if current_state == 1:
+            screen_location = screen_position + self.interaction
+            screen_location = screen_location * self.screen_polarity
+            axis = self.screen_axis
+            polarity = self.screen_polarity
+            test = 1
+            if polarity < 0:
+                if axis == 0:
+                    observed_particles = [elem for elem in part_pos if elem[0]>screen_location]
+                elif axis == 1:
+                    observed_particles = [elem for elem in part_pos if elem[1]>screen_location]
+                else:
+                    print('screen axis not set correctly for', self.model_name)
+
+            elif polarity > 0:
+                if axis == 0:
+                    observed_particles = [elem for elem in part_pos if elem[0]<screen_location]
+                elif axis == 1:
+                    observed_particles = [elem for elem in part_pos if elem[1]<screen_location]
+                else:
+                    print('screen axis not set correctly for', self.model_name)
+
+            else:
+                print('screen polarity not set correctly for', self.model_name)
+
+        else:
+            observed_particles = [0]
+
+        report_particles = np.array(observed_particles)
+        if test == 1:
+            test = 1
+            #print(part_pos)
+            #print(report_particles)
+
+        self.update_measurement(BTF_Camera.positions_pv, len(report_particles))
+
 
 

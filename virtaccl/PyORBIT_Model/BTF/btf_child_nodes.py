@@ -66,6 +66,7 @@ class BTF_FC_Objectclass:
         part_num = bunch.getSizeGlobal()
 
         live_state = self.parameters['state']
+        #print(live_state, self.child_name)
         if live_state == 1:
             if part_num > 0:
                 bunch.deleteAllParticles()
@@ -371,6 +372,65 @@ class BTF_Slitclass:
 
     def getAllChildren(self):
         return []
+
+class BTF_Cameraclass:
+    def __init__(self, child_name: str):
+        self.parameters = {'state': 1, 'part_list':[[0,0]]}
+        self.child_name = child_name
+        self.node_type = 'BTF_Camera'
+        
+        super().__init__()
+
+    def trackActions(self, actionsContainer, paramsDict):
+        if "bunch" not in paramsDict:
+            return
+
+        bunch = paramsDict["bunch"]
+        part_num = bunch.getSizeGlobal()
+        particles = []
+
+        live_state = self.parameters['state']
+        #print(live_state, self.child_name)
+        if live_state == 1 and part_num > 0:
+            for n in range(part_num):
+                current_particle = []
+                x = bunch.x(n)
+                y = bunch.y(n)
+                current_particle.append(x)
+                current_particle.append(y)
+                particles.append(current_particle)
+            #print(particles)
+        self.parameters['part_list'] = particles
+
+    def getState(self):
+        return self.parameters['state']
+
+    def getPartlist(self):
+        return self.parameters['part_list']
+
+    def getParam(self, param: str):
+        return self.parameters[param]
+
+    def setParam(self, param: str, new_param):
+        self.parameters[param] = new_param
+
+    def getParamsDict(self) -> dict:
+        return self.parameters
+
+    def getType(self):
+        return self.node_type
+
+    def getName(self):
+        return self.child_name
+
+    def getAllChildren(self):
+        return []
+
+
+
+
+
+
 
 
 

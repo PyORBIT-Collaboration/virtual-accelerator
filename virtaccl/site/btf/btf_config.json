@@ -337,27 +337,42 @@
 		"ITSF_Diag:VS14": {
                         "PyORBIT_Name": "MEBT:VS14",
 			"Axis": 1,
-                        "Axis_Polarity": -1
+                        "Axis_Polarity": -1,
+			"Camera": "ITSF_Diag:Cam14",
+			"Camera_PyORBIT": "MEBT:Cam14",
+			"Camera_State": 0 
                 },
                 "ITSF_Diag:VS22": {
                         "PyORBIT_Name": "MEBT:VS22",
 			"Axis": 1,
-                        "Axis_Polarity": -1
+                        "Axis_Polarity": -1,
+                        "Camera": "ITSF_Diag:Cam22",
+                        "Camera_PyORBIT": "MEBT:Cam22",
+                        "Camera_State": 0
                 },
                 "ITSF_Diag:VS30": {
                         "PyORBIT_Name": "MEBT:VS30",
 			"Axis": 1,
-                        "Axis_Polarity": -1
+                        "Axis_Polarity": -1,
+                        "Camera": "ITSF_Diag:Cam30",
+                        "Camera_PyORBIT": "MEBT:Cam30",
+                        "Camera_State": 0
                 },
                 "ITSF_Diag:VS36": {
                         "PyORBIT_Name": "MEBT:VS36",
 			"Axis": 0,
-                        "Axis_Polarity": -1
+                        "Axis_Polarity": -1,
+                        "Camera": "ITSF_Diag:Cam36",
+                        "Camera_PyORBIT": "MEBT:Cam36",
+                        "Camera_State": 0
                 },
                 "ITSF_Diag:VS06": {
                         "PyORBIT_Name": "MEBT:VS06",
                         "Axis": 0,
-                        "Axis_Polarity": 1
+                        "Axis_Polarity": 1,
+                        "Camera": "ITSF_Diag:Cam06",
+                        "Camera_PyORBIT": "MEBT:Cam06",
+                        "Camera_State": 0
                 },
                 "ITSF_Diag:VS08_S": {
                         "PyORBIT_Name": "MEBT:VS08_S",
@@ -392,13 +407,13 @@
 			"State": 0
 		}
 	},
-	"Cam": {
-		"ITSF_Diag:Cam06": "ITSF_Diag:Cam06",
-		"ITSF_Diag:Cam14": "ITSF_Diag:Cam14",
-		"ITSF_Diag:Cam22": "ITSF_Diag:Cam22",
-		"ITSF_Diag:Cam30": "ITSF_Diag:Cam30",
-		"ITSF_Diag:Cam36": "ITSF_Diag:Cam36"
-	},
+	"Cam": [
+		"ITSF_Diag:Cam06",
+		"ITSF_Diag:Cam14",
+		"ITSF_Diag:Cam22",
+		"ITSF_Diag:Cam30",
+		"ITSF_Diag:Cam36"
+	],
 	"Quadrupole_Power_Supply": [
 		"BTF_MEBT_Mag:PS_QH01",
 		"BTF_MEBT_Mag:PS_QV02",

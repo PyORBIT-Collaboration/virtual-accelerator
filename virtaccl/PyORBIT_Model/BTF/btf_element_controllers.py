@@ -4,7 +4,7 @@ from orbit.py_linac.lattice.LinacAccNodes import Quad, MarkerLinacNode, DCorrect
 from orbit.py_linac.lattice.LinacRfGapNodes import BaseRF_Gap
 from orbit.py_linac.lattice.LinacAccLatticeLib import RF_Cavity
 from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass, ScreenClass
-from .btf_child_nodes import BTF_FCclass, BTF_BCMclass, BTF_FC_Objectclass, BTF_Screenclass, BTF_Slitclass
+from .btf_child_nodes import BTF_FCclass, BTF_BCMclass, BTF_FC_Objectclass, BTF_Screenclass, BTF_Slitclass, BTF_Cameraclass
 
 """A collection of PyORBIT classes (useful for hinting) and PyORBIT keys we are using."""
 
@@ -28,6 +28,7 @@ class PyorbitElementTypes:
     FC_Obj_key = 'BTF_FC_Object'
     BTF_screen_key = 'BTF_Screen'
     BTF_slit_key = 'BTF_Slit'
+    BTF_camera_key = 'BTF_Camera'
 
     """PyORBIT keys for parameters we want to pass to the virtual accelerator."""
     quad_params = ['dB/dr']
@@ -43,6 +44,7 @@ class PyorbitElementTypes:
     fc_obj_params = ['state']
     btf_screen_params = ['speed', 'position', 'axis', 'axis_polarity', 'interaction_start']
     btf_slit_params = ['speed', 'position', 'axis', 'axis_polarity', 'interaction_start', 'edge_to_slit', 'slit_width']
+    btf_cam_params = ['state', 'part_list']
 
     """Dictionary to keep track of different PyORBIT class types."""
     pyorbit_class_names = {Quad: quad_key,
@@ -58,7 +60,8 @@ class PyorbitElementTypes:
                            BTF_BCMclass: BCM_key,
                            BTF_FC_Objectclass: FC_Obj_key,
                            BTF_Screenclass: BTF_screen_key,
-                           BTF_Slitclass: BTF_slit_key}
+                           BTF_Slitclass: BTF_slit_key,
+                           BTF_Cameraclass: BTF_camera_key}
 
     """Dictionary to keep the above parameters with their designated classes."""
     param_ref_dict = {quad_key: quad_params,
@@ -73,13 +76,14 @@ class PyorbitElementTypes:
                       BCM_key: bcm_params,
                       FC_Obj_key: fc_obj_params,
                       BTF_screen_key: btf_screen_params,
-                      BTF_slit_key: btf_slit_params}
+                      BTF_slit_key: btf_slit_params,
+                      BTF_camera_key: btf_cam_params}
 
     """Classes that can change the beam."""
     optic_classes = (quad_key, cavity_key, corrector_key, bend_key, FC_Obj_key, BTF_screen_key, BTF_slit_key)
 
     """Classes that measure the beam."""
-    diagnostic_classes = (BPM_key, WS_key, screen_key, marker_key, FC_key, BCM_key)
+    diagnostic_classes = (BPM_key, WS_key, screen_key, marker_key, FC_key, BCM_key, BTF_camera_key)
 
     """Type hint definitions"""
     node_classes = Union[Quad, BaseRF_Gap, MarkerLinacNode, Bend]

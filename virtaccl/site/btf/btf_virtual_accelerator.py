@@ -20,8 +20,8 @@ from orbit.core.linac import BaseRfGap, RfGapTTF
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.PyORBIT_Model.virtual_devices import BPM, Quadrupole, P_BPM, Quadrupole_Power_Supply, Bend_Power_Supply, Bend
-from virtaccl.PyORBIT_Model.BTF.virtual_devices_BTF import BTF_FC, BTF_Quadrupole, BTF_Quadrupole_Power_Supply, BTF_BCM, BTF_Actuator, BTF_Corrector, BTF_Corrector_Power_Supply
-from virtaccl.PyORBIT_Model.BTF.btf_child_nodes import BTF_FCclass, BTF_BCMclass, BTF_FC_Objectclass, BTF_Screenclass, BTF_Slitclass
+from virtaccl.PyORBIT_Model.BTF.virtual_devices_BTF import BTF_FC, BTF_Quadrupole, BTF_Quadrupole_Power_Supply, BTF_BCM, BTF_Actuator, BTF_Corrector, BTF_Corrector_Power_Supply, BTF_Camera
+from virtaccl.PyORBIT_Model.BTF.btf_child_nodes import BTF_FCclass, BTF_BCMclass, BTF_FC_Objectclass, BTF_Screenclass, BTF_Slitclass, BTF_Cameraclass
 
 from virtaccl.PyORBIT_Model.BTF.btf_lattice_controller import OrbitModel
 
@@ -277,6 +277,7 @@ def main():
             server.add_device(bpm_device)
 
     screens = devices_dict["Screen"]
+    cameras = devices_dict["Cam"]
     for name, device_dict in screens.items():
         ele_name = device_dict["PyORBIT_Name"]
         axis = device_dict["Axis"] 
@@ -286,7 +287,17 @@ def main():
             model.add_child_node(ele_name, screen_child)
             screen_device = BTF_Actuator(name, ele_name)
             server.add_device(screen_device)
-
+            '''
+            # In development, not currently implemented well
+            if "Camera" in device_dict and device_dict["Camera"] in cameras:
+                cam_py_name = device_dict["Camera_PyORBIT"]
+                cam_name = device_dict["Camera"]
+                cam_state = device_dict["Camera_State"]
+                cam_child = BTF_Cameraclass(cam_py_name)
+                model.add_child_node(cam_py_name, cam_child)
+                cam_device = BTF_Camera(cam_name, cam_py_name, view_scrn = screen_device, init_state = cam_state, screen_axis = axis, screen_polarity = axis_polarity)
+                server.add_device(cam_device)
+            '''
     slits = devices_dict["Slit"]
     for name, device_dict in slits.items():
         ele_name = device_dict["PyORBIT_Name"]
