@@ -7,7 +7,7 @@ from typing import Dict, Any, Union, Literal
 import numpy as np
 from virtaccl.PyORBIT_Model.virtual_devices import Cavity, Quadrupole, Corrector, WireScanner
 
-from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTInv, LinearTInv
+from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTInv, LinearTInv, PosNoise
 
 # Here are the device definitions that take the information from PyORBIT and translates/packages it into information for
 # the server.
@@ -170,7 +170,8 @@ class BTF_FC(Device):
     current_pv = 'CurrentAvrGt' # [A]
     state_set_pv = 'State_Set'
     state_readback_pv = 'State'
-
+    current_noise = 1e-6
+    
     #PyORBIT parameter keys
     current_key = 'current'
     state_key = 'state'
@@ -180,9 +181,11 @@ class BTF_FC(Device):
         self.model_name = model_name
         super().__init__(name, self.model_name)
 
-        # Registers the device's PVs with the server
-        self.register_measurement(BTF_FC.current_pv)
+        current_noise = PosNoise(noise=BTF_FC.current_noise)
         
+        # Registers the device's PVs with the server
+        self.register_measurement(BTF_FC.current_pv, noise=current_noise)
+         
         state_param = self.register_setting(BTF_FC.state_set_pv, default=init_state)
         self.register_readback(BTF_FC.state_readback_pv, state_param)
 
@@ -217,6 +220,7 @@ class BTF_FC(Device):
 class BTF_BCM(Device):
     #EPICS PV names
     current_pv = 'CurrentAvrGt' # [A?]
+    current_noise = 1e-6
 
     #PyORBIT parameter keys
     current_key = 'current'
@@ -228,8 +232,10 @@ class BTF_BCM(Device):
             self.model_name = model_name
         super().__init__(name, self.model_name)
 
+        current_noise = PosNoise(noise=BTF_BCM.current_noise)
+
         # Registers the device's PVs with the server
-        self.register_measurement(BTF_BCM.current_pv)
+        self.register_measurement(BTF_BCM.current_pv, noise=current_noise)
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.

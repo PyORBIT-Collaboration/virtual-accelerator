@@ -37,7 +37,7 @@ def main():
     # parser.add_argument('--prefix', '-p', default='test', type=str, help='Prefix for PVs')
 
     # Json file that contains a dictionary connecting EPICS name of devices with their associated element model names.
-    parser.add_argument('--file', '-f', default='/mnt/c/Users/4o2/virac/virtual-accelerator/virtaccl/site/btf/btf_config.json', type=str,
+    parser.add_argument('--file', '-f', default=loc / 'btf_config.json', type=str,
                         help='Pathname of config json file.')
 
     # Number (in Hz) determining the update rate for the virtual accelerator.
@@ -45,7 +45,7 @@ def main():
                         help='Rate (in Hz) at which the virtual accelerator updates (default=1.0).')
 
     # Lattice xml input file and the sequences desired from that file.
-    parser.add_argument('--lattice', default='/mnt/c/Users/4o2/virac/virtual-accelerator/virtaccl/PyORBIT_Model/BTF/btf_lattice_straight.xml', type=str,
+    parser.add_argument('--lattice', default=loc / 'btf_lattice_straight.xml', type=str,
                         help='Pathname of lattice file')
     parser.add_argument("--start", default="MEBT1", type=str,
                         help='Desired sequence of the lattice to start the model with (default=MEBT).')
@@ -53,7 +53,7 @@ def main():
                         help='Desired sequence of the lattice to end the model with (default=HEBT1).')
 
     # Desired initial bunch file and the desired number of particles from that file.
-    parser.add_argument('--bunch', default='/mnt/c/Users/4o2/virac/virtual-accelerator/virtaccl/PyORBIT_Model/BTF/parmteq_bunch_RFQ_output_1.00e+05.dat', type=str,
+    parser.add_argument('--bunch', default=loc / 'parmteq_bunch_RFQ_output_1.00e+05.dat', type=str,
                         help='Pathname of input bunch file.')
     parser.add_argument('--particle_number', default=1000, type=int,
                         help='Number of particles to use (default=1000).')
@@ -75,6 +75,12 @@ def main():
                         help="Will only print setting PVs. Will NOT run the virtual accelerator. (Default is off)")
     parser.add_argument('--print_pvs', dest='print_pvs', action='store_true',
                         help="Will print all PVs. Will NOT run the virtual accelerator. (Default is off)")
+
+    # Number (in seconds) that determine some delay parameter in the server. Not exactly sure how it works, so use at
+    # your own risk.
+    parser.add_argument('--ca_proc', default=0.1, type=float,
+                        help='Number (in seconds) that determine some delay parameter in the server. Not exactly sure '
+                             'how it works, so use at your own risk. (Default=0.1)')
 
     os.environ['EPICS_CA_MAX_ARRAY_BYTES'] = '10000000'
     
@@ -163,7 +169,8 @@ def main():
     model.set_beam_current(30.0e-3)  # Set the initial beam current in Amps.
     element_list = model.get_element_list()
 
-    server = Server()
+    delay = args.ca_proc
+    server = Server(process_delay=delay)
 
     offset_file = args.phase_offset
     if offset_file is not None:
