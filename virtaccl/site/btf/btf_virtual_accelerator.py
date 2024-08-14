@@ -37,7 +37,7 @@ def main():
     # parser.add_argument('--prefix', '-p', default='test', type=str, help='Prefix for PVs')
 
     # Json file that contains a dictionary connecting EPICS name of devices with their associated element model names.
-    parser.add_argument('--file', '-f', default=loc / 'btf_config.json', type=str,
+    parser.add_argument('--file', '-f', default='/mnt/c/Users/4o2/virac/virtual-accelerator/virtaccl/site/btf/btf_config.json', type=str,
                         help='Pathname of config json file.')
 
     # Number (in Hz) determining the update rate for the virtual accelerator.

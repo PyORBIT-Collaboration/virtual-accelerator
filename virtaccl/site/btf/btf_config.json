@@ -38,7 +38,7 @@
 		"BTF_MEBT_Mag:QV06": {
                         "PyORBIT_Name": "MEBT:QV06",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QV06",
-			"Current": 1.100,
+			"Current": 1.6,
                         "coeff_a": 0.0759,
                         "coeff_b": -0.000387
                 },
@@ -59,56 +59,56 @@
 		"BTF_MEBT_Mag:QV10": {
                         "PyORBIT_Name": "MEBT:QV10",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QV10",
-			"Current": -4.00,
+			"Current": -3.701,
                         "coeff_a": 0.163,
                         "coeff_b": -0.00035
                 },
 		"BTF_MEBT_Mag:QH11": {
                         "PyORBIT_Name": "MEBT:QH11",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QH11",
-			"Current": 4.709,
+			"Current": 4.456,
                         "coeff_a": 0.2191,
                         "coeff_b": -0.000373
                 },
 		"BTF_MEBT_Mag:QV12": {
                         "PyORBIT_Name": "MEBT:QV12",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QV12",
-			"Current": -4.3,
+			"Current": -4.142,
                         "coeff_a": 0.2191,
                         "coeff_b": -0.000373
                 },
 		"BTF_MEBT_Mag:QH13": {
                         "PyORBIT_Name": "MEBT:QH13",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QH13",
-			"Current": 3.9,
+			"Current": 3.761,
                         "coeff_a": 0.2191,
                         "coeff_b": -0.000373
                 },
 		"BTF_MEBT_Mag:QH33": {
                         "PyORBIT_Name": "MEBT:QH33",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QH33",
-			"Current": 6.2,
+			"Current": 5.753,
                         "coeff_a": 0.2191,
                         "coeff_b": -0.000373
                 },
 		"BTF_MEBT_Mag:QV34": {
                         "PyORBIT_Name": "MEBT:QV34",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QV34",
-			"Current": 0.000,
+			"Current": -4.355,
                         "coeff_a": 0.2191,
                         "coeff_b": -0.000373
                 },
 		"BTF_MEBT_Mag:QH35": {
                         "PyORBIT_Name": "MEBT:QH35",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QH35",
-			"Current": -6.40,
+			"Current": 6.155,
                         "coeff_a": 0.163,
                         "coeff_b": -0.00035
                 },
 		"BTF_MEBT_Mag:QV36": {
                         "PyORBIT_Name": "MEBT:QV36",
                         "Power_Supply": "BTF_MEBT_Mag:PS_QV36",
-			"Current": 3.95,
+			"Current": -4.237,
                         "coeff_a": 0.163,
                         "coeff_b": -0.00035
 		}
@@ -215,28 +215,28 @@
 			"PyORBIT_Name": "MEBT:DCH01",
 			"Quad_Name": "MEBT:QH01",
 			"Power_Supply": "BTF_MEBT_Mag:PS_DCH01",
-                        "Current": 1.5,
+                        "Current": 0.0,
                         "coeff": -0.369
 		},
 		"BTF_MEBT_Mag:DCV01": {
 			"PyORBIT_Name": "MEBT:DCV01",
 			"Quad_Name": "MEBT:QH01",
 			"Power_Supply": "BTF_MEBT_Mag:PS_DCV01",
-                        "Current": 4.0,
+                        "Current": 9.0,
                         "coeff": -0.523
 		},
 		"BTF_MEBT_Mag:DCH02": {
 			"PyORBIT_Name": "MEBT:DCH02",
 			"Quad_Name": "MEBT:QV02",
                         "Power_Supply": "BTF_MEBT_Mag:PS_DCH02",
-                        "Current": -4.00,
+                        "Current": -8.5,
                         "coeff": -0.381
                 },
                 "BTF_MEBT_Mag:DCV02": {
 			"PyORBIT_Name": "MEBT:DCV02",
 			"Quad_Name": "MEBT:QV02",
                         "Power_Supply": "BTF_MEBT_Mag:PS_DCV02",
-                        "Current": 8.0,
+                        "Current": 5.0,
                         "coeff": -0.405
 		},
 		"BTF_MEBT_Mag:DCH36": {
@@ -250,7 +250,7 @@
 			"PyORBIT_Name": "MEBT:DCV36",
 			"Quad_Name": "MEBT:QV36",
                         "Power_Supply": "BTF_MEBT_Mag:PS_DCV36",
-                        "Current": 0.0,
+                        "Current": -1.9,
                         "coeff": -0.5
 		}
 	},
