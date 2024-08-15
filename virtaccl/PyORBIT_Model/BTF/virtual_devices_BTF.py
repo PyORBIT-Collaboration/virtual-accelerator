@@ -111,6 +111,12 @@ class BTF_Actuator(Device):
             elif self.limit > 0 and self.park_location > 0 and pos_goal < self.limit:
                 pos_goal = self.limit
 
+            #Defining where the actuator reaches the park location and should not be extracted further
+            if self.park_location < 0 and pos_goal < self.park_location:
+                pos_goal = self.park_location
+            elif self.park_location > 0 and pos_goal > self.park_location:
+                pos_goal = self.park_location
+
             direction = np.sign(pos_goal - last_pos)
             current_time = time.time()
             actuator_pos = direction * actuator_speed * (current_time - last_time) + last_pos

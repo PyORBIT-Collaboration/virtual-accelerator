@@ -275,56 +275,56 @@
 			"PyORBIT_Name": "MEBT:HZ04",
                         "Axis": 1,
                         "Axis_Polarity": -1,
-                        "Actuator_Limit": 60,
+                        "Actuator_Limit": 0.06,
                         "Standard_Speed": 0.0025
 		},
 		"ITSF_Diag:Slit_VT04": {
                         "PyORBIT_Name": "MEBT:VT04",
                         "Axis": 0,
                         "Axis_Polarity": -1,
-                        "Actuator_Limit": 60,
+                        "Actuator_Limit": 0.06,
                         "Standard_Speed": 0.0025
                 },
 		"ITSF_Diag:Slit_HZ06": {
                         "PyORBIT_Name": "MEBT:HZ06",
                         "Axis": 1,
                         "Axis_Polarity": -1,
-                        "Actuator_Limit": 60,
+                        "Actuator_Limit": 0.06,
 			"Standard_Speed": 0.0025
                 },
 		"ITSF_Diag:Slit_VT06": {
                         "PyORBIT_Name": "MEBT:VT06",
                         "Axis": 0,
                         "Axis_Polarity": -1,
-                        "Actuator_Limit": 60,
+                        "Actuator_Limit": 0.06,
                         "Standard_Speed": 0.0025
                 },
 		"ITSF_Diag:Slit_HZ36a": {
                         "PyORBIT_Name": "MEBT:HZ36a",
                         "Axis": 1,
                         "Axis_Polarity": -1,
-                        "Actuator_Limit": 60,
+                        "Actuator_Limit": 0.06,
                         "Standard_Speed": 0.0025
                 },
 		"ITSF_Diag:Slit_VT36a": {
                         "PyORBIT_Name": "MEBT:VT36a",
                         "Axis": 0,
                         "Axis_Polarity": 1,
-                        "Actuator_Limit": 60,
+                        "Actuator_Limit": 0.06,
                         "Standard_Speed": 0.0025
                 },
 		"ITSF_Diag:Slit_HZ36b": {
                        "PyORBIT_Name": "MEBT:HZ36b",
                         "Axis": 1,
                         "Axis_Polarity": -1,
-                        "Actuator_Limit": 60,
+                        "Actuator_Limit": 0.06,
                         "Standard_Speed": 0.0025
                 },
 		"ITSF_Diag:Slit_VT36b": {
                         "PyORBIT_Name": "MEBT:VT36b",
                         "Axis": 0,
                         "Axis_Polarity": 1,
-                        "Actuator_Limit": 60,
+                        "Actuator_Limit": 0.06,
                         "Standard_Speed": 0.0025
                 }
 	},
