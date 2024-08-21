@@ -4,4 +4,3 @@ dist/
 /docs/build/
 /build/
 **/__pycache__/**
-/virtaccl/examples/opt3D_scipy.py
