@@ -138,10 +138,13 @@ def main():
             if n + 1 > part_num:
                 bunch_in.deleteParticleFast(n)
         bunch_in.compress()
+    beam_current = args.beam_current / 1000  # Set the initial beam current in Amps.
 
-    model = OrbitModel(model_lattice, bunch_in, debug=debug, save_bunch=save_bunch)
-    beam_current = args.beam_current
-    model.set_beam_current(beam_current / 1000)  # Set the initial beam current in Amps.
+    model = OrbitModel(debug=debug, save_bunch=save_bunch)
+    model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list)
+    model.define_custom_node(WSclass.node_type, WSclass.parameter_list)
+    model.initialize_lattice(model_lattice)
+    model.set_initial_bunch(bunch_in, beam_current)
     element_list = model.get_element_list()
 
     delay = args.ca_proc
