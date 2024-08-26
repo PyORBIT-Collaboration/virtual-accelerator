@@ -17,11 +17,12 @@ from virtaccl.model import Model
 
 class OrbitModel(Model):
     """
-    This is a controller that automates using the PyORBIT model for the virtual accelerator.
+    This is a controller that automates using the PyORBIT model for the virtual accelerator. If a PyORBIT lattice is
+    given, that lattice is initialized as part of the model's initialization.
 
         Parameters
         ----------
-        input_lattice : LinacAccLattice
+        input_lattice : LinacAccLattice, optional
             PyORBIT linac lattice the model uses for tracking.
         input_bunch : Bunch, optional
             PyORBIT bunch that the model will track from the entrance of the input_lattice.
@@ -40,26 +41,44 @@ class OrbitModel(Model):
         self.debug = debug
         self.save_bunch = save_bunch
 
-        self.accLattice = None
+        # Flags to keep track of lattice and bunch initialization.
         self.lattice_flag = False
-        self.included_node_types = {'linacQuad', 'dch', 'dcv', 'bend linac'}
-        self.pyorbit_dictionary: OrbitModel._element_dict_hint = {}
-        self.bunch_dict = {'initial_bunch': Bunch()}
+        self.bunch_flag = False
+
+        # A dictionary used in tracking to keep track of parameters useful to the model.
+        self.model_params = {}
+
         # Set up variable to track where the most upstream change is located.
         self.current_changes = set()
         # Store initial settings
         self.initial_optics = {}
 
+        # Setup for when a lattice is initialized.
+        self.accLattice = None
+        # The default node types that the model will keep track of.
+        self.included_node_types = {'linacQuad', 'dch', 'dcv', 'bend linac'}
+        # Dictionary containing all elements the model is maintaining.
+        self.pyorbit_dictionary: OrbitModel._element_dict_hint = {}
+        # Dictionary of bunches that allow for retracking at changed optics.
+        self.bunch_dict = {'initial_bunch': Bunch()}
+
         if input_lattice is not None:
             self.initialize_lattice(input_lattice)
 
-        # A dictionary used in tracking to keep track of parameters useful to the model.
-        self.model_params = {}
-        self.bunch_flag = False
         if input_bunch is not None:
             self.set_initial_bunch(input_bunch)
 
     def initialize_lattice(self, input_lattice: LinacAccLattice):
+        """
+        Designate the lattice used by the model. All nodes specified node types are registered with the model. If an
+        initial bunch has already been designated, the bunch is then tracked. If a previous lattice was
+
+            Parameters
+            ----------
+            input_lattice : LinacAccLattice
+                PyORBIT linac lattice the model uses for tracking.
+        """
+
         self.accLattice = input_lattice
         # Here we specify the node types in PyORBIT we don't need to worry about and start a set to make sure each
         # element we do care about has a unique name.
@@ -128,8 +147,8 @@ class OrbitModel(Model):
             self.force_track()
 
     def set_initial_bunch(self, initial_bunch: Bunch, beam_current: float = 40e-3):
-        """Designate an input PyORBIT bunch for the lattice. This bunch is then tracked through the lattice from the
-        beginning.
+        """Designate an input PyORBIT bunch for the lattice. If a lattice has already been initialized, this bunch is
+        then tracked through the lattice from the beginning.
 
         Parameters
         ----------
@@ -311,24 +330,23 @@ class OrbitModel(Model):
                   f' the model. Define this node type for the model using the "define_custom_node" function.')
 
     def define_custom_node(self, node_type: str, parameter_list: list[str] = None, is_optic: bool = False):
-        """Adds a child node to a node in the lattice and a reference in the element dictionary. If the name of the
-        child is taken by another node that is not a marker, the child will not be added.
+        """Defines custom nodes for the model. This tells the model how to handle new nodes not built into PyORBIT.
 
         Parameters
         ----------
-        node_type: PyORBIT class
-            Instance of a class that will become the child. Needs to contain a "trackActions" function that defines how
-            the bunch is tracked through the child and a "getName" function that returns a string of the node's name.
-        parameter_list: basestring
-            Name of the parent node that the child will be attached to. Can be the name of a child node itself.
-        is_optic: PyORBIT class
-            Instance of a class that will become the child. Needs to contain a "trackActions" function that defines how
-            the bunch is tracked through the child and a "getName" function that returns a string of the node's name.
+        node_type: basestring
+            String identifying the new type of node. This needs to be unique to all node types. If it is already taken
+            by either default PyORBIT nodes or another custom node, the new node type will NOT be added to the model.
+        parameter_list: list[string], optional
+            List of parameter keys in the node the model will reference. Include keys desired for the update_optics and
+            get_measurements functions. The default is an empty list telling the model not to reference any parameters.
+        is_optic: bool, optional
+            Boolean designating if the new node type changes the tracking optics. The default is False.
         """
 
         if node_type in PyorbitElementTypes.pyorbit_types or node_type in PyorbitElementTypes.custom_types:
             print(f'Error: Node type "{node_type}" is already in use. Node type cannot be added to the model.')
-            sys.exit()
+            return
         PyorbitElementTypes.custom_types.add(node_type)
         self.included_node_types.add(node_type)
         if parameter_list is None:
@@ -430,9 +448,9 @@ class OrbitModel(Model):
         """Tracks the bunch through the lattice. Tracks from the most upstream change to the end."""
 
         if not self.lattice_flag:
-            print('Initialize a lattice in order to start tracking.')
+            print('Warning: Initialize a lattice in order to start tracking.')
         elif not self.bunch_flag:
-            print('Create initial bunch in order to start tracking.')
+            print('Warning: Create an initial bunch in order to start tracking.')
 
         elif not self.current_changes:
             # print("No changes to track through.")
