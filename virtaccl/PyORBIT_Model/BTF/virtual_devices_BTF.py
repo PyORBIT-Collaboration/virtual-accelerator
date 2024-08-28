@@ -176,7 +176,7 @@ class BTF_FC(Device):
     current_pv = 'CurrentAvrGt' # [A]
     state_set_pv = 'State_Set'
     state_readback_pv = 'State'
-    current_noise = 1e-6
+    current_noise = 7e-5
     
     #PyORBIT parameter keys
     current_key = 'current'
@@ -226,7 +226,7 @@ class BTF_FC(Device):
 class BTF_BCM(Device):
     #EPICS PV names
     current_pv = 'CurrentAvrGt' # [A?]
-    current_noise = 1e-6
+    current_noise = 7e-5
 
     #PyORBIT parameter keys
     current_key = 'current'
