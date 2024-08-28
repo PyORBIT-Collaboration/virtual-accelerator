@@ -1,13 +1,9 @@
-import sys
-import time
 import math
-from random import randint, random
-from typing import Dict, Any, Union, Literal
+from typing import Dict, Any
 
-import numpy as np
-from virtaccl.PyORBIT_Model.virtual_devices import Cavity, Quadrupole, Corrector, WireScanner
+from virtaccl.site.SNS_Linac.virtual_devices import Cavity, WireScanner
 
-from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTInv, LinearTInv
+from virtaccl.virtual_devices import Device, AbsNoise, PhaseTInv, LinearTInv
 
 
 # Here are the device definitions that take the information from PyORBIT and translates/packages it into information for

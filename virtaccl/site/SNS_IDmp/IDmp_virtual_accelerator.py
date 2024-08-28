@@ -2,19 +2,18 @@
 # The main body of the script instantiates PVs from a file passed by command line argument.
 import json
 import os
-import sys
 import time
 import argparse
 from pathlib import Path
 
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
-from virtaccl.PyORBIT_Model.virtual_devices import (Quadrupole, Corrector, Quadrupole_Power_Supply,
-                                                    Corrector_Power_Supply, WireScanner, BPM, P_BPM, Screen)
-from virtaccl.PyORBIT_Model.SNS.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Dummy_ICS
+from virtaccl.site.SNS_Linac.virtual_devices import (Quadrupole, Corrector, Quadrupole_Power_Supply,
+                                                     Corrector_Power_Supply, WireScanner, BPM, P_BPM, Screen)
+from virtaccl.site.SNS_Linac.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Dummy_ICS
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 
-from virtaccl.site.IDmp.IDmp_maker import get_IDMP_lattice_and_bunch
+from virtaccl.site.SNS_IDmp.IDmp_maker import get_IDMP_lattice_and_bunch
 
 
 def main():
