@@ -141,8 +141,8 @@ def main():
     beam_current = args.beam_current / 1000  # Set the initial beam current in Amps.
 
     model = OrbitModel(debug=debug, save_bunch=save_bunch)
-    model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list)
-    model.define_custom_node(WSclass.node_type, WSclass.parameter_list)
+    model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list, diagnostic=True)
+    model.define_custom_node(WSclass.node_type, WSclass.parameter_list, diagnostic=True)
     model.initialize_lattice(model_lattice)
     model.set_initial_bunch(bunch_in, beam_current)
     element_list = model.get_element_list()

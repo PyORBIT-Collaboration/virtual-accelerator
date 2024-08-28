@@ -64,7 +64,6 @@ class BPMclass(BaseLinacNode):
             self.setParam('energy', sync_energy)
             self.setParam('beta', sync_beta)
             self.setParam('part_num', part_num)
-            # print(BPM_name + " : " + str(part_num))
         else:
             self.setParam('x_avg', 0.0)
             self.setParam('y_avg', 0.0)
@@ -270,10 +269,10 @@ class BunchCopyClass(BaseLinacNode):
         self.bunch_dict = bunch_dict
 
     def track(self, paramsDict):
+        if "bunch" not in paramsDict:
+            return
         bunch = paramsDict["bunch"]
-        part_num = bunch.getSizeGlobal()
-        if part_num > 0:
-            bunch.copyBunchTo(self.bunch_dict[self.bunch_key])
+        bunch.copyBunchTo(self.bunch_dict[self.bunch_key])
 
 
 # This class removes all bunch particles if the bunch is outside of the beta limits of the cavity.
