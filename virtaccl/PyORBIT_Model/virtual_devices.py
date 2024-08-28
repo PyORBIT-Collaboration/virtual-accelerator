@@ -51,7 +51,7 @@ class Quadrupole(Device):
         field_noise = AbsNoise(noise=Quadrupole.field_noise)
 
         # Registers the device's PVs with the server
-        self.register_readback(Quadrupole.field_readback_pv, noise=field_noise)
+        self.register_readback(Quadrupole.field_readback_pv, transform=self.pol_transform, noise=field_noise)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
@@ -93,7 +93,7 @@ class Corrector(Device):
         field_noise = AbsNoise(noise=Corrector.field_noise)
 
         # Registers the device's PVs with the server
-        self.register_readback(Corrector.field_readback_pv, noise=field_noise)
+        self.register_readback(Corrector.field_readback_pv, transform=self.pol_transform, noise=field_noise)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the setting PV names are associated with their model keys.
