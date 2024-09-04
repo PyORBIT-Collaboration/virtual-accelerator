@@ -7,15 +7,19 @@ from orbit.core.bunch import Bunch
 # A collection of classes that are attached to the lattice as child nodes for the virtual accelerator.
 
 class BTF_FCclass:
+    node_type = "BTF_FC"
+    parameter_list = ['current', 'state']
+
     def __init__(self, child_name: str):
-        self.parameters = {'current': 0.0}
+        parameters = {'current': 0.0, 'state': 1}
+        BaseLinacNode.__init__(self, child_name)
+        for key, value in parameters.items():
+            self.addParam(key, value)
         self.child_name = child_name
-        self.node_type = 'BTF_FC'
+        self.setType(BTF_FCclass.node_type)
         self.si_e_charge = 1.6021773e-19
 
-        super().__init__()
-
-    def trackActions(self, actionsContainer, paramsDict):
+    def track(self, paramsDict):
         if "bunch" not in paramsDict:
             return
         bunch = paramsDict["bunch"]
@@ -25,81 +29,35 @@ class BTF_FCclass:
             initial_beam_current = paramsDict["beam_current"]
             initial_number = paramsDict['initial_particle_number']
             current = part_num / initial_number * initial_beam_current
-            self.parameters['current'] = current
+            self.setParam['current'] = current
         else:
-            self.parameters['current'] = 0.0
+            self.setParam['current'] = 0.0
 
-    def getCurrent(self):
-        return self.parameters['current']
-
-    def getParam(self, param: str):
-        return self.parameters[param]
-
-    def setParam(self, param: str, new_param):
-        self.parameters[param] = new_param
-
-    def getParamsDict(self) -> dict:
-        return self.parameters
-
-    def getType(self):
-        return self.node_type
-
-    def getName(self):
-        return self.child_name
-
-    def getAllChildren(self):
-        return []
-
-class BTF_FC_Objectclass:
-    def __init__(self, child_name: str):
-        self.parameters = {'state': 1}
-        self.child_name = child_name
-        self.node_type = 'BTF_FC_Object'
-        self.si_e_charge = 1.6021773e-19
-
-        super().__init__()
-
-    def trackActions(self, actionsContainer, paramsDict):
-        if "bunch" not in paramsDict:
-            return
-        bunch = paramsDict["bunch"]
-        part_num = bunch.getSizeGlobal()
-
-        live_state = self.parameters['state']
-        #print(live_state, self.child_name)
+        live_state = self.getParam['state']
         if live_state == 1:
             if part_num > 0:
                 bunch.deleteAllParticles()
 
+    def getCurrent(self):
+        return self.getParam['current']
+
     def getState(self):
-        return self.parameters['state']
-
-    def getParam(self, param: str):
-        return self.parameters[param]
-
-    def setParam(self, param: str, new_param):
-        self.parameters[param] = new_param
-
-    def getParamsDict(self) -> dict:
-        return self.parameters
-
-    def getType(self):
-        return self.node_type
-
-    def getName(self):
-        return self.child_name
-
-    def getAllChildren(self):
-        return []
+        return self.getParam['state']
 
 class BTF_BCMclass:
+    node_type = "BTF_BCM"
+    parameter_list = ['current']
+
     def __init__(self, child_name: str):
-        self.parameters = {'current': 0.0}
+        parameters = {'current': 0.0}
+        BaseLinacNode.__init__(self, child_name)
+        for key, value in parameters.items():
+            self.addParam(key, value)
         self.child_name = child_name
-        self.node_type = 'BTF_BCM'
+        self.setType(BTF_BCMclass.node_type)
         self.si_e_charge = 1.6021773e-19
 
-    def trackActions(self, actionsContainer, paramsDict):
+    def track(self, paramsDict):
         if "bunch" not in paramsDict:
             return
         bunch = paramsDict["bunch"]
@@ -109,59 +67,47 @@ class BTF_BCMclass:
             initial_beam_current = paramsDict["beam_current"]
             initial_number = paramsDict['initial_particle_number']
             current = part_num / initial_number * initial_beam_current
-            self.parameters['current'] = current
+            self.setParam['current'] = current
         else:
-            self.parameters['current'] = 0.0
+            self.setParam['current'] = 0.0
 
     def getCurrent(self):
-        return self.parameters['current']
-
-    def getParam(self, param: str):
-        return self.parameters[param]
-
-    def setParam(self, param: str, new_param):
-        self.parameters[param] = new_param
-
-    def getParamsDict(self) -> dict:
-        return self.parameters
-
-    def getType(self):
-        return self.node_type
-
-    def getName(self):
-        return self.child_name
-
-    def getAllChildren(self):
-        return []
+        return self.getParam['current']
 
 class BTF_Screenclass:
+    node_type = "BTF_Screen"
+    parameter_list = ['speed', 'position', 'axis', 'axis_polarity', 'interaction_start']
+
     def __init__(self, child_name: str, screen_axis = None, screen_polarity = None, interaction = None):
-        self.parameters = {'speed': 0.0, 'position': -0.07, 'axis': screen_axis, 'axis_polarity': screen_polarity, 'interaction_start': interaction}
+        parameters = {'speed': 0.0, 'position': -0.07, 'axis': screen_axis, 'axis_polarity': screen_polarity, 'interaction_start': interaction}
+        BaseLinacNode.__init__(self, child_name)
+        for key, value in parameters.items():
+            self.addParam(key, value)
         self.child_name = child_name
-        self.node_type = 'BTF_Screen'
+        self.setType(BTF_Screenclass.node_type)
         self.si_e_charge = 1.6021773e-19
-        self.near_bunch = 0.01 # value at which to start checking for particles
+        self.near_bunch = 0.015 # value at which to start checking for particles
         
         # Set a standard value for the edge of the screen crossing the center of the bunch if none is specified
-        if self.parameters['interaction_start'] is None:
-            self.parameters['interaction_start'] = 0.03
+        if self.getParam['interaction_start'] is None:
+            self.setParam['interaction_start'] = 0.03
 
-        if self.parameters['axis_polarity'] is None:
-            self.parameters['axis_polarity'] = 1
+        if self.getParam['axis_polarity'] is None:
+            self.setParam['axis_polarity'] = 1
             print('No axis polarity set for', child_name+',', 'using standard value')
 
-    def trackActions(self, actionsContainer, paramsDict):
+    def track(self, paramsDict):
         if "bunch" not in paramsDict:
             return
         bunch = paramsDict["bunch"]
         
         # Bunch is centered at 0, a constant is added as screen position can only reach -16
-        current_position = self.parameters['position'] + self.parameters['interaction_start']
+        current_position = self.getParam['position'] + self.getParam['interaction_start']
 
         # The current position is adjusted to be negative or positive depending on what side of the beam pipe the actuator is on
-        current_position = current_position * self.parameters['axis_polarity']
+        current_position = current_position * self.getParam['axis_polarity']
 
-        axis = self.parameters['axis']
+        axis = self.getParam['axis']
         part_num = bunch.getSizeGlobal()
 
         # Create a dummy value that is changed if particles are lost, changing this value causes a bunch.compress() to happen
@@ -171,7 +117,7 @@ class BTF_Screenclass:
         # Note this is set up assuming that all actuators work with an initial parked condition that is negative
         # If their park location is positive this set of if statements will work incorrectly
 
-        if self.parameters['axis_polarity'] < 0 and current_position < self.near_bunch and part_num >0:
+        if self.getParam['axis_polarity'] < 0 and current_position < self.near_bunch and part_num >0:
             if axis == 0:
                 for n in range(part_num):
                     x = bunch.x(n)
@@ -187,7 +133,7 @@ class BTF_Screenclass:
             else:
                 print('screen axis not set correctly for', child_name)
 
-        elif self.parameters['axis_polarity'] > 0 and current_position > -self.near_bunch and part_num >0:
+        elif self.getParam['axis_polarity'] > 0 and current_position > -self.near_bunch and part_num >0:
             if axis == 0:
                 for n in range(part_num):
                     x = bunch.x(n)
@@ -207,78 +153,66 @@ class BTF_Screenclass:
             bunch.compress()
 
     def getSpeed(self):
-        return self.parameters['speed']
+        return self.getParam['speed']
 
     def getPosition(self):
-        return self.parameters['position']
+        return self.getParam['position']
 
     def getAxis(self):
-        return self.parameters['axis']
+        return self.getParam['axis']
 
     def getAxis_Polarity(self):
-        return self.parameters['axis_polarity']
+        return self.getParam['axis_polarity']
 
     def getInteraction_Start(self):
-        return self.parameters['interaction_start']
-
-    def getParam(self, param: str):
-        return self.parameters[param]
-
-    def setParam(self, param: str, new_param):
-        self.parameters[param] = new_param
-
-    def getParamsDict(self) -> dict:
-        return self.parameters
-
-    def getType(self):
-        return self.node_type
-
-    def getName(self):
-        return self.child_name
-
-    def getAllChildren(self):
-        return []
+        return self.getParam['interaction_start']
 
 class BTF_Slitclass:
+    node_type = "BTF_Slit"
+    parameter_list = ['speed', 'position', 'axis', 'axis_polarity', 'interaction_start', 'edge_to_slit', 'slit_width']
+
     def __init__(self, child_name: str, slit_axis = None, slit_polarity = None, interaction = None, edge_to_slit = None, slit_width = None):
-        self.parameters = {'speed': 0.0, 'position': -0.07, 'axis': slit_axis, 'axis_polarity': slit_polarity,
-                'interaction_start': interaction, 'edge_to_slit': edge_to_slit, 'slit_width': slit_width}
+        parameters = {'speed': 0.0, 'position': -0.07, 'axis': slit_axis, 'axis_polarity': slit_polarity,
+                      'interaction_start': interaction, 'edge_to_slit': edge_to_slit, 'slit_width': slit_width}
+        BaseLinacNode.__init__(self, child_name)
+        for key, value in parameters.items():
+            self.addParam(key, value)
         self.child_name = child_name
-        self.node_type = 'BTF_Slit'
+        self.setType(BTF_Slitclass.node_type)
         self.si_e_charge = 1.6021773e-19
         self.near_bunch = 0.01 # value at which to start checking for particles
 
         # Set a standard value for the edge of the screen crossing the center of the bunch if none is specified
-        if self.parameters['interaction_start'] is None:
-            self.parameters['interaction_start'] = 0.03
+        if self.getParam['interaction_start'] is None:
+            self.setParam['interaction_start'] = 0.03
 
-        if self.parameters['axis_polarity'] is None:
-            self.parameters['axis_polarity'] = 1
+        if self.getParam['axis_polarity'] is None:
+            self.setParam['axis_polarity'] = 1
             print('No axis polarity set for', child_name+',', 'using standard value')
 
-        if self.parameters['edge_to_slit'] is None:
-            self.parameters['edge_to_slit'] = 0.05
+        if self.getParam['edge_to_slit'] is None:
+            self.setParam['edge_to_slit'] = 0.05
 
-        if self.parameters['slit_width'] is None:
-            self.parameters['slit_width'] = 0.0002
+        if self.getParam['slit_width'] is None:
+            self.setParam['slit_width'] = 0.0002
 
 
-    def trackActions(self, actionsContainer, paramsDict):
+    def track(self, paramsDict):
         if "bunch" not in paramsDict:
             return
         bunch = paramsDict["bunch"]
         
         # Bunch is centered at 0, a constant is added as screen position can only reach -16
-        current_position = self.parameters['position'] + self.parameters['interaction_start']
-        slit_position = current_position - self.parameters['edge_to_slit']
+        current_position = self.getParam['position'] + self.getParam['interaction_start']
+        slit_position = current_position - self.getParam['edge_to_slit']
 
         # The current position is adjusted to be negative or positive depending on what side of the beam pipe the actuator is on
-        current_position = current_position * self.parameters['axis_polarity']
-        slit_position = slit_position * self.parameters['axis_polarity']
+        current_position = current_position * self.getParam['axis_polarity']
+        slit_position = slit_position * self.getParam['axis_polarity']
 
-        axis = self.parameters['axis']
+        axis = self.getParam['axis']
         part_num = bunch.getSizeGlobal()
-        slit_width = self.parameters['slit_width']
+        slit_width = self.getParam['slit_width']
 
         # Create a dummy value that is changed if particles are lost, changing this value causes a bunch.compress() to happen
         value = 0
@@ -287,7 +221,7 @@ class BTF_Slitclass:
         # Note this is set up assuming that all actuators work with an initial parked condition that is negative
         # If their park location is positive this set of if statements will work incorrectly
 
-        if self.parameters['axis_polarity'] < 0 and current_position < self.near_bunch and part_num > 0:
+        if self.getParam['axis_polarity'] < 0 and current_position < self.near_bunch and part_num > 0:
             if axis == 0:
                 for n in range(part_num):
                     x = bunch.x(n)
@@ -309,7 +243,7 @@ class BTF_Slitclass:
             else:
                 print('slit axis not set correctly for', self.child_name)
 
-        elif self.parameters['axis_polarity'] > 0 and current_position > -self.near_bunch and part_num > 0:
+        elif self.getParam['axis_polarity'] > 0 and current_position > -self.near_bunch and part_num > 0:
             if axis == 0:
                 for n in range(part_num):
                     x = bunch.x(n)
@@ -335,96 +269,26 @@ class BTF_Slitclass:
             bunch.compress()
 
     def getSpeed(self):
-        return self.parameters['speed']
+        return self.getParam['speed']
 
     def getPosition(self):
-        return self.parameters['position']
+        return self.getParam['position']
 
     def getAxis(self):
-        return self.parameters['axis']
+        return self.getParam['axis']
 
     def getAxis_Polarity(self):
-        return self.parameters['axis_polarity']
+        return self.getParam['axis_polarity']
 
     def getInteraction_Start(self):
-        return self.parameters['interaction_start']
+        return self.getParam['interaction_start']
 
     def getEdge_to_Slit(self):
-        return self.parameters['edge_to_slit']
+        return self.getParam['edge_to_slit']
 
     def getSlit_Width(self):
-        return self.parameters['slit_width']
+        return self.getParam['slit_width']
 
-    def getParam(self, param: str):
-        return self.parameters[param]
-
-    def setParam(self, param: str, new_param):
-        self.parameters[param] = new_param
-
-    def getParamsDict(self) -> dict:
-        return self.parameters
-
-    def getType(self):
-        return self.node_type
-
-    def getName(self):
-        return self.child_name
-
-    def getAllChildren(self):
-        return []
-
-class BTF_Cameraclass:
-    def __init__(self, child_name: str):
-        self.parameters = {'state': 1, 'part_list':[[0,0]]}
-        self.child_name = child_name
-        self.node_type = 'BTF_Camera'
-        
-        super().__init__()
-
-    def trackActions(self, actionsContainer, paramsDict):
-        if "bunch" not in paramsDict:
-            return
-
-        bunch = paramsDict["bunch"]
-        part_num = bunch.getSizeGlobal()
-        particles = []
-
-        live_state = self.parameters['state']
-        #print(live_state, self.child_name)
-        if live_state == 1 and part_num > 0:
-            for n in range(part_num):
-                current_particle = []
-                x = bunch.x(n)
-                y = bunch.y(n)
-                current_particle.append(x)
-                current_particle.append(y)
-                particles.append(current_particle)
-            #print(particles)
-        self.parameters['part_list'] = particles
-
-    def getState(self):
-        return self.parameters['state']
-
-    def getPartlist(self):
-        return self.parameters['part_list']
-
-    def getParam(self, param: str):
-        return self.parameters[param]
-
-    def setParam(self, param: str, new_param):
-        self.parameters[param] = new_param
-
-    def getParamsDict(self) -> dict:
-        return self.parameters
-
-    def getType(self):
-        return self.node_type
-
-    def getName(self):
-        return self.child_name
-
-    def getAllChildren(self):
-        return []
 
 
 

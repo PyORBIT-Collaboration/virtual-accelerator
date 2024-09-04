@@ -11,7 +11,7 @@ from importlib.metadata import version
 
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
 
-from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass
+from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass
 # from orbit.py_linac.linac_parsers import SNS_LinacLatticeFactory
 from virtaccl.PyORBIT_Model.BTF.btf_lattice_factory import PyORBIT_Lattice_Factory
 
@@ -21,9 +21,9 @@ from orbit.core.linac import BaseRfGap, RfGapTTF
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.PyORBIT_Model.virtual_devices import BPM, Quadrupole, P_BPM, Quadrupole_Power_Supply, Bend_Power_Supply, Bend
 from virtaccl.PyORBIT_Model.BTF.virtual_devices_BTF import BTF_FC, BTF_Quadrupole, BTF_Quadrupole_Power_Supply, BTF_BCM, BTF_Actuator, BTF_Corrector, BTF_Corrector_Power_Supply, BTF_Camera
-from virtaccl.PyORBIT_Model.BTF.btf_child_nodes import BTF_FCclass, BTF_BCMclass, BTF_FC_Objectclass, BTF_Screenclass, BTF_Slitclass, BTF_Cameraclass
+from virtaccl.PyORBIT_Model.BTF.btf_child_nodes import BTF_FCclass, BTF_BCMclass, BTF_Screenclass, BTF_Slitclass
 
-from virtaccl.PyORBIT_Model.BTF.btf_lattice_controller import OrbitModel
+from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 
 
 def load_config(filename: Path):
@@ -57,6 +57,8 @@ def main():
                         help='Pathname of input bunch file.')
     parser.add_argument('--particle_number', default=1000, type=int,
                         help='Number of particles to use (default=1000).')
+    parser.add_argument('--beam_current', default=30.0, type=float,
+                        help='Initial bema current in mA. (default=30.0).')
     parser.add_argument('--save_bunch', const='end_bunch.dat', nargs='?', type=str,
                         help="Saves the bunch at the end of the lattice after each track in the given location. "
                              "If no location is given, the bunch is saved as 'end_bunch.dat' in the working directory. "
@@ -130,14 +132,9 @@ def main():
     lattice_factory.setMaxDriftLength(0.01)
     model_lattice = lattice_factory.getLinacAccLattice(model_sequences, lattice_file)
     cppGapModel = BaseRfGap
-    # cppGapModel = RfGapTTF
     rf_gaps = model_lattice.getRF_Gaps()
     for rf_gap in rf_gaps:
         rf_gap.setCppGapModel(cppGapModel())
-    # cavities = model_lattice.getRF_Cavities()
-    # for cavity in cavities:
-    #     if 'SCL' in cavity.getName():
-    #         cavity.setAmp(0.0)
     Add_quad_apertures_to_lattice(model_lattice)
     Add_rfgap_apertures_to_lattice(model_lattice)
 
@@ -164,9 +161,15 @@ def main():
     # get sync particle momentum for use in corrector current conversion
     syncPart = bunch_in.getSyncParticle()
     momentum = syncPart.momentum()
+    beam_current = args.beam_current / 1000 # Set the initial beam current in Amps
 
-    model = OrbitModel(model_lattice, bunch_in, debug=debug, save_bunch=save_bunch)
-    model.set_beam_current(30.0e-3)  # Set the initial beam current in Amps.
+    model = OrbitModel(debug=debug, save_bunch=save_bunch)
+    model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list, diagnostic=True)
+    model.define_custom_node(BTF_FCclass.node_type, BTF_FCclass.parameter_list, optic=True, diagnostic=True)
+    model.define_custom_node(BTF_Screenclass.node_type, BTF_Screenclass.parameter_list, optic=True)
+    model.define_custom_node(BTF_Slitclass.node_type, BTF_Slitclass.parameter_list, optic=True)
+    model.define_custom_node(BTF_BCMclass.node_type, BTF_BCMclass.parameter_list, diagnostic=True)
+    model.set_initial_bunch(bunch_in, beam_current)
     element_list = model.get_element_list()
 
     delay = args.ca_proc
@@ -238,13 +241,10 @@ def main():
     fc = devices_dict["FC"]
     for name, device_dict in fc.items():
         ele_name = device_dict["PyORBIT_Name"]
-        obj_name = device_dict["Object_Name"]
         initial_state = device_dict["State"]
         if ele_name in element_list:
             fc_child = BTF_FCclass(ele_name)
             model.add_child_node(ele_name, fc_child)
-            fc_obj_child = BTF_FC_Objectclass(obj_name)
-            model.add_child_node(ele_name, fc_obj_child)
             fc_device = BTF_FC(name, ele_name, initial_state)
             server.add_device(fc_device)
 
@@ -284,7 +284,6 @@ def main():
             server.add_device(bpm_device)
 
     screens = devices_dict["Screen"]
-    cameras = devices_dict["Cam"]
     for name, device_dict in screens.items():
         ele_name = device_dict["PyORBIT_Name"]
         axis = device_dict["Axis"] 
@@ -294,17 +293,7 @@ def main():
             model.add_child_node(ele_name, screen_child)
             screen_device = BTF_Actuator(name, ele_name)
             server.add_device(screen_device)
-            '''
-            # In development, not currently implemented well
-            if "Camera" in device_dict and device_dict["Camera"] in cameras:
-                cam_py_name = device_dict["Camera_PyORBIT"]
-                cam_name = device_dict["Camera"]
-                cam_state = device_dict["Camera_State"]
-                cam_child = BTF_Cameraclass(cam_py_name)
-                model.add_child_node(cam_py_name, cam_child)
-                cam_device = BTF_Camera(cam_name, cam_py_name, view_scrn = screen_device, init_state = cam_state, screen_axis = axis, screen_polarity = axis_polarity)
-                server.add_device(cam_device)
-            '''
+    
     slits = devices_dict["Slit"]
     for name, device_dict in slits.items():
         ele_name = device_dict["PyORBIT_Name"]
