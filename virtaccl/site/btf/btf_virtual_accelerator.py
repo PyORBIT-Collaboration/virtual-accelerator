@@ -169,6 +169,7 @@ def main():
     model.define_custom_node(BTF_Screenclass.node_type, BTF_Screenclass.parameter_list, optic=True)
     model.define_custom_node(BTF_Slitclass.node_type, BTF_Slitclass.parameter_list, optic=True)
     model.define_custom_node(BTF_BCMclass.node_type, BTF_BCMclass.parameter_list, diagnostic=True)
+    model.initialize_lattice(model_lattice)
     model.set_initial_bunch(bunch_in, beam_current)
     element_list = model.get_element_list()
 
@@ -306,7 +307,6 @@ def main():
             model.add_child_node(ele_name, slit_child)
             slit_device = BTF_Actuator(name, ele_name, speed = speed, limit = limit)
             server.add_device(slit_device)
-
 
     # Retrack the bunch to update all diagnostics
     model.force_track()
