@@ -228,13 +228,13 @@ class ScreenClass(BaseLinacNode):
             self.setParam('y_avg', 0)
 
     def getXYHistogram(self):
-        return self.setParam('xy_histogram')
+        return self.getParam('xy_histogram')
 
     def getXAvg(self):
-        return self.setParam('x_avg')
+        return self.getParam('x_avg')
 
     def getYAvg(self):
-        return self.setParam('y_avg')
+        return self.getParam('y_avg')
 
 
 class DumpBunchClass(BaseLinacNode):

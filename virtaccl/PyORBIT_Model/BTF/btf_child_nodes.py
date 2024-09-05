@@ -3,10 +3,12 @@ from typing import Dict
 
 import numpy as np
 from orbit.core.bunch import Bunch
+from orbit.py_linac.lattice import BaseLinacNode
+
 
 # A collection of classes that are attached to the lattice as child nodes for the virtual accelerator.
 
-class BTF_FCclass:
+class BTF_FCclass(BaseLinacNode):
     node_type = "BTF_FC"
     parameter_list = ['current', 'state']
 
@@ -24,7 +26,7 @@ class BTF_FCclass:
             return
         bunch = paramsDict["bunch"]
         part_num = bunch.getSizeGlobal()
-        
+
         if part_num > 0:
             initial_beam_current = paramsDict["beam_current"]
             initial_number = paramsDict['initial_particle_number']
@@ -44,7 +46,8 @@ class BTF_FCclass:
     def getState(self):
         return self.getParam['state']
 
-class BTF_BCMclass:
+
+class BTF_BCMclass(BaseLinacNode):
     node_type = "BTF_BCM"
     parameter_list = ['current']
 
@@ -61,7 +64,7 @@ class BTF_BCMclass:
         if "bunch" not in paramsDict:
             return
         bunch = paramsDict["bunch"]
-        
+
         part_num = bunch.getSizeGlobal()
         if part_num > 0:
             initial_beam_current = paramsDict["beam_current"]
@@ -74,33 +77,35 @@ class BTF_BCMclass:
     def getCurrent(self):
         return self.getParam['current']
 
-class BTF_Screenclass:
+
+class BTF_Screenclass(BaseLinacNode):
     node_type = "BTF_Screen"
     parameter_list = ['speed', 'position', 'axis', 'axis_polarity', 'interaction_start']
 
-    def __init__(self, child_name: str, screen_axis = None, screen_polarity = None, interaction = None):
-        parameters = {'speed': 0.0, 'position': -0.07, 'axis': screen_axis, 'axis_polarity': screen_polarity, 'interaction_start': interaction}
+    def __init__(self, child_name: str, screen_axis=None, screen_polarity=None, interaction=None):
+        parameters = {'speed': 0.0, 'position': -0.07, 'axis': screen_axis, 'axis_polarity': screen_polarity,
+                      'interaction_start': interaction}
         BaseLinacNode.__init__(self, child_name)
         for key, value in parameters.items():
             self.addParam(key, value)
         self.child_name = child_name
         self.setType(BTF_Screenclass.node_type)
         self.si_e_charge = 1.6021773e-19
-        self.near_bunch = 0.015 # value at which to start checking for particles
-        
+        self.near_bunch = 0.015  # value at which to start checking for particles
+
         # Set a standard value for the edge of the screen crossing the center of the bunch if none is specified
         if self.getParam['interaction_start'] is None:
             self.setParam['interaction_start'] = 0.03
 
         if self.getParam['axis_polarity'] is None:
             self.setParam['axis_polarity'] = 1
-            print('No axis polarity set for', child_name+',', 'using standard value')
+            print('No axis polarity set for', child_name + ',', 'using standard value')
 
     def track(self, paramsDict):
         if "bunch" not in paramsDict:
             return
         bunch = paramsDict["bunch"]
-        
+
         # Bunch is centered at 0, a constant is added as screen position can only reach -16
         current_position = self.getParam['position'] + self.getParam['interaction_start']
 
@@ -117,7 +122,7 @@ class BTF_Screenclass:
         # Note this is set up assuming that all actuators work with an initial parked condition that is negative
         # If their park location is positive this set of if statements will work incorrectly
 
-        if self.getParam['axis_polarity'] < 0 and current_position < self.near_bunch and part_num >0:
+        if self.getParam['axis_polarity'] < 0 < part_num and current_position < self.near_bunch:
             if axis == 0:
                 for n in range(part_num):
                     x = bunch.x(n)
@@ -133,7 +138,7 @@ class BTF_Screenclass:
             else:
                 print('screen axis not set correctly for', child_name)
 
-        elif self.getParam['axis_polarity'] > 0 and current_position > -self.near_bunch and part_num >0:
+        elif self.getParam['axis_polarity'] > 0 and current_position > -self.near_bunch and part_num > 0:
             if axis == 0:
                 for n in range(part_num):
                     x = bunch.x(n)
@@ -167,11 +172,13 @@ class BTF_Screenclass:
     def getInteraction_Start(self):
         return self.getParam['interaction_start']
 
-class BTF_Slitclass:
+
+class BTF_Slitclass(BaseLinacNode):
     node_type = "BTF_Slit"
     parameter_list = ['speed', 'position', 'axis', 'axis_polarity', 'interaction_start', 'edge_to_slit', 'slit_width']
 
-    def __init__(self, child_name: str, slit_axis = None, slit_polarity = None, interaction = None, edge_to_slit = None, slit_width = None):
+    def __init__(self, child_name: str, slit_axis=None, slit_polarity=None, interaction=None, edge_to_slit=None,
+                 slit_width=None):
         parameters = {'speed': 0.0, 'position': -0.07, 'axis': slit_axis, 'axis_polarity': slit_polarity,
                       'interaction_start': interaction, 'edge_to_slit': edge_to_slit, 'slit_width': slit_width}
         BaseLinacNode.__init__(self, child_name)
@@ -180,7 +187,7 @@ class BTF_Slitclass:
         self.child_name = child_name
         self.setType(BTF_Slitclass.node_type)
         self.si_e_charge = 1.6021773e-19
-        self.near_bunch = 0.01 # value at which to start checking for particles
+        self.near_bunch = 0.01  # value at which to start checking for particles
 
         # Set a standard value for the edge of the screen crossing the center of the bunch if none is specified
         if self.getParam['interaction_start'] is None:
@@ -188,7 +195,7 @@ class BTF_Slitclass:
 
         if self.getParam['axis_polarity'] is None:
             self.setParam['axis_polarity'] = 1
-            print('No axis polarity set for', child_name+',', 'using standard value')
+            print('No axis polarity set for', child_name + ',', 'using standard value')
 
         if self.getParam['edge_to_slit'] is None:
             self.setParam['edge_to_slit'] = 0.05
@@ -196,12 +203,11 @@ class BTF_Slitclass:
         if self.getParam['slit_width'] is None:
             self.setParam['slit_width'] = 0.0002
 
-
     def track(self, paramsDict):
         if "bunch" not in paramsDict:
             return
         bunch = paramsDict["bunch"]
-        
+
         # Bunch is centered at 0, a constant is added as screen position can only reach -16
         current_position = self.getParam['position'] + self.getParam['interaction_start']
         slit_position = current_position - self.getParam['edge_to_slit']
@@ -288,16 +294,3 @@ class BTF_Slitclass:
 
     def getSlit_Width(self):
         return self.getParam['slit_width']
-
-
-
-
-
-
-
-
-
-
-
-
-
