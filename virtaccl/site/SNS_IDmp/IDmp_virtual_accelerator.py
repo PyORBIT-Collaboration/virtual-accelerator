@@ -6,6 +6,7 @@ import time
 import argparse
 from pathlib import Path
 
+from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass, ScreenClass
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.site.SNS_Linac.virtual_devices import (Quadrupole, Corrector, Quadrupole_Power_Supply,
                                                      Corrector_Power_Supply, WireScanner, BPM, P_BPM, Screen)
@@ -54,8 +55,12 @@ def main():
     part_num = args.particle_number
 
     lattice, bunch = get_IDMP_lattice_and_bunch(part_num, x_off=2, xp_off=0.3)
-    model = OrbitModel(lattice, bunch, debug=debug)
+    model = OrbitModel(input_bunch=bunch, debug=debug)
+    model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list, diagnostic=True)
+    model.define_custom_node(WSclass.node_type, WSclass.parameter_list, diagnostic=True)
+    model.define_custom_node(ScreenClass.node_type, ScreenClass.parameter_list, diagnostic=True)
     model.set_beam_current(38.0e-3)  # Set the initial beam current in Amps.
+    model.initialize_lattice(lattice)
     element_list = model.get_element_list()
 
     server = Server()
