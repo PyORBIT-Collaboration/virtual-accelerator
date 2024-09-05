@@ -12,7 +12,7 @@ from orbit.core.bunch import Bunch
 from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice, Sequence
 
 # Import Quad and Drift components to build the lattice.
-from orbit.py_linac.lattice.LinacAccNodes import Quad, Drift, DCorrectorH, DCorrectorV, MarkerLinacNode
+from orbit.py_linac.lattice.LinacAccNodes import Quad, Drift, DCorrectorH, DCorrectorV
 
 # Import AccActionsContainer, a method to add functionality throughout the accelerator.
 from orbit.lattice import AccActionsContainer
@@ -32,10 +32,8 @@ def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0,
     # List to contain the drift and quadrupole nodes.
     list_of_nodes = []
 
-    BPM00_marker = MarkerLinacNode("BPM00m")
     BPM00 = BPMclass("BPM00", frequency=bpm_frequency)
-    BPM00_marker.addChildNode(BPM00, BPM00_marker.ENTRANCE)
-    list_of_nodes.append(BPM00_marker)
+    list_of_nodes.append(BPM00)
 
     D1 = Drift("Drift1")
     D1.setLength((10.029 - mag_len / 2) - 6.48)
@@ -87,28 +85,22 @@ def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0,
     D3.setLength(16.612 - (13.59872 + mag_len / 2))
     list_of_nodes.append(D3)
 
-    WS01_marker = MarkerLinacNode("WS01m")
     WS01 = WSclass("WS01")
-    WS01_marker.addChildNode(WS01, WS01_marker.ENTRANCE)
-    list_of_nodes.append(WS01_marker)
+    list_of_nodes.append(WS01)
 
     D4 = Drift("Drift4")
     D4.setLength(17.380 - 16.612)
     list_of_nodes.append(D4)
 
-    BPM03_marker = MarkerLinacNode("BPM03m")
     BPM03 = BPMclass("BPM03", frequency=bpm_frequency)
-    BPM03_marker.addChildNode(BPM03, BPM03_marker.ENTRANCE)
-    list_of_nodes.append(BPM03_marker)
+    list_of_nodes.append(BPM03)
 
     D5 = Drift("Drift5")
     D5.setLength(12.998)
     list_of_nodes.append(D5)
 
-    Screen_marker = MarkerLinacNode("Screen_m")
     Screen = ScreenClass("Screen")
-    Screen_marker.addChildNode(Screen, Screen_marker.ENTRANCE)
-    list_of_nodes.append(Screen_marker)
+    list_of_nodes.append(Screen)
 
     # Dump
 

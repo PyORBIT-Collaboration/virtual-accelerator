@@ -14,6 +14,9 @@ from orbit.py_linac.lattice import BaseLinacNode
 # A class that adds BPMs to the lattice. This class calculates both typical diagnostics (average position) and values
 # that can't be directly measured (like energy).
 class BPMclass(BaseLinacNode):
+    node_type = "BPM"
+    parameter_list = ['frequency', 'x_avg', 'y_avg', 'phi_avg', 'amp_avg', 'energy', 'beta', 'part_num']
+
     def __init__(self, child_name: str, frequency: float = 402.5e6):
         parameters = {'frequency': frequency, 'x_avg': 0.0, 'y_avg': 0.0, 'phi_avg': 0.0, 'amp_avg': 0.0,
                       'current': 0.0, 'energy': 0.0, 'beta': 0.0, 'part_num': 0}
@@ -21,7 +24,7 @@ class BPMclass(BaseLinacNode):
         for key, value in parameters.items():
             self.addParam(key, value)
         self.child_name = child_name
-        self.setType("BPM")
+        self.setType(BPMclass.node_type)
         self.si_e_charge = 1.6021773e-19
 
     def track(self, paramsDict):
@@ -61,7 +64,6 @@ class BPMclass(BaseLinacNode):
             self.setParam('energy', sync_energy)
             self.setParam('beta', sync_beta)
             self.setParam('part_num', part_num)
-            # print(BPM_name + " : " + str(part_num))
         else:
             self.setParam('x_avg', 0.0)
             self.setParam('y_avg', 0.0)
@@ -99,6 +101,9 @@ class BPMclass(BaseLinacNode):
 
 # Class for wire scanners. This class simply returns histograms of the vertical and horizontal positions.
 class WSclass(BaseLinacNode):
+    node_type = "WireScanner"
+    parameter_list = ['x_histogram', 'y_histogram', 'x_avg', 'y_avg']
+
     def __init__(self, child_name: str, bin_number: int = 50):
         parameters = {'x_histogram': np.array([[-10, 0], [10, 0]]), 'y_histogram': np.array([[-10, 0], [10, 0]]),
                       'x_avg': 0.0, 'y_avg': 0.0}
@@ -106,7 +111,7 @@ class WSclass(BaseLinacNode):
         for key, value in parameters.items():
             self.addParam(key, value)
         self.child_name = child_name
-        self.setType("WireScanner")
+        self.setType(WSclass.node_type)
         self.bin_number = bin_number
 
     def track(self, paramsDict):
@@ -170,6 +175,9 @@ class WSclass(BaseLinacNode):
 
 # Class for wire scanners. This class simply returns histograms of the vertical and horizontal positions.
 class ScreenClass(BaseLinacNode):
+    node_type = "Screen"
+    parameter_list = ['xy_histogram', 'x_axis', 'y_axis', 'x_avg', 'y_avg']
+
     def __init__(self, child_name: str, x_bin_number: int = 10, y_bin_number: int = 10):
         parameters = {'xy_histogram': np.zeros((2, 2)), 'x_axis': np.array([-10, 10]), 'y_axis': np.array([-10, 10]),
                       'x_avg': 0.0, 'y_avg': 0.0}
@@ -177,7 +185,7 @@ class ScreenClass(BaseLinacNode):
         for key, value in parameters.items():
             self.addParam(key, value)
         self.child_name = child_name
-        self.setType("Screen")
+        self.setType(ScreenClass.node_type)
         self.x_number = x_bin_number
         self.y_number = y_bin_number
 
@@ -220,21 +228,24 @@ class ScreenClass(BaseLinacNode):
             self.setParam('y_avg', 0)
 
     def getXYHistogram(self):
-        return self.setParam('xy_histogram')
+        return self.getParam('xy_histogram')
 
     def getXAvg(self):
-        return self.setParam('x_avg')
+        return self.getParam('x_avg')
 
     def getYAvg(self):
-        return self.setParam('y_avg')
+        return self.getParam('y_avg')
 
 
 class DumpBunchClass(BaseLinacNode):
+    node_type = "bunch_dumper"
+    parameter_list = ['out_file']
+
     def __init__(self, child_name: str, out_file: str = 'bunch.dat'):
         BaseLinacNode.__init__(self, child_name)
         self.addParam('out_file', out_file)
         self.child_name = child_name
-        self.setType("bunch_dumper")
+        self.setType(DumpBunchClass.node_type)
 
     def track(self, paramsDict):
         if "bunch" not in paramsDict:
@@ -258,10 +269,10 @@ class BunchCopyClass(BaseLinacNode):
         self.bunch_dict = bunch_dict
 
     def track(self, paramsDict):
+        if "bunch" not in paramsDict:
+            return
         bunch = paramsDict["bunch"]
-        part_num = bunch.getSizeGlobal()
-        if part_num > 0:
-            bunch.copyBunchTo(self.bunch_dict[self.bunch_key])
+        bunch.copyBunchTo(self.bunch_dict[self.bunch_key])
 
 
 # This class removes all bunch particles if the bunch is outside of the beta limits of the cavity.

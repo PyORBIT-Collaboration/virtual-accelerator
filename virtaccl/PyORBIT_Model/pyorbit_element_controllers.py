@@ -1,76 +1,8 @@
-from typing import Union, Dict, Any
+from typing import Union, Dict, Any, List
 
-from orbit.py_linac.lattice.LinacAccNodes import Quad, MarkerLinacNode, DCorrectorV, DCorrectorH, Bend
+from orbit.py_linac.lattice.LinacAccNodes import BaseLinacNode
 from orbit.py_linac.lattice.LinacRfGapNodes import BaseRF_Gap
 from orbit.py_linac.lattice.LinacAccLatticeLib import RF_Cavity
-from .pyorbit_child_nodes import BPMclass, WSclass, ScreenClass, DumpBunchClass
-
-"""A collection of PyORBIT classes (useful for hinting) and PyORBIT keys we are using."""
-
-
-class PyorbitElementTypes:
-    """This is a container of keys and PyORBIT node types to assist with manipulating PYORBIT in
-    pyorbit_controller.py"""
-
-    """Keys to designate different PyORBIT node types."""
-    cavity_key = 'RF_Cavity'
-    quad_key = 'Quadrupole'
-    corrector_key = 'Corrector'
-    BPM_key = 'BPM'
-    pBPM_key = 'Physics_BPM'
-    WS_key = 'Wire_Scanner'
-    bend_key = 'Bend'
-    screen_key = 'Screen'
-    marker_key = 'Marker'
-    dump_key = 'DumpBunch'
-
-    """PyORBIT keys for parameters we want to pass to the virtual accelerator."""
-    quad_params = ['dB/dr']
-    corrector_params = ['B']
-    bend_params = []
-    cavity_params = ['phase', 'amp']
-    bpm_params = ['frequency', 'x_avg', 'y_avg', 'phi_avg', 'amp_avg', 'energy', 'beta', 'part_num']
-    ws_params = ['x_histogram', 'y_histogram', 'x_avg', 'y_avg']
-    screen_params = ['xy_histogram', 'x_axis', 'y_axis', 'x_avg', 'y_avg']
-    marker_params = []
-    dump_params = ['out_file']
-
-    """Dictionary to keep track of different PyORBIT class types."""
-    pyorbit_class_names = {Quad: quad_key,
-                           RF_Cavity: cavity_key,
-                           DCorrectorV: corrector_key,
-                           DCorrectorH: corrector_key,
-                           BPMclass: BPM_key,
-                           WSclass: WS_key,
-                           Bend: bend_key,
-                           ScreenClass: screen_key,
-                           MarkerLinacNode: marker_key,
-                           DumpBunchClass: dump_key}
-
-    """Dictionary to keep the above parameters with their designated classes."""
-    param_ref_dict = {quad_key: quad_params,
-                      cavity_key: cavity_params,
-                      corrector_key: corrector_params,
-                      bend_key: bend_params,
-                      BPM_key: bpm_params,
-                      WS_key: ws_params,
-                      screen_key: screen_params,
-                      marker_key: marker_params,
-                      dump_key: dump_params}
-
-    """Classes that can change the beam."""
-    optic_classes = (quad_key, cavity_key, corrector_key, bend_key, dump_key)
-
-    """Classes that measure the beam."""
-    diagnostic_classes = (BPM_key, WS_key, screen_key, marker_key)
-
-    """Type hint definitions"""
-    node_classes = Union[Quad, BaseRF_Gap, MarkerLinacNode, Bend, BPMclass, WSclass]
-    cavity_classes = RF_Cavity
-    child_classes = Union[DCorrectorV, DCorrectorH, BPMclass, WSclass, MarkerLinacNode, DumpBunchClass]
-
-    """type hint for all classes"""
-    pyorbit_classes = Union[node_classes, child_classes, cavity_classes]
 
 
 class PyorbitElement:
@@ -83,22 +15,17 @@ class PyorbitElement:
             Instance of a PyORBIT element (node, cavity, etc.) to be used in the controller.
     """
 
-    def __init__(self, element):
+    def __init__(self, element: Union[BaseLinacNode, RF_Cavity], node_type: str = None):
         name = element.getName()
-        element_class = type(element)
-        element_type = PyorbitElementTypes.pyorbit_class_names[element_class]
+
+        if node_type is not None:
+            element_type = node_type
+        else:
+            element_type = element.getType()
 
         self.element = element
         self.name = name
         self.element_type = element_type
-
-        # Determine if the element is an optic or diagnostic.
-        if element_type in PyorbitElementTypes.optic_classes:
-            self.is_optic_bool = True
-        elif element_type in PyorbitElementTypes.diagnostic_classes:
-            self.is_optic_bool = False
-        else:
-            print(f'Element "{name}" is not defined as optic or diagnostic.')
 
     def get_name(self) -> str:
         """Return the name of the element in PyORBIT.
@@ -112,7 +39,7 @@ class PyorbitElement:
         return self.name
 
     def get_type(self) -> str:
-        """Return the key associated with the the type of the element in PyORBIT.
+        """Return the key associated with the type of the element in PyORBIT.
 
         Returns
         ----------
@@ -123,8 +50,7 @@ class PyorbitElement:
         return self.element_type
 
     def get_parameter_dict(self) -> Dict[str, Any]:
-        """Returns the dictionary of parameters of the element from PyORBIT coinciding the parameters defined in
-        PyorbitElementTypes.param_ref_dict.
+        """Returns the dictionary of parameters of the element from PyORBIT.
 
         Returns
         ----------
@@ -132,15 +58,12 @@ class PyorbitElement:
             The element's parameter dictionary
         """
 
-        element_type = self.get_type()
-        modeled_params = PyorbitElementTypes.param_ref_dict[element_type]
-        params_out_dict = {key: self.element.getParamsDict()[key] for key in modeled_params}
-        return params_out_dict
+        return self.element.getParamsDict()
 
     def set_parameter_dict(self, new_params: Dict[str, Any]) -> None:
         """Changes the parameters of the element. Needs a dictionary that matches the keys in the PyORBIT ParamsDict for
-         the element connected with the new values. If any keys are not within that elements list of keys define in
-         PyorbitElementTypes.param_ref_dict, that parameter will be ignored.
+         the element connected with the new values. If any keys are not within that elements list of keys, that
+         parameter will be ignored.
 
         Parameters
         ----------
@@ -148,14 +71,13 @@ class PyorbitElement:
             Dictionary containing PyORBIT keys for the element's parameters connected to their new values.
         """
 
-        element_type = self.get_type()
-        modeled_params = PyorbitElementTypes.param_ref_dict[element_type]
-        new_params_fixed = {key: new_params[key] for key in modeled_params}
+        pyorbit_params = self.element.keys()
+        new_params_fixed = {key: new_params[key] for key in pyorbit_params}
         self.element.setParamsDict(new_params_fixed)
 
-        bad_params = set(new_params.keys()) - set(modeled_params)
+        bad_params = set(new_params.keys()) - set(pyorbit_params)
         if bad_params:
-            print(f'The following parameters are not in the "{element_type}" model: {", ".join(bad_params)}.')
+            print(f'The following parameters are not in the "{self.element_type}" element: {", ".join(bad_params)}.')
 
     def get_parameter(self, param_key: str):
         """Returns the value of the parameter for the element for the given parameter key.
@@ -166,13 +88,12 @@ class PyorbitElement:
             The value of the given parameter.
         """
 
-        element_type = self.get_type()
-        modeled_params = PyorbitElementTypes.param_ref_dict[element_type]
-        if param_key in modeled_params:
+        pyorbit_params = self.element.keys()
+        if param_key in pyorbit_params:
             param = self.element.getParam(param_key)
             return param
         else:
-            print(f'The key "{param_key}" is not in the "{element_type}" model.')
+            print(f'The key "{param_key}" is not in the "{self.element_type}" element.')
 
     def set_parameter(self, param_key: str, new_param) -> None:
         """Changes the value for the given parameter key with the given new value for the element.
@@ -185,38 +106,11 @@ class PyorbitElement:
             The new value for the parameter.
         """
 
-        element_type = self.get_type()
-        modeled_params = PyorbitElementTypes.param_ref_dict[element_type]
-        if param_key in modeled_params:
+        pyorbit_params = self.element.keys()
+        if param_key in pyorbit_params:
             self.element.setParam(param_key, new_param)
         else:
-            print(f'The key "{param_key}" is not in the "{element_type}" model.')
-
-    def is_optic(self) -> bool:
-        """Returns a boolean depending on if the element is designated as an optic or not.
-        PyorbitElementTypes.optic_classes determines which element types are designated as optics.
-
-        Returns
-        ----------
-        out : bool
-            True if the element is designated as an optic, false if not.
-        """
-
-        return self.is_optic_bool
-
-    def is_marker(self) -> bool:
-        """Returns a boolean depending on if the element is a marker node on the lattice.
-
-        Returns
-        ----------
-        out : bool
-            True if the element is a marker, false if not.
-        """
-
-        if self.element_type == PyorbitElementTypes.marker_key:
-            return True
-        else:
-            return False
+            print(f'The key "{param_key}" is not in the "{self.element_type}" element.')
 
 
 class PyorbitNode(PyorbitElement):
@@ -224,22 +118,20 @@ class PyorbitNode(PyorbitElement):
 
         Parameters
         ----------
-        node : PyorbitElementTypes.node_classes
+        node : BaseLinacNode
             Instance of a PyORBIT node (Quadrupole, etc.) to be used in the controller.
     """
 
-    node_types = PyorbitElementTypes.node_classes
-
-    def __init__(self, node: node_types):
+    def __init__(self, node: BaseLinacNode):
         super().__init__(node)
         self.node = node
 
-    def get_element(self) -> node_types:
+    def get_element(self) -> BaseLinacNode:
         """Returns the node.
 
         Returns
         ----------
-        out : PyorbitElementTypes.node_classes
+        out : BaseLinacNode
             The instance of the node given when initialized.
         """
 
@@ -257,13 +149,13 @@ class PyorbitNode(PyorbitElement):
         position = self.node.getPosition()
         return position
 
-    def get_tracking_node(self) -> node_types:
+    def get_tracking_node(self) -> BaseLinacNode:
         """Returns the node on the lattice this node is located at. This is for other classes and just returns the
         original node here.
 
         Returns
         ----------
-        out : PyorbitElementTypes.node_classes
+        out : BaseLinacNode
             The instance of the node given when initialized.
         """
 
@@ -275,18 +167,15 @@ class PyorbitCavity(PyorbitElement):
 
         Parameters
         ----------
-        cavity : PyorbitElementTypes.cavity_classes
+        cavity : RF_Cavity
             Instance of a PyORBIT cavity to be used in the controller.
     """
 
-    cavity_type = PyorbitElementTypes.cavity_classes
-    rf_gap_type = PyorbitElementTypes.node_classes
-
-    def __init__(self, cavity: cavity_type):
-        super().__init__(cavity)
+    def __init__(self, cavity: RF_Cavity, cavity_key: str):
+        super().__init__(cavity, cavity_key)
         self.cavity = cavity
 
-    def get_element(self) -> cavity_type:
+    def get_element(self) -> RF_Cavity:
         """Returns the cavity.
 
         Returns
@@ -297,7 +186,7 @@ class PyorbitCavity(PyorbitElement):
 
         return self.cavity
 
-    def get_first_node(self) -> rf_gap_type:
+    def get_first_node(self) -> BaseRF_Gap:
         """Returns the first RF gap node of the cavity.
 
         Returns
@@ -309,7 +198,7 @@ class PyorbitCavity(PyorbitElement):
         first_node = self.cavity.getRF_GapNodes()[0]
         return first_node
 
-    def get_tracking_node(self) -> rf_gap_type:
+    def get_tracking_node(self) -> BaseRF_Gap:
         """Returns the node directly on the lattice that begins the cavity. This uses get_first_node to do so.
 
         Returns
@@ -339,49 +228,46 @@ class PyorbitChild(PyorbitElement):
 
         Parameters
         ----------
-        child : PyorbitElementTypes.child_types
+        child : BaseLinacNode
             Instance of a PyORBIT child to be used in the controller.
-        ancestor_node : PyorbitElementTypes.node_types
+        ancestor_node : BaseLinacNode
             Instance of the PyORBIT node that is a direct child of the lattice and through which the child node can be
             found.
     """
 
-    child_types = PyorbitElementTypes.child_classes
-    node_types = PyorbitElementTypes.node_classes
-
-    def __init__(self, child: child_types, ancestor_node: node_types):
+    def __init__(self, child: BaseLinacNode, ancestor_node: BaseLinacNode):
         super().__init__(child)
         self.child = child
         self.ancestor_node = ancestor_node
 
-    def get_element(self) -> child_types:
+    def get_element(self) -> BaseLinacNode:
         """Returns the child node.
 
         Returns
         ----------
-        out : PyorbitElementTypes.child_types
+        out : BaseLinacNode
             The instance of the child node given when initialized.
         """
 
         return self.child
 
-    def get_ancestor_node(self) -> node_types:
+    def get_ancestor_node(self) -> BaseLinacNode:
         """Returns the ancestor node.
 
         Returns
         ----------
-        out : PyorbitElementTypes.node_types
+        out : BaseLinacNode
             The instance of the node on the lattice through which the child node is reached.
         """
 
         return self.ancestor_node
 
-    def get_tracking_node(self) -> node_types:
+    def get_tracking_node(self) -> BaseLinacNode:
         """Returns the node on the lattice that the child is under. In this case, the ancestor node.
 
         Returns
         ----------
-        out : PyorbitElementTypes.node_types
+        out : BaseLinacNode
             The instance of the node on the lattice through which the child node is reached.
         """
 

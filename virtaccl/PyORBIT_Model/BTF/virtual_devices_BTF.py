@@ -201,12 +201,11 @@ class BTF_FC(Device):
         new_state = self.settings[BTF_FC.state_set_pv].get_param()
          
         params_dict = {BTF_FC.state_key: new_state}
-        model_dict = {self.model_name+'_obj': params_dict}
-        #print(model_dict)
+        model_dict = {self.model_name: params_dict}
         return model_dict
 
     def update_readbacks(self):
-        fc_state = self.get_settings()[self.model_name+'_obj'][BTF_FC.state_key]
+        fc_state = self.get_settings()[self.model_name][BTF_FC.state_key]
         rb_param = self.readbacks[BTF_FC.state_readback_pv]
         rb_param.set_param(fc_state)
         
