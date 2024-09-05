@@ -169,6 +169,7 @@ def main():
     model.define_custom_node(BTF_Screenclass.node_type, BTF_Screenclass.parameter_list, optic=True)
     model.define_custom_node(BTF_Slitclass.node_type, BTF_Slitclass.parameter_list, optic=True)
     model.define_custom_node(BTF_BCMclass.node_type, BTF_BCMclass.parameter_list, diagnostic=True)
+    model.define_custom_node("markerLinacNode")
     model.initialize_lattice(model_lattice)
     model.set_initial_bunch(bunch_in, beam_current)
     element_list = model.get_element_list()
@@ -252,13 +253,10 @@ def main():
     bs = devices_dict["BS"]
     for name, device_dict in bs.items():
         ele_name = device_dict["PyORBIT_Name"]
-        obj_name = device_dict["Object_Name"]
         initial_state = device_dict["State"]
         if ele_name in element_list:
             bs_child = BTF_FCclass(ele_name)
             model.add_child_node(ele_name, bs_child)
-            bs_obj_child = BTF_FC_Objectclass(obj_name)
-            model.add_child_node(ele_name, bs_obj_child)
             bs_device = BTF_FC(name, ele_name, initial_state)
             server.add_device(bs_device)
 
