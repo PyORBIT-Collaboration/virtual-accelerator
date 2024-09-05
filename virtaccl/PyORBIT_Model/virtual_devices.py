@@ -51,7 +51,7 @@ class Quadrupole(Device):
         field_noise = AbsNoise(noise=Quadrupole.field_noise)
 
         # Registers the device's PVs with the server
-        self.register_readback(Quadrupole.field_readback_pv, noise=field_noise)
+        self.register_readback(Quadrupole.field_readback_pv, transform=self.pol_transform, noise=field_noise)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
@@ -93,7 +93,7 @@ class Corrector(Device):
         field_noise = AbsNoise(noise=Corrector.field_noise)
 
         # Registers the device's PVs with the server
-        self.register_readback(Corrector.field_readback_pv, noise=field_noise)
+        self.register_readback(Corrector.field_readback_pv, transform=self.pol_transform, noise=field_noise)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the setting PV names are associated with their model keys.
@@ -273,7 +273,7 @@ class BPM(Device):
         self.register_setting(BPM.oeda_pv, default=0)
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
-    # This is where the measurement PV name is associated with it's model key.
+    # This is where the measurement PV name is associated with its model key.
     def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
         bpm_params = new_params[self.model_name]
         amp = bpm_params[BPM.amp_key]

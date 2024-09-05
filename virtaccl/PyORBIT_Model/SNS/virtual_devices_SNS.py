@@ -165,3 +165,25 @@ class SNS_Dummy_ICS(Device):
 
     def get_settings(self) -> Dict[str, Dict[str, Any]]:
         return {}
+
+
+class SNS_Bunch_Dumper(Device):
+    # EPICS PV names
+    file_name_pv = 'bunch_file'
+    file_name_key = 'out_file'
+
+    def __init__(self, name: str, model_name: str = None, initial_file_name: str = 'bunch.dat'):
+        if model_name is None:
+            self.model_name = name
+        else:
+            self.model_name = model_name
+        super().__init__(name, self.model_name)
+
+        # Registers the device's PVs with the server.
+        self.register_setting(SNS_Bunch_Dumper.file_name_pv, default=initial_file_name, definition={'type': 'string'})
+
+    def get_settings(self):
+        file_name = self.settings[SNS_Bunch_Dumper.file_name_pv].get_param()
+        params_dict = {SNS_Bunch_Dumper.file_name_key: file_name}
+        model_dict = {self.model_name: params_dict}
+        return model_dict

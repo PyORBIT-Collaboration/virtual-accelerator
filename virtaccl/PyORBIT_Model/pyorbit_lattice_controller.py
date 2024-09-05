@@ -1,26 +1,27 @@
-import sys
 import time
 from datetime import datetime
-from typing import Optional, Union, List, Dict, Any
+from typing import Union, List, Dict, Any
 from pathlib import Path
 import json
 
+from orbit.py_linac.lattice import BaseLinacNode
 from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 from orbit.core.bunch import Bunch
 
 from .pyorbit_element_controllers import PyorbitNode, PyorbitChild, PyorbitCavity
-from .pyorbit_child_nodes import BPMclass, WSclass, BunchCopyClass, RF_Gap_Aperture, ScreenClass
+from .pyorbit_child_nodes import BunchCopyClass
 
 from virtaccl.model import Model
 
 
 class OrbitModel(Model):
     """
-    This is a controller that automates using the PyORBIT model for the virtual accelerator.
+    This is a controller that automates using the PyORBIT model for the virtual accelerator. If a PyORBIT lattice is
+    given, that lattice is initialized as part of the model's initialization.
 
         Parameters
         ----------
-        input_lattice : LinacAccLattice
+        input_lattice : LinacAccLattice, optional
             PyORBIT linac lattice the model uses for tracking.
         input_bunch : Bunch, optional
             PyORBIT bunch that the model will track from the entrance of the input_lattice.
@@ -33,20 +34,89 @@ class OrbitModel(Model):
     _element_ref_hint = Union[PyorbitNode, PyorbitCavity, PyorbitChild]
     _element_dict_hint = Dict[str, _element_ref_hint]
 
-    def __init__(self, input_lattice: LinacAccLattice, input_bunch: Bunch = None, debug: bool = False, save_bunch=None):
+    def __init__(self, input_lattice: LinacAccLattice = None, input_bunch: Bunch = None, debug: bool = False,
+                 save_bunch: str = None):
         super().__init__()
         self.debug = debug
         self.save_bunch = save_bunch
 
+        # Flags to keep track of lattice and bunch initialization.
+        self.lattice_flag = False
+        self.bunch_flag = False
+
+        # A dictionary used in tracking to keep track of parameters useful to the model.
+        self.model_params = {}
+
+        # Set up variable to track where the most upstream change is located.
+        self.current_changes = set()
+        # Store initial settings
+        self.initial_optics = {}
+
+        # Keys to designate different PyORBIT node types.
+        quad_key = 'linacQuad'
+        correctorH_key = 'dch'
+        correctorV_key = 'dcv'
+        bend_key = 'bend linac'
+        self.cavity_key = 'RF_Cavity'
+        self.marker_key = 'markerLinacNode'
+
+        # PyORBIT keys for parameters we want to pass to the virtual accelerator.
+        quad_params = ['dB/dr']
+        corrector_params = ['B']
+        bend_params = []
+        cavity_params = ['phase', 'amp']
+        marker_params = []
+
+        # Dictionary to keep the above parameters with their designated classes.
+        self.param_ref_dict = {quad_key: quad_params,
+                               self.cavity_key: cavity_params,
+                               correctorH_key: corrector_params,
+                               correctorV_key: corrector_params,
+                               bend_key: bend_params,
+                               self.marker_key: marker_params}
+
+        # Set of PyORBIT node types the model will keep track of.
+        self.modeled_elements = {self.cavity_key, quad_key, correctorH_key, correctorV_key, bend_key}
+
+        # Classes that can change the beam.
+        self.optic_classes = {self.cavity_key, quad_key, correctorH_key, correctorV_key, bend_key}
+
+        # Classes that measure the beam.
+        self.diagnostic_classes = set()
+
+        # Setup for when a lattice is initialized.
+        self.accLattice = None
+        # Dictionary containing all elements the model is maintaining.
+        self.pyorbit_dictionary: OrbitModel._element_dict_hint = {}
+        # Dictionary of bunches that allow for tracking starting at changed optics.
+        self.bunch_dict = {'initial_bunch': Bunch()}
+
+        if input_lattice is not None:
+            self.initialize_lattice(input_lattice)
+
+        if input_bunch is not None:
+            self.set_initial_bunch(input_bunch)
+
+    def initialize_lattice(self, input_lattice: LinacAccLattice):
+        """
+        Designate the lattice used by the model. All nodes specified node types are registered with the model. If an
+        initial bunch has already been designated, the bunch is then tracked. If a previous lattice was
+
+            Parameters
+            ----------
+            input_lattice : LinacAccLattice
+                PyORBIT linac lattice the model uses for tracking.
+        """
+
         self.accLattice = input_lattice
-        # Here we specify the node types in PyORBIT we don't need to worry about and start a set to make sure each
-        # element we do care about has a unique name.
-        ignored_nodes = {'baserfgap', 'drift', 'tilt', 'fringe', 'baseLinacNode'}
+        # Here we find the node types in PyORBIT we need to worry about and start a set to make sure each element we do
+        # care about has a unique name.
+        included_nodes = self.modeled_elements
         unique_elements = set()
 
         # Set up a dictionary to reference different objects within the lattice by their name. Not all elements are
         # readily available in LinacAccLattice, so this lets us easily reference them.
-        element_dict: OrbitModel._element_dict_hint = {}
+        element_dict = {}
 
         # This function is for digging into child nodes in PyORBIT to find nodes we need to reference. This is mainly
         # for correctors and some BPMs. If a BPM or wire scanner markerLinacNode is found, the appropriate child node is
@@ -54,7 +124,7 @@ class OrbitModel(Model):
         def add_child_nodes(ancestor_node, children_nodes, element_dictionary):
             for child in children_nodes:
                 child_type = child.getType()
-                if not any(substring in child_type for substring in ignored_nodes):
+                if child_type in included_nodes:
                     child_name = child.getName()
                     if child_name not in unique_elements:
                         unique_elements.add(child_name)
@@ -69,7 +139,7 @@ class OrbitModel(Model):
         list_of_nodes = self.accLattice.getNodes()
         for node in list_of_nodes:
             node_type = node.getType()
-            if not any(substring in node_type for substring in ignored_nodes):
+            if node_type in included_nodes:
                 element_name = node.getName()
                 if element_name not in unique_elements:
                     unique_elements.add(element_name)
@@ -83,40 +153,33 @@ class OrbitModel(Model):
         for cavity in list_of_cavities:
             element_name = cavity.getName()
             unique_elements.add(element_name)
-            element_dict[element_name] = PyorbitCavity(cavity)
-
-            # Adds a longitudinal aperture for the bunch based on the xml files allowed beta range.
-            # gap_ent = element_dict[element_name].get_first_node()
-            # beta_min, beta_max = gap_ent.getBetaMinMax()
-            # gap_ent.addChildNode(RF_Gap_Aperture('long_apt', beta_min, beta_max), gap_ent.BEFORE)
+            element_dict[element_name] = PyorbitCavity(cavity, self.cavity_key)
 
         self.pyorbit_dictionary = element_dict
 
         # Sets up a dictionary of bunches at each optics element. This dictionary is referenced whenever an optic
         # changes so that the bunch can be re-tracked from that optic instead of the beginning. It also attaches to each
         # optic the BunchCopyClass as a child node which saves the bunch within the dictionary.
-        self.bunch_dict = {'initial_bunch': Bunch()}
         for element_name, element_ref in self.pyorbit_dictionary.items():
-            location_node = element_ref.get_tracking_node()
-            if element_name not in self.bunch_dict:
+            if element_name not in self.bunch_dict and element_ref.get_type() in self.optic_classes:
+                location_node = element_ref.get_tracking_node()
                 self.bunch_dict[element_name] = Bunch()
-                location_node.addChildNode(BunchCopyClass(element_name, self.bunch_dict), location_node.ENTRANCE)
-
-        # A dictionary used in tracking to keep track of parameters useful to the model.
-        self.model_params = {}
-        self.bunch_flag = False
-
-        if input_bunch is not None:
-            self.set_initial_bunch(input_bunch)
+                location_node.addChildNode(BunchCopyClass(element_name + ':copyBunch', element_name, self.bunch_dict),
+                                           location_node.ENTRANCE)
 
         # Set up variable to track where the most upstream change is located.
-        self.current_changes = set()
+        self.current_changes.clear()
         # Store initial settings
         self.initial_optics = self.get_settings()
+        self.lattice_flag = True
+
+        if self.bunch_flag:
+            self.accLattice.trackDesignBunch(self.bunch_dict['initial_bunch'])
+            self.force_track()
 
     def set_initial_bunch(self, initial_bunch: Bunch, beam_current: float = 40e-3):
-        """Designate an input PyORBIT bunch for the lattice. This bunch is then tracked through the lattice from the
-        beginning.
+        """Designate an input PyORBIT bunch for the lattice. If a lattice has already been initialized, this bunch is
+        then tracked through the lattice from the beginning.
 
         Parameters
         ----------
@@ -132,8 +195,9 @@ class OrbitModel(Model):
         self.model_params['initial_particle_number'] = initial_bunch.getSizeGlobal()
         self.bunch_flag = True
 
-        self.accLattice.trackDesignBunch(initial_bunch)
-        self.force_track()
+        if self.lattice_flag:
+            self.accLattice.trackDesignBunch(initial_bunch)
+            self.force_track()
 
     def set_beam_current(self, beam_current: float):
         """Set the beam current for the initial bunch.
@@ -225,7 +289,11 @@ class OrbitModel(Model):
         if element_name not in pyorbit_dict.keys():
             print(f'The element "{element_name}" is not in the model.')
         else:
-            return pyorbit_dict[element_name].get_parameter_dict()
+            element_type = pyorbit_dict[element_name].get_type()
+            model_keys = self.param_ref_dict[element_type]
+            pyorbit_params = pyorbit_dict[element_name].get_parameter_dict()
+            element_dict = {key: pyorbit_params[key] for key in model_keys}
+            return element_dict
 
     def get_model_parameters(self, element_names: list[str] = None) -> Dict[str, Dict[str, Any]]:
         """Returns a parameter dictionary for multiple elements in the model.
@@ -260,13 +328,13 @@ class OrbitModel(Model):
                 print(f'These elements are not in the model: {", ".join(bad_names)}.')
 
         for element_name in good_names:
-            return_dict[element_name] = pyorbit_dict[element_name].get_parameter_dict()
-
+            element_dict = self.get_element_parameters(element_name)
+            return_dict[element_name] = element_dict
         return return_dict
 
-    def add_child_node(self, parent_name: str, child_node: Union[BPMclass, WSclass, ScreenClass]):
-        """Adds a child node to a node in the lattice and a reference in the element dictionary. If the name of the child
-         is taken by another node that is not a marker, the child will not be added.
+    def add_child_node(self, parent_name: str, child_node: BaseLinacNode):
+        """Adds a child node to a node in the lattice and a reference in the element dictionary. If the name of the
+        child is taken by another node that is not a marker, the child will not be added.
 
         Parameters
         ----------
@@ -279,7 +347,7 @@ class OrbitModel(Model):
 
         child_name = child_node.getName()
         if child_name in self.get_element_list():
-            if not self.get_element_controller(child_name).is_marker():
+            if self.get_element_controller(child_name).get_type() != self.marker_key:
                 print(f'Warning: "{child_name}" has the same name as another element, which is not a marker node. '
                       f'{child_name} was not added to the model.')
                 return
@@ -291,6 +359,45 @@ class OrbitModel(Model):
             ancestor = parent.get_element()
         ancestor.addChildNode(child_node, ancestor.ENTRANCE)
         self.get_element_dictionary()[child_name] = PyorbitChild(child_node, ancestor)
+
+        if child_node.getType() not in self.modeled_elements:
+            print(f'Warning: The node type "{child_node.getType()}" is not in the current list of node types managed by'
+                  f' the model. Define this node type for the model using the "define_custom_node" function.')
+
+    def define_custom_node(self, node_type: str, parameter_list: List[str] = None,
+                           optic: bool = False, diagnostic: bool = False):
+        """Defines custom nodes for the model. This tells the model how to handle new nodes not built into PyORBIT.
+
+        Parameters
+        ----------
+        node_type: basestring
+            String identifying the new type of node. This needs to be unique to all node types. If it is already taken
+            by either default PyORBIT nodes or another custom node, the new node type will NOT be added to the model.
+        parameter_list: list[string], optional
+            List of parameter keys in the node the model will reference. Include keys desired for the update_optics and
+            get_measurements functions. The default is an empty list telling the model not to reference any parameters.
+        optic: bool, optional
+            Boolean designating if the new node type changes the tracking optics. The default is False.
+        diagnostic: bool, optional
+            Boolean designating if the new node type measures the beam. The default is False.
+        """
+
+        if node_type in self.modeled_elements:
+            print(f'Error: Node type "{node_type}" is already in use. Node type cannot be added to the model.')
+            return
+        self.modeled_elements.add(node_type)
+        if parameter_list is None:
+            parameter_list = []
+        self.param_ref_dict[node_type] = parameter_list
+
+        if optic:
+            self.optic_classes.add(node_type)
+        if diagnostic:
+            self.diagnostic_classes.add(node_type)
+
+        if self.lattice_flag:
+            print(f'Warning: Lattice already initialized. Reinitialize the lattice to make sure all current '
+                  f'"{node_type}" nodes are registered with the model.')
 
     def get_settings(self, setting_names: list[str] = None) -> Dict[str, Dict[str, Any]]:
         """Returns a parameter dictionary for the setting elements in the model.
@@ -314,13 +421,13 @@ class OrbitModel(Model):
 
         if setting_names is None:
             for element_name, element_ref in pyorbit_dict.items():
-                if element_ref.is_optic():
+                if element_ref.get_type() in self.optic_classes:
                     good_names.append(element_name)
         else:
             for element_name in setting_names:
                 if element_name not in pyorbit_dict.keys():
                     bad_names.append(element_name)
-                elif not pyorbit_dict[element_name].is_optic():
+                elif pyorbit_dict[element_name].get_type() not in self.optic_classes:
                     bad_names.append(element_name)
                 else:
                     good_names.append(element_name)
@@ -328,8 +435,8 @@ class OrbitModel(Model):
                 print(f'These elements are not in the model or are not optics: {", ".join(bad_names)}.')
 
         for element_name in good_names:
-            return_dict[element_name] = pyorbit_dict[element_name].get_parameter_dict()
-
+            element_dict = self.get_element_parameters(element_name)
+            return_dict[element_name] = element_dict
         return return_dict
 
     def get_measurements(self, measurement_names: list[str] = None) -> Dict[str, Dict[str, Any]]:
@@ -347,8 +454,6 @@ class OrbitModel(Model):
             A dictionary of element names as keys connected to that element's parameter dictionary.
         """
 
-        # think about more useful parameters that are not real
-        # for fake parameters use XXX_Phys
         pyorbit_dict = self.pyorbit_dictionary
         return_dict = {}
         bad_names = []
@@ -356,29 +461,31 @@ class OrbitModel(Model):
 
         if measurement_names is None:
             for element_name, element_ref in pyorbit_dict.items():
-                if not element_ref.is_optic():
+                if element_ref.get_type() in self.diagnostic_classes:
                     good_names.append(element_name)
         else:
             for element_name in measurement_names:
                 if element_name not in pyorbit_dict.keys():
                     bad_names.append(element_name)
-                elif pyorbit_dict[element_name].is_optic():
+                elif pyorbit_dict[element_name].get_type() not in self.diagnostic_classes:
                     bad_names.append(element_name)
                 else:
                     good_names.append(element_name)
             if bad_names:
-                print(f'These elements are not in the model or are optics: {", ".join(bad_names)}.')
+                print(f'These elements are not in the model or are not diagnostics: {", ".join(bad_names)}.')
 
         for element_name in good_names:
-            return_dict[element_name] = pyorbit_dict[element_name].get_parameter_dict()
-
+            element_dict = self.get_element_parameters(element_name)
+            return_dict[element_name] = element_dict
         return return_dict
 
-    def track(self):
+    def track(self) -> None:
         """Tracks the bunch through the lattice. Tracks from the most upstream change to the end."""
 
-        if not self.bunch_flag:
-            print('Create initial bunch in order to start tracking.')
+        if not self.lattice_flag:
+            print('Error: Initialize a lattice in order to start tracking.')
+        elif not self.bunch_flag:
+            print('Error: Create an initial bunch in order to start tracking.')
 
         elif not self.current_changes:
             # print("No changes to track through.")
@@ -395,29 +502,34 @@ class OrbitModel(Model):
             tracked_bunch = Bunch()
 
             # Determine the furthest upstream node where an optic has been changed.
-            upstream_index = float('inf')
-            upstream_name = None
-            rf_flag = False
-            for element_name in frozen_changes:
-                location_node = self.pyorbit_dictionary[element_name].get_tracking_node()
-                ind_check = frozen_lattice.getNodeIndex(location_node)
-                if location_node.isRFGap():
-                    rf_flag = True
-                if ind_check < upstream_index:
-                    upstream_index = ind_check
-                    upstream_name = element_name
-
-            # Use the bunch in the dictionary associated with the node that tracking with start with.
-            if upstream_name in self.bunch_dict:
-                self.bunch_dict[upstream_name].copyBunchTo(tracked_bunch)
-                if self.debug:
-                    print("Tracking bunch from " + upstream_name + "...")
-            else:
-                # If no bunch is found for that node, track from the beginning.
+            if 'initial_bunch' in frozen_changes:
                 upstream_index = -1
+                upstream_name = None
+
+            else:
+                upstream_index = float('inf')
+                upstream_name = None
+                for element_name in frozen_changes:
+                    location_node = self.pyorbit_dictionary[element_name].get_tracking_node()
+                    ind_check = frozen_lattice.getNodeIndex(location_node)
+                    if ind_check < upstream_index:
+                        upstream_index = ind_check
+                        upstream_name = element_name
+
+                if upstream_name not in self.bunch_dict:
+                    upstream_index = -1
+                    upstream_name = None
+
+            if upstream_name is None:
+                # If no bunch is found for that node, track from the beginning.
                 self.bunch_dict['initial_bunch'].copyBunchTo(tracked_bunch)
                 if self.debug:
                     print("Tracking bunch from start...")
+            else:
+                # Use the bunch in the dictionary associated with the node that tracking will start with.
+                self.bunch_dict[upstream_name].copyBunchTo(tracked_bunch)
+                if self.debug:
+                    print("Tracking bunch from " + upstream_name + "...")
 
             # Track bunch
             frozen_lattice.trackBunch(tracked_bunch, paramsDict=self.model_params, index_start=upstream_index)
@@ -431,37 +543,12 @@ class OrbitModel(Model):
             # Clear the set of changes
             self.current_changes = set()
 
-    def force_track(self):
+    def force_track(self) -> None:
         """Tracks the bunch through the lattice. Tracks from the beginning to the end."""
 
-        if not self.bunch_flag:
-            print('Create initial bunch in order to start tracking.')
-
-        else:
-            track_start_time = time.time()
-
-            # I wanted to freeze the lattice to make sure no modifications could be made to it while it is tracking.
-            # Still trying to figure out the best way to do so.
-            # frozen_lattice = copy.deepcopy(self.accLattice)
-            frozen_lattice = self.accLattice
-            tracked_bunch = Bunch()
-
-            # Track from beginning
-            self.bunch_dict['initial_bunch'].copyBunchTo(tracked_bunch)
-            if self.debug:
-                print("Tracking bunch from start...")
-
-            # Track bunch
-            frozen_lattice.trackBunch(tracked_bunch, paramsDict=self.model_params)
-            track_time_taken = time.time() - track_start_time
-            if self.debug:
-                print(f"Bunch tracked. Tracking time was {round(track_time_taken, 3)} seconds")
-            if self.save_bunch:
-                tracked_bunch.dumpBunch(self.save_bunch)
-                print(f'Final bunch saved as "{self.save_bunch}"')
-
-            # Clear the set of changes
-            self.current_changes = set()
+        # Clear the set of changes to force tracking from the beginning of the lattice.
+        self.current_changes.add('initial_bunch')
+        self.track()
 
     def update_optics(self, changed_optics: Dict[str, Dict[str, Any]]) -> None:
         """Updates the optics in the lattice.
@@ -477,15 +564,18 @@ class OrbitModel(Model):
         for element_name, param_dict in changed_optics.items():
             if element_name not in pyorbit_dict.keys():
                 print(f'PyORBIT element "{element_name}" not found.')
-            elif pyorbit_dict[element_name].is_optic():
+            elif pyorbit_dict[element_name].get_type() in self.optic_classes:
                 element_ref = pyorbit_dict[element_name]
+                element_type = pyorbit_dict[element_name].get_type()
                 for param, new_value in param_dict.items():
-                    if param not in element_ref.get_parameter_dict():
+                    if param not in self.param_ref_dict[element_type]:
                         print(f'Parameter key "{param}" not found in PyORBIT element "{element_name}".')
                     else:
                         current_value = element_ref.get_parameter(param)
+                        if isinstance(new_value, str):
+                            element_ref.set_parameter(param, new_value)
                         # Resolution at which point the parameter will be changed.
-                        if abs(new_value - current_value) > 1e-12:
+                        elif abs(new_value - current_value) > 1e-12:
                             element_ref.set_parameter(param, new_value)
                             self.current_changes.add(element_name)
                             if self.debug:
