@@ -1,8 +1,11 @@
 import math
+import sys
 from typing import Dict
 
 import numpy as np
+
 from orbit.core.bunch import Bunch
+from orbit.py_linac.lattice import BaseLinacNode
 
 
 # A collection of classes that are attached to the lattice as child nodes for the virtual accelerator.
@@ -10,15 +13,21 @@ from orbit.core.bunch import Bunch
 
 # A class that adds BPMs to the lattice. This class calculates both typical diagnostics (average position) and values
 # that can't be directly measured (like energy).
-class BPMclass:
+class BPMclass(BaseLinacNode):
+    node_type = "BPM"
+    parameter_list = ['frequency', 'x_avg', 'y_avg', 'phi_avg', 'amp_avg', 'energy', 'beta', 'part_num']
+
     def __init__(self, child_name: str, frequency: float = 402.5e6):
-        self.parameters = {'frequency': frequency, 'x_avg': 0.0, 'y_avg': 0.0, 'phi_avg': 0.0, 'amp_avg': 0.0,
-                           'current': 0.0, 'energy': 0.0, 'beta': 0.0, 'part_num': 0}
+        parameters = {'frequency': frequency, 'x_avg': 0.0, 'y_avg': 0.0, 'phi_avg': 0.0, 'amp_avg': 0.0,
+                      'current': 0.0, 'energy': 0.0, 'beta': 0.0, 'part_num': 0}
+        BaseLinacNode.__init__(self, child_name)
+        for key, value in parameters.items():
+            self.addParam(key, value)
         self.child_name = child_name
-        self.node_type = 'BPM'
+        self.setType(BPMclass.node_type)
         self.si_e_charge = 1.6021773e-19
 
-    def trackActions(self, actionsContainer, paramsDict):
+    def track(self, paramsDict):
         if "bunch" not in paramsDict:
             return
         bunch = paramsDict["bunch"]
@@ -27,7 +36,7 @@ class BPMclass:
         sync_beta = sync_part.beta()
         sync_energy = sync_part.kinEnergy()
         if part_num > 0:
-            rf_freq = self.parameters['frequency']
+            rf_freq = self.getParam('frequency')
             initial_beam_current = paramsDict["beam_current"]
             initial_number = paramsDict['initial_particle_number']
             current = part_num / initial_number * initial_beam_current
@@ -46,78 +55,66 @@ class BPMclass:
             phi_avg = (phase_coeff * z_avg + sync_phase) % (2 * math.pi) - math.pi
             phi_rms = phase_coeff * math.sqrt((z_rms / part_num) - z_avg * z_avg)
             amp = abs(current * math.exp(-phi_rms * phi_rms / 2))
-            self.parameters['x_avg'] = x_avg
-            self.parameters['y_avg'] = y_avg
-            self.parameters['phi_avg'] = phi_avg
-            self.parameters['amp_avg'] = amp
-            self.parameters['current'] = current
-            self.parameters['energy'] = sync_energy
-            self.parameters['beta'] = sync_beta
-            self.parameters['part_num'] = part_num
-            # print(BPM_name + " : " + str(part_num))
+
+            self.setParam('x_avg', x_avg)
+            self.setParam('y_avg', y_avg)
+            self.setParam('phi_avg', phi_avg)
+            self.setParam('amp_avg', amp)
+            self.setParam('current', current)
+            self.setParam('energy', sync_energy)
+            self.setParam('beta', sync_beta)
+            self.setParam('part_num', part_num)
         else:
-            self.parameters['x_avg'] = 0.0
-            self.parameters['y_avg'] = 0.0
-            self.parameters['phi_avg'] = 0.0
-            self.parameters['amp_avg'] = 0.0
-            self.parameters['current'] = 0.0
-            self.parameters['energy'] = sync_energy
-            self.parameters['beta'] = sync_beta
-            self.parameters['part_num'] = part_num
+            self.setParam('x_avg', 0.0)
+            self.setParam('y_avg', 0.0)
+            self.setParam('phi_avg', 0.0)
+            self.setParam('amp_avg', 0.0)
+            self.setParam('current', 0.0)
+            self.setParam('energy', sync_energy)
+            self.setParam('beta', sync_beta)
+            self.setParam('part_num', part_num)
 
     def getFrequency(self):
-        return self.parameters['frequency']
+        return self.getParam('frequency')
 
     def setFrequency(self, new_frequency: float) -> None:
-        self.parameters['frequency'] = new_frequency
+        self.setParam('frequency', new_frequency)
 
     def getPhaseAvg(self):
-        return self.parameters['phi_avg']
+        return self.getParam('phi_avg')
 
     def getXAvg(self):
-        return self.parameters['x_avg']
+        return self.getParam('x_avg')
 
     def getYAvg(self):
-        return self.parameters['y_avg']
+        return self.getParam('y_avg')
 
     def getCurrent(self):
-        return self.parameters['current']
+        return self.getParam('current')
 
     def getEnergy(self):
-        return self.parameters['energy']
+        return self.getParam('energy')
 
     def getBeta(self):
-        return self.parameters['beta']
-
-    def getParam(self, param: str):
-        return self.parameters[param]
-
-    def setParam(self, param: str, new_param):
-        self.parameters[param] = new_param
-
-    def getParamsDict(self) -> dict:
-        return self.parameters
-
-    def getType(self):
-        return self.node_type
-
-    def getName(self):
-        return self.child_name
-
-    def getAllChildren(self):
-        return []
+        return self.getParam('beta')
 
 
 # Class for wire scanners. This class simply returns histograms of the vertical and horizontal positions.
-class WSclass:
-    def __init__(self, child_name: str, bin_number: int = 50):
-        self.parameters = {'x_histogram': np.array([[-10, 0], [10, 0]]), 'y_histogram': np.array([[-10, 0], [10, 0]]),
-                           'x_avg': 0.0, 'y_avg': 0.0}
-        self.child_name = child_name
-        self.bin_number = bin_number
-        self.node_type = 'WireScanner'
+class WSclass(BaseLinacNode):
+    node_type = "WireScanner"
+    parameter_list = ['x_histogram', 'y_histogram', 'x_avg', 'y_avg']
 
-    def trackActions(self, actionsContainer, paramsDict):
+    def __init__(self, child_name: str, bin_number: int = 50):
+        parameters = {'x_histogram': np.array([[-10, 0], [10, 0]]), 'y_histogram': np.array([[-10, 0], [10, 0]]),
+                      'x_avg': 0.0, 'y_avg': 0.0}
+        BaseLinacNode.__init__(self, child_name)
+        for key, value in parameters.items():
+            self.addParam(key, value)
+        self.child_name = child_name
+        self.setType(WSclass.node_type)
+        self.bin_number = bin_number
+
+    def track(self, paramsDict):
         if "bunch" not in paramsDict:
             return
         bunch = paramsDict["bunch"]
@@ -152,57 +149,47 @@ class WSclass:
             x_avg /= part_num
             y_avg /= part_num
 
-            self.parameters['x_histogram'] = x_out
-            self.parameters['y_histogram'] = y_out
-            self.parameters['x_avg'] = x_avg
-            self.parameters['y_avg'] = y_avg
+            self.setParam('x_histogram', x_out)
+            self.setParam('y_histogram', y_out)
+            self.setParam('x_avg', x_avg)
+            self.setParam('y_avg', y_avg)
 
         else:
-            self.parameters['x_histogram'] = np.array([[-10, 0], [10, 0]])
-            self.parameters['y_histogram'] = np.array([[-10, 0], [10, 0]])
-            self.parameters['x_avg'] = 0
-            self.parameters['y_avg'] = 0
+            self.setParam('x_histogram', np.array([[-10, 0], [10, 0]]))
+            self.setParam('y_histogram', np.array([[-10, 0], [10, 0]]))
+            self.setParam('x_avg', 0)
+            self.setParam('y_avg', 0)
 
     def getXHistogram(self):
-        return self.parameters['x_histogram']
+        return self.getParam('x_histogram')
 
     def getYHistogram(self):
-        return self.parameters['y_histogram']
+        return self.getParam('y_histogram')
 
     def getXAvg(self):
-        return self.parameters['x_avg']
+        return self.getParam('x_avg')
 
     def getYAvg(self):
-        return self.parameters['y_avg']
-
-    def getParam(self, param: str):
-        return self.parameters[param]
-
-    def getParamsDict(self) -> dict:
-        return self.parameters
-
-    def getType(self):
-        return self.node_type
-
-    def getName(self):
-        return self.child_name
-
-    def getAllChildren(self):
-        return []
+        return self.getParam('y_avg')
 
 
 # Class for wire scanners. This class simply returns histograms of the vertical and horizontal positions.
-class ScreenClass:
+class ScreenClass(BaseLinacNode):
+    node_type = "Screen"
+    parameter_list = ['xy_histogram', 'x_axis', 'y_axis', 'x_avg', 'y_avg']
+
     def __init__(self, child_name: str, x_bin_number: int = 10, y_bin_number: int = 10):
-        self.parameters = {'xy_histogram': np.zeros((2, 2)),
-                           'x_axis': np.array([-10, 10]), 'y_axis': np.array([-10, 10]),
-                           'x_avg': 0.0, 'y_avg': 0.0}
+        parameters = {'xy_histogram': np.zeros((2, 2)), 'x_axis': np.array([-10, 10]), 'y_axis': np.array([-10, 10]),
+                      'x_avg': 0.0, 'y_avg': 0.0}
+        BaseLinacNode.__init__(self, child_name)
+        for key, value in parameters.items():
+            self.addParam(key, value)
         self.child_name = child_name
+        self.setType(ScreenClass.node_type)
         self.x_number = x_bin_number
         self.y_number = y_bin_number
-        self.node_type = 'Screen'
 
-    def trackActions(self, actionsContainer, paramsDict):
+    def track(self, paramsDict):
         if "bunch" not in paramsDict:
             return
         bunch = paramsDict["bunch"]
@@ -227,56 +214,65 @@ class ScreenClass:
             x_avg /= part_num
             y_avg /= part_num
 
-            self.parameters['xy_histogram'] = xy_hist
-            self.parameters['x_axis'] = x_edges
-            self.parameters['y_axis'] = y_edges
-            self.parameters['x_avg'] = x_avg
-            self.parameters['y_avg'] = y_avg
+            self.setParam('xy_histogram', xy_hist)
+            self.setParam('x_axis', x_edges)
+            self.setParam('y_axis', y_edges)
+            self.setParam('x_avg', x_avg)
+            self.setParam('y_avg', y_avg)
 
         else:
-            self.parameters['xy_histogram'] = np.zeros((2, 2))
-            self.parameters['x_axis'] = np.array([-10, 10])
-            self.parameters['y_axis'] = np.array([-10, 10])
-            self.parameters['x_avg'] = 0
-            self.parameters['y_avg'] = 0
+            self.setParam('xy_histogram', np.zeros((2, 2)))
+            self.setParam('x_axis', np.array([-10, 10]))
+            self.setParam('y_axis', np.array([-10, 10]))
+            self.setParam('x_avg', 0)
+            self.setParam('y_avg', 0)
 
     def getXYHistogram(self):
-        return self.parameters['xy_histogram']
+        return self.getParam('xy_histogram')
 
     def getXAvg(self):
-        return self.parameters['x_avg']
+        return self.getParam('x_avg')
 
     def getYAvg(self):
-        return self.parameters['y_avg']
+        return self.getParam('y_avg')
 
-    def getParam(self, param: str):
-        return self.parameters[param]
 
-    def getParamsDict(self) -> dict:
-        return self.parameters
+class DumpBunchClass(BaseLinacNode):
+    node_type = "bunch_dumper"
+    parameter_list = ['out_file']
 
-    def getType(self):
-        return self.node_type
+    def __init__(self, child_name: str, out_file: str = 'bunch.dat'):
+        BaseLinacNode.__init__(self, child_name)
+        self.addParam('out_file', out_file)
+        self.child_name = child_name
+        self.setType(DumpBunchClass.node_type)
 
-    def getName(self):
-        return self.child_name
+    def track(self, paramsDict):
+        if "bunch" not in paramsDict:
+            return
+        bunch = paramsDict["bunch"]
+        file_name = self.getParam('out_file')
+        bunch.dumpBunch(file_name)
+        print('Bunch dumped into ' + file_name)
 
-    def getAllChildren(self):
-        return []
+    def setFileName(self, new_name: str):
+        self.setParam('out_file', new_name)
 
 
 # This class copies the bunch to a the bunch dictionary used to save the bunch at each optic.
-class BunchCopyClass:
-    def __init__(self, pyorbit_name: str, bunch_dict: Dict[str, Bunch]):
-        self.pyorbit_name = pyorbit_name
+class BunchCopyClass(BaseLinacNode):
+    def __init__(self, child_name: str, bunch_key: str, bunch_dict: Dict[str, Bunch]):
+        BaseLinacNode.__init__(self, child_name)
+        self.child_name = child_name
+        self.setType("bunch_saver")
+        self.bunch_key = bunch_key
         self.bunch_dict = bunch_dict
-        self.node_type = 'bunch_saver'
 
-    def trackActions(self, actionsContainer, paramsDict):
+    def track(self, paramsDict):
+        if "bunch" not in paramsDict:
+            return
         bunch = paramsDict["bunch"]
-        part_num = bunch.getSizeGlobal()
-        if part_num > 0:
-            bunch.copyBunchTo(self.bunch_dict[self.pyorbit_name])
+        bunch.copyBunchTo(self.bunch_dict[self.bunch_key])
 
 
 # This class removes all bunch particles if the bunch is outside of the beta limits of the cavity.

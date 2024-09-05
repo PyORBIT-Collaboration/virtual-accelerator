@@ -383,12 +383,10 @@
 	"BS": {
 		"ITSF_Diag:BS36": {
 			"PyORBIT_Name": "MEBT:BS36",
-			"Object_Name": "MEBT:BS36_obj",
 			"State": 1
 		},
 		"ITSF_Diag:BS08_S": {
 			"PyORBIT_Name": "MEBT:BS08_S",
-			"Object_Name": "MEBT:BS08_S_obj",
 			"State": 1
 		}
 	},
@@ -403,7 +401,6 @@
 	"FC": {
 		"ITSF_Diag:FC12": {
 			"PyORBIT_Name": "MEBT:FC12",
-			"Object_Name": "MEBT:FC12_obj",
 			"State": 0
 		}
 	},
