@@ -136,7 +136,7 @@ class BTF_Screenclass(BaseLinacNode):
                         value = 1
                         bunch.deleteParticleFast(n)
             else:
-                print('screen axis not set correctly for', child_name)
+                print('screen axis not set correctly for', self.child_name)
 
         elif self.getParam('axis_polarity') > 0 and current_position > -self.near_bunch and part_num > 0:
             if axis == 0:
