@@ -35,8 +35,8 @@ class SNS_Cavity(Cavity):
             self.model_name = model_name
         super().__init__(name, self.model_name, initial_dict, phase_offset, design_amp)
 
-        mps_name = name.replace('FCM', 'HPM', 1) + ':' + SNS_Cavity.net_power_pv
-        net_pwr_name = name.split(':')[0] + ':Cav' + name[-1] + ':' + SNS_Cavity.MPS_pv
+        net_pwr_name = name.split(':')[0] + ':Cav' + name[-1] + ':' + SNS_Cavity.net_power_pv
+        mps_name = name.replace('FCM', 'HPM', 1) + ':' + SNS_Cavity.MPS_pv
 
         if 'SCL' not in name:
             self.register_readback(SNS_Cavity.net_power_pv, Cavity.amp_pv, pv_override=net_pwr_name)
