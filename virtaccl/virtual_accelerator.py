@@ -63,6 +63,8 @@ def virtual_accelerator(model: Model, beam_line: BeamLine, arguments: argparse.A
     server = beam_line.get_server()
     delay = args.ca_proc
     server.process_delay = delay
+    if debug:
+        print(server)
     server.start()
     print(f"Server started.")
     now = None
