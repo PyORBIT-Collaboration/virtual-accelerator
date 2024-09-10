@@ -188,9 +188,6 @@ class Cavity(Device):
         offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
         amp_transform = LinearTInv(scaler=design_amp)
 
-        initial_phase = offset_transform.raw(initial_phase)
-        # initial_amp = amp_transform.raw(initial_amp)
-
         # Registers the device's PVs with the server
         self.register_setting(Cavity.phase_pv, default=initial_phase, transform=offset_transform)
         self.register_setting(Cavity.amp_pv, default=initial_amp, transform=amp_transform)

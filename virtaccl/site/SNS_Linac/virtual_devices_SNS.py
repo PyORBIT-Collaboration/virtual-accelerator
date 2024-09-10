@@ -33,36 +33,10 @@ class SNS_Cavity(Cavity):
             self.model_name = name
         else:
             self.model_name = model_name
-        super().__init__(name, self.model_name)
-
-        # Sets initial values for parameters.
-        if initial_dict is not None:
-            initial_phase = initial_dict[Cavity.phase_key]
-            initial_amp = initial_dict[Cavity.amp_key]
-        else:
-            initial_phase = 0
-            initial_amp = 1.0
-
-        self.design_amp = design_amp  # [MV]
-
-        # Create old amp variable for ramping
-        self.old_amp = initial_amp
-
-        # Adds a phase offset. Default is 0 offset.
-        offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
-        amp_transform = LinearTInv(scaler=self.design_amp)
-
-        initial_phase = initial_phase
-        initial_amp = initial_amp
+        super().__init__(name, self.model_name, initial_dict, phase_offset, design_amp)
 
         mps_name = name.replace('FCM', 'HPM', 1) + ':' + SNS_Cavity.net_power_pv
         net_pwr_name = name.split(':')[0] + ':Cav' + name[-1] + ':' + SNS_Cavity.MPS_pv
-
-        # Registers the device's PVs with the server
-        self.register_setting(Cavity.phase_pv, default=initial_phase, transform=offset_transform)
-        self.register_setting(Cavity.amp_pv, default=initial_amp, transform=amp_transform)
-        self.register_setting(Cavity.amp_goal_pv, default=initial_amp, transform=amp_transform)
-        self.register_setting(Cavity.blank_pv, default=0.0)
 
         if 'SCL' not in name:
             self.register_readback(SNS_Cavity.net_power_pv, Cavity.amp_pv, pv_override=net_pwr_name)
