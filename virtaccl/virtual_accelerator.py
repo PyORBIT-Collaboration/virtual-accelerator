@@ -80,7 +80,7 @@ def virtual_accelerator(model: Model, beam_line: BeamLine, arguments: argparse.A
         model.update_optics(new_optics)
         model.track()
         new_measurements = model.get_measurements()
-        beam_line.update_server_measurements_and_readbacks(new_measurements, timestamp=now)
+        beam_line.update_server(new_measurements, timestamp=now)
 
         server.update()
 

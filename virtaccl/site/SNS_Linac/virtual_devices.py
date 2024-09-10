@@ -202,13 +202,14 @@ class Cavity(Device):
 
         goal_value = self.get_parameter_value(Cavity.amp_goal_pv)
         set_value = self.get_parameter_value(Cavity.amp_pv)
-        model_value = self.old_amp
         if goal_value != self.old_amp:
             model_value = goal_value
-            self.set_parameter_value(Cavity.amp_pv, goal_value)
+            self.server_setting_override(Cavity.amp_pv, goal_value)
         elif set_value != self.old_amp:
             model_value = set_value
-            self.set_parameter_value(Cavity.amp_goal_pv, set_value)
+            self.server_setting_override(Cavity.amp_goal_pv, set_value)
+        else:
+            model_value = self.old_amp
         self.old_amp = model_value
 
         # If the cavity is blanked, turn off acceleration.

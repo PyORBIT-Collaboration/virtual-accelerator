@@ -206,6 +206,8 @@ class Device:
         # dictionary stores (definition, default, transform, noise)
         self.parameters: Dict[str, Parameter] = {}
 
+        self.sever_changes: Set[str] = set()
+
         self.settings: Set[str] = set()
         self.measurements: Set[str] = set()
         self.readbacks: Set[str] = set()
@@ -265,11 +267,16 @@ class Device:
             if reason in new_settings:
                 self.update_setting(reason, new_settings[reason])
 
+    def server_setting_override(self, reason: str, new_value=None):
+        self.set_parameter_value(reason, new_value)
+        self.sever_changes.add(reason)
+
     def get_model_optics(self) -> Dict[str, Dict[str, Any]]:
         return {}
 
     def update_measurement(self, reason: str, value=None):
         self.set_parameter_value(reason, value)
+        self.sever_changes.add(reason)
 
     def update_measurements(self, new_measurements: Dict[str, Dict[str, Any]] = None):
         for model_name, measurement in new_measurements.items():
@@ -282,10 +289,21 @@ class Device:
             setting_reason = self.parameters[reason].setting_reason
             value = self.parameters[setting_reason].get_value()
         self.set_parameter_value(reason, value)
+        self.sever_changes.add(reason)
 
     def update_readbacks(self):
         for reason in self.readbacks:
             self.update_readback(reason)
+
+    def clear_changes(self):
+        self.sever_changes.clear()
+
+    def get_changed_parameters(self) -> Dict[str, Any]:
+        changes_dict = {}
+        for reason in self.sever_changes:
+            param = self.get_parameter(reason)
+            changes_dict[param.get_pv()] = param.get_value_for_server()
+        return changes_dict
 
     def get_readbacks(self) -> Dict[str, Any]:
         readback_dict = {}
@@ -409,12 +427,15 @@ class BeamLine:
             readback_dict |= device.get_readbacks()
         return readback_dict
 
-    def update_server_measurements_and_readbacks(self,  new_measurements: Dict[str, Dict[str, Any]],
-                                                 timestamp: epicsTimeStamp = None):
+    def update_server(self, new_measurements: Dict[str, Dict[str, Any]], timestamp: epicsTimeStamp = None):
         self.update_measurements_from_model(new_measurements)
         self.update_readbacks()
-        new_server_params = self.get_measurements() | self.get_readbacks()
-        self.server.set_params(new_server_params, timestamp)
+
+        sever_dict = {}
+        for device_name, device in self.devices.items():
+            sever_dict |= device.get_changed_parameters()
+            device.clear_changes()
+        self.server.set_params(sever_dict, timestamp)
 
     def get_setting_pvs(self) -> List[str]:
         setting_pvs = []
