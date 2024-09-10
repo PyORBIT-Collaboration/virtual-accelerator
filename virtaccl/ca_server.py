@@ -1,7 +1,8 @@
 import signal
+import sys
 from threading import Event, Thread
 from datetime import datetime
-from typing import Dict, Any
+from typing import Dict, Any, List
 from time import sleep
 
 from math import floor
@@ -9,7 +10,6 @@ from math import floor
 from pcaspy import Driver
 from pcaspy.cas import epicsTimeStamp
 from pcaspy import SimpleServer
-from virtaccl.virtual_devices import Device
 
 
 def to_epics_timestamp(t: datetime):
@@ -42,8 +42,7 @@ class Server:
     def __init__(self, prefix='', process_delay=0.1):
         self.prefix = prefix
         self.driver = None
-        self.pv_db = dict()
-        self.devices: Dict[str, Device] = {}
+        self.pv_db = {}
         self.process_delay = process_delay
 
     def _CA_events(self, server):
@@ -59,17 +58,8 @@ class Server:
     def update(self):
         self.driver.updatePVs()
 
-    def add_device(self, device: Device):
-        pvs = device.build_db()
-        def_dict = {}
-        for reason, param in pvs.items():
-            param.server = self
-            def_dict[reason] = param.get_definition()
-        self.pv_db = self.pv_db | def_dict
-
-        device.server = self
-        self.devices[device.name] = device
-        return device
+    def add_pvs(self, pvs: Dict[str, Dict[str, Any]]):
+        self.pv_db |= pvs
 
     def start(self):
         server = SimpleServer()
@@ -80,10 +70,6 @@ class Server:
         # So it will die after main thread is gone
         tid.setDaemon(True)
         tid.start()
-
-        for device_name, device in self.devices.items():
-            device.reset()
-
         self.run()
 
     def stop(self):
@@ -93,52 +79,15 @@ class Server:
     def __str__(self):
         return 'Following PVs are registered:\n' + '\n'.join([f'{self.prefix}{k}' for k in self.pv_db])
 
-    def get_params(self):
+    def get_params(self) -> Dict[str, Any]:
         return {k: self.getParam(k) for k in self.pv_db.keys()}
 
-    def get_settings(self):
-        result = {}
-        for device_name, device in self.devices.items():
-            result = result | device.get_settings()
-        return result
-
-    def update_measurements(self, new_measurements: Dict[str, Dict[str, Any]]):
-        for device_name, device in self.devices.items():
-            model_names = device.model_names
-            device_measurements = {key: value for key, value in new_measurements.items() if key in model_names}
-            device.update_measurements(device_measurements)
-
-    def update_readbacks(self):
-        for device_name, device in self.devices.items():
-            device.update_readbacks()
-
-    def set_params(self, values: dict, timestamp=None):
+    def set_params(self, values: Dict[str, Any], timestamp=None):
         for k, v in values.items():
             self.setParam(k, v, timestamp)
 
-    def get_setting_pvs(self):
-        setting_pvs = []
-        for device_name, device in self.devices.items():
-            for reason, param in device.settings.items():
-                setting_pvs.append(param.get_pv())
-        return setting_pvs
-
-    def get_measurement_pvs(self):
-        measurement_pvs = []
-        for device_name, device in self.devices.items():
-            for reason, param in device.measurements.items():
-                measurement_pvs.append(param.get_pv())
-        return measurement_pvs
-
-    def get_readback_pvs(self):
-        readback_pvs = []
-        for device_name, device in self.devices.items():
-            for reason, param in device.readbacks.items():
-                readback_pvs.append(param.get_pv())
-        return readback_pvs
-
-    def get_pvs(self):
-        pvs = self.get_setting_pvs() +self.get_measurement_pvs() + self.get_readback_pvs()
+    def get_pvs(self) -> List[str]:
+        pvs = list(self.pv_db.keys())
         return pvs
 
     def run(self):

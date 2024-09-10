@@ -7,7 +7,7 @@ from typing import Dict, Any, Union, Literal
 import numpy as np
 from scipy.interpolate import interp2d
 
-from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTInv, LinearTInv, PosNoise, NormalizePeak
+from virtaccl.beam_line import Device, AbsNoise, LinearT, PhaseT, PhaseTInv, LinearTInv, PosNoise, NormalizePeak
 
 
 # Here are the device definitions that take the information from PyORBIT and translates/packages it into information for
@@ -55,23 +55,27 @@ class Quadrupole(Device):
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
-    def get_settings(self):
-        new_field = self.power_supply.get_setting(Quadrupole_Power_Supply.field_set_pv)
+
+    def get_field_from_PS(self):
+        new_field = self.power_supply.get_parameter_value(Quadrupole_Power_Supply.field_set_pv)
         new_field = self.pol_transform.real(new_field)
 
         if self.power_shunt:
-            shunt_field = self.power_shunt.get_setting(Quadrupole_Power_Shunt.field_set_pv)
+            shunt_field = self.power_shunt.get_parameter_value(Quadrupole_Power_Shunt.field_set_pv)
             shunt_field = self.pol_transform.real(shunt_field)
             new_field += shunt_field
 
+        return new_field
+
+    def get_model_optics(self) -> Dict[str, Dict[str, Any]]:
+        new_field = self.get_field_from_PS()
         params_dict = {Quadrupole.field_key: new_field}
         model_dict = {self.model_name: params_dict}
         return model_dict
 
     def update_readbacks(self):
-        rb_field = abs(self.get_settings()[self.model_name][Quadrupole.field_key])
-        rb_param = self.readbacks[Quadrupole.field_readback_pv]
-        rb_param.set_param(rb_field)
+        rb_field = abs(self.get_field_from_PS())
+        self.update_readback(Quadrupole.field_readback_pv, rb_field)
 
 
 class Corrector(Device):
@@ -99,26 +103,29 @@ class Corrector(Device):
     # where the setting PV names are associated with their model keys.
     # These settings have been limited by field_limits, meaning that if the server has a value outside that range, the
     # model will receive the max or min limit defined above.
-    def get_settings(self):
-        new_field = self.power_supply.get_setting(Corrector_Power_Supply.field_set_pv)
 
-        field_limit_high = self.power_supply.get_setting(Corrector_Power_Supply.field_high_limit_pv)
-        field_limit_low = self.power_supply.get_setting(Corrector_Power_Supply.field_low_limit_pv)
+    def get_field_from_PS(self):
+        new_field = self.power_supply.get_parameter_value(Corrector_Power_Supply.field_set_pv)
+
+        field_limit_high = self.power_supply.get_parameter_value(Corrector_Power_Supply.field_high_limit_pv)
+        field_limit_low = self.power_supply.get_parameter_value(Corrector_Power_Supply.field_low_limit_pv)
         if new_field > field_limit_high:
             new_field = field_limit_high
         elif new_field < field_limit_low:
             new_field = field_limit_low
 
         new_field = self.pol_transform.real(new_field)
+        return new_field
 
+    def get_model_optics(self) -> Dict[str, Dict[str, Any]]:
+        new_field = self.get_field_from_PS()
         params_dict = {Corrector.field_key: new_field}
         model_dict = {self.model_name: params_dict}
         return model_dict
 
     def update_readbacks(self):
-        rb_field = self.get_settings()[self.model_name][Corrector.field_key]
-        rb_param = self.readbacks[Corrector.field_readback_pv]
-        rb_param.set_param(rb_field)
+        rb_field = self.get_field_from_PS()
+        self.update_readback(Corrector.field_readback_pv, rb_field)
 
 
 class Bend(Device):
@@ -141,9 +148,8 @@ class Bend(Device):
         self.register_readback(Bend.field_readback_pv, noise=field_noise)
 
     def update_readbacks(self):
-        field = self.power_supply.get_setting(Bend_Power_Supply.field_set_pv)
-        rb_param = self.readbacks[Bend.field_readback_pv]
-        rb_param.set_param(field)
+        rb_field = self.power_supply.get_parameter_value(Bend_Power_Supply.field_set_pv)
+        self.update_readback(Bend_Power_Supply.field_set_pv, rb_field)
 
 
 class Cavity(Device):
@@ -183,7 +189,7 @@ class Cavity(Device):
         amp_transform = LinearTInv(scaler=design_amp)
 
         initial_phase = offset_transform.raw(initial_phase)
-        initial_amp = amp_transform.raw(initial_amp)
+        # initial_amp = amp_transform.raw(initial_amp)
 
         # Registers the device's PVs with the server
         self.register_setting(Cavity.phase_pv, default=initial_phase, transform=offset_transform)
@@ -193,37 +199,27 @@ class Cavity(Device):
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the setting PV names are associated with their model keys.
-    def get_settings(self):
-        params_dict = {}
-        for setting, param in self.settings.items():
-            param_value = param.get_param()
-            if setting == Cavity.phase_pv:
-                params_dict = params_dict | {Cavity.phase_key: param_value}
+    def get_model_optics(self) -> Dict[str, Dict[str, Any]]:
+        phase = self.get_parameter_value(Cavity.phase_pv)
+        params_dict = {Cavity.phase_key: phase}
 
-            elif setting == Cavity.amp_pv or setting == Cavity.amp_goal_pv:
-                goal_value = self.get_setting(Cavity.amp_goal_pv)
-                set_value = self.get_setting(Cavity.amp_pv)
-                model_value = self.old_amp
-                if goal_value != self.old_amp:
-                    model_value = goal_value
-                    amp_param = self.settings[Cavity.amp_pv]
-                    amp_param.set_param(goal_value)
-                elif set_value != self.old_amp:
-                    model_value = set_value
-                    goal_param = self.settings[Cavity.amp_goal_pv]
-                    goal_param.set_param(set_value)
-                self.old_amp = model_value
+        goal_value = self.get_parameter_value(Cavity.amp_goal_pv)
+        set_value = self.get_parameter_value(Cavity.amp_pv)
+        model_value = self.old_amp
+        if goal_value != self.old_amp:
+            model_value = goal_value
+            self.set_parameter_value(Cavity.amp_pv, goal_value)
+        elif set_value != self.old_amp:
+            model_value = set_value
+            self.set_parameter_value(Cavity.amp_goal_pv, set_value)
+        self.old_amp = model_value
 
-                # If the cavity is blanked, turn off acceleration.
-                blank_value = self.get_setting(Cavity.blank_pv)
-                if blank_value == 0:
-                    params_dict = params_dict | {Cavity.amp_key: param_value}
-                else:
-                    params_dict = params_dict | {Cavity.amp_key: 0.0}
-
-            elif setting == Cavity.blank_pv:
-                # placeholder in case something needs to happen here?
-                pass
+        # If the cavity is blanked, turn off acceleration.
+        blank_value = self.get_parameter_value(Cavity.blank_pv)
+        if blank_value == 0:
+            params_dict = params_dict | {Cavity.amp_key: model_value}
+        else:
+            params_dict = params_dict | {Cavity.amp_key: 0.0}
 
         model_dict = {self.model_name: params_dict}
         return model_dict
@@ -332,16 +328,13 @@ class WireScanner(Device):
             initial_position = initial_dict[WireScanner.position_key]
             initial_speed = initial_dict[WireScanner.speed_key]
         else:
-            initial_position = -0.05  # [m]
-            initial_speed = 0.001  # [mm/s]
+            initial_position = -0.05  # [mm]
+            initial_speed = 1  # [mm/s]
 
         # Defines internal parameters to keep track of the wire position.
         self.last_wire_pos = initial_position
         self.last_wire_time = time.time()
         self.wire_speed = initial_speed
-
-        initial_position = self.milli_units.raw(initial_position)
-        initial_speed = self.milli_units.raw(initial_speed)
 
         # Creates flat noise for associated PVs.
         xy_noise = AbsNoise(noise=1e-9)
@@ -354,16 +347,17 @@ class WireScanner(Device):
         self.register_measurement(WireScanner.y_avg_pv, noise=xy_noise, transform=self.milli_units)
 
         self.register_setting(WireScanner.speed_pv, default=initial_speed, transform=self.milli_units)
-        pos_param = self.register_setting(WireScanner.position_pv, default=initial_position, transform=self.milli_units)
-        self.register_readback(WireScanner.position_readback_pv, pos_param, transform=self.milli_units, noise=pos_noise)
+        self.register_setting(WireScanner.position_pv, default=initial_position, transform=self.milli_units)
+        self.register_readback(WireScanner.position_readback_pv, WireScanner.position_pv, transform=self.milli_units,
+                               noise=pos_noise)
 
     # Function to find the position of the virtual wire using time of flight from the previous position and the speed of
     # the wire.
     def get_wire_position(self):
         last_pos = self.last_wire_pos
         last_time = self.last_wire_time
-        wire_speed = self.get_setting(WireScanner.speed_pv)
-        pos_goal = self.get_setting(WireScanner.position_pv)
+        wire_speed = self.get_parameter_value(WireScanner.speed_pv)
+        pos_goal = self.get_parameter_value(WireScanner.position_pv)
         direction = np.sign(pos_goal - last_pos)
         current_time = time.time()
         wire_pos = direction * wire_speed * (current_time - last_time) + last_pos
@@ -381,15 +375,6 @@ class WireScanner(Device):
         self.last_wire_pos = wire_pos
 
         return wire_pos
-
-    # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
-    # where the setting PV names are associated with their model keys.
-    def get_settings(self):
-        wire_goal = self.settings[WireScanner.position_pv].get_param()
-        wire_speed = self.settings[WireScanner.speed_pv].get_param()
-        params_dict = {WireScanner.position_key: wire_goal, WireScanner.speed_key: wire_speed}
-        model_dict = {self.model_name: params_dict}
-        return model_dict
 
     # For the input setting PV (not the readback PV), updates it's associated readback on the server using the model.
     def update_readbacks(self):
@@ -410,6 +395,7 @@ class WireScanner(Device):
         x_pos = WireScanner.wire_coeff * wire_pos + WireScanner.x_offset
         x_value = np.interp(x_pos, x_hist[:, 0], x_hist[:, 1], left=0, right=0)
         self.update_measurement(WireScanner.x_charge_pv, x_value)
+
         y_pos = WireScanner.wire_coeff * wire_pos + WireScanner.y_offset
         y_value = np.interp(y_pos, y_hist[:, 0], y_hist[:, 1], left=0, right=0)
         self.update_measurement(WireScanner.y_charge_pv, y_value)
@@ -512,10 +498,11 @@ class Quadrupole_Power_Supply(Device):
         field_noise = AbsNoise(noise=1e-6)
 
         # Registers the device's PVs with the server.
-        field_param = self.register_setting(Quadrupole_Power_Supply.field_set_pv, default=init_field)
-        self.register_readback(Quadrupole_Power_Supply.field_readback_pv, field_param, noise=field_noise)
+        self.register_setting(Quadrupole_Power_Supply.field_set_pv, default=init_field)
+        self.register_readback(Quadrupole_Power_Supply.field_readback_pv, Quadrupole_Power_Supply.field_set_pv,
+                               noise=field_noise)
 
-        self.register_readback(Quadrupole_Power_Supply.book_pv, field_param)
+        self.register_readback(Quadrupole_Power_Supply.book_pv, Quadrupole_Power_Supply.field_set_pv)
 
 
 class Quadrupole_Power_Shunt(Device):
@@ -532,10 +519,11 @@ class Quadrupole_Power_Shunt(Device):
         field_noise = AbsNoise(noise=1e-6)
 
         # Registers the device's PVs with the server.
-        field_param = self.register_setting(Quadrupole_Power_Shunt.field_set_pv, default=init_field)
-        self.register_readback(Quadrupole_Power_Shunt.field_readback_pv, field_param, noise=field_noise)
+        self.register_setting(Quadrupole_Power_Shunt.field_set_pv, default=init_field)
+        self.register_readback(Quadrupole_Power_Shunt.field_readback_pv, Quadrupole_Power_Shunt.field_set_pv,
+                               noise=field_noise)
 
-        self.register_readback(Quadrupole_Power_Shunt.book_pv, field_param)
+        self.register_readback(Quadrupole_Power_Shunt.book_pv, Quadrupole_Power_Shunt.field_set_pv)
 
 
 class Bend_Power_Supply(Device):
@@ -552,10 +540,10 @@ class Bend_Power_Supply(Device):
         field_noise = AbsNoise(noise=1e-6)
 
         # Registers the device's PVs with the server.
-        field_param = self.register_setting(Bend_Power_Supply.field_set_pv, default=init_field)
-        self.register_readback(Bend_Power_Supply.field_readback_pv, field_param, noise=field_noise)
+        self.register_setting(Bend_Power_Supply.field_set_pv, default=init_field)
+        self.register_readback(Bend_Power_Supply.field_readback_pv, Bend_Power_Supply.field_set_pv, noise=field_noise)
 
-        self.register_readback(Bend_Power_Supply.book_pv, field_param)
+        self.register_readback(Bend_Power_Supply.book_pv, Bend_Power_Supply.field_set_pv)
 
 
 class Corrector_Power_Supply(Device):
@@ -577,14 +565,15 @@ class Corrector_Power_Supply(Device):
         field_noise = AbsNoise(noise=1e-6)
 
         # Registers the device's PVs with the server.
-        field_param = self.register_setting(Corrector_Power_Supply.field_set_pv, default=init_field)
-        self.register_readback(Corrector_Power_Supply.field_readback_pv, field_param, noise=field_noise)
+        self.register_setting(Corrector_Power_Supply.field_set_pv, default=init_field)
+        self.register_readback(Corrector_Power_Supply.field_readback_pv, Corrector_Power_Supply.field_set_pv,
+                               noise=field_noise)
 
         self.register_setting(Corrector_Power_Supply.field_high_limit_pv,
                               default=Corrector_Power_Supply.field_limits[1])
         self.register_setting(Corrector_Power_Supply.field_low_limit_pv, default=Corrector_Power_Supply.field_limits[0])
 
-        self.register_readback(Corrector_Power_Supply.book_pv, field_param)
+        self.register_readback(Corrector_Power_Supply.book_pv, Corrector_Power_Supply.field_set_pv)
 
 
 # An unrealistic device associated with BPMs in the PyORBIT model that tracks values that cannot be measured directly.

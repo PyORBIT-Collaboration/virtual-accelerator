@@ -2,12 +2,7 @@
 # The main body of the script instantiates PVs from a file passed by command line argument.
 import json
 import math
-import os
-import sys
-import time
-import argparse
 from pathlib import Path
-from importlib.metadata import version
 
 from orbit.lattice import AccNode
 from orbit.py_linac.lattice import LinacPhaseApertureNode
@@ -18,8 +13,8 @@ from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass
 from orbit.core.bunch import Bunch
 from orbit.core.linac import BaseRfGap
 
-from virtaccl.ca_server import Server, epics_now, not_ctrlc
-
+from virtaccl.ca_server import Server
+from virtaccl.beam_line import BeamLine
 from virtaccl.site.SNS_Linac.orbit_model.sns_linac_lattice_factory import PyORBIT_Lattice_Factory
 from virtaccl.site.SNS_Linac.virtual_devices import BPM, Quadrupole, Corrector, P_BPM, \
     WireScanner, Quadrupole_Power_Supply, Corrector_Power_Supply, Bend_Power_Supply, Bend, Quadrupole_Power_Shunt
@@ -116,6 +111,7 @@ def main():
     element_list = model.get_element_list()
 
     server = Server()
+    beam_line = BeamLine(server)
 
     offset_file = args.phase_offset
     if offset_file is not None:
@@ -134,7 +130,7 @@ def main():
                 phase_offset = offset_dict[name]
             rf_device = SNS_Cavity(name, ele_name, initial_dict=initial_settings, phase_offset=phase_offset,
                                    design_amp=amplitude)
-            server.add_device(rf_device)
+            beam_line.add_device(rf_device)
 
     quad_ps_names = devices_dict["Quadrupole_Power_Supply"]
     ps_quads = {}
@@ -168,7 +164,7 @@ def main():
         if ps_dict["quads"]:
             ps_field = ps_dict["min_field"]
             ps_device = Quadrupole_Power_Supply(ps_name, ps_field)
-            server.add_device(ps_device)
+            beam_line.add_device(ps_device)
             for quad_name, quad_model in ps_dict["quads"].items():
                 if quad_model['shunt'] == 'none':
                     quad_device = Quadrupole(quad_name, quad_model['or_name'], power_supply=ps_device,
@@ -178,10 +174,10 @@ def main():
                     field = quad_model['dB/dr']
                     shunt_field = field - ps_field
                     shunt_device = Quadrupole_Power_Shunt(shunt_name, shunt_field)
-                    server.add_device(shunt_device)
+                    beam_line.add_device(shunt_device)
                     quad_device = Quadrupole(quad_name, quad_model['or_name'], power_supply=ps_device,
                                              power_shunt=shunt_device, polarity=quad_model['polarity'])
-                server.add_device(quad_device)
+                beam_line.add_device(quad_device)
 
     correctors = devices_dict["Corrector"]
     for name, device_dict in correctors.items():
@@ -192,9 +188,9 @@ def main():
             if "Power_Supply" in device_dict and device_dict["Power_Supply"] in devices_dict["Corrector_Power_Supply"]:
                 ps_name = device_dict["Power_Supply"]
                 ps_device = Corrector_Power_Supply(ps_name, initial_field)
-                server.add_device(ps_device)
+                beam_line.add_device(ps_device)
                 corrector_device = Corrector(name, ele_name, power_supply=ps_device, polarity=polarity)
-                server.add_device(corrector_device)
+                beam_line.add_device(corrector_device)
 
     bends = devices_dict["Bend"]
     for name, device_dict in bends.items():
@@ -204,15 +200,15 @@ def main():
             if "Power_Supply" in device_dict and device_dict["Power_Supply"] in devices_dict["Bend_Power_Supply"]:
                 ps_name = device_dict["Power_Supply"]
                 ps_device = Bend_Power_Supply(ps_name, initial_field)
-                server.add_device(ps_device)
+                beam_line.add_device(ps_device)
                 bend_device = Bend(name, ele_name, power_supply=ps_device)
-                server.add_device(bend_device)
+                beam_line.add_device(bend_device)
 
     wire_scanners = devices_dict["Wire_Scanner"]
     for name, model_name in wire_scanners.items():
         if model_name in element_list:
             ws_device = WireScanner(name, model_name)
-            server.add_device(ws_device)
+            beam_line.add_device(ws_device)
 
     bpms = devices_dict["BPM"]
     for name, device_dict in bpms.items():
@@ -222,20 +218,20 @@ def main():
             if offset_file is not None:
                 phase_offset = offset_dict[name]
             bpm_device = BPM(name, ele_name, phase_offset=phase_offset)
-            server.add_device(bpm_device)
+            beam_line.add_device(bpm_device)
 
     pbpms = devices_dict["Physics_BPM"]
     for name, model_name in pbpms.items():
         if model_name in element_list:
             pbpm_device = P_BPM(name, model_name)
-            server.add_device(pbpm_device)
+            beam_line.add_device(pbpm_device)
 
     dummy_device = SNS_Dummy_BCM("Ring_Diag:BCM_D09", 'HEBT_Diag:BPM11')
-    server.add_device(dummy_device)
+    beam_line.add_device(dummy_device)
     dummy_device = SNS_Dummy_ICS("ICS_Tim")
-    server.add_device(dummy_device)
+    beam_line.add_device(dummy_device)
 
-    virtual_accelerator(model, server, args)
+    virtual_accelerator(model, beam_line, parser)
 
 
 if __name__ == '__main__':
