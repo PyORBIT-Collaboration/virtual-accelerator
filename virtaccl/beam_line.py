@@ -287,7 +287,9 @@ class Device:
     def update_readback(self, reason, value=None):
         if value is None:
             setting_reason = self.parameters[reason].setting_reason
-            value = self.parameters[setting_reason].get_value()
+            if setting_reason is not None:
+                setting_reason = self.parameters[reason].setting_reason
+                value = self.parameters[setting_reason].get_value()
         self.set_parameter_value(reason, value)
         self.sever_changes.add(reason)
 
@@ -304,31 +306,6 @@ class Device:
             param = self.get_parameter(reason)
             changes_dict[param.get_pv()] = param.get_value_for_server()
         return changes_dict
-
-    def get_readbacks(self) -> Dict[str, Any]:
-        readback_dict = {}
-        for reason in self.readbacks:
-            param = self.get_parameter(reason)
-            readback_dict[param.get_pv()] = param.get_value_for_server()
-        return readback_dict
-
-    def get_settings(self) -> Dict[str, Any]:
-        settings_dict = {}
-        for reason in self.settings:
-            param = self.get_parameter(reason)
-            settings_dict[param.get_pv()] = param.get_value_for_server()
-        return settings_dict
-
-    def get_measurements(self) -> Dict[str, Any]:
-        measurement_dict = {}
-        for reason in self.measurements:
-            param = self.get_parameter(reason)
-            measurement_dict[param.get_pv()] = param.get_value_for_server()
-        return measurement_dict
-
-    def get_pvs(self) -> Dict[str, Any]:
-        pvs = self.get_settings() | self.get_measurements() | self.get_readbacks()
-        return pvs
 
     def reset(self):
         for reason in self.settings:
@@ -384,9 +361,6 @@ class BeamLine:
     def get_sever_params(self) -> Dict[str, Any]:
         return self.server.get_params()
 
-    def update_server_params(self, new_pvs: Dict[str, Any], timestamp: epicsTimeStamp = None):
-        self.server.set_params(new_pvs, timestamp)
-
     def update_settings_from_server(self):
         server_params = self.get_sever_params()
         for device_name, device in self.devices.items():
@@ -411,21 +385,9 @@ class BeamLine:
             device_measurements = {key: value for key, value in new_measurements.items() if key in model_names}
             device.update_measurements(device_measurements)
 
-    def get_measurements(self) -> Dict[str, Any]:
-        measure_dict = {}
-        for device_name, device in self.devices.items():
-            measure_dict |= device.get_measurements()
-        return measure_dict
-
     def update_readbacks(self):
         for device_name, device in self.devices.items():
             device.update_readbacks()
-
-    def get_readbacks(self) -> Dict[str, Any]:
-        readback_dict = {}
-        for device_name, device in self.devices.items():
-            readback_dict |= device.get_readbacks()
-        return readback_dict
 
     def update_server(self, new_measurements: Dict[str, Dict[str, Any]], timestamp: epicsTimeStamp = None):
         self.update_measurements_from_model(new_measurements)
