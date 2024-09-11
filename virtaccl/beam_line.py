@@ -319,7 +319,7 @@ class Device:
 
 class BeamLine:
 
-    def __init__(self, server: Server = None):
+    def __init__(self, server: Server):
         self.devices: Dict[str, Device] = {}
         self.server = server
 
@@ -358,11 +358,11 @@ class BeamLine:
     def get_pvs(self) -> List[str]:
         return self.server.get_pvs()
 
-    def get_sever_params(self) -> Dict[str, Any]:
+    def get_server_params(self) -> Dict[str, Any]:
         return self.server.get_params()
 
     def update_settings_from_server(self):
-        server_params = self.get_sever_params()
+        server_params = self.get_server_params()
         for device_name, device in self.devices.items():
             device_settings = {}
             for reason in device.settings:
