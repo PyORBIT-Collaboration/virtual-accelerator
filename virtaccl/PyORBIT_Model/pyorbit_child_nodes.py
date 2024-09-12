@@ -273,18 +273,3 @@ class BunchCopyClass(BaseLinacNode):
             return
         bunch = paramsDict["bunch"]
         bunch.copyBunchTo(self.bunch_dict[self.bunch_key])
-
-
-# This class removes all bunch particles if the bunch is outside of the beta limits of the cavity.
-class RF_Gap_Aperture:
-    def __init__(self, gap_name: str, beta_min: float, beta_max: float):
-        self.gap_name = gap_name
-        self.beta_min = beta_min
-        self.beta_max = beta_max
-
-    def trackActions(self, actionsContainer, paramsDict):
-        bunch = paramsDict["bunch"]
-        sync_part = bunch.getSyncParticle()
-        sync_beta = sync_part.beta()
-        if not self.beta_min < sync_beta < self.beta_max:
-            bunch.deleteAllParticles()

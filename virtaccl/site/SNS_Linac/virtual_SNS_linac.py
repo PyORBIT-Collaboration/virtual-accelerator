@@ -7,21 +7,20 @@ from pathlib import Path
 from orbit.lattice import AccNode
 from orbit.py_linac.lattice import LinacPhaseApertureNode
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
-
-from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass
-
 from orbit.core.bunch import Bunch
 from orbit.core.linac import BaseRfGap
 
-from virtaccl.ca_server import Server
-from virtaccl.beam_line import BeamLine
 from virtaccl.site.SNS_Linac.orbit_model.sns_linac_lattice_factory import PyORBIT_Lattice_Factory
 from virtaccl.site.SNS_Linac.virtual_devices import BPM, Quadrupole, Corrector, P_BPM, \
     WireScanner, Quadrupole_Power_Supply, Corrector_Power_Supply, Bend_Power_Supply, Bend, Quadrupole_Power_Shunt
 from virtaccl.site.SNS_Linac.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS
 
+from virtaccl.ca_server import Server
+from virtaccl.beam_line import BeamLine
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 from virtaccl.virtual_accelerator import va_parser, virtual_accelerator
+
+from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass
 
 
 def main():
@@ -232,6 +231,8 @@ def main():
     beam_line.add_device(dummy_device)
 
     virtual_accelerator(model, beam_line, parser)
+
+    print('Exiting. Thank you for using our virtual accelerator!')
 
 
 if __name__ == '__main__':

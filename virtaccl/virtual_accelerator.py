@@ -90,5 +90,3 @@ def virtual_accelerator(model: Model, beam_line: BeamLine, arguments: argparse.A
             print('Warning: Update took longer than refresh rate.')
         else:
             time.sleep(sleep_time)
-
-    print('Exiting. Thank you for using our virtual accelerator!')
