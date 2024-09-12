@@ -26,7 +26,7 @@ setuptools.setup(
     entry_points={
         "console_scripts": [
             "sns_va = virtaccl.site.SNS_Linac.virtual_SNS_linac:main",
-            "idmp_va = virtaccl.site.IDmp.IDmp_virtual_accelerator:main",
+            "idmp_va = virtaccl.site.SNS_IDmp.IDmp_virtual_accelerator:main",
             "btf_va = virtaccl.site.btf.btf_virtual_accelerator:main",
         ]},
 
