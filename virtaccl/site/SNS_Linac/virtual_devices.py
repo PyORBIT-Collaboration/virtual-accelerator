@@ -149,7 +149,7 @@ class Bend(Device):
 
     def update_readbacks(self):
         rb_field = self.power_supply.get_parameter_value(Bend_Power_Supply.field_set_pv)
-        self.update_readback(Bend_Power_Supply.field_readback_pv, rb_field)
+        self.update_readback(Bend.field_readback_pv, rb_field)
 
 
 class Cavity(Device):
