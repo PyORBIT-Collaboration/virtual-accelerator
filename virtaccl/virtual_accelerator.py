@@ -1,32 +1,14 @@
 # Channel access server used to generate fake PV signals analogous to accelerator components.
 # The main body of the script instantiates PVs from a file passed by command line argument.
-import json
-import math
 import os
 import sys
 import time
 import argparse
-from pathlib import Path
 from importlib.metadata import version
 
-from orbit.lattice import AccNode
-from orbit.py_linac.lattice import LinacPhaseApertureNode
-from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
-
-from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass
-
-from orbit.core.bunch import Bunch
-from orbit.core.linac import BaseRfGap
-
 from virtaccl.ca_server import Server, epics_now, not_ctrlc
+from virtaccl.beam_line import BeamLine
 from virtaccl.model import Model
-
-from virtaccl.site.SNS_Linac.orbit_model.sns_linac_lattice_factory import PyORBIT_Lattice_Factory
-from virtaccl.site.SNS_Linac.virtual_devices import BPM, Quadrupole, Corrector, P_BPM, \
-    WireScanner, Quadrupole_Power_Supply, Corrector_Power_Supply, Bend_Power_Supply, Bend, Quadrupole_Power_Shunt
-from virtaccl.site.SNS_Linac.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS
-
-from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 
 
 def va_parser():
@@ -38,6 +20,8 @@ def va_parser():
     # Number (in Hz) determining the update rate for the virtual accelerator.
     parser.add_argument('--refresh_rate', default=1.0, type=float,
                         help='Rate (in Hz) at which the virtual accelerator updates (default=1.0).')
+    parser.add_argument('--sync_time', dest='sync_time', action='store_true',
+                        help="Synchronize timestamps for PVs.")
 
     # Desired amount of output.
     parser.add_argument('--debug', dest='debug', action='store_true',
@@ -58,40 +42,45 @@ def va_parser():
     return parser, va_version
 
 
-def virtual_accelerator(model: Model, server: Server, arguments: argparse.ArgumentParser):
+def virtual_accelerator(model: Model, beam_line: BeamLine, arguments: argparse.ArgumentParser):
     os.environ['EPICS_CA_MAX_ARRAY_BYTES'] = '10000000'
 
     args = arguments.parse_args()
     debug = args.debug
+    sync_time = args.sync_time
 
     update_period = 1 / args.refresh_rate
 
     if args.print_settings:
-        for setting in server.get_setting_pvs():
+        for setting in beam_line.get_setting_pvs():
             print(setting)
         sys.exit()
     elif args.print_pvs:
-        for pv in server.get_pvs():
+        for pv in beam_line.get_pvs():
             print(pv)
         sys.exit()
 
+    server = beam_line.get_server()
     delay = args.ca_proc
     server.process_delay = delay
+    if debug:
+        print(server)
     server.start()
     print(f"Server started.")
+    now = None
 
     # Our new data acquisition routine
     while not_ctrlc():
         loop_start_time = time.time()
 
-        now = epics_now()
+        if sync_time:
+            now = epics_now()
 
-        new_params = server.get_settings()
-        server.update_readbacks()
-        model.update_optics(new_params)
+        new_optics = beam_line.get_model_optics()
+        model.update_optics(new_optics)
         model.track()
         new_measurements = model.get_measurements()
-        server.update_measurements(new_measurements)
+        beam_line.update_server(new_measurements, timestamp=now)
 
         server.update()
 
