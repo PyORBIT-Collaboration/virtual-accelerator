@@ -173,7 +173,7 @@ def main():
                 beam_line.add_device(ps_device)
                 quadrupole_device = BTF_Quadrupole(name, ele_name, power_supply=ps_device, coeff_a = coeff_a, coeff_b = coeff_b, length=length)
                 beam_line.add_device(quadrupole_device)
-
+    
     fq_quad_ps = devices_dict["FQ_Quadrupole_Power_Supply"]
     fq_quads = devices_dict["FQ_Quadrupole"]
     for name, device_dict in fq_quads.items():
@@ -187,7 +187,7 @@ def main():
                 beam_line.add_device(ps_device)
                 quadrupole_device = Quadrupole(name, ele_name, power_supply=ps_device, polarity=polarity)
                 beam_line.add_device(quadrupole_device)
-
+    
     corr_ps = devices_dict["Corrector_Power_Supply"]
     corrs = devices_dict["Corrector"]
     for name, device_dict in corrs.items():
@@ -203,7 +203,7 @@ def main():
                 beam_line.add_device(ps_device)
                 corrector_device = BTF_Corrector(name, ele_name, power_supply = ps_device, coeff = coeff, length=length, momentum = momentum)
                 beam_line.add_device(corrector_device)
-
+    
     bends = devices_dict["Bend"]
     for name, device_dict in bends.items():
         ele_name = device_dict["PyORBIT_Name"]
@@ -215,7 +215,7 @@ def main():
                 beam_line.add_device(ps_device)
                 bend_device = Bend(name, ele_name, power_supply=ps_device)
                 beam_line.add_device(bend_device)
-
+    
     fc = devices_dict["FC"]
     for name, device_dict in fc.items():
         ele_name = device_dict["PyORBIT_Name"]

@@ -90,8 +90,8 @@ class BTF_Actuator(Device):
         last_pos = self.last_actuator_pos
         last_time = self.last_actuator_time
 
-        current_state = self.get_setting(BTF_Actuator.state_set_pv)
-        actuator_speed = self.get_setting(BTF_Actuator.speed_set_pv)
+        current_state = self.get_parameter_value(BTF_Actuator.state_set_pv)
+        actuator_speed = self.get_parameter_value(BTF_Actuator.speed_set_pv)
 
         # Limit the speed of the actuator to the maximum speed of physical actuator
         if actuator_speed > self.speed:
@@ -192,8 +192,8 @@ class BTF_FC(Device):
         # Registers the device's PVs with the server
         self.register_measurement(BTF_FC.current_pv, noise=current_noise)
          
-        state_param = self.register_setting(BTF_FC.state_set_pv, default=init_state)
-        self.register_readback(BTF_FC.state_readback_pv, state_param)
+        self.register_setting(BTF_FC.state_set_pv, default=init_state)
+        self.register_readback(BTF_FC.state_readback_pv, BTF_FC.state_set_pv)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
@@ -205,9 +205,8 @@ class BTF_FC(Device):
         return model_dict
 
     def update_readbacks(self):
-        fc_state = self.get_parameter_value(BTF_FC.state_key)
-        rb_param = self.readbacks[BTF_FC.state_readback_pv]
-        rb_param.set_param(fc_state)
+        fc_state = self.get_parameter_value(BTF_FC.state_set_pv)
+        self.update_readback(BTF_FC.state_readback_pv, fc_state)
         
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
