@@ -273,3 +273,86 @@ class BunchCopyClass(BaseLinacNode):
             return
         bunch = paramsDict["bunch"]
         bunch.copyBunchTo(self.bunch_dict[self.bunch_key])
+
+
+# This class removes all bunch particles if the bunch is outside of the beta limits of the cavity.
+class RF_Gap_Aperture:
+    def __init__(self, gap_name: str, beta_min: float, beta_max: float):
+        self.gap_name = gap_name
+        self.beta_min = beta_min
+        self.beta_max = beta_max
+
+    def trackActions(self, actionsContainer, paramsDict):
+        bunch = paramsDict["bunch"]
+        sync_part = bunch.getSyncParticle()
+        sync_beta = sync_part.beta()
+        if not self.beta_min < sync_beta < self.beta_max:
+            bunch.deleteAllParticles()
+
+class FCclass(BaseLinacNode):
+    node_type = "FaradayCup"
+    parameter_list = ['current', 'state']
+
+    def __init__(self, child_name: str):
+        parameters = {'current': 0.0, 'state': 1}
+        BaseLinacNode.__init__(self, child_name)
+        for key, value in parameters.items():
+            self.addParam(key, value)
+        self.child_name = child_name
+        self.setType(FCclass.node_type)
+        self.si_e_charge = 1.6021773e-19
+
+    def track(self, paramsDict):
+        if "bunch" not in paramsDict:
+            return
+        bunch = paramsDict["bunch"]
+        part_num = bunch.getSizeGlobal()
+
+        if part_num > 0:
+            initial_beam_current = paramsDict["beam_current"]
+            initial_number = paramsDict['initial_particle_number']
+            current = part_num / initial_number * initial_beam_current
+            self.setParam('current', current)
+        else:
+            self.setParam('current', 0.0)
+
+        live_state = self.getParam('state')
+        if live_state == 1:
+            if part_num > 0:
+                bunch.deleteAllParticles()
+
+    def getCurrent(self):
+        return self.getParam('current')
+
+    def getState(self):
+        return self.getParam('state')
+
+class BCMclass(BaseLinacNode):
+    node_type = "BCM"
+    parameter_list = ['current']
+
+    def __init__(self, child_name: str):
+        parameters = {'current': 0.0}
+        BaseLinacNode.__init__(self, child_name)
+        for key, value in parameters.items():
+            self.addParam(key, value)
+        self.child_name = child_name
+        self.setType(BCMclass.node_type)
+        self.si_e_charge = 1.6021773e-19
+
+    def track(self, paramsDict):
+        if "bunch" not in paramsDict:
+            return
+        bunch = paramsDict["bunch"]
+
+        part_num = bunch.getSizeGlobal()
+        if part_num > 0:
+            initial_beam_current = paramsDict["beam_current"]
+            initial_number = paramsDict['initial_particle_number']
+            current = part_num / initial_number * initial_beam_current
+            self.setParam('current', current)
+        else:
+            self.setParam('current', 0.0)
+
+    def getCurrent(self):
+        return self.getParam('current')
