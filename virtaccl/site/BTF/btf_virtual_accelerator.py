@@ -44,9 +44,9 @@ def main():
     parser.add_argument('--lattice', default=loc / 'orbit_model/btf_lattice_straight.xml', type=str,
                         help='Pathname of lattice file')
     parser.add_argument("--start", default="MEBT1", type=str,
-                        help='Desired sequence of the lattice to start the model with (default=MEBT).')
+                        help='Desired sequence of the lattice to start the model with (default=MEBT1).')
     parser.add_argument("end", nargs='?', default="MEBT2", type=str,
-                        help='Desired sequence of the lattice to end the model with (default=HEBT1).')
+                        help='Desired sequence of the lattice to end the model with (default=MEBT2).')
 
     # Desired initial bunch file and the desired number of particles from that file.
     parser.add_argument('--bunch', default=loc / 'orbit_model/parmteq_bunch_RFQ_output_1.00e+05.dat', type=str,
@@ -54,7 +54,7 @@ def main():
     parser.add_argument('--particle_number', default=1000, type=int,
                         help='Number of particles to use (default=1000).')
     parser.add_argument('--beam_current', default=30.0, type=float,
-                        help='Initial bema current in mA. (default=30.0).')
+                        help='Initial beam current in mA. (default=30.0).')
     parser.add_argument('--save_bunch', const='end_bunch.dat', nargs='?', type=str,
                         help="Saves the bunch at the end of the lattice after each track in the given location. "
                              "If no location is given, the bunch is saved as 'end_bunch.dat' in the working directory. "
@@ -157,7 +157,7 @@ def main():
     if offset_file is not None:
         with open(offset_file, "r") as json_file:
             offset_dict = json.load(json_file)
-    
+
     quad_ps = devices_dict["Quadrupole_Power_Supply"]
     quads = devices_dict["Quadrupole"]
     for name, device_dict in quads.items():
@@ -173,7 +173,7 @@ def main():
                 beam_line.add_device(ps_device)
                 quadrupole_device = BTF_Quadrupole(name, ele_name, power_supply=ps_device, coeff_a = coeff_a, coeff_b = coeff_b, length=length)
                 beam_line.add_device(quadrupole_device)
-    
+
     fq_quad_ps = devices_dict["FQ_Quadrupole_Power_Supply"]
     fq_quads = devices_dict["FQ_Quadrupole"]
     for name, device_dict in fq_quads.items():
@@ -187,7 +187,7 @@ def main():
                 beam_line.add_device(ps_device)
                 quadrupole_device = Quadrupole(name, ele_name, power_supply=ps_device, polarity=polarity)
                 beam_line.add_device(quadrupole_device)
-    
+
     corr_ps = devices_dict["Corrector_Power_Supply"]
     corrs = devices_dict["Corrector"]
     for name, device_dict in corrs.items():
@@ -203,7 +203,7 @@ def main():
                 beam_line.add_device(ps_device)
                 corrector_device = BTF_Corrector(name, ele_name, power_supply = ps_device, coeff = coeff, length=length, momentum = momentum)
                 beam_line.add_device(corrector_device)
-    
+
     bends = devices_dict["Bend"]
     for name, device_dict in bends.items():
         ele_name = device_dict["PyORBIT_Name"]
@@ -215,7 +215,7 @@ def main():
                 beam_line.add_device(ps_device)
                 bend_device = Bend(name, ele_name, power_supply=ps_device)
                 beam_line.add_device(bend_device)
-    
+
     fc = devices_dict["FC"]
     for name, device_dict in fc.items():
         ele_name = device_dict["PyORBIT_Name"]
@@ -261,14 +261,14 @@ def main():
     screens = devices_dict["Screen"]
     for name, device_dict in screens.items():
         ele_name = device_dict["PyORBIT_Name"]
-        axis = device_dict["Axis"] 
+        axis = device_dict["Axis"]
         axis_polarity = device_dict["Axis_Polarity"]
         if ele_name in element_list:
             screen_child = BTF_Screenclass(ele_name, screen_axis = axis, screen_polarity = axis_polarity)
             model.add_child_node(ele_name, screen_child)
             screen_device = BTF_Actuator(name, ele_name)
             beam_line.add_device(screen_device)
-    
+
     slits = devices_dict["Slit"]
     for name, device_dict in slits.items():
         ele_name = device_dict["PyORBIT_Name"]

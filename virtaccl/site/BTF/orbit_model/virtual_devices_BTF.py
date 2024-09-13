@@ -42,7 +42,7 @@ class BTF_Actuator(Device):
 
         # Changes the units from meters to millimeters for associated PVs.
         self.milli_units = LinearTInv(scaler=1e3)
-        
+
         # Sets initial values for parameters.
         if park_location is not None:
             self.park_location = park_location
@@ -149,7 +149,7 @@ class BTF_Actuator(Device):
         else:
             actuator_pos = last_pos
             current_time = time.time()
-        
+
         # Reset variables for the next calculation
         self.last_actuator_time = current_time
         self.last_actuator_pos = actuator_pos
@@ -177,29 +177,29 @@ class BTF_FC(Device):
     state_set_pv = 'State_Set'
     state_readback_pv = 'State'
     current_noise = 7e-5
-    
+
     #PyORBIT parameter keys
     current_key = 'current'
     state_key = 'state'
 
     def __init__(self, name: str, model_name: str = None, init_state=None):
-        
+
         self.model_name = model_name
         super().__init__(name, self.model_name)
 
         current_noise = PosNoise(noise=BTF_FC.current_noise)
-        
+
         # Registers the device's PVs with the server
         self.register_measurement(BTF_FC.current_pv, noise=current_noise)
-         
+
         self.register_setting(BTF_FC.state_set_pv, default=init_state)
         self.register_readback(BTF_FC.state_readback_pv, BTF_FC.state_set_pv)
 
     # Return the setting value of the PV name for the device as a dictionary using the model key and it's value. This is
     # where the PV names are associated with their model keys.
-    def get_model_settings(self) -> Dict[str, Dict[str, Any]]:
+    def get_model_optics(self) -> Dict[str, Dict[str, Any]]:
         new_state = self.get_parameter_value(BTF_FC.state_set_pv)
-         
+
         params_dict = {BTF_FC.state_key: new_state}
         model_dict = {self.model_name: params_dict}
         return model_dict
@@ -207,12 +207,12 @@ class BTF_FC(Device):
     def update_readbacks(self):
         fc_state = self.get_parameter_value(BTF_FC.state_set_pv)
         self.update_readback(BTF_FC.state_readback_pv, fc_state)
-        
+
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
     def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
         current_state = self.get_parameter_value(BTF_FC.state_set_pv)
-        
+
         if current_state == 1:
             fc_params = new_params[self.model_name]
             current = fc_params[BTF_FC.current_key]
@@ -302,7 +302,7 @@ class BTF_Quadrupole(Device):
 
 
 
-class BTF_Quadrupole_Power_Supply(Device):    
+class BTF_Quadrupole_Power_Supply(Device):
     current_set_pv = 'I_Set' # [Amps]
     current_readback_pv = 'I' # [Amps]
 

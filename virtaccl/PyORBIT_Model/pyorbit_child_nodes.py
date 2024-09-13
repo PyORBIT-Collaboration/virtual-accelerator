@@ -237,58 +237,6 @@ class ScreenClass(BaseLinacNode):
         return self.getParam('y_avg')
 
 
-class DumpBunchClass(BaseLinacNode):
-    node_type = "bunch_dumper"
-    parameter_list = ['out_file']
-
-    def __init__(self, child_name: str, out_file: str = 'bunch.dat'):
-        BaseLinacNode.__init__(self, child_name)
-        self.addParam('out_file', out_file)
-        self.child_name = child_name
-        self.setType(DumpBunchClass.node_type)
-
-    def track(self, paramsDict):
-        if "bunch" not in paramsDict:
-            return
-        bunch = paramsDict["bunch"]
-        file_name = self.getParam('out_file')
-        bunch.dumpBunch(file_name)
-        print('Bunch dumped into ' + file_name)
-
-    def setFileName(self, new_name: str):
-        self.setParam('out_file', new_name)
-
-
-# This class copies the bunch to a the bunch dictionary used to save the bunch at each optic.
-class BunchCopyClass(BaseLinacNode):
-    def __init__(self, child_name: str, bunch_key: str, bunch_dict: Dict[str, Bunch]):
-        BaseLinacNode.__init__(self, child_name)
-        self.child_name = child_name
-        self.setType("bunch_saver")
-        self.bunch_key = bunch_key
-        self.bunch_dict = bunch_dict
-
-    def track(self, paramsDict):
-        if "bunch" not in paramsDict:
-            return
-        bunch = paramsDict["bunch"]
-        bunch.copyBunchTo(self.bunch_dict[self.bunch_key])
-
-
-# This class removes all bunch particles if the bunch is outside of the beta limits of the cavity.
-class RF_Gap_Aperture:
-    def __init__(self, gap_name: str, beta_min: float, beta_max: float):
-        self.gap_name = gap_name
-        self.beta_min = beta_min
-        self.beta_max = beta_max
-
-    def trackActions(self, actionsContainer, paramsDict):
-        bunch = paramsDict["bunch"]
-        sync_part = bunch.getSyncParticle()
-        sync_beta = sync_part.beta()
-        if not self.beta_min < sync_beta < self.beta_max:
-            bunch.deleteAllParticles()
-
 class FCclass(BaseLinacNode):
     node_type = "FaradayCup"
     parameter_list = ['current', 'state']
@@ -327,6 +275,7 @@ class FCclass(BaseLinacNode):
     def getState(self):
         return self.getParam('state')
 
+
 class BCMclass(BaseLinacNode):
     node_type = "BCM"
     parameter_list = ['current']
@@ -356,3 +305,41 @@ class BCMclass(BaseLinacNode):
 
     def getCurrent(self):
         return self.getParam('current')
+
+
+class DumpBunchClass(BaseLinacNode):
+    node_type = "bunch_dumper"
+    parameter_list = ['out_file']
+
+    def __init__(self, child_name: str, out_file: str = 'bunch.dat'):
+        BaseLinacNode.__init__(self, child_name)
+        self.addParam('out_file', out_file)
+        self.child_name = child_name
+        self.setType(DumpBunchClass.node_type)
+
+    def track(self, paramsDict):
+        if "bunch" not in paramsDict:
+            return
+        bunch = paramsDict["bunch"]
+        file_name = self.getParam('out_file')
+        bunch.dumpBunch(file_name)
+        print('Bunch dumped into ' + file_name)
+
+    def setFileName(self, new_name: str):
+        self.setParam('out_file', new_name)
+
+
+# This class copies the bunch to a the bunch dictionary used to save the bunch at each optic.
+class BunchCopyClass(BaseLinacNode):
+    def __init__(self, child_name: str, bunch_key: str, bunch_dict: Dict[str, Bunch]):
+        BaseLinacNode.__init__(self, child_name)
+        self.child_name = child_name
+        self.setType("bunch_saver")
+        self.bunch_key = bunch_key
+        self.bunch_dict = bunch_dict
+
+    def track(self, paramsDict):
+        if "bunch" not in paramsDict:
+            return
+        bunch = paramsDict["bunch"]
+        bunch.copyBunchTo(self.bunch_dict[self.bunch_key])
