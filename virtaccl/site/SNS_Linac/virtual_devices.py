@@ -32,8 +32,8 @@ class Quadrupole(Device):
     # PyORBIT parameter keys
     field_key = 'dB/dr'  # [T/m]
 
-    def __init__(self, name: str, model_name: str, power_supply: Device, power_shunt: Device = None,
-                 polarity: Literal[-1, 1] = None):
+    def __init__(self, name: str, model_name: str, power_supply: 'Quadrupole_Power_Supply',
+                 power_shunt: 'Quadrupole_Power_Shunt' = None, polarity: Literal[-1, 1] = None):
 
         self.model_name = model_name
         self.power_supply = power_supply
@@ -86,7 +86,8 @@ class Corrector(Device):
     # PyORBIT parameter keys
     field_key = 'B'  # [T]
 
-    def __init__(self, name: str, model_name: str, power_supply: Device, polarity: Literal[-1, 1] = None):
+    def __init__(self, name: str, model_name: str, power_supply: 'Corrector_Power_Supply',
+                 polarity: Literal[-1, 1] = None):
         self.model_name = model_name
         self.power_supply = power_supply
 
@@ -136,7 +137,7 @@ class Bend(Device):
     # PyORBIT parameter keys
     field_key = 'B'  # [T]
 
-    def __init__(self, name: str, model_name: str, power_supply: Device):
+    def __init__(self, name: str, model_name: str, power_supply: 'Bend_Power_Supply'):
         self.model_name = model_name
         self.power_supply = power_supply
 
