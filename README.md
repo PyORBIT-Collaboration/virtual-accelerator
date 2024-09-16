@@ -57,17 +57,17 @@ export EPICS_CA_MAX_ARRAY_BYTES=10000000
 
 To see help:
 ```bash
-virtual_accelerator -h
+sns_va -h
 ```
 
 Run default MEBT -> HEBT1
 ```bash
-virtual_accelerator
+sns_va
 ```
 
 Run MEBT only (with printing all PVs)
 ```bash
-   virtual_accelerator --debug --bunch MEBT_in.dat MEBT
+   sns_va --debug --bunch MEBT_in.dat MEBT
 ```
 
 ### Run standard examples 
@@ -83,6 +83,24 @@ To launch an example run
 python -m virtaccl.examples.Corrector 
 ```
 
+### BTF beamline
+
+To see help:
+```bash
+btf_va -h
+```
+
+Run with default bunch
+
+```bash
+btf_va --debug
+```
+
+BTF example file:
+
+```bash
+python -m virtaccl.examples.BTF_Mag_Test 
+```
 
 ### Hardcoded IDmp+ beamline of SNS accelerator
 
