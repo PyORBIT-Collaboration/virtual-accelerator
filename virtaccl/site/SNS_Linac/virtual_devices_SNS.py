@@ -1,13 +1,8 @@
-import sys
-import time
 import math
-from random import randint, random
-from typing import Dict, Any, Union, Literal
+from typing import Dict, Any
 
-import numpy as np
-from virtaccl.PyORBIT_Model.virtual_devices import Cavity, Quadrupole, Corrector, WireScanner
-
-from virtaccl.virtual_devices import Device, AbsNoise, LinearT, PhaseT, PhaseTInv, LinearTInv
+from virtaccl.beam_line import Device, AbsNoise, PhaseTInv, LinearTInv
+from virtaccl.site.SNS_Linac.virtual_devices import Cavity, WireScanner
 
 
 # Here are the device definitions that take the information from PyORBIT and translates/packages it into information for
@@ -38,42 +33,16 @@ class SNS_Cavity(Cavity):
             self.model_name = name
         else:
             self.model_name = model_name
-        super().__init__(name, self.model_name)
+        super().__init__(name, self.model_name, initial_dict, phase_offset, design_amp)
 
-        # Sets initial values for parameters.
-        if initial_dict is not None:
-            initial_phase = initial_dict[Cavity.phase_key]
-            initial_amp = initial_dict[Cavity.amp_key]
-        else:
-            initial_phase = 0
-            initial_amp = 1.0
-
-        self.design_amp = design_amp  # [MV]
-
-        # Create old amp variable for ramping
-        self.old_amp = initial_amp
-
-        # Adds a phase offset. Default is 0 offset.
-        offset_transform = PhaseTInv(offset=phase_offset, scaler=180 / math.pi)
-        amp_transform = LinearTInv(scaler=self.design_amp)
-
-        initial_phase = offset_transform.raw(initial_phase)
-        initial_amp = amp_transform.raw(initial_amp)
-
-        mps_name = name.replace('FCM', 'HPM', 1)
-        net_pwr_name = name.split(':')[0] + ':Cav' + name[-1]
-
-        # Registers the device's PVs with the server
-        self.register_setting(Cavity.phase_pv, default=initial_phase, transform=offset_transform)
-        amp_setting = self.register_setting(Cavity.amp_pv, default=initial_amp, transform=amp_transform)
-        self.register_setting(Cavity.amp_goal_pv, default=initial_amp, transform=amp_transform)
-        self.register_setting(Cavity.blank_pv, default=0.0)
+        net_pwr_name = name.split(':')[0] + ':Cav' + name[-1] + ':' + SNS_Cavity.net_power_pv
+        mps_name = name.replace('FCM', 'HPM', 1) + ':' + SNS_Cavity.MPS_pv
 
         if 'SCL' not in name:
-            self.register_readback(SNS_Cavity.net_power_pv, amp_setting, name_override=net_pwr_name)
+            self.register_readback(SNS_Cavity.net_power_pv, Cavity.amp_pv, pv_override=net_pwr_name)
         self.register_setting(SNS_Cavity.mode_pv, default=0.0)
         self.register_setting(SNS_Cavity.reset_pv, default=0.0)
-        self.register_setting(SNS_Cavity.MPS_pv, default=0.0, name_override=mps_name)
+        self.register_setting(SNS_Cavity.MPS_pv, default=0.0, pv_override=mps_name)
 
 
 class SNS_Dummy_BCM(Device):
@@ -163,7 +132,7 @@ class SNS_Dummy_ICS(Device):
         self.update_measurement(SNS_Dummy_ICS.beam_on_pv, 1)
         self.update_measurement(SNS_Dummy_ICS.event_pv, 0)
 
-    def get_settings(self) -> Dict[str, Dict[str, Any]]:
+    def get_model_optics(self) -> Dict[str, Dict[str, Any]]:
         return {}
 
 
@@ -182,8 +151,8 @@ class SNS_Bunch_Dumper(Device):
         # Registers the device's PVs with the server.
         self.register_setting(SNS_Bunch_Dumper.file_name_pv, default=initial_file_name, definition={'type': 'string'})
 
-    def get_settings(self):
-        file_name = self.settings[SNS_Bunch_Dumper.file_name_pv].get_param()
+    def get_model_optics(self):
+        file_name = self.parameters[SNS_Bunch_Dumper.file_name_pv].get_value()
         params_dict = {SNS_Bunch_Dumper.file_name_key: file_name}
         model_dict = {self.model_name: params_dict}
         return model_dict

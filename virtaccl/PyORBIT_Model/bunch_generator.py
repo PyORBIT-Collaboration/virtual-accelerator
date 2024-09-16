@@ -22,7 +22,7 @@ from orbit.bunch_generators import TwissAnalysis
 from orbit.core.bunch import Bunch
 
 
-class SNS_Linac_BunchGenerator:
+class BunchGenerator:
     """
     Generates the pyORBIT SNS Linac Bunches.
     Twiss parameters has the fol following units: x in [m], xp in [rad]

@@ -1,8 +1,5 @@
 # This script runs through how to build a lattice, build a bunch, and how to track it.
 import math
-import sys
-
-import numpy as np
 from orbit.bunch_generators import TwissContainer, WaterBagDist3D
 
 # Import Bunch to be able to build a bunch.
@@ -14,11 +11,9 @@ from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice, Sequence
 # Import Quad and Drift components to build the lattice.
 from orbit.py_linac.lattice.LinacAccNodes import Quad, Drift, DCorrectorH, DCorrectorV
 
-# Import AccActionsContainer, a method to add functionality throughout the accelerator.
-from orbit.lattice import AccActionsContainer
 
 from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass, ScreenClass
-from virtaccl.PyORBIT_Model.sns_linac_bunch_generator import SNS_Linac_BunchGenerator
+from virtaccl.PyORBIT_Model.bunch_generator import BunchGenerator
 
 
 def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0, yp_off=0):
@@ -159,7 +154,7 @@ def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0,
     twissZ = TwissContainer(alphaZ, betaZ, emittZ)
 
     print("Start Bunch Generation.")
-    bunch_gen = SNS_Linac_BunchGenerator(twissX, twissY, twissZ)
+    bunch_gen = BunchGenerator(twissX, twissY, twissZ)
 
     # set the initial kinetic energy in GeV
     bunch_gen.setKinEnergy(e_kin_ini)
