@@ -25,9 +25,9 @@ setuptools.setup(
     url="https://github.com/PyORBIT-Collaboration/virtual-accelerator",
     entry_points={
         "console_scripts": [
-            "virtual_accelerator = virtaccl.virtual_accelerator:main",
-            "idmp_va = virtaccl.site.IDmp.IDmp_virtual_accelerator:main",
-            "btf_va = virtaccl.site.btf.btf_virtual_accelerator:main",
+            "sns_va = virtaccl.site.SNS_Linac.virtual_SNS_linac:main",
+            "idmp_va = virtaccl.site.SNS_IDmp.IDmp_virtual_accelerator:main",
+            "btf_va = virtaccl.site.BTF.btf_virtual_accelerator:main",
         ]},
 
     packages=setuptools.find_packages(),
