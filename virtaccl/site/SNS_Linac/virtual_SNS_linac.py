@@ -2,6 +2,7 @@
 # The main body of the script instantiates PVs from a file passed by command line argument.
 import json
 import math
+import sys
 from pathlib import Path
 
 from orbit.lattice import AccNode
@@ -39,6 +40,10 @@ def main():
                         help='Desired sequence of the lattice to start the model with (default=MEBT).')
     parser.add_argument("end", nargs='?', default="HEBT1", type=str,
                         help='Desired sequence of the lattice to end the model with (default=HEBT1).')
+    parser.add_argument('--space_charge', const=0.01, nargs='?', type=float,
+                        help="Adds Uniform Ellipse Space Charge nodes to the lattice. The minimum distance in meters "
+                             "between nodes can be specified; the default is 0.01m if no minimum is given. If the "
+                             "argument is not used, no space charge nodes are added.")
 
     # Desired initial bunch file and the desired number of particles from that file.
     parser.add_argument('--bunch', default=loc / 'orbit_model/MEBT_in.dat', type=str,
@@ -101,11 +106,15 @@ def main():
                 bunch_in.deleteParticleFast(n)
         bunch_in.compress()
     beam_current = args.beam_current / 1000  # Set the initial beam current in Amps.
+    space_charge = args.space_charge
+    print("space charge check: ", space_charge)
 
     model = OrbitModel(debug=debug, save_bunch=save_bunch)
     model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list, diagnostic=True)
     model.define_custom_node(WSclass.node_type, WSclass.parameter_list, diagnostic=True)
     model.initialize_lattice(model_lattice)
+    if space_charge is not None:
+        model.add_space_charge_nodes(space_charge)
     model.set_initial_bunch(bunch_in, beam_current)
     element_list = model.get_element_list()
 
