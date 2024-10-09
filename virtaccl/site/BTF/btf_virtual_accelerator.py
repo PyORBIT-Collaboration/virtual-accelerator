@@ -51,7 +51,7 @@ def main():
     # Desired initial bunch file and the desired number of particles from that file.
     parser.add_argument('--bunch', default=loc / 'orbit_model/parmteq_bunch_RFQ_output_1.00e+05.dat', type=str,
                         help='Pathname of input bunch file.')
-    parser.add_argument('--particle_number', default=1000, type=int,
+    parser.add_argument('--particle_number', default=10000, type=int,
                         help='Number of particles to use (default=1000).')
     parser.add_argument('--beam_current', default=30.0, type=float,
                         help='Initial beam current in mA. (default=30.0).')
@@ -202,6 +202,24 @@ def main():
                 ps_device = BTF_Corrector_Power_Supply(ps_name, corr_current)
                 beam_line.add_device(ps_device)
                 corrector_device = BTF_Corrector(name, ele_name, power_supply = ps_device, coeff = coeff, length=length, momentum = momentum)
+                beam_line.add_device(corrector_device)
+
+    # These are non physical correctors that are not present in actual BTF
+    # They are here to add an optional variable initial momentum offset to the bunch
+    # At startup they are off
+    rfq_corr_ps = devices_dict["RFQ_Corrector_Power_Supply"]
+    rfq_corrs = devices_dict["RFQ_Corrector"]
+    for name, device_dict in rfq_corrs.items():
+        ele_name = device_dict["PyORBIT_Name"]
+        corr_current = device_dict["Current"]
+        coeff = device_dict["coeff"]
+        length = device_dict["Length"]
+        if ele_name in element_list:
+            if "Power_Supply" in device_dict and device_dict["Power_Supply"] in rfq_corr_ps:
+                ps_name = device_dict["Power_Supply"]
+                ps_device = BTF_Corrector_Power_Supply(ps_name, corr_current)
+                beam_line.add_device(ps_device)
+                corrector_device = BTF_Corrector(name, ele_name, power_supply = ps_device, coeff = coeff, length = length, momentum = momentum)
                 beam_line.add_device(corrector_device)
 
     bends = devices_dict["Bend"]

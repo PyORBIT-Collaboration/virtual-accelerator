@@ -1,6 +1,12 @@
 <?xml version="1.0" ?>
 <BTF_Lattice>
  <MEBT1 bpmFrequency="8.05E8" length="2.863" name="MEBT1" rfFrequency="4.025E8">
+  <accElement length="0.0" name="MEBT:DCH00" pos="0.0" type="DCH">
+   <parameters B="0.0" effLength="0.061"/>
+  </accElement>
+  <accElement length="0.0" name="MEBT:DCV00" pos="0.0" type="DCV">
+   <parameters B="0.0" effLength="0.061"/>
+  </accElement>
   <accElement length="0.061" name="MEBT:QH01" pos="0.131" type="QUAD">
    <parameters aperture="0.030" aprt_type="1" field="-26.00"/>
   </accElement>

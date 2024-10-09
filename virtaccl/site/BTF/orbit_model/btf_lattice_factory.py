@@ -163,34 +163,34 @@ class PyORBIT_Lattice_Factory:
                     if node_name == "MEBT:QH01":
                         DCH01 = DCorrectorH("MEBT:DCH01")
                         DCH01.setParam("effLength", node_length)
-                        DCH01.setField(0.01)
+                        DCH01.setField(0.0)
                         accNode.addChildNode(DCH01, accNode.EXIT)
 
                         DCV01 = DCorrectorV("MEBT:DCV01")
                         DCV01.setParam("effLength", node_length)
-                        DCV01.setField(0.01)
+                        DCV01.setField(0.0)
                         accNode.addChildNode(DCV01, accNode.EXIT)
 
                     if node_name == "MEBT:QV02":
                         DCH02 = DCorrectorH("MEBT:DCH02")
                         DCH02.setParam("effLength", node_length)
-                        DCH02.setField(0.01)
+                        DCH02.setField(0.0)
                         accNode.addChildNode(DCH02, accNode.EXIT)
 
                         DCV02 = DCorrectorV("MEBT:DCV02")
                         DCV02.setParam("effLength", node_length)
-                        DCV02.setField(0.01)
+                        DCV02.setField(0.0)
                         accNode.addChildNode(DCV02, accNode.EXIT)
 
                     if node_name == "MEBT:QV36":
                         DCH36 = DCorrectorH("MEBT:DCH36")
                         DCH36.setParam("effLength", node_length)
-                        DCH36.setField(0.01)
+                        DCH36.setField(0.0)
                         accNode.addChildNode(DCH36, accNode.EXIT)
 
                         DCV36 = DCorrectorV("MEBT:DCV36")
                         DCV36.setParam("effLength", node_length)
-                        DCV36.setField(0.01)
+                        DCV36.setField(0.0)
                         accNode.addChildNode(DCV36, accNode.EXIT)
 
                     if params_da.hasAttribute("poles"):
