@@ -7,6 +7,8 @@ import json
 from orbit.py_linac.lattice import BaseLinacNode
 from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice
 from orbit.core.bunch import Bunch
+from orbit.space_charge.sc3d import setUniformEllipsesSCAccNodes
+from orbit.core.spacecharge import SpaceChargeCalcUnifEllipse
 
 from .pyorbit_element_controllers import PyorbitNode, PyorbitChild, PyorbitCavity
 from .pyorbit_child_nodes import BunchCopyClass
@@ -172,6 +174,26 @@ class OrbitModel(Model):
         # Store initial settings
         self.initial_optics = self.get_settings()
         self.lattice_flag = True
+
+        if self.bunch_flag:
+            self.accLattice.trackDesignBunch(self.bunch_dict['initial_bunch'])
+            self.force_track()
+
+    def add_space_charge_nodes(self, minimum_sc_length: float = 0.01):
+        """Add space charge nodes to an initialized lattice. The nodes are the Uniform Ellipses SC accelerator nodes.
+
+        Parameters
+        ----------
+        minimum_sc_length : float
+            Minimum length in meters for distance between space charge nodes. The default 0.01 meters.
+        """
+
+        if self.lattice_flag:
+            nEllipses = 1
+            calcUnifEllips = SpaceChargeCalcUnifEllipse(nEllipses)
+            setUniformEllipsesSCAccNodes(self.accLattice, minimum_sc_length, calcUnifEllips)
+        else:
+            print('Error: Initialize a lattice in order to add space charge nodes.')
 
         if self.bunch_flag:
             self.accLattice.trackDesignBunch(self.bunch_dict['initial_bunch'])

@@ -44,7 +44,7 @@ conda activate virac
 
 ## Run
 
-### Client environemnt setup
+### Client environment setup
 Your client environment, the one that connects to virtaul accelerator, should have **localhost**  included in CA search, so some setup may be needed.<br>
 For example following will ensure that the client connects to virtual accelerator only while allowing large array transfers.
 ```bash
