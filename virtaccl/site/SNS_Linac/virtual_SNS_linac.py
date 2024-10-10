@@ -105,10 +105,9 @@ def main():
             if n + 1 > part_num:
                 bunch_in.deleteParticleFast(n)
         bunch_in.compress()
+
     beam_current = args.beam_current / 1000  # Set the initial beam current in Amps.
     space_charge = args.space_charge
-    print("space charge check: ", space_charge)
-
     model = OrbitModel(debug=debug, save_bunch=save_bunch)
     model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list, diagnostic=True)
     model.define_custom_node(WSclass.node_type, WSclass.parameter_list, diagnostic=True)
