@@ -9,7 +9,7 @@ from orbit.lattice import AccNode
 from orbit.py_linac.lattice import LinacPhaseApertureNode
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
 from orbit.core.bunch import Bunch
-from orbit.core.linac import BaseRfGap
+from orbit.core.linac import BaseRfGap, RfGapTTF
 
 from virtaccl.site.SNS_Linac.orbit_model.sns_linac_lattice_factory import PyORBIT_Lattice_Factory
 from virtaccl.site.SNS_Linac.virtual_devices import BPM, Quadrupole, Corrector, P_BPM, \
