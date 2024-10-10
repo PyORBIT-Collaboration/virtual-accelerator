@@ -1909,7 +1909,7 @@
         "SCL_Mag:DCH17": {
             "PyORBIT_Name": "SCL_Mag:DCH17",
             "Power_Supply": "SCL_Mag:PS_DCH17",
-            "Polarity": -1
+            "Polarity": 1
         },
         "SCL_Mag:DCV17": {
             "PyORBIT_Name": "SCL_Mag:DCV17",
@@ -2029,22 +2029,22 @@
         "SCL_Mag:DCH29": {
             "PyORBIT_Name": "SCL_Mag:DCH29",
             "Power_Supply": "SCL_Mag:PS_DCH29",
-            "Polarity": -1
+            "Polarity": 1
         },
         "SCL_Mag:DCV29": {
             "PyORBIT_Name": "SCL_Mag:DCV29",
             "Power_Supply": "SCL_Mag:PS_DCV29",
-            "Polarity": -1
+            "Polarity": 1
         },
         "SCL_Mag:DCH30": {
             "PyORBIT_Name": "SCL_Mag:DCH30",
             "Power_Supply": "SCL_Mag:PS_DCH30",
-            "Polarity": -1
+            "Polarity": 1
         },
         "SCL_Mag:DCV30": {
             "PyORBIT_Name": "SCL_Mag:DCV30",
             "Power_Supply": "SCL_Mag:PS_DCV30",
-            "Polarity": -1
+            "Polarity": 1
         },
         "SCL_Mag:DCH31": {
             "PyORBIT_Name": "SCL_Mag:DCH31",
