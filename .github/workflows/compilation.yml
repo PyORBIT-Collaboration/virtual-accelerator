@@ -9,39 +9,37 @@ on:
 
 jobs:
 
-
   ubuntu:
     runs-on: ubuntu-latest
     container:
       image: ubuntu:latest
     steps:
-         - name: Install Conda
-           run: |
-             apt update -y
-             apt install -y curl gpg git build-essential
-             curl https://repo.anaconda.com/pkgs/misc/gpgkeys/anaconda.asc | gpg --dearmor > conda.gpg
-             install -o root -g root -m 644 conda.gpg /usr/share/keyrings/conda-archive-keyring.gpg
-             echo "deb [arch=amd64 signed-by=/usr/share/keyrings/conda-archive-keyring.gpg] https://repo.anaconda.com/pkgs/misc/debrepo/conda stable main" > /etc/apt/sources.list.d/conda.list
-             apt update -y
-             apt install -y conda
 
-         - uses: actions/checkout@v4
-           with:
-            fetch-depth: 0
+        # Important! This has to be done before checkout action
+        # Otherwise git could fail to check out full history
+        # It will cause issues with versioning of the built package
+        # since the version depends on git repository state.
+      - name: Install Compilers and Git
+        run: apt-get update && apt-get install -y git build-essential
 
-         - name: Build
-           run: |
-             git config --global --add safe.directory /__w/virtual-accelerator/virtual-accelerator
-             .github/workflows/conda-build.sh
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          set-safe-directory: ''
 
-         - name: Corrector Test
-           run: |
-             .github/workflows/corrector-test.sh
+      # Install Miniconda
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniconda-version: "latest"
+          auto-update-conda: true
+          python-version: 3.9
+          environment-file: virac.yml
+          activate-environment: virac
 
-         - name: Previous PVs Test
-           run: |
-             .github/workflows/pv-test.sh
+      - name: Pytest
+        shell: bash -l {0}
+        run: |
+           pytest -s tests
 
-         - name: Print Versions
-           run: |
-             .github/workflows/conda-versions.sh  
