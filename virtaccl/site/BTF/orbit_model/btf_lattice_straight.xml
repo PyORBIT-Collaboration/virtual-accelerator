@@ -66,9 +66,6 @@
   <accElement length="0.075" name="MEBT:FQ14" pos="1.767" type="QUAD">
    <parameters aperture="0.040" aprt_type="1" field="24.30"/>
   </accElement>
-  <accElement length="0.0" name="MEBT:Cam14" pos="1.880" type="MARKER">
-   <parameters/>
-  </accElement>
   <accElement length="0.0" name="MEBT:VS14" pos="1.881" type="MARKER">
    <parameters/>
   </accElement>
@@ -99,9 +96,6 @@
   <accElement length="0.0" name="MEBT:Cam22" pos="3.709" type="MARKER">
    <parameters/>
   </accElement>
-  <accElement length="0.0" name="MEBT:VS22" pos="3.710" type="MARKER">
-   <parameters/>
-  </accElement>
   <accElement length="0.075" name="MEBT:FQ23" pos="3.824" type="QUAD">
    <parameters aperture="0.040" aprt_type="1" field="-24.30"/>
   </accElement>
@@ -125,9 +119,6 @@
   </accElement>
   <accElement length="0.075" name="MEBT:FQ30" pos="5.424" type="QUAD">
    <parameters aperture="0.040" aprt_type="1" field="24.30"/>
-  </accElement>
-  <accElement length="0.0" name="MEBT:Cam30" pos="5.538" type="MARKER">
-   <parameters/>
   </accElement>
   <accElement length="0.0" name="MEBT:VS30" pos="5.539" type="MARKER">
    <parameters/>
@@ -165,9 +156,6 @@
   <accElement length="0.558575174" name="MEBT:DH36" pos="8.408" type="BEND">
    <parameters aperture_x="0.04" aperture_y="0.04" aprt_type="3" ea1="0.0" ea2="0.0" kls="0.0" poles="1.0" skews="0.0" theta="1.57079633"/>
   </accElement>
-  <accElement length="0.0" name="MEBT:Cam36" pos="8.842" type="MARKER">
-   <parameters/>
-  </accElement>
   <accElement length="0.0" name="MEBT:VS36" pos="8.843" type="MARKER">
    <parameters/>
   </accElement>
@@ -178,9 +166,6 @@
 <STUB bpmFrequency="8.05E8" length="1.946" name="STUB" rfFrequency="4.025E8">
   <accElement length="0.558575174" name="MEBT:DH06" pos="0.324" type="BEND">
    <parameters aperture_x="0.04" aperture_y="0.04" aprt_type="3" ea1="0.0" ea2="0.0" kls="0.0" poles="1.0" skews="0.0" theta="1.57079633"/>
-  </accElement>
-  <accElement length="0.0" name="MEBT:Cam06" pos="0.731" type="MARKER">
-   <parameters/>
   </accElement>
   <accElement length="0.0" name="MEBT:VS06" pos="0.732" type="MARKER">
    <parameters/>
@@ -194,10 +179,10 @@
   <accElement length="0.0" name="MEBT:BSM08" pos="1.548" type="MARKER">
    <parameters/>
   </accElement>
-  <accElement length="0.0" name="MEBT:VS08_S" pos="1.775" type="MARKER">
+  <accElement length="0.0" name="MEBT:VS08" pos="1.775" type="MARKER">
    <parameters/>
   </accElement>
-    <accElement length="0.0" name="MEBT:BS08_S" pos="1.945" type="MARKER">
+    <accElement length="0.0" name="MEBT:BS08" pos="1.945" type="MARKER">
    <parameters/>
   </accElement>
  </STUB>
