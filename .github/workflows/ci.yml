@@ -1,0 +1,55 @@
+name: build-virac
+
+on:
+  pull_request:
+    branches:
+      - '*'
+  push:
+    tags:
+      - '*'
+    branches:
+      - '*'
+
+jobs:
+
+  ubuntu:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:latest
+    steps:
+
+        # Important! This has to be done before checkout action
+        # Otherwise git could fail to check out full history
+        # It will cause issues with versioning of the built package
+        # since the version depends on git repository state.
+      - name: Install Compilers and Git
+        run: apt-get update && apt-get install -y git build-essential
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          set-safe-directory: ''
+
+      # Install micromamba
+      - name: Install mamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-file: virac.yml
+          init-shell: bash
+          cache-environment: true
+          post-cleanup: 'all'
+
+      # Although virac is already installed by mamba
+      # We reinstall it to make sure it uses the latest virac and
+      # not the cached version from mamba environment.
+      - name: Install virac
+        shell: bash -l {0}
+        run: |
+           pip install .
+
+      - name: Pytest
+        shell: bash -l {0}
+        run: |
+           pytest -s
+
