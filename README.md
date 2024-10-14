@@ -67,7 +67,7 @@ sns_va
 
 Run MEBT only (with printing all PVs)
 ```bash
-   sns_va --debug --bunch MEBT_in.dat MEBT
+sns_va --debug --bunch MEBT_in.dat MEBT
 ```
 
 ### Run standard examples 
