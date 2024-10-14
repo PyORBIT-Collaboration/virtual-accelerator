@@ -6,17 +6,18 @@ import subprocess
 from epics import caget, caput
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def va_process():
     # Start VA as a background process
     proc = subprocess.Popen(["sns_va"])
 
     # Wait for the VA to start serving PVs
     sleep(4.0)
-    print('VA should be ready by now')
+    print('SNS VA should be ready by now')
     yield proc
 
     # Tear down: stop the background process when tests are done
+    print('SNS VA will terminate.')
     proc.terminate()
     proc.wait()
 

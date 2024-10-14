@@ -6,7 +6,7 @@ import subprocess
 from epics import caget, caput
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def va_process():
     # Start VA as a background process
     proc = subprocess.Popen(["btf_va"])
@@ -17,6 +17,7 @@ def va_process():
     yield proc
 
     # Tear down: stop the background process when tests are done
+    print('BTF VA will terminate.')
     proc.terminate()
     proc.wait()
 
