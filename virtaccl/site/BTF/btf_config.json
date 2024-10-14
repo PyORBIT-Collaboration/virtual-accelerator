@@ -353,45 +353,30 @@
 		"ITSF_Diag:VS14": {
                         "PyORBIT_Name": "MEBT:VS14",
 			"Axis": 1,
-                        "Axis_Polarity": -1,
-			"Camera": "ITSF_Diag:Cam14",
-			"Camera_PyORBIT": "MEBT:Cam14",
-			"Camera_State": 0 
+                        "Axis_Polarity": -1
                 },
                 "ITSF_Diag:VS22": {
                         "PyORBIT_Name": "MEBT:VS22",
 			"Axis": 1,
-                        "Axis_Polarity": -1,
-                        "Camera": "ITSF_Diag:Cam22",
-                        "Camera_PyORBIT": "MEBT:Cam22",
-                        "Camera_State": 0
+                        "Axis_Polarity": -1
                 },
                 "ITSF_Diag:VS30": {
                         "PyORBIT_Name": "MEBT:VS30",
 			"Axis": 1,
-                        "Axis_Polarity": -1,
-                        "Camera": "ITSF_Diag:Cam30",
-                        "Camera_PyORBIT": "MEBT:Cam30",
-                        "Camera_State": 0
+                        "Axis_Polarity": -1
                 },
                 "ITSF_Diag:VS36": {
                         "PyORBIT_Name": "MEBT:VS36",
 			"Axis": 0,
-                        "Axis_Polarity": -1,
-                        "Camera": "ITSF_Diag:Cam36",
-                        "Camera_PyORBIT": "MEBT:Cam36",
-                        "Camera_State": 0
+                        "Axis_Polarity": -1
                 },
                 "ITSF_Diag:VS06": {
                         "PyORBIT_Name": "MEBT:VS06",
                         "Axis": 0,
-                        "Axis_Polarity": 1,
-                        "Camera": "ITSF_Diag:Cam06",
-                        "Camera_PyORBIT": "MEBT:Cam06",
-                        "Camera_State": 0
+                        "Axis_Polarity": 1
                 },
-                "ITSF_Diag:VS08_S": {
-                        "PyORBIT_Name": "MEBT:VS08_S",
+                "ITSF_Diag:VS08": {
+                        "PyORBIT_Name": "MEBT:VS08",
                         "Axis": 0,
                         "Axis_Polarity": 1
                 }
@@ -401,8 +386,8 @@
 			"PyORBIT_Name": "MEBT:BS36",
 			"State": 1
 		},
-		"ITSF_Diag:BS08_S": {
-			"PyORBIT_Name": "MEBT:BS08_S",
+		"ITSF_Diag:BS08": {
+			"PyORBIT_Name": "MEBT:BS08",
 			"State": 1
 		}
 	},
