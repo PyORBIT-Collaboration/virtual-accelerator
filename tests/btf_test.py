@@ -55,10 +55,10 @@ def test_corrector(va_process):
         b_reading = caget(corrector)
         bpm_reading = caget(bpm_device)
 
-        print(f'Corrector value: {b_reading:.4f}/{b_field:.4f}')
+        print(f'Corrector value: {b_reading:.4f}/{b_field:.3f}')
         assert b_reading == pytest.approx(b_field, abs=0.001)
 
-        print(f'BPM value: {bpm_reading:.4f}/{bpm:.4f}')
+        print(f'BPM value: {bpm_reading:.4f}/{bpm:.1f}')
         assert bpm_reading == pytest.approx(bpm, abs=0.1)
 
     caput(corrector_set, original_val)
