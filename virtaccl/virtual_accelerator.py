@@ -42,7 +42,7 @@ def va_parser():
     return parser, va_version
 
 
-def virtual_accelerator(model: Model, beam_line: BeamLine, arguments: argparse.ArgumentParser):
+def virtual_accelerator(model: Model, beam_line: BeamLine, server: Server, arguments: argparse.ArgumentParser):
     os.environ['EPICS_CA_MAX_ARRAY_BYTES'] = '10000000'
 
     args = arguments.parse_args()
@@ -51,20 +51,24 @@ def virtual_accelerator(model: Model, beam_line: BeamLine, arguments: argparse.A
 
     update_period = 1 / args.refresh_rate
 
+    pv_definitions = beam_line.get_pv_definitions()
+    server.add_pvs(pv_definitions)
+
     if args.print_settings:
         for setting in beam_line.get_setting_pvs():
             print(setting)
         sys.exit()
     elif args.print_pvs:
-        for pv in beam_line.get_pvs():
+        for pv in server.get_pv_names():
             print(pv)
         sys.exit()
 
-    server = beam_line.get_server()
     delay = args.ca_proc
     server.process_delay = delay
     if debug:
         print(server)
+
+    beam_line.reset_devices()
     server.start()
     print(f"Server started.")
     now = None
@@ -76,11 +80,18 @@ def virtual_accelerator(model: Model, beam_line: BeamLine, arguments: argparse.A
         if sync_time:
             now = epics_now()
 
+        server_pvs = server.get_pvs()
+        beam_line.update_settings_from_server(server_pvs)
         new_optics = beam_line.get_model_optics()
         model.update_optics(new_optics)
+
         model.track()
+
         new_measurements = model.get_measurements()
-        beam_line.update_server(new_measurements, timestamp=now)
+        beam_line.update_measurements_from_model(new_measurements)
+        beam_line.update_readbacks()
+        new_pvs = beam_line.get_pvs_for_server()
+        server.set_pvs(new_pvs, timestamp=now)
 
         server.update()
 
@@ -90,3 +101,5 @@ def virtual_accelerator(model: Model, beam_line: BeamLine, arguments: argparse.A
             print('Warning: Update took longer than refresh rate.')
         else:
             time.sleep(sleep_time)
+
+    print('Exiting. Thank you for using our virtual accelerator!')

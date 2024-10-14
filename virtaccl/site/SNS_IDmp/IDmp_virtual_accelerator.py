@@ -69,8 +69,7 @@ def main():
     model.initialize_lattice(lattice)
     element_list = model.get_element_list()
 
-    server = Server()
-    beam_line = BeamLine(server)
+    beam_line = BeamLine()
 
     offset_file = args.phase_offset
     if offset_file is not None:
@@ -137,7 +136,9 @@ def main():
     dummy_device = SNS_Dummy_ICS("ICS_Tim")
     beam_line.add_device(dummy_device)
 
-    virtual_accelerator(model, beam_line, parser)
+    server = Server()
+
+    virtual_accelerator(model, beam_line, server, parser)
 
     print('Exiting. Thank you for using our virtual accelerator!')
 

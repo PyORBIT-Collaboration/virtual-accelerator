@@ -79,14 +79,14 @@ class Server:
     def __str__(self):
         return 'Following PVs are registered:\n' + '\n'.join([f'{self.prefix}{k}' for k in self.pv_db])
 
-    def get_params(self) -> Dict[str, Any]:
+    def get_pvs(self) -> Dict[str, Any]:
         return {k: self.getParam(k) for k in self.pv_db.keys()}
 
-    def set_params(self, values: Dict[str, Any], timestamp=None):
+    def set_pvs(self, values: Dict[str, Any], timestamp=None):
         for k, v in values.items():
             self.setParam(k, v, timestamp)
 
-    def get_pvs(self) -> List[str]:
+    def get_pv_names(self) -> List[str]:
         pvs = list(self.pv_db.keys())
         return pvs
 

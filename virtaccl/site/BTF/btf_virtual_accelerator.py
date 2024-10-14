@@ -150,8 +150,7 @@ def main():
     model.set_initial_bunch(bunch_in, beam_current)
     element_list = model.get_element_list()
 
-    server = Server()
-    beam_line = BeamLine(server)
+    beam_line = BeamLine()
 
     offset_file = args.phase_offset
     if offset_file is not None:
@@ -300,7 +299,9 @@ def main():
             slit_device = BTF_Actuator(name, ele_name, speed = speed, limit = limit)
             beam_line.add_device(slit_device)
 
-    virtual_accelerator(model, beam_line, parser)
+    server = Server()
+
+    virtual_accelerator(model, beam_line, server, parser)
 
 if __name__ == '__main__':
     main()

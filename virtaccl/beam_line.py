@@ -319,62 +319,50 @@ class Device:
 
 class BeamLine:
 
-    def __init__(self, server: Server):
+    def __init__(self):
         self.devices: Dict[str, Device] = {}
-        self.server = server
 
         self.setting_pvs = set()
         self.measurement_pvs = set()
         self.readback_pvs = set()
 
-    def add_device(self, device: Device):
+    def add_device(self, device: Device) -> Device:
         self.devices[device.name] = device
         self.setting_pvs |= device.settings
         self.measurement_pvs |= device.measurements
         self.measurement_pvs |= device.readbacks
-
-        pvs = device.build_db()
-        def_dict = {}
-        for reason, param in pvs.items():
-            def_dict[reason] = param.get_definition() | {'value': param.get_value_for_server()}
-        self.server.add_pvs(def_dict)
-
         return device
 
-    def start(self):
-        self.server.start()
-        for device_name, device in self.devices.items():
-            device.reset()
-
-    def stop(self):
-        self.server.stop()
+    def get_devices(self) -> Dict[str, Device]:
+        return self.devices
 
     def get_device(self, device_name: str) -> Device:
         return self.devices[device_name]
 
-    def get_server(self) -> Server:
-        return self.server
+    def get_pv_definitions(self) -> Dict[str, Dict[str, Any]]:
+        def_dict = {}
+        for device_name, device in self.get_devices().items():
+            pvs = device.build_db()
+            for reason, param in pvs.items():
+                def_dict[reason] = param.get_definition() | {'value': param.get_value_for_server()}
+        return def_dict
 
-    def get_pvs(self) -> List[str]:
-        return self.server.get_pvs()
+    def reset_devices(self):
+        for device_name, device in self.devices.items():
+            device.reset()
 
-    def get_server_params(self) -> Dict[str, Any]:
-        return self.server.get_params()
-
-    def update_settings_from_server(self):
-        server_params = self.get_server_params()
+    def update_settings_from_server(self, server_pvs: Dict[str, Any]):
         for device_name, device in self.devices.items():
             device_settings = {}
             for reason in device.settings:
                 parameter = device.get_parameter(reason)
                 pv = parameter.get_pv()
-                if pv in server_params:
-                    device_settings |= {reason: server_params[pv]}
+                if pv in server_pvs:
+                    device_settings |= {reason: server_pvs[pv]}
             device.update_settings(device_settings)
 
     def get_model_optics(self) -> Dict[str, Dict[str, Any]]:
         optics_dict = {}
-        self.update_settings_from_server()
         for device_name, device in self.devices.items():
             optics_dict |= device.get_model_optics()
         return optics_dict
@@ -389,15 +377,12 @@ class BeamLine:
         for device_name, device in self.devices.items():
             device.update_readbacks()
 
-    def update_server(self, new_measurements: Dict[str, Dict[str, Any]], timestamp: epicsTimeStamp = None):
-        self.update_measurements_from_model(new_measurements)
-        self.update_readbacks()
-
+    def get_pvs_for_server(self) -> Dict[str, Any]:
         sever_dict = {}
         for device_name, device in self.devices.items():
             sever_dict |= device.get_changed_parameters()
             device.clear_changes()
-        self.server.set_params(sever_dict, timestamp)
+        return sever_dict
 
     def get_setting_pvs(self) -> List[str]:
         setting_pvs = []
