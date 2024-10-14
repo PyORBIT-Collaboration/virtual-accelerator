@@ -27,10 +27,9 @@ class BTF_Actuator(Device):
     # EPICS PV names
     position_set_pv = 'DestinationSet' #[mm]
     position_readback_pv = 'PositionSync' # [mm]
-    speed_set_pv = 'Speed_Set' # [mm/s]
-    speed_readback_pv = 'Speed' # [mm/s]
-    state_set_pv = 'COMMAND'
-    state_readback_pv = 'COMMAND_RB'
+    speed_set_pv = 'Velocity_Set' # [mm/s]
+    speed_readback_pv = 'Velocity' # [mm/s]
+    state_set_pv = 'Command'
 
     # Device keys
     position_key = 'position' # [m]
@@ -71,19 +70,18 @@ class BTF_Actuator(Device):
 
         initial_position = self.milli_units.raw(initial_position)
         initial_speed = self.milli_units.raw(initial_speed)
-
+        
         # Creates flat noise for associated PVs
         pos_noise = AbsNoise(noise=1e-6)
 
         # Registers the device's PVs with the server
-        speed_param = self.register_setting(BTF_Actuator.speed_set_pv, default=initial_speed, transform=self.milli_units)
-        self.register_readback(BTF_Actuator.speed_readback_pv, speed_param, transform=self.milli_units)
+        speed_param = self.register_setting(BTF_Actuator.speed_set_pv, default=initial_speed)
+        self.register_readback(BTF_Actuator.speed_readback_pv, speed_param)
 
-        pos_param = self.register_setting(BTF_Actuator.position_set_pv, default = initial_position, transform = self.milli_units)
+        pos_param = self.register_setting(BTF_Actuator.position_set_pv, default = initial_position)
         self.register_readback(BTF_Actuator.position_readback_pv, pos_param, transform=self.milli_units, noise=pos_noise)
 
         state_param = self.register_setting(BTF_Actuator.state_set_pv, default = initial_state)
-        self.register_readback(BTF_Actuator.state_readback_pv, state_param)
 
     # Function to find the position of the virtual screen using time of flight from the previous position and the speed of the screen
     def get_actuator_position(self):
@@ -98,7 +96,7 @@ class BTF_Actuator(Device):
             actuator_speed = self.speed
 
         if current_state == 1:
-            pos_goal = self.get_setting(BTF_Actuator.position_set_pv)
+            pos_goal = self.get_parameter_value(BTF_Actuator.position_set_pv)
 
             # Defining where the actuator reaches the limit it can insert and should not be moved past
             # Multiple cases needed to ensure it correctly determines limit
@@ -169,6 +167,13 @@ class BTF_Actuator(Device):
     def update_readbacks(self):
         actuator_pos = BTF_Actuator.get_actuator_position(self)
         self.update_readback(BTF_Actuator.position_readback_pv, actuator_pos)
+        
+        # Readback set velocity value only when actuator is moving
+        if self.get_parameter_value(BTF_Actuator.state_set_pv) == 1 and self.milli_units.raw(actuator_pos) != self.get_parameter_value(BTF_Actuator.position_set_pv):
+            actuator_spd = self.get_parameter_value(BTF_Actuator.speed_set_pv)
+        else:
+            actuator_spd = 0
+        self.update_readback(BTF_Actuator.speed_readback_pv, actuator_spd)
 
 
 class BTF_FC(Device):
