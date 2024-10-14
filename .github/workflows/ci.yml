@@ -1,6 +1,9 @@
 name: build-virac
 
 on:
+  pull_request:
+    branches:
+      - '*'
   push:
     tags:
       - '*'
@@ -28,18 +31,25 @@ jobs:
           fetch-depth: 0
           set-safe-directory: ''
 
-      # Install Miniconda
-      - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+      # Install micromamba
+      - name: Install mamba
+        uses: mamba-org/setup-micromamba@v1
         with:
-          miniconda-version: "latest"
-          auto-update-conda: true
-          python-version: 3.9
           environment-file: virac.yml
-          activate-environment: virac
+          init-shell: bash
+          cache-environment: true
+          post-cleanup: 'all'
+
+      # Although virac is already installed by mamba
+      # We reinstall it to make sure it uses the latest virac and
+      # not the cached version from mamba environment.
+      - name: Install virac
+        shell: bash -l {0}
+        run: |
+           pip install .
 
       - name: Pytest
         shell: bash -l {0}
         run: |
-           pytest -s tests
+           pytest -s
 
