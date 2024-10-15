@@ -7,7 +7,7 @@
 from epics import caget, caput
 from time import sleep
 ws = 'MEBT_Diag:WS14'
-setpoint = f'{ws}:Position_Set'
+set_point = f'{ws}:Position_Set'
 position = f'{ws}:Position'
 speed = f'{ws}:Speed_Set'
 x = f'{ws}:Hor_Cont'
@@ -15,11 +15,11 @@ y = f'{ws}:Ver_Cont'
 
 print('Retract fork')
 caput(speed, 100)
-caput(setpoint, -25)
+caput(set_point, -25)
 sleep(2)
 print('Start scan')
 caput(speed, 0.5)
-caput(setpoint, 25)
+caput(set_point, 25)
 print(f'{"Position":^12s}  {"x":^8s}  {"y":^8s}')
 for i in range(100):
     p = caget(position)
