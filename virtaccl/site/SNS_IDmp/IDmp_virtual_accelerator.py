@@ -1,20 +1,17 @@
 # Channel access server used to generate fake PV signals analogous to accelerator components.
 # The main body of the script instantiates PVs from a file passed by command line argument.
 import json
-import os
-import time
-import argparse
 from pathlib import Path
 
 from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass, ScreenClass
-from virtaccl.ca_server import Server, epics_now, not_ctrlc
 from virtaccl.site.SNS_Linac.virtual_devices import (Quadrupole, Corrector, Quadrupole_Power_Supply,
                                                      Corrector_Power_Supply, WireScanner, BPM, P_BPM, Screen)
 from virtaccl.site.SNS_Linac.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Dummy_ICS
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
-from virtaccl.virtual_accelerator import va_parser, virtual_accelerator
 from virtaccl.beam_line import BeamLine
+from virtaccl.EPICS_Server.ca_server import EPICS_Server
+from virtaccl.virtual_accelerator import va_parser, virtual_accelerator
 
 from virtaccl.site.SNS_IDmp.IDmp_maker import get_IDMP_lattice_and_bunch
 
@@ -69,8 +66,7 @@ def main():
     model.initialize_lattice(lattice)
     element_list = model.get_element_list()
 
-    server = Server()
-    beam_line = BeamLine(server)
+    beam_line = BeamLine()
 
     offset_file = args.phase_offset
     if offset_file is not None:
@@ -137,7 +133,9 @@ def main():
     dummy_device = SNS_Dummy_ICS("ICS_Tim")
     beam_line.add_device(dummy_device)
 
-    virtual_accelerator(model, beam_line, parser)
+    server = EPICS_Server()
+
+    virtual_accelerator(model, beam_line, server, parser)
 
     print('Exiting. Thank you for using our virtual accelerator!')
 
