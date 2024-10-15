@@ -68,17 +68,17 @@ class BTF_Actuator(Device):
         self.screen_speed = initial_speed
         self.current_state = initial_state
 
-        initial_position = self.milli_units.raw(initial_position)
-        initial_speed = self.milli_units.raw(initial_speed)
+        initial_position = initial_position
+        initial_speed = initial_speed
         
         # Creates flat noise for associated PVs
         pos_noise = AbsNoise(noise=1e-6)
 
         # Registers the device's PVs with the server
-        speed_param = self.register_setting(BTF_Actuator.speed_set_pv, default=initial_speed)
-        self.register_readback(BTF_Actuator.speed_readback_pv, speed_param)
+        speed_param = self.register_setting(BTF_Actuator.speed_set_pv, default=initial_speed, transform=self.milli_units)
+        self.register_readback(BTF_Actuator.speed_readback_pv, speed_param, transform=self.milli_units)
 
-        pos_param = self.register_setting(BTF_Actuator.position_set_pv, default = initial_position)
+        pos_param = self.register_setting(BTF_Actuator.position_set_pv, default = initial_position, transform=self.milli_units)
         self.register_readback(BTF_Actuator.position_readback_pv, pos_param, transform=self.milli_units, noise=pos_noise)
 
         state_param = self.register_setting(BTF_Actuator.state_set_pv, default = initial_state)
@@ -169,7 +169,7 @@ class BTF_Actuator(Device):
         self.update_readback(BTF_Actuator.position_readback_pv, actuator_pos)
         
         # Readback set velocity value only when actuator is moving
-        if self.get_parameter_value(BTF_Actuator.state_set_pv) == 1 and self.milli_units.raw(actuator_pos) != self.get_parameter_value(BTF_Actuator.position_set_pv):
+        if self.get_parameter_value(BTF_Actuator.state_set_pv) == 1 and actuator_pos != self.get_parameter_value(BTF_Actuator.position_set_pv):
             actuator_spd = self.get_parameter_value(BTF_Actuator.speed_set_pv)
         else:
             actuator_spd = 0
