@@ -17,18 +17,17 @@ from virtaccl.site.BTF.orbit_model.btf_lattice_factory import PyORBIT_Lattice_Fa
 from orbit.core.bunch import Bunch
 from orbit.core.linac import BaseRfGap
 
-from virtaccl.ca_server import Server
 from virtaccl.beam_line import BeamLine
-from virtaccl.site.SNS_Linac.virtual_devices import BPM, Quadrupole, P_BPM, Quadrupole_Power_Supply, Bend_Power_Supply, Bend
-from virtaccl.site.BTF.orbit_model.virtual_devices_BTF import BTF_FC, BTF_Quadrupole, BTF_Quadrupole_Power_Supply, BTF_BCM, BTF_Actuator, BTF_Corrector, BTF_Corrector_Power_Supply
+from virtaccl.site.SNS_Linac.virtual_devices import BPM, Quadrupole, P_BPM, Quadrupole_Power_Supply, Bend_Power_Supply, \
+    Bend
+from virtaccl.site.BTF.orbit_model.virtual_devices_BTF import BTF_FC, BTF_Quadrupole, BTF_Quadrupole_Power_Supply, \
+    BTF_BCM, BTF_Actuator, BTF_Corrector, BTF_Corrector_Power_Supply
 from virtaccl.site.BTF.orbit_model.btf_child_nodes import BTF_Screenclass, BTF_Slitclass
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
-from virtaccl.virtual_accelerator import va_parser, virtual_accelerator
+from virtaccl.EPICS_Server.ca_server import EPICS_Server
 
-def load_config(filename: Path):
-    with open(filename, "r") as json_file:
-        devices_dict = json.load(json_file)
+from virtaccl.virtual_accelerator import va_parser, virtual_accelerator
 
 
 def main():
@@ -114,7 +113,6 @@ def main():
     Add_quad_apertures_to_lattice(model_lattice)
     Add_rfgap_apertures_to_lattice(model_lattice)
 
-
     bunch_file = Path(args.bunch)
     part_num = args.particle_number
 
@@ -137,7 +135,7 @@ def main():
     # get sync particle momentum for use in corrector current conversion
     syncPart = bunch_in.getSyncParticle()
     momentum = syncPart.momentum()
-    beam_current = args.beam_current / 1000 # Set the initial beam current in Amps
+    beam_current = args.beam_current / 1000  # Set the initial beam current in Amps
 
     model = OrbitModel(debug=debug, save_bunch=save_bunch)
     model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list, diagnostic=True)
@@ -170,7 +168,8 @@ def main():
                 ps_name = device_dict["Power_Supply"]
                 ps_device = BTF_Quadrupole_Power_Supply(ps_name, initial_current)
                 beam_line.add_device(ps_device)
-                quadrupole_device = BTF_Quadrupole(name, ele_name, power_supply=ps_device, coeff_a = coeff_a, coeff_b = coeff_b, length=length)
+                quadrupole_device = BTF_Quadrupole(name, ele_name, power_supply=ps_device, coeff_a=coeff_a,
+                                                   coeff_b=coeff_b, length=length)
                 beam_line.add_device(quadrupole_device)
 
     fq_quad_ps = devices_dict["FQ_Quadrupole_Power_Supply"]
@@ -200,7 +199,8 @@ def main():
                 ps_name = device_dict["Power_Supply"]
                 ps_device = BTF_Corrector_Power_Supply(ps_name, corr_current)
                 beam_line.add_device(ps_device)
-                corrector_device = BTF_Corrector(name, ele_name, power_supply = ps_device, coeff = coeff, length=length, momentum = momentum)
+                corrector_device = BTF_Corrector(name, ele_name, power_supply=ps_device, coeff=coeff, length=length,
+                                                 momentum=momentum)
                 beam_line.add_device(corrector_device)
 
     # These are non physical correctors that are not present in actual BTF
@@ -218,7 +218,8 @@ def main():
                 ps_name = device_dict["Power_Supply"]
                 ps_device = BTF_Corrector_Power_Supply(ps_name, corr_current)
                 beam_line.add_device(ps_device)
-                corrector_device = BTF_Corrector(name, ele_name, power_supply = ps_device, coeff = coeff, length = length, momentum = momentum)
+                corrector_device = BTF_Corrector(name, ele_name, power_supply=ps_device, coeff=coeff, length=length,
+                                                 momentum=momentum)
                 beam_line.add_device(corrector_device)
 
     bends = devices_dict["Bend"]
@@ -281,7 +282,7 @@ def main():
         axis = device_dict["Axis"]
         axis_polarity = device_dict["Axis_Polarity"]
         if ele_name in element_list:
-            screen_child = BTF_Screenclass(ele_name, screen_axis = axis, screen_polarity = axis_polarity)
+            screen_child = BTF_Screenclass(ele_name, screen_axis=axis, screen_polarity=axis_polarity)
             model.add_child_node(ele_name, screen_child)
             screen_device = BTF_Actuator(name, ele_name)
             beam_line.add_device(screen_device)
@@ -292,19 +293,17 @@ def main():
         axis = device_dict["Axis"]
         axis_polarity = device_dict["Axis_Polarity"]
         speed = device_dict["Standard_Speed"]
-        limit= device_dict["Actuator_Limit"]
+        limit = device_dict["Actuator_Limit"]
         if ele_name in element_list:
-            slit_child = BTF_Slitclass(ele_name, slit_axis = axis, slit_polarity = axis_polarity)
+            slit_child = BTF_Slitclass(ele_name, slit_axis=axis, slit_polarity=axis_polarity)
             model.add_child_node(ele_name, slit_child)
-            slit_device = BTF_Actuator(name, ele_name, speed = speed, limit = limit)
+            slit_device = BTF_Actuator(name, ele_name, speed=speed, limit=limit)
             beam_line.add_device(slit_device)
 
-    server = Server()
+    server = EPICS_Server()
 
     virtual_accelerator(model, beam_line, server, parser)
 
+
 if __name__ == '__main__':
     main()
-
-
-

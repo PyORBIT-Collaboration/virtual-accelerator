@@ -1,12 +1,8 @@
 import math
-import sys
 
 import numpy as np
 from numpy.random import random_sample
 from typing import Optional, Union, List, Dict, Any, Set
-from virtaccl.ca_server import Server
-
-from pcaspy.cas import epicsTimeStamp
 
 
 class Transform:
@@ -135,13 +131,13 @@ class PosNoise(Noise):
 
 class Parameter:
     def __init__(self, reason: str, definition=None, default=0, setting_reason=None, transform=None, noise=None,
-                 full_pv: str = None):
+                 server_key: str = None):
         self.reason = reason
         self.definition = definition
         self.default_value = default
         self.setting_reason = setting_reason
         self.transform, self.noise = self._default(transform, noise)
-        self.full_pv = full_pv
+        self.server_key = server_key
 
         self.current_value = default
 
@@ -153,8 +149,8 @@ class Parameter:
         noise = noise if noise else Noise()
         return transform, noise
 
-    def get_pv(self):
-        return self.full_pv
+    def get_server_key(self):
+        return self.server_key
 
     def get_definition(self):
         return self.definition
@@ -181,12 +177,12 @@ class Parameter:
 
 class Device:
 
-    def __init__(self, pv_name: str, model_name: Optional[Union[str, List[str]]] = None,
+    def __init__(self, server_name: str, model_name: Optional[Union[str, List[str]]] = None,
                  connected_device: Optional[Union['Device', List['Device']]] = None):
-        self.name = pv_name
+        self.name = server_name
 
         if model_name is None:
-            self.model_names = [pv_name]
+            self.model_names = [server_name]
         elif not isinstance(model_name, list):
             self.model_names = [model_name]
         else:
@@ -212,40 +208,40 @@ class Device:
         self.measurements: Set[str] = set()
         self.readbacks: Set[str] = set()
 
-    def register_pv(self, reason, definition=None, default=0, setting_reason: str = None, transform=None, noise=None,
-                    pv_override: str = None) -> Parameter:
+    def register_parameter(self, reason: str, definition=None, default=0, setting_reason: str = None, transform=None,
+                           noise=None, key_override: str = None) -> Parameter:
         if definition is None:
             definition = {}
-        if pv_override is not None:
-            pv = pv_override
+        if key_override is not None:
+            parameter_key = key_override
         else:
-            pv = self.name + ':' + reason
-        param = Parameter(reason, definition, default, setting_reason, transform, noise, pv)
+            parameter_key = self.name + ':' + reason
+        param = Parameter(reason, definition, default, setting_reason, transform, noise, parameter_key)
         self.parameters[reason] = param
         return param
 
-    def register_measurement(self, reason, definition=None, transform=None, noise=None,
-                             pv_override: str = None) -> Parameter:
-        param = self.register_pv(reason, definition, transform=transform, noise=noise, pv_override=pv_override)
+    def register_measurement(self, reason: str, definition=None, transform=None, noise=None,
+                             key_override: str = None) -> Parameter:
+        param = self.register_parameter(reason, definition, transform=transform, noise=noise, key_override=key_override)
         self.measurements.add(reason)
         return param
 
     def register_setting(self, reason: str, definition=None, default=0, transform=None, noise=None,
-                         pv_override: str = None) -> Parameter:
-        param = self.register_pv(reason, definition, default=default, transform=transform, noise=noise,
-                                 pv_override=pv_override)
+                         key_override: str = None) -> Parameter:
+        param = self.register_parameter(reason, definition, default=default, transform=transform, noise=noise,
+                                        key_override=key_override)
         self.settings.add(reason)
         return param
 
     def register_readback(self, reason: str, setting: str = None, definition=None, transform=None, noise=None,
-                          pv_override: str = None) -> Parameter:
+                          key_override: str = None) -> Parameter:
         rb_def = {}
         if definition is not None:
             rb_def = definition
         elif setting is not None and setting in self.settings:
             rb_def = self.get_parameter(setting).get_definition()
-        param = self.register_pv(reason, definition=rb_def, setting_reason=setting, transform=transform, noise=noise,
-                                 pv_override=pv_override)
+        param = self.register_parameter(reason, definition=rb_def, setting_reason=setting, transform=transform,
+                                        noise=noise, key_override=key_override)
         self.readbacks.add(reason)
         return param
 
@@ -257,6 +253,9 @@ class Device:
 
     def get_parameter(self, reason) -> Parameter:
         return self.parameters[reason]
+
+    def get_parameters(self) -> Dict[str, Parameter]:
+        return self.parameters
 
     def update_setting(self, reason: str, new_value=None):
         param = self.get_parameter(reason)
@@ -304,7 +303,7 @@ class Device:
         changes_dict = {}
         for reason in self.sever_changes:
             param = self.get_parameter(reason)
-            changes_dict[param.get_pv()] = param.get_value_for_server()
+            changes_dict[param.get_server_key()] = param.get_value_for_server()
         return changes_dict
 
     def reset(self):
@@ -313,8 +312,8 @@ class Device:
             param.set_value(param.get_default())
 
     def build_db(self) -> Dict[str, Parameter]:
-        pv_db = {v.get_pv(): v for k, v in self.parameters.items()}
-        return pv_db
+        parameter_db = {v.get_server_key(): v for k, v in self.parameters.items()}
+        return parameter_db
 
 
 class BeamLine:
@@ -322,15 +321,20 @@ class BeamLine:
     def __init__(self):
         self.devices: Dict[str, Device] = {}
 
-        self.setting_pvs = set()
-        self.measurement_pvs = set()
-        self.readback_pvs = set()
+        self.setting_keys = set()
+        self.measurement_keys = set()
+        self.readback_keys = set()
 
     def add_device(self, device: Device) -> Device:
         self.devices[device.name] = device
-        self.setting_pvs |= device.settings
-        self.measurement_pvs |= device.measurements
-        self.measurement_pvs |= device.readbacks
+        for reason, parameter in device.get_parameters().items():
+            server_key = parameter.get_server_key()
+            if reason in device.settings:
+                self.setting_keys.add(server_key)
+            elif reason in device.measurements:
+                self.measurement_keys.add(server_key)
+            elif reason in device.readbacks:
+                self.readback_keys.add(server_key)
         return device
 
     def get_devices(self) -> Dict[str, Device]:
@@ -339,11 +343,11 @@ class BeamLine:
     def get_device(self, device_name: str) -> Device:
         return self.devices[device_name]
 
-    def get_pv_definitions(self) -> Dict[str, Dict[str, Any]]:
+    def get_server_parameter_definitions(self) -> Dict[str, Dict[str, Any]]:
         def_dict = {}
         for device_name, device in self.get_devices().items():
-            pvs = device.build_db()
-            for reason, param in pvs.items():
+            parameters = device.build_db()
+            for reason, param in parameters.items():
                 def_dict[reason] = param.get_definition() | {'value': param.get_value_for_server()}
         return def_dict
 
@@ -351,14 +355,14 @@ class BeamLine:
         for device_name, device in self.devices.items():
             device.reset()
 
-    def update_settings_from_server(self, server_pvs: Dict[str, Any]):
+    def update_settings_from_server(self, server_parameters: Dict[str, Any]):
         for device_name, device in self.devices.items():
             device_settings = {}
             for reason in device.settings:
                 parameter = device.get_parameter(reason)
-                pv = parameter.get_pv()
-                if pv in server_pvs:
-                    device_settings |= {reason: server_pvs[pv]}
+                param_key = parameter.get_server_key()
+                if param_key in server_parameters:
+                    device_settings |= {reason: server_parameters[param_key]}
             device.update_settings(device_settings)
 
     def get_model_optics(self) -> Dict[str, Dict[str, Any]]:
@@ -377,30 +381,30 @@ class BeamLine:
         for device_name, device in self.devices.items():
             device.update_readbacks()
 
-    def get_pvs_for_server(self) -> Dict[str, Any]:
+    def get_parameters_for_server(self) -> Dict[str, Any]:
         sever_dict = {}
         for device_name, device in self.devices.items():
             sever_dict |= device.get_changed_parameters()
             device.clear_changes()
         return sever_dict
 
-    def get_setting_pvs(self) -> List[str]:
-        setting_pvs = []
+    def get_setting_keys(self) -> List[str]:
+        setting_keys = []
         for device_name, device in self.devices.items():
             for reason in device.settings:
-                setting_pvs.append(device.get_parameter(reason).get_pv())
-        return setting_pvs
+                setting_keys.append(device.get_parameter(reason).get_server_key())
+        return setting_keys
 
-    def get_measurement_pvs(self) -> List[str]:
-        measurement_pvs = []
+    def get_measurement_keys(self) -> List[str]:
+        measurement_keys = []
         for device_name, device in self.devices.items():
             for reason in device.measurements:
-                measurement_pvs.append(device.get_parameter(reason).get_pv())
-        return measurement_pvs
+                measurement_keys.append(device.get_parameter(reason).get_server_key())
+        return measurement_keys
 
-    def get_readback_pvs(self) -> List[str]:
-        readback_pvs = []
+    def get_readback_keys(self) -> List[str]:
+        readback_keys = []
         for device_name, device in self.devices.items():
             for reason in device.readbacks:
-                readback_pvs.append(device.get_parameter(reason).get_pv())
-        return readback_pvs
+                readback_keys.append(device.get_parameter(reason).get_server_key())
+        return readback_keys

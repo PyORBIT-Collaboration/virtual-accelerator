@@ -2,7 +2,6 @@
 # The main body of the script instantiates PVs from a file passed by command line argument.
 import json
 import math
-import sys
 from pathlib import Path
 
 from orbit.lattice import AccNode
@@ -16,7 +15,7 @@ from virtaccl.site.SNS_Linac.virtual_devices import BPM, Quadrupole, Corrector, 
     WireScanner, Quadrupole_Power_Supply, Corrector_Power_Supply, Bend_Power_Supply, Bend, Quadrupole_Power_Shunt
 from virtaccl.site.SNS_Linac.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS
 
-from virtaccl.ca_server import Server
+from virtaccl.EPICS_Server.ca_server import EPICS_Server
 from virtaccl.beam_line import BeamLine
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 from virtaccl.virtual_accelerator import va_parser, virtual_accelerator
@@ -237,7 +236,7 @@ def main():
     dummy_device = SNS_Dummy_ICS("ICS_Tim")
     beam_line.add_device(dummy_device)
 
-    server = Server()
+    server = EPICS_Server()
 
     virtual_accelerator(model, beam_line, server, parser)
 
