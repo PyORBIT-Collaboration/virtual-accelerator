@@ -53,7 +53,7 @@ def main():
                         help='Pathname of input bunch file.')
     parser.add_argument('--particle_number', default=10000, type=int,
                         help='Number of particles to use (default=1000).')
-    parser.add_argument('--beam_current', default=30.0, type=float,
+    parser.add_argument('--beam_current', default=50.0, type=float,
                         help='Initial beam current in mA. (default=30.0).')
     parser.add_argument('--save_bunch', const='end_bunch.dat', nargs='?', type=str,
                         help="Saves the bunch at the end of the lattice after each track in the given location. "
