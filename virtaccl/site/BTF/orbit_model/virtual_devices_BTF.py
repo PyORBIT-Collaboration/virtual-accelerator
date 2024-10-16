@@ -169,6 +169,7 @@ class BTF_Actuator(Device):
         self.update_readback(BTF_Actuator.position_readback_pv, actuator_pos)
         
         # Readback set velocity value only when actuator is moving
+        # Note: does not work if destinationset is outside available region
         if self.get_parameter_value(BTF_Actuator.state_set_pv) == 1 and actuator_pos != self.get_parameter_value(BTF_Actuator.position_set_pv):
             actuator_spd = self.get_parameter_value(BTF_Actuator.speed_set_pv)
         else:
@@ -178,10 +179,10 @@ class BTF_Actuator(Device):
 
 class BTF_FC(Device):
     #EPICS PV names
-    current_pv = 'CurrentAvrGt' # [A]
+    current_pv = 'CurrentAvrGt' # [mA]
     state_set_pv = 'State_Set'
     state_readback_pv = 'State'
-    current_noise = 7e-5
+    current_noise = 7e-2
 
     #PyORBIT parameter keys
     current_key = 'current'
@@ -192,10 +193,13 @@ class BTF_FC(Device):
         self.model_name = model_name
         super().__init__(name, self.model_name)
 
+        # Changes the units from meters to millimeters for associated PVs.
+        self.milli_units = LinearTInv(scaler=1e3)
+
         current_noise = PosNoise(noise=BTF_FC.current_noise)
 
         # Registers the device's PVs with the server
-        self.register_measurement(BTF_FC.current_pv, noise=current_noise)
+        self.register_measurement(BTF_FC.current_pv, noise=current_noise, transform = self.milli_units)
 
         self.register_setting(BTF_FC.state_set_pv, default=init_state)
         self.register_readback(BTF_FC.state_readback_pv, BTF_FC.state_set_pv)
@@ -228,8 +232,8 @@ class BTF_FC(Device):
 
 class BTF_BCM(Device):
     #EPICS PV names
-    current_pv = 'CurrentAvrGt' # [A?]
-    current_noise = 7e-5
+    current_pv = 'CurrentAvrGt' # [mA]
+    current_noise = 7e-2
 
     #PyORBIT parameter keys
     current_key = 'current'
@@ -241,10 +245,13 @@ class BTF_BCM(Device):
             self.model_name = model_name
         super().__init__(name, self.model_name)
 
+        # Changes the units from meters to millimeters for associated PVs.
+        self.milli_units = LinearTInv(scaler=1e3)
+
         current_noise = PosNoise(noise=BTF_BCM.current_noise)
 
         # Registers the device's PVs with the server
-        self.register_measurement(BTF_BCM.current_pv, noise=current_noise)
+        self.register_measurement(BTF_BCM.current_pv, noise=current_noise, transform=self.milli_units)
 
     # Updates the measurement values on the server. Needs the model key associated with its value and the new value.
     # This is where the measurement PV name is associated with it's model key.
