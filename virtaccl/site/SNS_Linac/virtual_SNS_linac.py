@@ -1,5 +1,6 @@
 import json
 import math
+import sys
 from pathlib import Path
 
 from orbit.lattice import AccNode
@@ -27,11 +28,6 @@ def main():
     loc = Path(__file__).parent
     va_parser = VA_Parser()
     va_parser.set_description('Run the SNS linac PyORBIT virtual accelerator server.')
-    va_parser.change_argument_help('--print_settings',
-                                   "Will only print setting PVs. Will NOT run the virtual accelerator.")
-    va_parser.remove_argument('--print_server_keys')
-    va_parser.add_argument('--print_server_pvs', dest='print_keys', action='store_true',
-                           help="Will print all server PVs. Will NOT run the virtual accelerator.")
 
     va_parser = add_pyorbit_arguments(va_parser)
     # Set the defaults for the PyORBIT model.
@@ -40,6 +36,8 @@ def main():
     va_parser.change_argument_default('--bunch', loc / 'orbit_model/MEBT_in.dat')
 
     va_parser = add_epics_arguments(va_parser)
+    va_parser.add_server_argument('--print_settings', action='store_true',
+                                  help="Will only print setting PVs. Will NOT run the virtual accelerator.")
 
     # Json file that contains a dictionary connecting EPICS name of devices with their associated element model names.
     va_parser.add_argument('--config_file', '-f', default=loc / 'va_config.json', type=str,
@@ -226,7 +224,13 @@ def main():
     dummy_device = SNS_Dummy_ICS("ICS_Tim")
     beam_line.add_device(dummy_device)
 
-    server = EPICS_Server()
+    if args.print_settings:
+        for key in beam_line.get_setting_keys():
+            print(key)
+        sys.exit()
+
+    delay = args.ca_proc
+    server = EPICS_Server(process_delay=delay, print_pvs=args.print_pvs)
 
     virtual_accelerator(model, beam_line, server, va_parser)
 
