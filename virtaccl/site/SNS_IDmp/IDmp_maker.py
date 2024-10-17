@@ -100,8 +100,8 @@ def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0,
     # Dump
 
     # Define the sequence and add the list of nodes to the sequence.
-    fodo = Sequence('FODO')
-    fodo.setNodes(list_of_nodes)
+    idmp = Sequence('IDmp')
+    idmp.setNodes(list_of_nodes)
 
     # Define the lattice, add the list of nodes to the lattice, and initialize the lattice.
     my_lattice = LinacAccLattice('My Lattice')

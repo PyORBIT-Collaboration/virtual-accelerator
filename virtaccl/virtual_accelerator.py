@@ -1,46 +1,72 @@
-# Channel access server used to generate fake PV signals analogous to accelerator components.
-# The main body of the script instantiates PVs from a file passed by command line argument.
 import os
 import sys
 import time
 import argparse
 from datetime import datetime
 from importlib.metadata import version
+from typing import Dict, Any
 
 from virtaccl.server import Server, not_ctrlc
 from virtaccl.beam_line import BeamLine
 from virtaccl.model import Model
 
 
-def va_parser():
-    va_version = version('virtaccl')
-    parser = argparse.ArgumentParser(
-        description='Run the Virac virtual accelerator server. Version ' + va_version)
-    # parser.add_argument('--prefix', '-p', default='test', type=str, help='Prefix for PVs')
+class VA_Parser:
+    def __init__(self):
+        self.arguments: Dict[str, Dict[str, Any]] = {}
+        self.version = version('virtaccl')
+        self.description = 'Run the Virac virtual accelerator server.'
 
+        add_va_arguments(self)
+
+    def set_description(self, new_description: str):
+        self.description = new_description
+
+    def add_argument(self, *args, **kwargs):
+        self.arguments[args[0]] = {'positional': args, 'optional': kwargs}
+
+    def remove_argument(self, name: str):
+        del self.arguments[name]
+
+    def edit_argument(self, name: str, argument_keyword: str, new_value: Any):
+        self.arguments[name]['optional'][argument_keyword] = new_value
+
+    def change_argument_default(self, name: str, new_value: Any):
+        self.arguments[name]['optional']['default'] = new_value
+
+    def change_argument_help(self, name: str, new_help: Any):
+        self.arguments[name]['optional']['help'] = new_help
+
+    def initialize_arguments(self) -> argparse.ArgumentParser:
+        va_parser = argparse.ArgumentParser(
+            description=self.description + ' Version ' + self.version,
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+        for argument_name, argument_dict in self.arguments.items():
+            va_parser.add_argument(*argument_dict['positional'], **argument_dict['optional'])
+
+        return va_parser
+
+
+def add_va_arguments(va_parser: VA_Parser) -> VA_Parser:
     # Number (in Hz) determining the update rate for the virtual accelerator.
-    parser.add_argument('--refresh_rate', default=1.0, type=float,
-                        help='Rate (in Hz) at which the virtual accelerator updates (default=1.0).')
-    parser.add_argument('--sync_time', dest='sync_time', action='store_true',
-                        help="Synchronize timestamps for PVs.")
+    va_parser.add_argument('--refresh_rate', default=1.0, type=float,
+                           help='Rate (in Hz) at which the virtual accelerator updates.')
+    va_parser.add_argument('--sync_time', dest='sync_time', action='store_true',
+                           help="Synchronize timestamps for server parameters.")
 
     # Desired amount of output.
-    parser.add_argument('--debug', dest='debug', action='store_true',
-                        help="Some debug info will be printed.")
-    parser.add_argument('--production', dest='debug', action='store_false',
-                        help="DEFAULT: No additional info printed.")
-    parser.add_argument('--print_settings', dest='print_settings', action='store_true',
-                        help="Will only print setting PVs. Will NOT run the virtual accelerator. (Default is off)")
-    parser.add_argument('--print_pvs', dest='print_pvs', action='store_true',
-                        help="Will print all PVs. Will NOT run the virtual accelerator. (Default is off)")
+    va_parser.add_argument('--debug', dest='debug', action='store_true',
+                           help="Some debug info will be printed.")
+    va_parser.add_argument('--production', dest='debug', action='store_false',
+                           help="DEFAULT: No additional info printed.")
 
-    # Number (in seconds) that determine some delay parameter in the server. Not exactly sure how it works, so use at
-    # your own risk.
-    parser.add_argument('--ca_proc', default=0.1, type=float,
-                        help='Number (in seconds) that determine some delay parameter in the server. Not exactly sure '
-                             'how it works, so use at your own risk. (Default=0.1)')
+    va_parser.add_argument('--print_settings', dest='print_settings', action='store_true',
+                           help="Will only print setting parameters. Will NOT run the virtual accelerator.")
+    va_parser.add_argument('--print_server_keys', dest='print_keys', action='store_true',
+                           help="Will print all server keys. Will NOT run the virtual accelerator.")
 
-    return parser, va_version
+    return va_parser
 
 
 def virtual_accelerator(model: Model, beam_line: BeamLine, server: Server, arguments: argparse.ArgumentParser):
@@ -59,7 +85,7 @@ def virtual_accelerator(model: Model, beam_line: BeamLine, server: Server, argum
         for setting in beam_line.get_setting_keys():
             print(setting)
         sys.exit()
-    elif args.print_pvs:
+    elif args.print_keys:
         for key in server.get_parameter_keys():
             print(key)
         sys.exit()
@@ -81,8 +107,8 @@ def virtual_accelerator(model: Model, beam_line: BeamLine, server: Server, argum
         if sync_time:
             now = datetime.now()
 
-        server_pvs = server.get_parameters()
-        beam_line.update_settings_from_server(server_pvs)
+        server_parameters = server.get_parameters()
+        beam_line.update_settings_from_server(server_parameters)
         new_optics = beam_line.get_model_optics()
         model.update_optics(new_optics)
 

@@ -10,6 +10,16 @@ from pcaspy.cas import epicsTimeStamp
 from pcaspy import SimpleServer
 
 from virtaccl.server import Server
+from virtaccl.virtual_accelerator import VA_Parser
+
+
+def add_epics_arguments(va_parser: VA_Parser) -> VA_Parser:
+    # Number (in seconds) that determine some delay parameter in the server. Not exactly sure how it works, so use at
+    # your own risk.
+    va_parser.add_argument('--ca_proc', default=0.1, type=float,
+                           help='Number (in seconds) that determine some delay parameter in the server. Not exactly '
+                                'sure how it works, so use at your own risk.')
+    return va_parser
 
 
 def to_epics_timestamp(t: datetime):
