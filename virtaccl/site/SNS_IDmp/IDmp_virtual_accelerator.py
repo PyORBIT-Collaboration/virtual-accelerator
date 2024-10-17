@@ -1,63 +1,55 @@
-# Channel access server used to generate fake PV signals analogous to accelerator components.
-# The main body of the script instantiates PVs from a file passed by command line argument.
 import json
+import sys
 from pathlib import Path
 
 from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass, ScreenClass
+from virtaccl.PyORBIT_Model.pyorbit_va_arguments import add_pyorbit_arguments
 from virtaccl.site.SNS_Linac.virtual_devices import (Quadrupole, Corrector, Quadrupole_Power_Supply,
                                                      Corrector_Power_Supply, WireScanner, BPM, P_BPM, Screen)
 from virtaccl.site.SNS_Linac.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Dummy_ICS
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 from virtaccl.beam_line import BeamLine
-from virtaccl.EPICS_Server.ca_server import EPICS_Server
-from virtaccl.virtual_accelerator import va_parser, virtual_accelerator
+from virtaccl.EPICS_Server.ca_server import EPICS_Server, add_epics_arguments
+from virtaccl.virtual_accelerator import virtual_accelerator, VA_Parser
 
 from virtaccl.site.SNS_IDmp.IDmp_maker import get_IDMP_lattice_and_bunch
 
 
 def main():
     loc = Path(__file__).parent
-    parser, va_version = va_parser()
-    parser.description = 'Run the SNS Injection Dump PyORBIT virtual accelerator server. Version ' + va_version
+    va_parser = VA_Parser()
+    va_parser.set_description('Run the SNS Injection Dump PyORBIT virtual accelerator server.')
+
+    va_parser = add_pyorbit_arguments(va_parser)
+    # Set the defaults for the PyORBIT model.
+    va_parser.remove_argument('--lattice')
+    va_parser.remove_argument('--start')
+    va_parser.remove_argument('end')
+    va_parser.remove_argument('--bunch')
+
+    va_parser = add_epics_arguments(va_parser)
+    va_parser.add_server_argument('--print_settings', action='store_true',
+                                  help="Will only print setting PVs. Will NOT run the virtual accelerator.")
 
     # Json file that contains a dictionary connecting EPICS name of devices with their associated element model names.
-    parser.add_argument('--file', '-f', default=loc / 'va_config.json', type=str,
-                        help='Pathname of config json file.')
-
-    # Lattice xml input file and the sequences desired from that file.
-    parser.add_argument('--lattice', default=loc / 'orbit_model/sns_linac.xml', type=str,
-                        help='Pathname of lattice file')
-    parser.add_argument("--start", default="MEBT", type=str,
-                        help='Desired sequence of the lattice to start the model with (default=MEBT).')
-    parser.add_argument("end", nargs='?', default="HEBT1", type=str,
-                        help='Desired sequence of the lattice to end the model with (default=HEBT1).')
-
-    # Desired initial bunch file and the desired number of particles from that file.
-    parser.add_argument('--bunch', default=loc / 'orbit_model/MEBT_in.dat', type=str,
-                        help='Pathname of input bunch file.')
-    parser.add_argument('--particle_number', default=1000, type=int,
-                        help='Number of particles to use (default=1000).')
-    parser.add_argument('--beam_current', default=38.0, type=float,
-                        help='Initial beam current in mA. (default=38.0).')
-    parser.add_argument('--save_bunch', const='end_bunch.dat', nargs='?', type=str,
-                        help="Saves the bunch at the end of the lattice after each track in the given location. "
-                             "If no location is given, the bunch is saved as 'end_bunch.dat' in the working directory. "
-                             "(Default is that the bunch is not saved.)")
+    va_parser.add_argument('--config_file', '-f', default=loc / 'va_config.json', type=str,
+                           help='Pathname of config json file.')
 
     # Json file that contains a dictionary connecting EPICS name of devices with their phase offset.
-    parser.add_argument('--phase_offset', default=None, type=str,
-                        help='Pathname of phase offset file.')
+    va_parser.add_argument('--phase_offset', default=None, type=str,
+                           help='Pathname of phase offset file.')
 
-    args = parser.parse_args()
+    va_parser = va_parser.initialize_arguments()
+    args = va_parser.parse_args()
     debug = args.debug
 
-    config_file = Path(args.file)
+    config_file = Path(args.config_file)
     with open(config_file, "r") as json_file:
         devices_dict = json.load(json_file)
 
     part_num = args.particle_number
-    lattice, bunch = get_IDMP_lattice_and_bunch(part_num, x_off=2, xp_off=0.3)
+    lattice, bunch = get_IDMP_lattice_and_bunch(part_num, x_off=2, xp_off=0.3, debug=debug)
     model = OrbitModel(input_bunch=bunch, debug=debug)
     model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list, diagnostic=True)
     model.define_custom_node(WSclass.node_type, WSclass.parameter_list, diagnostic=True)
@@ -133,9 +125,15 @@ def main():
     dummy_device = SNS_Dummy_ICS("ICS_Tim")
     beam_line.add_device(dummy_device)
 
-    server = EPICS_Server()
+    if args.print_settings:
+        for key in beam_line.get_setting_keys():
+            print(key)
+        sys.exit()
 
-    virtual_accelerator(model, beam_line, server, parser)
+    delay = args.ca_proc
+    server = EPICS_Server(process_delay=delay, print_pvs=args.print_pvs)
+
+    virtual_accelerator(model, beam_line, server, va_parser)
 
     print('Exiting. Thank you for using our virtual accelerator!')
 

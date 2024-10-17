@@ -16,7 +16,7 @@ from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass, Screen
 from virtaccl.PyORBIT_Model.bunch_generator import BunchGenerator
 
 
-def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0, yp_off=0):
+def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0, yp_off=0, debug: bool = False):
     # Field strength and length of the quadrupoles
     quad_field = 0.5
     dch_field = 0.01
@@ -100,14 +100,15 @@ def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0,
     # Dump
 
     # Define the sequence and add the list of nodes to the sequence.
-    fodo = Sequence('FODO')
-    fodo.setNodes(list_of_nodes)
+    idmp = Sequence('IDmp')
+    idmp.setNodes(list_of_nodes)
 
     # Define the lattice, add the list of nodes to the lattice, and initialize the lattice.
     my_lattice = LinacAccLattice('My Lattice')
     my_lattice.setNodes(list_of_nodes)
     my_lattice.initialize()
-    print("Total length=", my_lattice.getLength())
+    if debug:
+        print("Total length=", my_lattice.getLength())
 
     # -----TWISS Parameters at the entrance of MEBT ---------------
     # transverse emittances are unnormalized and in pi*mm*mrad
@@ -116,8 +117,9 @@ def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0,
     mass = 0.939294  # in [GeV]
     gamma = (mass + e_kin_ini) / mass
     beta = math.sqrt(gamma * gamma - 1.0) / gamma
-    print("relat. gamma=", gamma)
-    print("relat.  beta=", beta)
+    if debug:
+        print("relat. gamma=", gamma)
+        print("relat.  beta=", beta)
     frequency = 402.5e6
     v_light = 2.99792458e8  # in [m/sec]
 
@@ -144,16 +146,18 @@ def get_IDMP_lattice_and_bunch(particle_number=1000, x_off=0, xp_off=0, y_off=0,
     emittZ = emittZ * gamma ** 3 * beta ** 2 * mass
     betaZ = betaZ / (gamma ** 3 * beta ** 2 * mass)
 
-    print(" ========= PyORBIT Twiss ===========")
-    print(" aplha beta emitt[mm*mrad] X= %6.4f %6.4f %6.4f " % (alphaX, betaX, emittX * 1.0e6))
-    print(" aplha beta emitt[mm*mrad] Y= %6.4f %6.4f %6.4f " % (alphaY, betaY, emittY * 1.0e6))
-    print(" aplha beta emitt[mm*MeV] Z= %6.4f %6.4f %6.4f " % (alphaZ, betaZ, emittZ * 1.0e6))
+    if debug:
+        print(" ========= PyORBIT Twiss ===========")
+        print(" aplha beta emitt[mm*mrad] X= %6.4f %6.4f %6.4f " % (alphaX, betaX, emittX * 1.0e6))
+        print(" aplha beta emitt[mm*mrad] Y= %6.4f %6.4f %6.4f " % (alphaY, betaY, emittY * 1.0e6))
+        print(" aplha beta emitt[mm*MeV] Z= %6.4f %6.4f %6.4f " % (alphaZ, betaZ, emittZ * 1.0e6))
 
     twissX = TwissContainer(alphaX, betaX, emittX)
     twissY = TwissContainer(alphaY, betaY, emittY)
     twissZ = TwissContainer(alphaZ, betaZ, emittZ)
 
-    print("Start Bunch Generation.")
+    if debug:
+        print("Start Bunch Generation.")
     bunch_gen = BunchGenerator(twissX, twissY, twissZ)
 
     # set the initial kinetic energy in GeV

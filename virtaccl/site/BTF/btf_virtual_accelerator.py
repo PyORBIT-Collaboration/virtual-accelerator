@@ -12,6 +12,7 @@ from importlib.metadata import version
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
 
 from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, FCclass, BCMclass
+from virtaccl.PyORBIT_Model.pyorbit_va_arguments import add_pyorbit_arguments
 from virtaccl.site.BTF.orbit_model.btf_lattice_factory import PyORBIT_Lattice_Factory
 
 from orbit.core.bunch import Bunch
@@ -25,49 +26,42 @@ from virtaccl.site.BTF.orbit_model.virtual_devices_BTF import BTF_FC, BTF_Quadru
 from virtaccl.site.BTF.orbit_model.btf_child_nodes import BTF_Screenclass, BTF_Slitclass
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
-from virtaccl.EPICS_Server.ca_server import EPICS_Server
+from virtaccl.EPICS_Server.ca_server import EPICS_Server, add_epics_arguments
 
-from virtaccl.virtual_accelerator import va_parser, virtual_accelerator
+from virtaccl.virtual_accelerator import virtual_accelerator, VA_Parser
 
 
 def main():
     loc = Path(__file__).parent
-    parser, va_version = va_parser()
-    parser.description = 'Run the SNS Linac PyORBIT virtual accelerator server. Version ' + va_version
+    va_parser = VA_Parser()
+    va_parser.set_description('Run the BTF PyORBIT virtual accelerator server.')
+
+    va_parser = add_pyorbit_arguments(va_parser)
+    # Set the defaults for the PyORBIT model.
+    va_parser.change_argument_default('--lattice', loc / 'orbit_model/btf_lattice_straight.xml')
+    va_parser.change_argument_default('--start', 'MEBT1')
+    va_parser.change_argument_default('end', 'MEBT2')
+    va_parser.change_argument_default('--bunch', loc / 'orbit_model/parmteq_bunch_RFQ_output_1.00e+05.dat')
+    va_parser.change_argument_default('--beam_current', 50.0)
+
+    va_parser = add_epics_arguments(va_parser)
+    va_parser.add_server_argument('--print_settings', action='store_true',
+                                  help="Will only print setting PVs. Will NOT run the virtual accelerator.")
 
     # Json file that contains a dictionary connecting EPICS name of devices with their associated element model names.
-    parser.add_argument('--file', '-f', default=loc / 'btf_config.json', type=str,
-                        help='Pathname of config json file.')
-
-    # Lattice xml input file and the sequences desired from that file.
-    parser.add_argument('--lattice', default=loc / 'orbit_model/btf_lattice_straight.xml', type=str,
-                        help='Pathname of lattice file')
-    parser.add_argument("--start", default="MEBT1", type=str,
-                        help='Desired sequence of the lattice to start the model with (default=MEBT1).')
-    parser.add_argument("end", nargs='?', default="MEBT2", type=str,
-                        help='Desired sequence of the lattice to end the model with (default=MEBT2).')
-
-    # Desired initial bunch file and the desired number of particles from that file.
-    parser.add_argument('--bunch', default=loc / 'orbit_model/parmteq_bunch_RFQ_output_1.00e+05.dat', type=str,
-                        help='Pathname of input bunch file.')
-    parser.add_argument('--particle_number', default=10000, type=int,
-                        help='Number of particles to use (default=1000).')
-    parser.add_argument('--beam_current', default=50.0, type=float,
-                        help='Initial beam current in mA. (default=30.0).')
-    parser.add_argument('--save_bunch', const='end_bunch.dat', nargs='?', type=str,
-                        help="Saves the bunch at the end of the lattice after each track in the given location. "
-                             "If no location is given, the bunch is saved as 'end_bunch.dat' in the working directory. "
-                             "(Default is that the bunch is not saved.)")
+    va_parser.add_argument('--config_file', '-f', default=loc / 'btf_config.json', type=str,
+                           help='Pathname of config json file.')
 
     # Json file that contains a dictionary connecting EPICS name of devices with their phase offset.
-    parser.add_argument('--phase_offset', default=None, type=str,
-                        help='Pathname of phase offset file.')
+    va_parser.add_argument('--phase_offset', default=None, type=str,
+                           help='Pathname of phase offset file.')
 
-    args = parser.parse_args()
+    va_parser = va_parser.initialize_arguments()
+    args = va_parser.parse_args()
     debug = args.debug
     save_bunch = args.save_bunch
 
-    config_file = Path(args.file)
+    config_file = Path(args.config_file)
     with open(config_file, "r") as json_file:
         devices_dict = json.load(json_file)
 
@@ -300,9 +294,15 @@ def main():
             slit_device = BTF_Actuator(name, ele_name, speed=speed, limit=limit)
             beam_line.add_device(slit_device)
 
-    server = EPICS_Server()
+    if args.print_settings:
+        for key in beam_line.get_setting_keys():
+            print(key)
+        sys.exit()
 
-    virtual_accelerator(model, beam_line, server, parser)
+    delay = args.ca_proc
+    server = EPICS_Server(process_delay=delay, print_pvs=args.print_pvs)
+
+    virtual_accelerator(model, beam_line, server, va_parser)
 
 
 if __name__ == '__main__':

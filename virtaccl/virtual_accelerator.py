@@ -1,46 +1,119 @@
-# Channel access server used to generate fake PV signals analogous to accelerator components.
-# The main body of the script instantiates PVs from a file passed by command line argument.
 import os
 import sys
 import time
 import argparse
 from datetime import datetime
 from importlib.metadata import version
+from typing import Dict, Any
 
 from virtaccl.server import Server, not_ctrlc
 from virtaccl.beam_line import BeamLine
 from virtaccl.model import Model
 
 
-def va_parser():
-    va_version = version('virtaccl')
-    parser = argparse.ArgumentParser(
-        description='Run the Virac virtual accelerator server. Version ' + va_version)
-    # parser.add_argument('--prefix', '-p', default='test', type=str, help='Prefix for PVs')
+class VA_Parser:
+    def __init__(self):
+        self._va_arguments_: Dict[str, Dict[str, Any]] = {}
+        self.model_arguments: Dict[str, Dict[str, Any]] = {}
+        self.server_arguments: Dict[str, Dict[str, Any]] = {}
+        self.custom_arguments: Dict[str, Dict[str, Any]] = {}
+        self.__all_arguments__ = {'va': self._va_arguments_, 'model': self.model_arguments,
+                                  'server': self.server_arguments, 'custom': self.custom_arguments}
+        self.__all_argument_keys__ = set()
 
+        self.version = version('virtaccl')
+        self.description = 'Run the Virac virtual accelerator server.'
+
+        add_va_arguments(self)
+
+    def __find_argument_dict__(self, name) -> Dict[str, Dict[str, Any]]:
+        for argument_group, arguments in self.__all_arguments__.items():
+            if name in arguments:
+                return arguments
+
+    def set_description(self, new_description: str):
+        self.description = new_description
+
+    def add_argument(self, *args, **kwargs):
+        arg_key = args[0]
+        if arg_key in self.__all_argument_keys__:
+            print(f'Warning: Argument name "{arg_key}" already exists. Argument not added.')
+        else:
+            self.custom_arguments[arg_key] = {'positional': args, 'optional': kwargs}
+            self.__all_argument_keys__.add(arg_key)
+
+    def add_va_argument(self, *args, **kwargs):
+        arg_key = args[0]
+        if arg_key in self.__all_argument_keys__:
+            print(f'Warning: Argument name "{arg_key}" already exists. Argument not added.')
+        else:
+            self._va_arguments_[arg_key] = {'positional': args, 'optional': kwargs}
+            self.__all_argument_keys__.add(arg_key)
+
+    def add_model_argument(self, *args, **kwargs):
+        arg_key = args[0]
+        if arg_key in self.__all_argument_keys__:
+            print(f'Warning: Argument name "{arg_key}" already exists. Argument not added.')
+        else:
+            self.custom_arguments[arg_key] = {'positional': args, 'optional': kwargs}
+            self.__all_argument_keys__.add(arg_key)
+
+    def add_server_argument(self, *args, **kwargs):
+        arg_key = args[0]
+        if arg_key in self.__all_argument_keys__:
+            print(f'Warning: Argument name "{arg_key}" already exists. Argument not added.')
+        else:
+            self.custom_arguments[arg_key] = {'positional': args, 'optional': kwargs}
+            self.__all_argument_keys__.add(arg_key)
+
+    def remove_argument(self, name: str):
+        if name not in self.__all_argument_keys__:
+            print(f'Warning: Argument name "{name}" was not found.')
+        else:
+            arguments = self.__find_argument_dict__(name)
+            del arguments[name]
+            self.__all_argument_keys__.remove(name)
+
+    def edit_argument(self, name: str, new_options: Dict[str, Any]):
+        if name not in self.__all_argument_keys__:
+            print(f'Warning: Argument name "{name}" was not found.')
+        else:
+            arguments = self.__find_argument_dict__(name)
+            for option_key, new_value in new_options.items():
+                arguments[name]['optional'][option_key] = new_value
+
+    def change_argument_default(self, name: str, new_value: Any):
+        arguments = self.__find_argument_dict__(name)
+        arguments[name]['optional']['default'] = new_value
+
+    def change_argument_help(self, name: str, new_help: Any):
+        arguments = self.__find_argument_dict__(name)
+        arguments[name]['optional']['help'] = new_help
+
+    def initialize_arguments(self) -> argparse.ArgumentParser:
+        va_parser = argparse.ArgumentParser(
+            description=self.description + ' Version ' + self.version,
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+        for group_key, argument_group in self.__all_arguments__.items():
+            for argument_name, argument_dict in argument_group.items():
+                va_parser.add_argument(*argument_dict['positional'], **argument_dict['optional'])
+        return va_parser
+
+
+def add_va_arguments(va_parser: VA_Parser) -> VA_Parser:
     # Number (in Hz) determining the update rate for the virtual accelerator.
-    parser.add_argument('--refresh_rate', default=1.0, type=float,
-                        help='Rate (in Hz) at which the virtual accelerator updates (default=1.0).')
-    parser.add_argument('--sync_time', dest='sync_time', action='store_true',
-                        help="Synchronize timestamps for PVs.")
+    va_parser.add_va_argument('--refresh_rate', default=1.0, type=float,
+                              help='Rate (in Hz) at which the virtual accelerator updates.')
+    va_parser.add_va_argument('--sync_time', dest='sync_time', action='store_true',
+                              help="Synchronize timestamps for server parameters.")
 
     # Desired amount of output.
-    parser.add_argument('--debug', dest='debug', action='store_true',
-                        help="Some debug info will be printed.")
-    parser.add_argument('--production', dest='debug', action='store_false',
-                        help="DEFAULT: No additional info printed.")
-    parser.add_argument('--print_settings', dest='print_settings', action='store_true',
-                        help="Will only print setting PVs. Will NOT run the virtual accelerator. (Default is off)")
-    parser.add_argument('--print_pvs', dest='print_pvs', action='store_true',
-                        help="Will print all PVs. Will NOT run the virtual accelerator. (Default is off)")
-
-    # Number (in seconds) that determine some delay parameter in the server. Not exactly sure how it works, so use at
-    # your own risk.
-    parser.add_argument('--ca_proc', default=0.1, type=float,
-                        help='Number (in seconds) that determine some delay parameter in the server. Not exactly sure '
-                             'how it works, so use at your own risk. (Default=0.1)')
-
-    return parser, va_version
+    va_parser.add_va_argument('--debug', dest='debug', action='store_true',
+                              help="Some debug info will be printed.")
+    va_parser.add_va_argument('--production', dest='debug', action='store_false',
+                              help="DEFAULT: No additional info printed.")
+    return va_parser
 
 
 def virtual_accelerator(model: Model, beam_line: BeamLine, server: Server, arguments: argparse.ArgumentParser):
@@ -55,17 +128,6 @@ def virtual_accelerator(model: Model, beam_line: BeamLine, server: Server, argum
     sever_parameters = beam_line.get_server_parameter_definitions()
     server.add_parameters(sever_parameters)
 
-    if args.print_settings:
-        for setting in beam_line.get_setting_keys():
-            print(setting)
-        sys.exit()
-    elif args.print_pvs:
-        for key in server.get_parameter_keys():
-            print(key)
-        sys.exit()
-
-    delay = args.ca_proc
-    server.process_delay = delay
     if debug:
         print(server)
 
@@ -81,8 +143,8 @@ def virtual_accelerator(model: Model, beam_line: BeamLine, server: Server, argum
         if sync_time:
             now = datetime.now()
 
-        server_pvs = server.get_parameters()
-        beam_line.update_settings_from_server(server_pvs)
+        server_parameters = server.get_parameters()
+        beam_line.update_settings_from_server(server_parameters)
         new_optics = beam_line.get_model_optics()
         model.update_optics(new_optics)
 

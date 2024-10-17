@@ -1,15 +1,29 @@
+import sys
 from threading import Thread
 from datetime import datetime
 from time import sleep
 
 from math import floor
-from typing import Any
+from typing import Any, Dict
 
 from pcaspy import Driver
 from pcaspy.cas import epicsTimeStamp
 from pcaspy import SimpleServer
 
 from virtaccl.server import Server
+from virtaccl.virtual_accelerator import VA_Parser
+
+
+def add_epics_arguments(va_parser: VA_Parser) -> VA_Parser:
+    # Number (in seconds) that determine some delay parameter in the server. Not exactly sure how it works, so use at
+    # your own risk.
+    va_parser.add_server_argument('--ca_proc', default=0.1, type=float,
+                                  help='Number (in seconds) that determine some delay parameter in the server. Not '
+                                       'exactly sure how it works, so use at your own risk.')
+
+    va_parser.add_server_argument('--print_pvs', dest='print_pvs', action='store_true',
+                                  help="Will print all server PVs. Will NOT run the virtual accelerator.")
+    return va_parser
 
 
 def to_epics_timestamp(t: datetime):
@@ -39,15 +53,23 @@ class TDriver(Driver):
 
 
 class EPICS_Server(Server):
-    def __init__(self, prefix='', process_delay=0.1):
+    def __init__(self, prefix='', process_delay=0.1, print_pvs=False):
         super().__init__()
         self.prefix = prefix
         self.driver = None
         self.process_delay = process_delay
+        self.print_pvs = print_pvs
 
     def _CA_events(self, server):
         while True:
             server.process(self.process_delay)
+
+    def add_parameters(self, new_parameters: Dict[str, Dict[str, Any]]):
+        super().add_parameters(new_parameters)
+        if self.print_pvs:
+            for key in self.get_parameter_keys():
+                print(key)
+            sys.exit()
 
     def set_parameter(self, reason: str, value: Any, timestamp: datetime = None):
         if timestamp is not None:
