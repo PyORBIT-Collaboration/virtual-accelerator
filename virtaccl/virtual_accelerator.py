@@ -116,7 +116,11 @@ def add_va_arguments(va_parser: VA_Parser) -> VA_Parser:
     return va_parser
 
 
-def virtual_accelerator(model: Model, beam_line: BeamLine, server: Server, arguments: argparse.ArgumentParser):
+def virtual_accelerator(model: Model, beam_line: BeamLine, server: Server, arguments: argparse.ArgumentParser = None):
+    if arguments is None:
+        arguments = VA_Parser()
+        arguments = arguments.initialize_arguments()
+
     os.environ['EPICS_CA_MAX_ARRAY_BYTES'] = '10000000'
 
     args = arguments.parse_args()

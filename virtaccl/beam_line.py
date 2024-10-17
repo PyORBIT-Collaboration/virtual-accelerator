@@ -280,7 +280,7 @@ class Device:
     def update_measurements(self, new_measurements: Dict[str, Dict[str, Any]] = None):
         for model_name, measurement in new_measurements.items():
             if model_name in self.model_names:
-                for reason, value in measurement:
+                for reason, value in measurement.items():
                     self.update_measurement(reason, value)
 
     def update_readback(self, reason, value=None):
