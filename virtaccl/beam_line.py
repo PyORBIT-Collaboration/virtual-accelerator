@@ -131,13 +131,13 @@ class PosNoise(Noise):
 
 class Parameter:
     def __init__(self, reason: str, definition=None, default=0, setting_reason=None, transform=None, noise=None,
-                 server_key: str = None):
+                 server_key_override: str = None):
         self.reason = reason
         self.definition = definition
         self.default_value = default
         self.setting_reason = setting_reason
         self.transform, self.noise = self._default(transform, noise)
-        self.server_key = server_key
+        self.server_key = server_key_override
 
         self.current_value = default
 
@@ -149,8 +149,11 @@ class Parameter:
         noise = noise if noise else Noise()
         return transform, noise
 
-    def get_server_key(self):
+    def get_server_key(self) -> str:
         return self.server_key
+
+    def set_server_key(self, server_key: str):
+        self.server_key = server_key
 
     def get_definition(self):
         return self.definition
@@ -209,39 +212,36 @@ class Device:
         self.readbacks: Set[str] = set()
 
     def register_parameter(self, reason: str, definition=None, default=0, setting_reason: str = None, transform=None,
-                           noise=None, key_override: str = None) -> Parameter:
+                           noise=None, server_key_override: str = None) -> Parameter:
         if definition is None:
             definition = {}
-        if key_override is not None:
-            parameter_key = key_override
-        else:
-            parameter_key = self.name + ':' + reason
-        param = Parameter(reason, definition, default, setting_reason, transform, noise, parameter_key)
+        param = Parameter(reason, definition, default, setting_reason, transform, noise, server_key_override)
         self.parameters[reason] = param
         return param
 
     def register_measurement(self, reason: str, definition=None, transform=None, noise=None,
-                             key_override: str = None) -> Parameter:
-        param = self.register_parameter(reason, definition, transform=transform, noise=noise, key_override=key_override)
+                             server_key_override: str = None) -> Parameter:
+        param = self.register_parameter(reason, definition, transform=transform, noise=noise,
+                                        server_key_override=server_key_override)
         self.measurements.add(reason)
         return param
 
     def register_setting(self, reason: str, definition=None, default=0, transform=None, noise=None,
-                         key_override: str = None) -> Parameter:
+                         server_key_override: str = None) -> Parameter:
         param = self.register_parameter(reason, definition, default=default, transform=transform, noise=noise,
-                                        key_override=key_override)
+                                        server_key_override=server_key_override)
         self.settings.add(reason)
         return param
 
     def register_readback(self, reason: str, setting: str = None, definition=None, transform=None, noise=None,
-                          key_override: str = None) -> Parameter:
+                          server_key_override: str = None) -> Parameter:
         rb_def = {}
         if definition is not None:
             rb_def = definition
         elif setting is not None and setting in self.settings:
             rb_def = self.get_parameter(setting).get_definition()
         param = self.register_parameter(reason, definition=rb_def, setting_reason=setting, transform=transform,
-                                        noise=noise, key_override=key_override)
+                                        noise=noise, server_key_override=server_key_override)
         self.readbacks.add(reason)
         return param
 
@@ -318,8 +318,9 @@ class Device:
 
 class BeamLine:
 
-    def __init__(self):
+    def __init__(self, server_key_joiner: str = ':'):
         self.devices: Dict[str, Device] = {}
+        self.server_key_joiner = server_key_joiner
 
         self.setting_keys = set()
         self.measurement_keys = set()
@@ -329,6 +330,10 @@ class BeamLine:
         self.devices[device.name] = device
         for reason, parameter in device.get_parameters().items():
             server_key = parameter.get_server_key()
+            if server_key is None:
+                server_key = device.name + self.server_key_joiner + reason
+                parameter.set_server_key(server_key)
+
             if reason in device.settings:
                 self.setting_keys.add(server_key)
             elif reason in device.measurements:
