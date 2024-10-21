@@ -1,3 +1,4 @@
+import os
 import sys
 from threading import Thread
 from datetime import datetime
@@ -59,6 +60,8 @@ class EPICS_Server(Server):
         self.driver = None
         self.process_delay = process_delay
         self.print_pvs = print_pvs
+
+        os.environ['EPICS_CA_MAX_ARRAY_BYTES'] = '10000000'
 
     def _CA_events(self, server):
         while True:
