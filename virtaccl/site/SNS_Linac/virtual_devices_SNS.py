@@ -39,10 +39,10 @@ class SNS_Cavity(Cavity):
         mps_name = name.replace('FCM', 'HPM', 1) + ':' + SNS_Cavity.MPS_pv
 
         if 'SCL' not in name:
-            self.register_readback(SNS_Cavity.net_power_pv, Cavity.amp_pv, key_override=net_pwr_name)
+            self.register_readback(SNS_Cavity.net_power_pv, Cavity.amp_pv, server_key_override=net_pwr_name)
         self.register_setting(SNS_Cavity.mode_pv, default=0.0)
         self.register_setting(SNS_Cavity.reset_pv, default=0.0)
-        self.register_setting(SNS_Cavity.MPS_pv, default=0.0, key_override=mps_name)
+        self.register_setting(SNS_Cavity.MPS_pv, default=0.0, server_key_override=mps_name)
 
 
 class SNS_Dummy_BCM(Device):
