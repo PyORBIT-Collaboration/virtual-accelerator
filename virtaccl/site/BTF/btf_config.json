@@ -281,7 +281,7 @@
                 }
 	},
 	"BPM": {
-		"ITSF_Diag:BPM04": {
+		"ITSF_Diag:BPM04_4": {
 			"PyORBIT_Name": "MEBT:BPM04",
 			"Frequency": 805000000.0
 		}
@@ -382,7 +382,7 @@
                 }
 	},
 	"BS": {
-		"ITSF_Diag:BS36": {
+		"ITSF_Diag:BS36_LP": {
 			"PyORBIT_Name": "MEBT:BS36",
 			"State": 1
 		},
