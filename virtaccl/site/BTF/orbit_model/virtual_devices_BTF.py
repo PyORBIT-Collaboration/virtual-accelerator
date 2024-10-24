@@ -182,7 +182,7 @@ class BTF_FC(Device):
     current_pv = 'CurrentAvrGt' # [mA]
     state_set_pv = 'State_Set'
     state_readback_pv = 'State'
-    current_noise = 7e-2
+    current_noise = -7e-2
 
     #PyORBIT parameter keys
     current_key = 'current'
@@ -224,7 +224,7 @@ class BTF_FC(Device):
 
         if current_state == 1:
             fc_params = new_params[self.model_name]
-            current = fc_params[BTF_FC.current_key]
+            current = -1.0*fc_params[BTF_FC.current_key]
         else:
             current = 0
         self.update_measurement(BTF_FC.current_pv, current)
@@ -233,7 +233,7 @@ class BTF_FC(Device):
 class BTF_BCM(Device):
     #EPICS PV names
     current_pv = 'CurrentAvrGt' # [mA]
-    current_noise = 7e-2
+    current_noise = -7e-2
 
     #PyORBIT parameter keys
     current_key = 'current'
@@ -257,7 +257,7 @@ class BTF_BCM(Device):
     # This is where the measurement PV name is associated with it's model key.
     def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
         bcm_params = new_params[self.model_name]
-        current = bcm_params[BTF_BCM.current_key]
+        current = -1.0*bcm_params[BTF_BCM.current_key]
         self.update_measurement(BTF_BCM.current_pv, current)
 
 class BTF_Quadrupole(Device):
