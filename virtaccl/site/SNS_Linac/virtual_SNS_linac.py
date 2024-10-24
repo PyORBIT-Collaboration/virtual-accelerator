@@ -9,6 +9,7 @@ from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, 
 from orbit.core.bunch import Bunch
 from orbit.core.linac import BaseRfGap, RfGapTTF
 
+from virtaccl.server import Server
 from virtaccl.site.SNS_Linac.orbit_model.sns_linac_lattice_factory import PyORBIT_Lattice_Factory
 from virtaccl.site.SNS_Linac.virtual_devices import BPM, Quadrupole, Corrector, P_BPM, \
     WireScanner, Quadrupole_Power_Supply, Corrector_Power_Supply, Bend_Power_Supply, Bend, Quadrupole_Power_Shunt
@@ -21,10 +22,10 @@ from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass
 from virtaccl.EPICS_Server.ca_server import EPICS_Server, add_epics_arguments
 from virtaccl.beam_line import BeamLine
 
-from virtaccl.virtual_accelerator import virtual_accelerator, VA_Parser
+from virtaccl.virtual_accelerator import Virtual_Accelerator, VA_Parser
 
 
-def main():
+def build_sns():
     loc = Path(__file__).parent
     va_parser = VA_Parser()
     va_parser.set_description('Run the SNS linac PyORBIT virtual accelerator server.')
@@ -231,8 +232,15 @@ def main():
 
     delay = args.ca_proc
     server = EPICS_Server(process_delay=delay, print_pvs=args.print_pvs)
+    # server = Server()
 
-    virtual_accelerator(model, beam_line, server, va_parser)
+    sns_virac = Virtual_Accelerator(model, beam_line, server, va_parser)
+    return sns_virac
+
+
+def main():
+    sns = build_sns()
+    sns.start_server()
 
 
 if __name__ == '__main__':
