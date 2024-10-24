@@ -25,7 +25,7 @@ def va_process():
 def test_pv_connection(va_process):
 
     assert va_process.poll() is None
-    x = caget('ITSF_Diag:BPM04:xAvg', connection_timeout=0.1)
+    x = caget('ITSF_Diag:BPM04_4:xAvg', connection_timeout=0.1)
     assert x is not None
 
 
@@ -39,7 +39,7 @@ def test_bad_pv(va_process):
 def test_corrector(va_process):
     corrector = "BTF_MEBT_Mag:DCH00:B"
     corrector_set = "BTF_MEBT_Mag:PS_DCH00:I_Set"
-    bpm_device = "ITSF_Diag:BPM04:xAvg"
+    bpm_device = "ITSF_Diag:BPM04_4:xAvg"
 
     original_val = caget(corrector_set)
     settings = [(0.0, -0.03, 0.0),
