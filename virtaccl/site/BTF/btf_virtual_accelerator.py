@@ -35,6 +35,7 @@ def btf_arguments():
     loc = Path(__file__).parent
     va_parser = VA_Parser()
     va_parser.set_description('Run the BTF PyORBIT virtual accelerator server.')
+    va_parser.edit_argument('--sync_time', {'action': 'store_false'})
 
     va_parser = add_pyorbit_arguments(va_parser)
     # Set the defaults for the PyORBIT model.
@@ -308,6 +309,7 @@ def build_btf(**kwargs):
     server = EPICS_Server(process_delay=delay, print_pvs=kwargs['print_pvs'])
 
     btf_virac = VirtualAccelerator(model, beam_line, server, **kwargs)
+    btf_virac.track()
     return btf_virac
 
 

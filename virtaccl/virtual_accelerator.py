@@ -117,8 +117,8 @@ def add_va_arguments(va_parser: VA_Parser) -> VA_Parser:
 
 class VirtualAccelerator:
     def __init__(self, model: Model, beam_line: BeamLine, server: Server, **kwargs):
-        kwargs = VA_Parser().initialize_arguments() | kwargs
-        print(kwargs)
+        if not kwargs:
+            kwargs = VA_Parser().initialize_arguments()
 
         self.debug = kwargs['debug']
         self.sync_time = kwargs['sync_time']
@@ -129,6 +129,7 @@ class VirtualAccelerator:
         beam_line.update_readbacks()
         sever_parameters = beam_line.get_server_parameter_definitions()
         server.add_parameters(sever_parameters)
+        beam_line.reset_devices()
 
         self.model = model
         self.beam_line = beam_line
@@ -165,7 +166,6 @@ class VirtualAccelerator:
         self.server.set_parameters(new_server_values, timestamp=timestamp)
 
     def start_server(self):
-        self.beam_line.reset_devices()
         self.server.start()
         print(f"Server started.")
         now = None
