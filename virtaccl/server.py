@@ -9,7 +9,8 @@ class Server:
         self.parameter_db = {}
 
     def add_parameters(self, new_parameters: Dict[str, Dict[str, Any]]):
-        self.parameter_db |= new_parameters
+        for parameter_key, parameter_definitions in new_parameters.items():
+            self.add_parameter(parameter_key, parameter_definitions)
 
     def add_parameter(self, parameter_key: str, parameter_definitions: Dict[str, Any]):
         self.parameter_db |= {parameter_key: parameter_definitions}
@@ -29,10 +30,10 @@ class Server:
         return 'Following parameters are registered:\n' + '\n'.join([f'{key}' for key in self.parameter_db.keys()])
 
     def get_parameter(self, parameter_key: str):
-        pass
+        return self.parameter_db[parameter_key]['value']
 
     def set_parameter(self, parameter_key: str, new_value, timestamp: datetime = None):
-        pass
+        self.parameter_db[parameter_key]['value'] = new_value
 
     def update(self):
         pass

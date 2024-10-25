@@ -1,4 +1,3 @@
-import os
 import sys
 import time
 import argparse
@@ -90,7 +89,7 @@ class VA_Parser:
         arguments = self.__find_argument_dict__(name)
         arguments[name]['optional']['help'] = new_help
 
-    def initialize_arguments(self) -> argparse.ArgumentParser:
+    def initialize_arguments(self) -> Dict[str, Any]:
         va_parser = argparse.ArgumentParser(
             description=self.description + ' Version ' + self.version,
             formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -98,7 +97,7 @@ class VA_Parser:
         for group_key, argument_group in self.__all_arguments__.items():
             for argument_name, argument_dict in argument_group.items():
                 va_parser.add_argument(*argument_dict['positional'], **argument_dict['optional'])
-        return va_parser
+        return vars(va_parser.parse_args())
 
 
 def add_va_arguments(va_parser: VA_Parser) -> VA_Parser:
@@ -116,57 +115,75 @@ def add_va_arguments(va_parser: VA_Parser) -> VA_Parser:
     return va_parser
 
 
-def virtual_accelerator(model: Model, beam_line: BeamLine, server: Server, arguments: argparse.ArgumentParser = None):
-    if arguments is None:
-        arguments = VA_Parser()
-        arguments = arguments.initialize_arguments()
+class VirtualAccelerator:
+    def __init__(self, model: Model, beam_line: BeamLine, server: Server, **kwargs):
+        if not kwargs:
+            kwargs = VA_Parser().initialize_arguments()
 
-    os.environ['EPICS_CA_MAX_ARRAY_BYTES'] = '10000000'
-
-    args = arguments.parse_args()
-    debug = args.debug
-    sync_time = args.sync_time
-
-    update_period = 1 / args.refresh_rate
-
-    sever_parameters = beam_line.get_server_parameter_definitions()
-    server.add_parameters(sever_parameters)
-
-    if debug:
-        print(server)
-
-    beam_line.reset_devices()
-    server.start()
-    print(f"Server started.")
-    now = None
-
-    # Our new data acquisition routine
-    while not_ctrlc():
-        loop_start_time = time.time()
-
-        if sync_time:
-            now = datetime.now()
-
-        server_parameters = server.get_parameters()
-        beam_line.update_settings_from_server(server_parameters)
-        new_optics = beam_line.get_model_optics()
-        model.update_optics(new_optics)
-
-        model.track()
+        self.debug = kwargs['debug']
+        self.sync_time = kwargs['sync_time']
+        self.update_period = 1 / kwargs['refresh_rate']
 
         new_measurements = model.get_measurements()
         beam_line.update_measurements_from_model(new_measurements)
         beam_line.update_readbacks()
-        new_server_parameters = beam_line.get_parameters_for_server()
-        server.set_parameters(new_server_parameters, timestamp=now)
+        sever_parameters = beam_line.get_server_parameter_definitions()
+        server.add_parameters(sever_parameters)
+        beam_line.reset_devices()
 
-        server.update()
+        self.model = model
+        self.beam_line = beam_line
+        if self.debug:
+            print(server)
+        self.server = server
 
-        loop_time_taken = time.time() - loop_start_time
-        sleep_time = update_period - loop_time_taken
-        if sleep_time < 0.0:
-            print('Warning: Update took longer than refresh rate.')
-        else:
-            time.sleep(sleep_time)
+    def set_value(self, server_key: str, new_value):
+        self.server.set_parameter(server_key, new_value)
+        self.track()
 
-    print('Exiting. Thank you for using our virtual accelerator!')
+    def set_values(self, new_settings: Dict[str, Any]):
+        self.server.set_parameters(new_settings)
+        self.track()
+
+    def get_value(self, server_key: str):
+        return self.server.get_parameter(server_key)
+
+    def get_values(self) -> Dict[str, Any]:
+        return self.server.get_parameters()
+
+    def track(self, timestamp: datetime = None):
+        server_parameters = self.server.get_parameters()
+        self.beam_line.update_settings_from_server(server_parameters)
+        new_optics = self.beam_line.get_model_optics()
+
+        self.model.update_optics(new_optics)
+        self.model.track()
+        new_measurements = self.model.get_measurements()
+
+        self.beam_line.update_measurements_from_model(new_measurements)
+        self.beam_line.update_readbacks()
+        new_server_values = self.beam_line.get_parameters_for_server()
+        self.server.set_parameters(new_server_values, timestamp=timestamp)
+
+    def start_server(self):
+        self.server.start()
+        print(f"Server started.")
+        now = None
+
+        # Our new data acquisition routine
+        while not_ctrlc():
+            loop_start_time = time.time()
+
+            if self.sync_time:
+                now = datetime.now()
+            self.track(timestamp=now)
+            self.server.update()
+
+            loop_time_taken = time.time() - loop_start_time
+            sleep_time = self.update_period - loop_time_taken
+            if sleep_time < 0.0:
+                print('Warning: Update took longer than refresh rate.')
+            else:
+                time.sleep(sleep_time)
+
+        print('Exiting. Thank you for using our virtual accelerator!')
