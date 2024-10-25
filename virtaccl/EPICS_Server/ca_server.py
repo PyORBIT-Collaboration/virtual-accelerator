@@ -76,9 +76,9 @@ class EPICS_Server(Server):
             sys.exit()
 
     def set_parameter(self, reason: str, value: Any, timestamp: datetime = None):
+        super().set_parameter(reason, value, timestamp)
         if timestamp is not None:
             timestamp = epics_now(timestamp)
-        super().set_parameter(reason, value, timestamp)
         if self.start_flag:
             self.driver.setParam(reason, value, timestamp)
 

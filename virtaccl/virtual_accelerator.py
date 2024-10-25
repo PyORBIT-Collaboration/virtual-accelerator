@@ -118,6 +118,7 @@ def add_va_arguments(va_parser: VA_Parser) -> VA_Parser:
 class VirtualAccelerator:
     def __init__(self, model: Model, beam_line: BeamLine, server: Server, **kwargs):
         kwargs = VA_Parser().initialize_arguments() | kwargs
+        print(kwargs)
 
         self.debug = kwargs['debug']
         self.sync_time = kwargs['sync_time']

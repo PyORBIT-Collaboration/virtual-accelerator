@@ -28,10 +28,10 @@ from virtaccl.site.BTF.orbit_model.btf_child_nodes import BTF_Screenclass, BTF_S
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 from virtaccl.EPICS_Server.ca_server import EPICS_Server, add_epics_arguments
 
-from virtaccl.virtual_accelerator import virtual_accelerator, VA_Parser
+from virtaccl.virtual_accelerator import VirtualAccelerator, VA_Parser
 
 
-def main():
+def btf_arguments():
     loc = Path(__file__).parent
     va_parser = VA_Parser()
     va_parser.set_description('Run the BTF PyORBIT virtual accelerator server.')
@@ -56,21 +56,26 @@ def main():
     va_parser.add_argument('--phase_offset', default=None, type=str,
                            help='Pathname of phase offset file.')
 
-    va_parser = va_parser.initialize_arguments()
-    args = va_parser.parse_args()
-    debug = args.debug
-    save_bunch = args.save_bunch
+    va_args = va_parser.initialize_arguments()
+    return va_args
 
-    config_file = Path(args.config_file)
+
+def build_btf(**kwargs):
+    kwargs = btf_arguments() | kwargs
+
+    debug = kwargs['debug']
+    save_bunch = kwargs['save_bunch']
+
+    config_file = Path(kwargs['config_file'])
     with open(config_file, "r") as json_file:
         devices_dict = json.load(json_file)
 
-    lattice_file = args.lattice
+    lattice_file = kwargs['lattice']
     linac_sequence = ["MEBT1"]
     bend_1_sequence = ["STUB"]
     bend_2_sequence = ["MEBT2"]
-    start_sequence = args.start
-    end_sequence = args.end
+    start_sequence = kwargs['start']
+    end_sequence = kwargs['end']
     model_sequences = []
 
     if start_sequence in linac_sequence:
@@ -107,8 +112,8 @@ def main():
     Add_quad_apertures_to_lattice(model_lattice)
     Add_rfgap_apertures_to_lattice(model_lattice)
 
-    bunch_file = Path(args.bunch)
-    part_num = args.particle_number
+    bunch_file = Path(kwargs['bunch'])
+    part_num = kwargs['particle_number']
 
     bunch_in = Bunch()
     bunch_in.readBunch(str(bunch_file))
@@ -129,7 +134,7 @@ def main():
     # get sync particle momentum for use in corrector current conversion
     syncPart = bunch_in.getSyncParticle()
     momentum = syncPart.momentum()
-    beam_current = args.beam_current / 1000  # Set the initial beam current in Amps
+    beam_current = kwargs['beam_current'] / 1000  # Set the initial beam current in Amps
 
     model = OrbitModel(debug=debug, save_bunch=save_bunch)
     model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list, diagnostic=True)
@@ -144,7 +149,7 @@ def main():
 
     beam_line = BeamLine()
 
-    offset_file = args.phase_offset
+    offset_file = kwargs['phase_offset']
     if offset_file is not None:
         with open(offset_file, "r") as json_file:
             offset_dict = json.load(json_file)
@@ -294,15 +299,22 @@ def main():
             slit_device = BTF_Actuator(name, ele_name, speed=speed, limit=limit)
             beam_line.add_device(slit_device)
 
-    if args.print_settings:
+    if kwargs['print_settings']:
         for key in beam_line.get_setting_keys():
             print(key)
         sys.exit()
 
-    delay = args.ca_proc
-    server = EPICS_Server(process_delay=delay, print_pvs=args.print_pvs)
+    delay = kwargs['ca_proc']
+    server = EPICS_Server(process_delay=delay, print_pvs=kwargs['print_pvs'])
 
-    virtual_accelerator(model, beam_line, server, va_parser)
+    btf_virac = VirtualAccelerator(model, beam_line, server, **kwargs)
+    return btf_virac
+
+
+def main():
+    args = btf_arguments()
+    btf = build_btf(**args)
+    btf.start_server()
 
 
 if __name__ == '__main__':

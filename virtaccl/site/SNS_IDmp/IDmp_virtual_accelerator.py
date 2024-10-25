@@ -11,12 +11,12 @@ from virtaccl.site.SNS_Linac.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Dummy
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 from virtaccl.beam_line import BeamLine
 from virtaccl.EPICS_Server.ca_server import EPICS_Server, add_epics_arguments
-from virtaccl.virtual_accelerator import virtual_accelerator, VA_Parser
+from virtaccl.virtual_accelerator import VirtualAccelerator, VA_Parser
 
 from virtaccl.site.SNS_IDmp.IDmp_maker import get_IDMP_lattice_and_bunch
 
 
-def main():
+def idmp_arguments():
     loc = Path(__file__).parent
     va_parser = VA_Parser()
     va_parser.set_description('Run the SNS Injection Dump PyORBIT virtual accelerator server.')
@@ -40,15 +40,20 @@ def main():
     va_parser.add_argument('--phase_offset', default=None, type=str,
                            help='Pathname of phase offset file.')
 
-    va_parser = va_parser.initialize_arguments()
-    args = va_parser.parse_args()
-    debug = args.debug
+    va_args = va_parser.initialize_arguments()
+    return va_args
 
-    config_file = Path(args.config_file)
+
+def build_idmp(**kwargs):
+    kwargs = idmp_arguments() | kwargs
+
+    debug = kwargs['debug']
+
+    config_file = Path(kwargs['config_file'])
     with open(config_file, "r") as json_file:
         devices_dict = json.load(json_file)
 
-    part_num = args.particle_number
+    part_num = kwargs['particle_number']
     lattice, bunch = get_IDMP_lattice_and_bunch(part_num, x_off=2, xp_off=0.3, debug=debug)
     model = OrbitModel(input_bunch=bunch, debug=debug)
     model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list, diagnostic=True)
@@ -60,7 +65,7 @@ def main():
 
     beam_line = BeamLine()
 
-    offset_file = args.phase_offset
+    offset_file = kwargs['phase_offset']
     if offset_file is not None:
         with open(offset_file, "r") as json_file:
             offset_dict = json.load(json_file)
@@ -125,17 +130,22 @@ def main():
     dummy_device = SNS_Dummy_ICS("ICS_Tim")
     beam_line.add_device(dummy_device)
 
-    if args.print_settings:
+    if kwargs['print_settings']:
         for key in beam_line.get_setting_keys():
             print(key)
         sys.exit()
 
-    delay = args.ca_proc
-    server = EPICS_Server(process_delay=delay, print_pvs=args.print_pvs)
+    delay = kwargs['ca_proc']
+    server = EPICS_Server(process_delay=delay, print_pvs=kwargs['print_pvs'])
 
-    virtual_accelerator(model, beam_line, server, va_parser)
+    idmp_virac = VirtualAccelerator(model, beam_line, server, **kwargs)
+    return idmp_virac
 
-    print('Exiting. Thank you for using our virtual accelerator!')
+
+def main():
+    args = idmp_arguments()
+    idmp = build_idmp(**args)
+    idmp.start_server()
 
 
 if __name__ == '__main__':
