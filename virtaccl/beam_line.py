@@ -114,7 +114,10 @@ class AbsNoise(Noise):
         self.shape = shape
 
     def add_noise(self, x):
-        noise = self.noise * (random_sample(self.shape) * 2 - 1)
+        if self.shape == 1:
+            noise = self.noise * (random_sample() * 2 - 1)
+        else:
+            noise = self.noise * (random_sample(self.shape) * 2 - 1)
         return x + noise
 
 
@@ -125,7 +128,10 @@ class PosNoise(Noise):
         self.count = count
 
     def add_noise(self, x):
-        noise = self.noise * random_sample(self.count)
+        if self.count == 1:
+            noise = self.noise * random_sample()
+        else:
+            noise = self.noise * random_sample(self.count)
         return x + noise
 
 
