@@ -22,10 +22,10 @@ from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass
 from virtaccl.EPICS_Server.ca_server import EPICS_Server, add_epics_arguments
 from virtaccl.beam_line import BeamLine
 
-from virtaccl.virtual_accelerator import Virtual_Accelerator, VA_Parser
+from virtaccl.virtual_accelerator import VirtualAccelerator, VA_Parser
 
 
-def build_sns():
+def sns_arguments():
     loc = Path(__file__).parent
     va_parser = VA_Parser()
     va_parser.set_description('Run the SNS linac PyORBIT virtual accelerator server.')
@@ -48,18 +48,23 @@ def build_sns():
     va_parser.add_argument('--phase_offset', default=None, type=str,
                            help='Pathname of phase offset file.')
 
-    va_parser = va_parser.initialize_arguments()
-    args = va_parser.parse_args()
-    debug = args.debug
-    save_bunch = args.save_bunch
+    va_args = va_parser.initialize_arguments()
+    return va_args
 
-    config_file = Path(args.config_file)
+
+def build_sns(**kwargs):
+    kwargs = sns_arguments() | kwargs
+
+    debug = kwargs['debug']
+    save_bunch = kwargs['save_bunch']
+
+    config_file = Path(kwargs['config_file'])
     with open(config_file, "r") as json_file:
         devices_dict = json.load(json_file)
 
-    lattice_file = args.lattice
-    start_sequence = args.start
-    end_sequence = args.end
+    lattice_file = kwargs['lattice']
+    start_sequence = kwargs['start']
+    end_sequence = kwargs['end']
 
     lattice_factory = PyORBIT_Lattice_Factory()
     lattice_factory.setMaxDriftLength(0.01)
@@ -75,8 +80,8 @@ def build_sns():
     Add_quad_apertures_to_lattice(model_lattice)
     Add_rfgap_apertures_to_lattice(model_lattice)
 
-    bunch_file = Path(args.bunch)
-    part_num = args.particle_number
+    bunch_file = Path(kwargs['bunch'])
+    part_num = kwargs['particle_number']
 
     bunch_in = Bunch()
     bunch_in.readBunch(str(bunch_file))
@@ -94,8 +99,8 @@ def build_sns():
                 bunch_in.deleteParticleFast(n)
         bunch_in.compress()
 
-    beam_current = args.beam_current / 1000  # Set the initial beam current in Amps.
-    space_charge = args.space_charge
+    beam_current = kwargs['beam_current'] / 1000  # Set the initial beam current in Amps.
+    space_charge = kwargs['space_charge']
     model = OrbitModel(debug=debug, save_bunch=save_bunch)
     model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list, diagnostic=True)
     model.define_custom_node(WSclass.node_type, WSclass.parameter_list, diagnostic=True)
@@ -107,7 +112,7 @@ def build_sns():
 
     beam_line = BeamLine()
 
-    offset_file = args.phase_offset
+    offset_file = kwargs['phase_offset']
     if offset_file is not None:
         with open(offset_file, "r") as json_file:
             offset_dict = json.load(json_file)
@@ -225,21 +230,21 @@ def build_sns():
     dummy_device = SNS_Dummy_ICS("ICS_Tim")
     beam_line.add_device(dummy_device)
 
-    if args.print_settings:
+    if kwargs['print_settings']:
         for key in beam_line.get_setting_keys():
             print(key)
         sys.exit()
 
-    delay = args.ca_proc
-    server = EPICS_Server(process_delay=delay, print_pvs=args.print_pvs)
-    # server = Server()
+    delay = kwargs['ca_proc']
+    server = EPICS_Server(process_delay=delay, print_pvs=kwargs['print_pvs'])
 
-    sns_virac = Virtual_Accelerator(model, beam_line, server, va_parser)
+    sns_virac = VirtualAccelerator(model, beam_line, server, **kwargs)
     return sns_virac
 
 
 def main():
-    sns = build_sns()
+    args = sns_arguments()
+    sns = build_sns(**args)
     sns.start_server()
 
 

@@ -60,6 +60,7 @@ class EPICS_Server(Server):
         self.driver = None
         self.process_delay = process_delay
         self.print_pvs = print_pvs
+        self.start_flag = False
 
         os.environ['EPICS_CA_MAX_ARRAY_BYTES'] = '10000000'
 
@@ -77,10 +78,16 @@ class EPICS_Server(Server):
     def set_parameter(self, reason: str, value: Any, timestamp: datetime = None):
         if timestamp is not None:
             timestamp = epics_now(timestamp)
-        self.driver.setParam(reason, value, timestamp)
+        super().set_parameter(reason, value, timestamp)
+        if self.start_flag:
+            self.driver.setParam(reason, value, timestamp)
 
     def get_parameter(self, reason: str) -> Any:
-        return self.driver.getParam(reason)
+        if self.start_flag:
+            value = self.driver.getParam(reason)
+        else:
+            value = super().get_parameter(reason)
+        return value
 
     def update(self):
         self.driver.updatePVs()
@@ -95,9 +102,11 @@ class EPICS_Server(Server):
         tid.setDaemon(True)
         tid.start()
         self.run()
+        self.start_flag = True
 
     def stop(self):
         # it's unclear how to gracefully stop the server
+        self.start_flag = False
         sleep(1)
 
     def __str__(self):

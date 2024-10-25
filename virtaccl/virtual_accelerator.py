@@ -89,7 +89,7 @@ class VA_Parser:
         arguments = self.__find_argument_dict__(name)
         arguments[name]['optional']['help'] = new_help
 
-    def initialize_arguments(self) -> argparse.ArgumentParser:
+    def initialize_arguments(self) -> Dict[str, Any]:
         va_parser = argparse.ArgumentParser(
             description=self.description + ' Version ' + self.version,
             formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -97,7 +97,7 @@ class VA_Parser:
         for group_key, argument_group in self.__all_arguments__.items():
             for argument_name, argument_dict in argument_group.items():
                 va_parser.add_argument(*argument_dict['positional'], **argument_dict['optional'])
-        return va_parser
+        return vars(va_parser.parse_args())
 
 
 def add_va_arguments(va_parser: VA_Parser) -> VA_Parser:
@@ -116,15 +116,12 @@ def add_va_arguments(va_parser: VA_Parser) -> VA_Parser:
 
 
 class VirtualAccelerator:
-    def __init__(self, model: Model, beam_line: BeamLine, server: Server, arguments: argparse.ArgumentParser = None):
-        if arguments is None:
-            arguments = VA_Parser()
-            arguments = arguments.initialize_arguments()
+    def __init__(self, model: Model, beam_line: BeamLine, server: Server, **kwargs):
+        kwargs = VA_Parser().initialize_arguments() | kwargs
 
-        args = arguments.parse_args()
-        self.debug = args.debug
-        self.sync_time = args.sync_time
-        self.update_period = 1 / args.refresh_rate
+        self.debug = kwargs['debug']
+        self.sync_time = kwargs['sync_time']
+        self.update_period = 1 / kwargs['refresh_rate']
 
         new_measurements = model.get_measurements()
         beam_line.update_measurements_from_model(new_measurements)
@@ -156,11 +153,11 @@ class VirtualAccelerator:
         server_parameters = self.server.get_parameters()
         self.beam_line.update_settings_from_server(server_parameters)
         new_optics = self.beam_line.get_model_optics()
+
         self.model.update_optics(new_optics)
-
         self.model.track()
-
         new_measurements = self.model.get_measurements()
+
         self.beam_line.update_measurements_from_model(new_measurements)
         self.beam_line.update_readbacks()
         new_server_values = self.beam_line.get_parameters_for_server()
@@ -178,9 +175,7 @@ class VirtualAccelerator:
 
             if self.sync_time:
                 now = datetime.now()
-
             self.track(timestamp=now)
-
             self.server.update()
 
             loop_time_taken = time.time() - loop_start_time
