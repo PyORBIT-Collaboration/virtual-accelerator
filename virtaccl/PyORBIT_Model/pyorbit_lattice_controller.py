@@ -88,6 +88,7 @@ class OrbitModel(Model):
 
         # Setup for when a lattice is initialized.
         self.accLattice = None
+        self.accLattice: LinacAccLattice
         # Dictionary containing all elements the model is maintaining.
         self.pyorbit_dictionary: OrbitModel._element_dict_hint = {}
         # Dictionary of bunches that allow for tracking starting at changed optics.
