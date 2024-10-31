@@ -8,10 +8,16 @@ def add_pyorbit_arguments(va_parser: VA_Parser) -> VA_Parser:
                                  help='Desired sequence of the lattice to start the model with.')
     va_parser.add_model_argument("end", nargs='?', type=str,
                                  help='Desired sequence of the lattice to end the model with.')
+    va_parser.add_model_argument('--drift_length', default=0.05, type=float,
+                                 help='Maximum length of a drift node. Will determine frequency of Physics and Space '
+                                      'Charge Nodes.')
+
     va_parser.add_model_argument('--space_charge', const=0.01, nargs='?', type=float,
                                  help="Adds Uniform Ellipse Space Charge nodes to the lattice. The minimum distance "
                                       "in meters between nodes can be specified; the default is 0.01m if no minimum "
                                       "is given. If the argument is not used, no space charge nodes are added.")
+    va_parser.add_model_argument('--physics_nodes', dest='physics_nodes', action='store_true',
+                                 help="Adds physics child nodes to each node on the lattice.")
 
     # Desired initial bunch file and the desired number of particles from that file.
     va_parser.add_model_argument('--bunch', type=str, help='Pathname of input bunch file.')

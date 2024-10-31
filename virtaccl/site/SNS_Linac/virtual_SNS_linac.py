@@ -12,7 +12,8 @@ from orbit.core.linac import BaseRfGap, RfGapTTF
 from virtaccl.server import Server
 from virtaccl.site.SNS_Linac.orbit_model.sns_linac_lattice_factory import PyORBIT_Lattice_Factory
 from virtaccl.site.SNS_Linac.virtual_devices import BPM, Quadrupole, Corrector, P_BPM, \
-    WireScanner, Quadrupole_Power_Supply, Corrector_Power_Supply, Bend_Power_Supply, Bend, Quadrupole_Power_Shunt
+    WireScanner, Quadrupole_Power_Supply, Corrector_Power_Supply, Bend_Power_Supply, Bend, Quadrupole_Power_Shunt, \
+    PhysDevice
 from virtaccl.site.SNS_Linac.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
@@ -57,6 +58,7 @@ def build_sns(**kwargs):
 
     debug = kwargs['debug']
     save_bunch = kwargs['save_bunch']
+    physics_nodes = kwargs['physics_nodes']
 
     config_file = Path(kwargs['config_file'])
     with open(config_file, "r") as json_file:
@@ -65,9 +67,10 @@ def build_sns(**kwargs):
     lattice_file = kwargs['lattice']
     start_sequence = kwargs['start']
     end_sequence = kwargs['end']
+    drift_length = kwargs['drift_length']
 
     lattice_factory = PyORBIT_Lattice_Factory()
-    lattice_factory.setMaxDriftLength(0.01)
+    lattice_factory.setMaxDriftLength(drift_length)
     model_lattice = lattice_factory.getLinacAccLattice_test(lattice_file, end_sequence, start_sequence)
     cppGapModel = BaseRfGap
     rf_gaps = model_lattice.getRF_Gaps()
@@ -82,6 +85,9 @@ def build_sns(**kwargs):
 
     bunch_file = Path(kwargs['bunch'])
     part_num = kwargs['particle_number']
+    beam_current = kwargs['beam_current'] / 1000  # Set the initial beam current in Amps.
+    bunch_frequency = 402.5e6
+    si_e_charge = 1.6021773e-19
 
     bunch_in = Bunch()
     bunch_in.readBunch(str(bunch_file))
@@ -91,17 +97,16 @@ def build_sns(**kwargs):
     elif part_num <= 0:
         bunch_in.deleteAllParticles()
     else:
-        bunch_macrosize = bunch_in.macroSize()
-        bunch_macrosize *= bunch_orig_num / part_num
+        bunch_macrosize = beam_current / bunch_frequency
+        bunch_macrosize /= math.fabs(bunch_in.charge()) * si_e_charge
         bunch_in.macroSize(bunch_macrosize)
         for n in range(bunch_orig_num):
             if n + 1 > part_num:
                 bunch_in.deleteParticleFast(n)
         bunch_in.compress()
 
-    beam_current = kwargs['beam_current'] / 1000  # Set the initial beam current in Amps.
     space_charge = kwargs['space_charge']
-    model = OrbitModel(debug=debug, save_bunch=save_bunch)
+    model = OrbitModel(debug=debug, save_bunch=save_bunch, physics_nodes=physics_nodes)
     model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list, diagnostic=True)
     model.define_custom_node(WSclass.node_type, WSclass.parameter_list, diagnostic=True)
     model.initialize_lattice(model_lattice)
@@ -224,6 +229,12 @@ def build_sns(**kwargs):
         if model_name in element_list:
             pbpm_device = P_BPM(name, model_name)
             beam_line.add_device(pbpm_device)
+
+    if physics_nodes:
+        for name, element in model.get_element_dictionary().items():
+            if element.get_type() == 'Physics':
+                phys_device = PhysDevice(element.get_name())
+                beam_line.add_device(phys_device)
 
     dummy_device = SNS_Dummy_BCM("Ring_Diag:BCM_D09", 'HEBT_Diag:BPM11')
     beam_line.add_device(dummy_device)

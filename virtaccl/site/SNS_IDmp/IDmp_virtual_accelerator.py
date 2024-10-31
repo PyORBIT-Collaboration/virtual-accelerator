@@ -25,6 +25,7 @@ def idmp_arguments():
     # Set the defaults for the PyORBIT model.
     va_parser.remove_argument('--lattice')
     va_parser.remove_argument('--start')
+    va_parser.remove_argument('--drift_length')
     va_parser.remove_argument('end')
     va_parser.remove_argument('--bunch')
 

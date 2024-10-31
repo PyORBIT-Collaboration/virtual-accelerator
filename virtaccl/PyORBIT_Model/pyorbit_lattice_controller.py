@@ -11,7 +11,7 @@ from orbit.space_charge.sc3d import setUniformEllipsesSCAccNodes
 from orbit.core.spacecharge import SpaceChargeCalcUnifEllipse
 
 from .pyorbit_element_controllers import PyorbitNode, PyorbitChild, PyorbitCavity
-from .pyorbit_child_nodes import BunchCopyClass
+from .pyorbit_child_nodes import BunchCopyClass, PhysicsClass
 
 from virtaccl.model import Model
 
@@ -37,10 +37,11 @@ class OrbitModel(Model):
     _element_dict_hint = Dict[str, _element_ref_hint]
 
     def __init__(self, input_lattice: LinacAccLattice = None, input_bunch: Bunch = None, debug: bool = False,
-                 save_bunch: str = None):
+                 save_bunch: str = None, physics_nodes: bool = False):
         super().__init__()
         self.debug = debug
         self.save_bunch = save_bunch
+        self.physics_nodes = physics_nodes
 
         # Flags to keep track of lattice and bunch initialization.
         self.lattice_flag = False
@@ -85,6 +86,10 @@ class OrbitModel(Model):
 
         # Classes that measure the beam.
         self.diagnostic_classes = set()
+
+        # Add Physics node class definitions if being used.
+        if self.physics_nodes:
+            self.define_custom_node(PhysicsClass.node_type, PhysicsClass.parameter_list, diagnostic=True)
 
         # Setup for when a lattice is initialized.
         self.accLattice = None
@@ -142,11 +147,17 @@ class OrbitModel(Model):
         list_of_nodes = self.accLattice.getNodes()
         for node in list_of_nodes:
             node_type = node.getType()
+            element_name = node.getName()
             if node_type in included_nodes:
-                element_name = node.getName()
                 if element_name not in unique_elements:
                     unique_elements.add(element_name)
                     element_dict[element_name] = PyorbitNode(node)
+
+            if self.physics_nodes:
+                physics_name = element_name + ':' + 'Physics'
+                physics_node = PhysicsClass(physics_name)
+                node.addChildNode(physics_node, node.ENTRANCE)
+
             children = node.getAllChildren()
             if len(children) > 0:
                 add_child_nodes(node, children, element_dict)
@@ -233,7 +244,7 @@ class OrbitModel(Model):
 
         self.model_params['beam_current'] = beam_current
 
-    def get_element_list(self) -> list[str]:
+    def get_element_list(self) -> List[str]:
         """Returns a list of all element key names currently maintained in the model.
 
         Results
@@ -318,7 +329,7 @@ class OrbitModel(Model):
             element_dict = {key: pyorbit_params[key] for key in model_keys}
             return element_dict
 
-    def get_model_parameters(self, element_names: list[str] = None) -> Dict[str, Dict[str, Any]]:
+    def get_model_parameters(self, element_names: List[str] = None) -> Dict[str, Dict[str, Any]]:
         """Returns a parameter dictionary for multiple elements in the model.
 
         Parameters
@@ -422,7 +433,7 @@ class OrbitModel(Model):
             print(f'Warning: Lattice already initialized. Reinitialize the lattice to make sure all current '
                   f'"{node_type}" nodes are registered with the model.')
 
-    def get_settings(self, setting_names: list[str] = None) -> Dict[str, Dict[str, Any]]:
+    def get_settings(self, setting_names: List[str] = None) -> Dict[str, Dict[str, Any]]:
         """Returns a parameter dictionary for the setting elements in the model.
 
         Parameters
@@ -462,7 +473,7 @@ class OrbitModel(Model):
             return_dict[element_name] = element_dict
         return return_dict
 
-    def get_measurements(self, measurement_names: list[str] = None) -> Dict[str, Dict[str, Any]]:
+    def get_measurements(self, measurement_names: List[str] = None) -> Dict[str, Dict[str, Any]]:
         """Returns a parameter dictionary for the measurement elements in the model.
 
         Parameters

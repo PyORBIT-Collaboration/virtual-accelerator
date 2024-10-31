@@ -3,7 +3,7 @@ import time
 import argparse
 from datetime import datetime
 from importlib.metadata import version
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from virtaccl.server import Server, not_ctrlc
 from virtaccl.beam_line import BeamLine
@@ -157,8 +157,14 @@ class VirtualAccelerator:
     def get_value(self, server_key: str):
         return self.server.get_parameter(server_key)
 
-    def get_values(self) -> Dict[str, Any]:
-        return self.server.get_parameters()
+    def get_values(self, value_keys: List[str] = None) -> Dict[str, Any]:
+        if value_keys is not None:
+            return_dict = {}
+            for key in value_keys:
+                return_dict |= {key: self.server.get_parameter(key)}
+        else:
+            return_dict = self.server.get_parameters()
+        return return_dict
 
     def track(self, timestamp: datetime = None):
         server_parameters = self.server.get_parameters()
