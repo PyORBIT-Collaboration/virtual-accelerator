@@ -13,17 +13,20 @@ from orbit.py_linac.lattice import BaseLinacNode
 class PhysicsClass(BaseLinacNode):
     node_type = "Physics"
     parameter_list = ['x_beta', 'x_alpha', 'x_emit', 'y_beta', 'y_alpha', 'y_emit', 'z_beta', 'z_alpha', 'z_emit',
-                      'energy', 'beta', 'part_num']
+                      'position', 'energy', 'beta', 'part_num']
 
     def __init__(self, node_name: str):
         parameters = {'x_beta': 0.0, 'x_alpha': 0.0, 'y_beta': 0.0, 'y_alpha': 0.0,
-                      'energy': 0.0, 'beta': 0.0, 'part_num': 0}
+                      'position': 0.0, 'energy': 0.0, 'beta': 0.0, 'part_num': 0}
         BaseLinacNode.__init__(self, node_name)
         for key, value in parameters.items():
             self.addParam(key, value)
         self.node_name = node_name
         self.setType(PhysicsClass.node_type)
         self.twiss_analysis = BunchTwissAnalysis()
+
+    def trackDesign(self, paramsDict):
+        self.setParam('position', paramsDict["path_length"])
 
     def track(self, paramsDict):
         if "bunch" not in paramsDict:

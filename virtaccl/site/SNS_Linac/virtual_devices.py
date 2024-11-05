@@ -624,6 +624,7 @@ class PhysDevice(Device):
     z_alpha_pv = 'zAlpha'
     z_emit_pv = 'zEmittance'
 
+    position_pv = 'Position'  # [m]
     energy_pv = 'Energy'  # [GeV]
     beta_pv = 'Beta'  # [c]
     num_pv = 'Particle_Number'
@@ -641,6 +642,7 @@ class PhysDevice(Device):
     z_alpha_key = 'z_alpha'
     z_emit_key = 'z_emit'
 
+    position_key = 'position'  # [m]
     energy_key = 'energy'  # [GeV]
     beta_key = 'beta'  # [c]
     num_key = 'part_num'
@@ -662,6 +664,7 @@ class PhysDevice(Device):
         self.register_measurement(PhysDevice.z_alpha_pv)
         self.register_measurement(PhysDevice.z_emit_pv)
 
+        self.register_measurement(PhysDevice.position_pv)
         self.register_measurement(PhysDevice.energy_pv)
         self.register_measurement(PhysDevice.beta_pv)
         self.register_measurement(PhysDevice.num_pv)
@@ -682,6 +685,7 @@ class PhysDevice(Device):
         self.update_measurement(PhysDevice.z_alpha_pv, phys_params[PhysDevice.z_alpha_key])
         self.update_measurement(PhysDevice.z_emit_pv, phys_params[PhysDevice.z_emit_key])
 
+        self.update_measurement(PhysDevice.position_pv, phys_params[PhysDevice.position_key])
         self.update_measurement(PhysDevice.energy_pv, phys_params[PhysDevice.energy_key])
         self.update_measurement(PhysDevice.beta_pv, phys_params[PhysDevice.beta_key])
         self.update_measurement(PhysDevice.num_pv, phys_params[PhysDevice.num_key])

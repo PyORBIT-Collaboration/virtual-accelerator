@@ -8,9 +8,9 @@ def add_pyorbit_arguments(va_parser: VA_Parser) -> VA_Parser:
                                  help='Desired sequence of the lattice to start the model with.')
     va_parser.add_model_argument("end", nargs='?', type=str,
                                  help='Desired sequence of the lattice to end the model with.')
-    va_parser.add_model_argument('--drift_length', default=0.05, type=float,
-                                 help='Maximum length of a drift node. Will determine frequency of Physics and Space '
-                                      'Charge Nodes.')
+    va_parser.add_model_argument('--drift_length', default=1.0, type=float,
+                                 help='Maximum length of a drift node in meters. Will determine frequency of Physics '
+                                      'and Space Charge Nodes.')
 
     va_parser.add_model_argument('--space_charge', const=0.01, nargs='?', type=float,
                                  help="Adds Uniform Ellipse Space Charge nodes to the lattice. The minimum distance "
