@@ -36,6 +36,11 @@ class PhysicsClass(BaseLinacNode):
         sync_part = bunch.getSyncParticle()
         sync_beta = sync_part.beta()
         sync_energy = sync_part.kinEnergy()
+
+        self.setParam('energy', sync_energy)
+        self.setParam('beta', sync_beta)
+        self.setParam('part_num', part_num)
+
         if part_num > 0:
             self.twiss_analysis.analyzeBunch(bunch)
             (alphaX, betaX, emittX) = (
@@ -57,9 +62,6 @@ class PhysicsClass(BaseLinacNode):
             self.setParam('z_beta', betaZ)
             self.setParam('z_alpha', alphaZ)
             self.setParam('z_emit', emittZ)
-            self.setParam('energy', sync_energy)
-            self.setParam('beta', sync_beta)
-            self.setParam('part_num', part_num)
         else:
             self.setParam('x_beta', 0.0)
             self.setParam('x_alpha', 0.0)
@@ -70,9 +72,6 @@ class PhysicsClass(BaseLinacNode):
             self.setParam('z_beta', 0.0)
             self.setParam('z_alpha', 0.0)
             self.setParam('z_emit', 0.0)
-            self.setParam('energy', sync_energy)
-            self.setParam('beta', sync_beta)
-            self.setParam('part_num', part_num)
 
 
 # A class that adds BPMs to the lattice. This class calculates both typical diagnostics (average position) and values
