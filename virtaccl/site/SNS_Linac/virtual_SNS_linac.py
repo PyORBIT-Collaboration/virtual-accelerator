@@ -96,14 +96,15 @@ def build_sns(**kwargs):
         bunch_in.readBunch(str(bunch_file))
 
     bunch_orig_num = bunch_in.getSizeGlobal()
+    bunch_macrosize = beam_current * 1.0e-3 / bunch_frequency
+    bunch_macrosize /= math.fabs(bunch_in.charge()) * si_e_charge
+    bunch_in.macroSize(bunch_macrosize / part_num)
+
     if bunch_orig_num < part_num:
         print('Bunch file contains less particles than the desired number of particles.')
     elif part_num <= 0:
         bunch_in.deleteAllParticles()
     else:
-        bunch_macrosize = beam_current / bunch_frequency
-        bunch_macrosize /= math.fabs(bunch_in.charge()) * si_e_charge
-        bunch_in.macroSize(bunch_macrosize)
         for n in range(bunch_orig_num):
             if n + 1 > part_num:
                 bunch_in.deleteParticleFast(n)
