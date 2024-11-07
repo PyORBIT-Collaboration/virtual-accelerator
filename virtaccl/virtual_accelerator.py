@@ -154,8 +154,11 @@ class VirtualAccelerator:
         self.server.set_parameters(new_settings)
         self.track()
 
-    def get_value(self, server_key: str):
-        return self.server.get_parameter(server_key)
+    def get_value(self, *server_key: str):
+        if len(server_key) == 1:
+            return self.server.get_parameter(server_key[0])
+        else:
+            return tuple(self.server.get_parameter(key) for key in server_key)
 
     def get_values(self, value_keys: List[str] = None) -> Dict[str, Any]:
         if value_keys is not None:
