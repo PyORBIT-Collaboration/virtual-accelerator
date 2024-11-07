@@ -83,14 +83,18 @@ def build_sns(**kwargs):
     Add_quad_apertures_to_lattice(model_lattice)
     Add_rfgap_apertures_to_lattice(model_lattice)
 
-    bunch_file = Path(kwargs['bunch'])
     part_num = kwargs['particle_number']
     beam_current = kwargs['beam_current'] / 1000  # Set the initial beam current in Amps.
     bunch_frequency = 402.5e6
     si_e_charge = 1.6021773e-19
 
-    bunch_in = Bunch()
-    bunch_in.readBunch(str(bunch_file))
+    if isinstance(kwargs['bunch'], Bunch):
+        bunch_in = kwargs['bunch']
+    else:
+        bunch_file = Path(kwargs['bunch'])
+        bunch_in = Bunch()
+        bunch_in.readBunch(str(bunch_file))
+
     bunch_orig_num = bunch_in.getSizeGlobal()
     if bunch_orig_num < part_num:
         print('Bunch file contains less particles than the desired number of particles.')
