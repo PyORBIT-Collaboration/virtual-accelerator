@@ -6,7 +6,7 @@ from importlib.metadata import version
 from typing import Dict, Any, List
 
 from virtaccl.server import Server, not_ctrlc
-from virtaccl.beam_line import BeamLine, PhysicsDevice
+from virtaccl.beam_line import BeamLine
 from virtaccl.model import Model
 
 
