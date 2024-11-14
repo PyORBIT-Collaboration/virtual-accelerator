@@ -3,7 +3,8 @@ import sys
 from pathlib import Path
 
 from virtaccl.PyORBIT_Model.pyorbit_va_nodes import BPMclass, WSclass, ScreenClass
-from virtaccl.PyORBIT_Model.pyorbit_va_arguments import add_pyorbit_arguments
+from virtaccl.PyORBIT_Model.pyorbit_virtual_accelerator import PyorbitVirtualAcceleratorBuilder, add_pyorbit_arguments
+
 from virtaccl.site.SNS_Linac.virtual_devices import (Quadrupole, Corrector, Quadrupole_Power_Supply,
                                                      Corrector_Power_Supply, WireScanner, BPM, Screen)
 from virtaccl.site.SNS_Linac.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Dummy_ICS
@@ -11,7 +12,7 @@ from virtaccl.site.SNS_Linac.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Dummy
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 from virtaccl.beam_line import BeamLine
 from virtaccl.EPICS_Server.ca_server import EPICS_Server, add_epics_arguments
-from virtaccl.virtual_accelerator import VA_Parser, VirtualAcceleratorBuilder
+from virtaccl.virtual_accelerator import VA_Parser
 
 from virtaccl.site.SNS_IDmp.IDmp_maker import get_IDMP_lattice_and_bunch
 
@@ -128,7 +129,7 @@ def build_idmp(**kwargs):
     delay = kwargs['ca_proc']
     server = EPICS_Server(process_delay=delay, print_pvs=kwargs['print_pvs'])
 
-    idmp_virac = VirtualAcceleratorBuilder(model, beam_line, server, **kwargs)
+    idmp_virac = PyorbitVirtualAcceleratorBuilder(model, beam_line, server, **kwargs)
     return idmp_virac
 
 

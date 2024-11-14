@@ -14,14 +14,14 @@ from virtaccl.site.SNS_Linac.virtual_devices import (BPM, Quadrupole, Corrector,
                                                      Quadrupole_Power_Shunt)
 from virtaccl.site.SNS_Linac.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS
 
+from virtaccl.PyORBIT_Model.pyorbit_virtual_accelerator import PyorbitVirtualAcceleratorBuilder, add_pyorbit_arguments
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
-from virtaccl.PyORBIT_Model.pyorbit_va_arguments import add_pyorbit_arguments
 from virtaccl.PyORBIT_Model.pyorbit_va_nodes import BPMclass, WSclass
 
 from virtaccl.EPICS_Server.ca_server import EPICS_Server, add_epics_arguments
 from virtaccl.beam_line import BeamLine
 
-from virtaccl.virtual_accelerator import VirtualAcceleratorBuilder, VA_Parser
+from virtaccl.virtual_accelerator import VA_Parser
 
 
 def sns_arguments():
@@ -235,7 +235,7 @@ def build_sns(**kwargs):
     delay = kwargs['ca_proc']
     server = EPICS_Server(process_delay=delay, print_pvs=kwargs['print_pvs'])
 
-    sns_virac = VirtualAcceleratorBuilder(model, beam_line, server, **kwargs)
+    sns_virac = PyorbitVirtualAcceleratorBuilder(model, beam_line, server, **kwargs)
     return sns_virac
 
 

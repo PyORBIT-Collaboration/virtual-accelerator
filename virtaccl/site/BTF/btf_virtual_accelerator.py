@@ -12,7 +12,7 @@ from importlib.metadata import version
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
 
 from virtaccl.PyORBIT_Model.pyorbit_va_nodes import BPMclass, FCclass, BCMclass
-from virtaccl.PyORBIT_Model.pyorbit_va_arguments import add_pyorbit_arguments
+from virtaccl.PyORBIT_Model.pyorbit_virtual_accelerator import add_pyorbit_arguments, PyorbitVirtualAcceleratorBuilder
 from virtaccl.site.BTF.orbit_model.btf_lattice_factory import PyORBIT_Lattice_Factory
 
 from orbit.core.bunch import Bunch
@@ -27,7 +27,7 @@ from virtaccl.site.BTF.orbit_model.btf_child_nodes import BTF_Screenclass, BTF_S
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 from virtaccl.EPICS_Server.ca_server import EPICS_Server, add_epics_arguments
 
-from virtaccl.virtual_accelerator import VA_Parser, VirtualAcceleratorBuilder
+from virtaccl.virtual_accelerator import VA_Parser
 
 
 def btf_arguments():
@@ -301,7 +301,7 @@ def build_btf(**kwargs):
     delay = kwargs['ca_proc']
     server = EPICS_Server(process_delay=delay, print_pvs=kwargs['print_pvs'])
 
-    btf_virac = VirtualAcceleratorBuilder(model, beam_line, server, **kwargs)
+    btf_virac = PyorbitVirtualAcceleratorBuilder(model, beam_line, server, **kwargs)
     return btf_virac
 
 
