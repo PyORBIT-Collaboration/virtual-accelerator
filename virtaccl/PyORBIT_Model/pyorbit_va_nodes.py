@@ -78,11 +78,10 @@ class PhysicsClass(BaseLinacNode):
 # that can't be directly measured (like energy).
 class BPMclass(BaseLinacNode):
     node_type = "BPM"
-    parameter_list = ['frequency', 'x_avg', 'y_avg', 'phi_avg', 'amp_avg', 'energy', 'beta', 'part_num']
+    parameter_list = ['x_avg', 'y_avg', 'phi_avg', 'amp_avg']
 
     def __init__(self, node_name: str, frequency: float = 402.5e6):
-        parameters = {'frequency': frequency, 'x_avg': 0.0, 'y_avg': 0.0, 'phi_avg': 0.0, 'amp_avg': 0.0,
-                      'current': 0.0, 'energy': 0.0, 'beta': 0.0, 'part_num': 0}
+        parameters = {'frequency': frequency, 'x_avg': 0.0, 'y_avg': 0.0, 'phi_avg': 0.0, 'amp_avg': 0.0}
         BaseLinacNode.__init__(self, node_name)
         for key, value in parameters.items():
             self.addParam(key, value)
@@ -97,7 +96,6 @@ class BPMclass(BaseLinacNode):
         part_num = bunch.getSizeGlobal()
         sync_part = bunch.getSyncParticle()
         sync_beta = sync_part.beta()
-        sync_energy = sync_part.kinEnergy()
         if part_num > 0:
             rf_freq = self.getParam('frequency')
             initial_beam_current = paramsDict["beam_current"]
@@ -123,19 +121,11 @@ class BPMclass(BaseLinacNode):
             self.setParam('y_avg', y_avg)
             self.setParam('phi_avg', phi_avg)
             self.setParam('amp_avg', amp)
-            self.setParam('current', current)
-            self.setParam('energy', sync_energy)
-            self.setParam('beta', sync_beta)
-            self.setParam('part_num', part_num)
         else:
             self.setParam('x_avg', 0.0)
             self.setParam('y_avg', 0.0)
             self.setParam('phi_avg', 0.0)
             self.setParam('amp_avg', 0.0)
-            self.setParam('current', 0.0)
-            self.setParam('energy', sync_energy)
-            self.setParam('beta', sync_beta)
-            self.setParam('part_num', part_num)
 
     def getFrequency(self):
         return self.getParam('frequency')
@@ -151,15 +141,6 @@ class BPMclass(BaseLinacNode):
 
     def getYAvg(self):
         return self.getParam('y_avg')
-
-    def getCurrent(self):
-        return self.getParam('current')
-
-    def getEnergy(self):
-        return self.getParam('energy')
-
-    def getBeta(self):
-        return self.getParam('beta')
 
 
 # Class for wire scanners. This class simply returns histograms of the vertical and horizontal positions.

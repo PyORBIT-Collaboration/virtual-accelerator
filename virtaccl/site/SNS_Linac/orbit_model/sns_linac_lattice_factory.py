@@ -30,7 +30,7 @@ from orbit.lattice import AccNode
 # import pyORBIT Python utilities classes for objects with names, types, and dictionary parameters
 from orbit.utils import orbitFinalize
 
-from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass
+from virtaccl.PyORBIT_Model.pyorbit_va_nodes import BPMclass, WSclass
 
 
 class PyORBIT_Lattice_Factory:

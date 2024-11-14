@@ -11,7 +11,7 @@ from importlib.metadata import version
 
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
 
-from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, FCclass, BCMclass
+from virtaccl.PyORBIT_Model.pyorbit_va_nodes import BPMclass, FCclass, BCMclass
 from virtaccl.PyORBIT_Model.pyorbit_va_arguments import add_pyorbit_arguments
 from virtaccl.site.BTF.orbit_model.btf_lattice_factory import PyORBIT_Lattice_Factory
 
@@ -19,8 +19,7 @@ from orbit.core.bunch import Bunch
 from orbit.core.linac import BaseRfGap
 
 from virtaccl.beam_line import BeamLine
-from virtaccl.site.SNS_Linac.virtual_devices import BPM, Quadrupole, P_BPM, Quadrupole_Power_Supply, Bend_Power_Supply, \
-    Bend
+from virtaccl.site.SNS_Linac.virtual_devices import BPM, Quadrupole, Quadrupole_Power_Supply, Bend_Power_Supply, Bend
 from virtaccl.site.BTF.orbit_model.virtual_devices_BTF import BTF_FC, BTF_Quadrupole, BTF_Quadrupole_Power_Supply, \
     BTF_BCM, BTF_Actuator, BTF_Corrector, BTF_Corrector_Power_Supply
 from virtaccl.site.BTF.orbit_model.btf_child_nodes import BTF_Screenclass, BTF_Slitclass
@@ -28,7 +27,7 @@ from virtaccl.site.BTF.orbit_model.btf_child_nodes import BTF_Screenclass, BTF_S
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 from virtaccl.EPICS_Server.ca_server import EPICS_Server, add_epics_arguments
 
-from virtaccl.virtual_accelerator import VirtualAccelerator, VA_Parser
+from virtaccl.virtual_accelerator import VA_Parser, VirtualAcceleratorBuilder
 
 
 def btf_arguments():
@@ -36,6 +35,8 @@ def btf_arguments():
     va_parser = VA_Parser()
     va_parser.set_description('Run the BTF PyORBIT virtual accelerator server.')
     va_parser.edit_argument('--sync_time', {'action': 'store_false'})
+    va_parser.edit_argument('--print_settings', {'help': "Will only print setting PVs. Will NOT run "
+                                                         "the virtual accelerator."})
 
     va_parser = add_pyorbit_arguments(va_parser)
     # Set the defaults for the PyORBIT model.
@@ -46,8 +47,6 @@ def btf_arguments():
     va_parser.change_argument_default('--beam_current', 50.0)
 
     va_parser = add_epics_arguments(va_parser)
-    va_parser.add_server_argument('--print_settings', action='store_true',
-                                  help="Will only print setting PVs. Will NOT run the virtual accelerator.")
 
     # Json file that contains a dictionary connecting EPICS name of devices with their associated element model names.
     va_parser.add_argument('--config_file', '-f', default=loc / 'btf_config.json', type=str,
@@ -143,7 +142,6 @@ def build_btf(**kwargs):
     model.define_custom_node(BTF_Screenclass.node_type, BTF_Screenclass.parameter_list, optic=True)
     model.define_custom_node(BTF_Slitclass.node_type, BTF_Slitclass.parameter_list, optic=True)
     model.define_custom_node(BCMclass.node_type, BCMclass.parameter_list, diagnostic=True)
-    model.define_custom_node("markerLinacNode")
     model.initialize_lattice(model_lattice)
     model.set_initial_bunch(bunch_in, beam_current)
     element_list = model.get_element_list()
@@ -300,22 +298,16 @@ def build_btf(**kwargs):
             slit_device = BTF_Actuator(name, ele_name, speed=speed, limit=limit)
             beam_line.add_device(slit_device)
 
-    if kwargs['print_settings']:
-        for key in beam_line.get_setting_keys():
-            print(key)
-        sys.exit()
-
     delay = kwargs['ca_proc']
     server = EPICS_Server(process_delay=delay, print_pvs=kwargs['print_pvs'])
 
-    btf_virac = VirtualAccelerator(model, beam_line, server, **kwargs)
-    btf_virac.track()
+    btf_virac = VirtualAcceleratorBuilder(model, beam_line, server, **kwargs)
     return btf_virac
 
 
 def main():
     args = btf_arguments()
-    btf = build_btf(**args)
+    btf = build_btf(**args).build()
     btf.start_server()
 
 

@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 
 class Model:
@@ -33,3 +33,15 @@ class Model:
             new parameter values.
         """
         pass
+
+    def add_physics_elements(self) -> List[str]:
+        """Adds physics elements to the model. These are to be used in conjunction with the Physics Devices found in
+        BeamLine.
+
+        Returns
+        ----------
+        out : list
+            A list of the names of the new physics elements added to the model.
+        """
+        pass
+

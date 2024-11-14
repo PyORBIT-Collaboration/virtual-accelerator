@@ -1,6 +1,5 @@
 import json
 import math
-import sys
 from pathlib import Path
 
 from orbit.lattice import AccNode
@@ -9,21 +8,20 @@ from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, 
 from orbit.core.bunch import Bunch
 from orbit.core.linac import BaseRfGap, RfGapTTF
 
-from virtaccl.server import Server
 from virtaccl.site.SNS_Linac.orbit_model.sns_linac_lattice_factory import PyORBIT_Lattice_Factory
-from virtaccl.site.SNS_Linac.virtual_devices import BPM, Quadrupole, Corrector, P_BPM, \
-    WireScanner, Quadrupole_Power_Supply, Corrector_Power_Supply, Bend_Power_Supply, Bend, Quadrupole_Power_Shunt, \
-    PhysDevice
+from virtaccl.site.SNS_Linac.virtual_devices import (BPM, Quadrupole, Corrector, WireScanner, Quadrupole_Power_Supply,
+                                                     Corrector_Power_Supply, Bend_Power_Supply, Bend,
+                                                     Quadrupole_Power_Shunt)
 from virtaccl.site.SNS_Linac.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 from virtaccl.PyORBIT_Model.pyorbit_va_arguments import add_pyorbit_arguments
-from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass
+from virtaccl.PyORBIT_Model.pyorbit_va_nodes import BPMclass, WSclass
 
 from virtaccl.EPICS_Server.ca_server import EPICS_Server, add_epics_arguments
 from virtaccl.beam_line import BeamLine
 
-from virtaccl.virtual_accelerator import VirtualAccelerator, VA_Parser
+from virtaccl.virtual_accelerator import VirtualAcceleratorBuilder, VA_Parser
 
 
 def sns_arguments():
@@ -32,14 +30,14 @@ def sns_arguments():
     va_parser.set_description('Run the SNS linac PyORBIT virtual accelerator server.')
 
     va_parser = add_pyorbit_arguments(va_parser)
+    va_parser.edit_argument('--print_settings', {'help': "Will only print setting PVs. Will NOT run "
+                                                         "the virtual accelerator."})
     # Set the defaults for the PyORBIT model.
     va_parser.change_argument_default('--lattice', loc / 'orbit_model/sns_linac.xml')
     va_parser.change_argument_default('end', 'HEBT1')
     va_parser.change_argument_default('--bunch', loc / 'orbit_model/MEBT_in.dat')
 
     va_parser = add_epics_arguments(va_parser)
-    va_parser.add_server_argument('--print_settings', action='store_true',
-                                  help="Will only print setting PVs. Will NOT run the virtual accelerator.")
 
     # Json file that contains a dictionary connecting EPICS name of devices with their associated element model names.
     va_parser.add_argument('--config_file', '-f', default=loc / 'va_config.json', type=str,
@@ -229,38 +227,21 @@ def build_sns(**kwargs):
             bpm_device = BPM(name, ele_name, phase_offset=phase_offset)
             beam_line.add_device(bpm_device)
 
-    pbpms = devices_dict["Physics_BPM"]
-    for name, model_name in pbpms.items():
-        if model_name in element_list:
-            pbpm_device = P_BPM(name, model_name)
-            beam_line.add_device(pbpm_device)
-
-    if physics_nodes:
-        for name, element in model.get_element_dictionary().items():
-            if element.get_type() == 'Physics':
-                phys_device = PhysDevice(element.get_name())
-                beam_line.add_device(phys_device)
-
     dummy_device = SNS_Dummy_BCM("Ring_Diag:BCM_D09", 'HEBT_Diag:BPM11')
     beam_line.add_device(dummy_device)
     dummy_device = SNS_Dummy_ICS("ICS_Tim")
     beam_line.add_device(dummy_device)
 
-    if kwargs['print_settings']:
-        for key in beam_line.get_setting_keys():
-            print(key)
-        sys.exit()
-
     delay = kwargs['ca_proc']
     server = EPICS_Server(process_delay=delay, print_pvs=kwargs['print_pvs'])
 
-    sns_virac = VirtualAccelerator(model, beam_line, server, **kwargs)
+    sns_virac = VirtualAcceleratorBuilder(model, beam_line, server, **kwargs)
     return sns_virac
 
 
 def main():
     args = sns_arguments()
-    sns = build_sns(**args)
+    sns = build_sns(**args).build()
     sns.start_server()
 
 

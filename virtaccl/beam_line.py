@@ -322,6 +322,88 @@ class Device:
         return parameter_db
 
 
+# An unrealistic device that reports values that can't be directly measured.
+class PhysicsDevice(Device):
+    # EPICS PV names
+    x_beta_pv = 'xBeta'
+    x_alpha_pv = 'xAlpha'
+    x_emit_pv = 'xEmittance'
+
+    y_beta_pv = 'yBeta'
+    y_alpha_pv = 'yAlpha'
+    y_emit_pv = 'yEmittance'
+
+    z_beta_pv = 'zBeta'
+    z_alpha_pv = 'zAlpha'
+    z_emit_pv = 'zEmittance'
+
+    position_pv = 'Position'  # [m]
+    energy_pv = 'Energy'  # [GeV]
+    beta_pv = 'Beta'  # [c]
+    num_pv = 'Particle_Number'
+
+    # PyORBIT parameter keys
+    x_beta_key = 'x_beta'
+    x_alpha_key = 'x_alpha'
+    x_emit_key = 'x_emit'
+
+    y_beta_key = 'y_beta'
+    y_alpha_key = 'y_alpha'
+    y_emit_key = 'y_emit'
+
+    z_beta_key = 'z_beta'
+    z_alpha_key = 'z_alpha'
+    z_emit_key = 'z_emit'
+
+    position_key = 'position'  # [m]
+    energy_key = 'energy'  # [GeV]
+    beta_key = 'beta'  # [c]
+    num_key = 'part_num'
+
+    def __init__(self, name: str):
+        self.model_name = name
+        super().__init__(name, self.model_name)
+
+        # Registers the device's PVs with the server.
+        self.register_measurement(PhysicsDevice.x_beta_pv)
+        self.register_measurement(PhysicsDevice.x_alpha_pv)
+        self.register_measurement(PhysicsDevice.x_emit_pv)
+
+        self.register_measurement(PhysicsDevice.y_beta_pv)
+        self.register_measurement(PhysicsDevice.y_alpha_pv)
+        self.register_measurement(PhysicsDevice.y_emit_pv)
+
+        self.register_measurement(PhysicsDevice.z_beta_pv)
+        self.register_measurement(PhysicsDevice.z_alpha_pv)
+        self.register_measurement(PhysicsDevice.z_emit_pv)
+
+        self.register_measurement(PhysicsDevice.position_pv)
+        self.register_measurement(PhysicsDevice.energy_pv)
+        self.register_measurement(PhysicsDevice.beta_pv)
+        self.register_measurement(PhysicsDevice.num_pv)
+
+    # Updates the measurement values on the server. Needs the model key associated with it's value and the new value.
+    # This is where the measurement PV name is associated with it's model key.
+    def update_measurements(self, new_params: Dict[str, Dict[str, Any]] = None):
+        phys_params = new_params[self.model_name]
+        self.update_measurement(PhysicsDevice.x_beta_pv, phys_params[PhysicsDevice.x_beta_key])
+        self.update_measurement(PhysicsDevice.x_alpha_pv, phys_params[PhysicsDevice.x_alpha_key])
+        self.update_measurement(PhysicsDevice.x_emit_pv, phys_params[PhysicsDevice.x_emit_key])
+
+        self.update_measurement(PhysicsDevice.y_beta_pv, phys_params[PhysicsDevice.y_beta_key])
+        self.update_measurement(PhysicsDevice.y_alpha_pv, phys_params[PhysicsDevice.y_alpha_key])
+        self.update_measurement(PhysicsDevice.y_emit_pv, phys_params[PhysicsDevice.y_emit_key])
+
+        self.update_measurement(PhysicsDevice.z_beta_pv, phys_params[PhysicsDevice.z_beta_key])
+        self.update_measurement(PhysicsDevice.z_alpha_pv, phys_params[PhysicsDevice.z_alpha_key])
+        self.update_measurement(PhysicsDevice.z_emit_pv, phys_params[PhysicsDevice.z_emit_key])
+
+        self.update_measurement(PhysicsDevice.position_pv, phys_params[PhysicsDevice.position_key])
+        self.update_measurement(PhysicsDevice.energy_pv, phys_params[PhysicsDevice.energy_key])
+        self.update_measurement(PhysicsDevice.beta_pv, phys_params[PhysicsDevice.beta_key])
+        self.update_measurement(PhysicsDevice.num_pv, phys_params[PhysicsDevice.num_key])
+
+
 class BeamLine:
 
     def __init__(self, server_key_joiner: str = ':'):

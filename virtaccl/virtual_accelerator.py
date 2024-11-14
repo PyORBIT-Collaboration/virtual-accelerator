@@ -6,7 +6,7 @@ from importlib.metadata import version
 from typing import Dict, Any, List
 
 from virtaccl.server import Server, not_ctrlc
-from virtaccl.beam_line import BeamLine
+from virtaccl.beam_line import BeamLine, PhysicsDevice
 from virtaccl.model import Model
 
 
@@ -112,30 +112,20 @@ def add_va_arguments(va_parser: VA_Parser) -> VA_Parser:
                               help="Some debug info will be printed.")
     va_parser.add_va_argument('--production', dest='debug', action='store_false',
                               help="DEFAULT: No additional info printed.")
+
+    va_parser.add_server_argument('--print_settings', action='store_true',
+                                  help="Will only print setting keys for the server. Will NOT run the virtual "
+                                       "accelerator.")
+
     return va_parser
 
 
-class VirtualAccelerator:
+class VirtualAcceleratorBuilder:
     def __init__(self, model: Model, beam_line: BeamLine, server: Server, **kwargs):
-        if not kwargs:
-            kwargs = VA_Parser().initialize_arguments()
-
-        self.debug = kwargs['debug']
-        self.sync_time = kwargs['sync_time']
-        self.update_period = 1 / kwargs['refresh_rate']
-
-        new_measurements = model.get_measurements()
-        beam_line.update_measurements_from_model(new_measurements)
-        beam_line.update_readbacks()
-        sever_parameters = beam_line.get_server_parameter_definitions()
-        server.add_parameters(sever_parameters)
-        beam_line.reset_devices()
-
         self.model = model
         self.beam_line = beam_line
-        if self.debug:
-            print(server)
         self.server = server
+        self.options = kwargs
 
     def get_model(self) -> Model:
         return self.model
@@ -145,6 +135,37 @@ class VirtualAccelerator:
 
     def get_server(self) -> Server:
         return self.server
+
+    def build(self) -> 'VirtualAccelerator':
+        return VirtualAccelerator(self.model, self.beam_line, self.server, **self.options)
+
+
+class VirtualAccelerator:
+    def __init__(self, model: Model, beam_line: BeamLine, server: Server, **kwargs):
+        if not kwargs:
+            kwargs = VA_Parser().initialize_arguments()
+
+        if kwargs['print_settings']:
+            for key in beam_line.get_setting_keys():
+                print(key)
+            sys.exit()
+
+        self.debug = kwargs['debug']
+        self.sync_time = kwargs['sync_time']
+        self.update_period = 1 / kwargs['refresh_rate']
+
+        self.model = model
+        self.beam_line = beam_line
+        self.server = server
+
+        sever_parameters = beam_line.get_server_parameter_definitions()
+        server.add_parameters(sever_parameters)
+        beam_line.reset_devices()
+
+        if self.debug:
+            print(server)
+
+        self.track()
 
     def set_value(self, server_key: str, new_value):
         self.server.set_parameter(server_key, new_value)

@@ -1,4 +1,7 @@
-from virtaccl.virtual_accelerator import VA_Parser
+from virtaccl.beam_line import BeamLine, PhysicsDevice
+from virtaccl.model import Model
+from virtaccl.server import Server
+from virtaccl.virtual_accelerator import VA_Parser, VirtualAcceleratorBuilder
 
 
 def add_pyorbit_arguments(va_parser: VA_Parser) -> VA_Parser:
@@ -30,3 +33,17 @@ def add_pyorbit_arguments(va_parser: VA_Parser) -> VA_Parser:
                                       "location. If no location is given, the bunch is saved as 'end_bunch.dat' in "
                                       "the working directory.")
     return va_parser
+
+
+class PyorbitVirtualAcceleratorBuilder(VirtualAcceleratorBuilder):
+    def __init__(self, model: Model, beam_line: BeamLine, server: Server, **kwargs):
+        super().__init__(model, beam_line, server, **kwargs)
+
+        if kwargs['physics_nodes']:
+            self.add_physics_elements()
+
+    def add_physics_elements(self):
+        physics_elements = self.model.add_physics_elements()
+        for physics_name in physics_elements:
+            phys_device = PhysicsDevice(physics_name)
+            self.beam_line.add_device(phys_device)
