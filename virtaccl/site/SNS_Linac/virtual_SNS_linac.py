@@ -30,8 +30,6 @@ def sns_arguments():
     va_parser.set_description('Run the SNS linac PyORBIT virtual accelerator server.')
 
     va_parser = add_pyorbit_arguments(va_parser)
-    va_parser.edit_argument('--print_settings', {'help': "Will only print setting PVs. Will NOT run "
-                                                         "the virtual accelerator."})
     # Set the defaults for the PyORBIT model.
     va_parser.change_argument_default('--lattice', loc / 'orbit_model/sns_linac.xml')
     va_parser.change_argument_default('end', 'HEBT1')

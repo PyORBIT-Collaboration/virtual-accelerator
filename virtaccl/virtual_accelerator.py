@@ -3,7 +3,7 @@ import time
 import argparse
 from datetime import datetime
 from importlib.metadata import version
-from typing import Dict, Any, List
+from typing import Dict, Any, List, TypeVar, Generic
 
 from virtaccl.server import Server, not_ctrlc
 from virtaccl.beam_line import BeamLine
@@ -120,8 +120,13 @@ def add_va_arguments(va_parser: VA_Parser) -> VA_Parser:
     return va_parser
 
 
-class VirtualAcceleratorBuilder:
-    def __init__(self, model: Model, beam_line: BeamLine, server: Server, **kwargs):
+# Define a TypeVar constrained to Model
+ModelType = TypeVar('ModelType', bound='Model')
+ServerType = TypeVar('ServerType', bound='Server')
+
+
+class VirtualAcceleratorBuilder(Generic[ModelType, ServerType]):
+    def __init__(self, model: ModelType, beam_line: BeamLine, server: ServerType, **kwargs):
         self.model = model
         self.beam_line = beam_line
         self.server = server

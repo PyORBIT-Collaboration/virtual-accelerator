@@ -2,7 +2,7 @@ from virtaccl.site.SNS_Linac.virtual_SNS_linac import build_sns
 from virtaccl.site.BTF.btf_virtual_accelerator import build_btf
 
 
-sns = build_sns()
+sns = build_sns().server
 sns = sns.build()
 
 print(sns.get_value("SCL_Mag:DCH00:B", "SCL_Mag:DCH01:B", "SCL_Diag:BPM04:xAvg"))

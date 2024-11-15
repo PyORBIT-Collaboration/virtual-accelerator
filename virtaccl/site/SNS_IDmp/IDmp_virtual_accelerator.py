@@ -31,8 +31,6 @@ def idmp_arguments():
     va_parser.remove_argument('--bunch')
 
     va_parser = add_epics_arguments(va_parser)
-    va_parser.edit_argument('--print_settings',
-                            {'help': "Will only print setting PVs. Will NOT run the virtual accelerator."})
 
     # Json file that contains a dictionary connecting EPICS name of devices with their associated element model names.
     va_parser.add_argument('--config_file', '-f', default=loc / 'va_config.json', type=str,

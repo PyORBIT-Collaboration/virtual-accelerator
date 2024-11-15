@@ -34,9 +34,7 @@ def btf_arguments():
     loc = Path(__file__).parent
     va_parser = VA_Parser()
     va_parser.set_description('Run the BTF PyORBIT virtual accelerator server.')
-    va_parser.edit_argument('--sync_time', {'action': 'store_false'})
-    va_parser.edit_argument('--print_settings', {'help': "Will only print setting PVs. Will NOT run "
-                                                         "the virtual accelerator."})
+    va_parser.remove_argument('--sync_time')
 
     va_parser = add_pyorbit_arguments(va_parser)
     # Set the defaults for the PyORBIT model.
@@ -63,6 +61,7 @@ def btf_arguments():
 def build_btf(**kwargs):
     kwargs = btf_arguments() | kwargs
 
+    kwargs['sync_time'] = True
     debug = kwargs['debug']
     save_bunch = kwargs['save_bunch']
 

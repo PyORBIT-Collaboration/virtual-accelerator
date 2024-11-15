@@ -16,6 +16,10 @@ from virtaccl.virtual_accelerator import VA_Parser
 
 
 def add_epics_arguments(va_parser: VA_Parser) -> VA_Parser:
+    # Set the print_settings help description to specify 'PVs' instead of server keys.
+    va_parser.edit_argument('--print_settings', {'help': "Will only print setting PVs. Will NOT run "
+                                                         "the virtual accelerator."})
+
     # Number (in seconds) that determine some delay parameter in the server. Not exactly sure how it works, so use at
     # your own risk.
     va_parser.add_server_argument('--ca_proc', default=0.1, type=float,

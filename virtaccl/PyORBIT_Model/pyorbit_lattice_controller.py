@@ -207,7 +207,7 @@ class OrbitModel(Model):
         else:
             print('Error: Initialize a lattice in order to add space charge nodes.')
 
-    def add_physics_elements(self) -> List[str]:
+    def add_physics_nodes(self) -> List[str]:
         """Adds physics nodes to an initialized lattice. These nodes return values of the bunch that cannot be directly
         measured.
 

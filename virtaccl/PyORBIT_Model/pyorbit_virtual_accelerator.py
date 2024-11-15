@@ -1,5 +1,5 @@
+from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 from virtaccl.beam_line import BeamLine, PhysicsDevice
-from virtaccl.model import Model
 from virtaccl.server import Server
 from virtaccl.virtual_accelerator import VA_Parser, VirtualAcceleratorBuilder
 
@@ -35,15 +35,17 @@ def add_pyorbit_arguments(va_parser: VA_Parser) -> VA_Parser:
     return va_parser
 
 
-class PyorbitVirtualAcceleratorBuilder(VirtualAcceleratorBuilder):
-    def __init__(self, model: Model, beam_line: BeamLine, server: Server, **kwargs):
+class PyorbitVirtualAcceleratorBuilder(VirtualAcceleratorBuilder[OrbitModel, Server]):
+    def __init__(self, model: OrbitModel, beam_line: BeamLine, server: Server, **kwargs):
         super().__init__(model, beam_line, server, **kwargs)
 
         if kwargs['physics_nodes']:
-            self.add_physics_elements()
+            self.add_physics_nodes()
 
-    def add_physics_elements(self):
-        physics_elements = self.model.add_physics_elements()
+    def add_physics_nodes(self):
+        physics_elements = self.model.add_physics_nodes()
         for physics_name in physics_elements:
             phys_device = PhysicsDevice(physics_name)
             self.beam_line.add_device(phys_device)
+
+
