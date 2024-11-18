@@ -70,7 +70,7 @@ class BTF_Actuator(Device):
 
         initial_position = initial_position
         initial_speed = initial_speed
-        
+
         # Creates flat noise for associated PVs
         pos_noise = AbsNoise(noise=1e-6)
 
@@ -81,7 +81,7 @@ class BTF_Actuator(Device):
         pos_param = self.register_setting(BTF_Actuator.position_set_pv, default = initial_position, transform=self.milli_units)
         self.register_readback(BTF_Actuator.position_readback_pv, pos_param, transform=self.milli_units, noise=pos_noise)
 
-        state_param = self.register_setting(BTF_Actuator.state_set_pv, default = initial_state)
+        state_param = self.register_setting(BTF_Actuator.state_set_pv, default = initial_state, definition={'type': 'int'})
 
     # Function to find the position of the virtual screen using time of flight from the previous position and the speed of the screen
     def get_actuator_position(self):
@@ -167,7 +167,7 @@ class BTF_Actuator(Device):
     def update_readbacks(self):
         actuator_pos = BTF_Actuator.get_actuator_position(self)
         self.update_readback(BTF_Actuator.position_readback_pv, actuator_pos)
-        
+
         # Readback set velocity value only when actuator is moving
         # Note: does not work if destinationset is outside available region
         if self.get_parameter_value(BTF_Actuator.state_set_pv) == 1 and actuator_pos != self.get_parameter_value(BTF_Actuator.position_set_pv):
