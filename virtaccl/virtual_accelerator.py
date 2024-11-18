@@ -3,7 +3,7 @@ import time
 import argparse
 from datetime import datetime
 from importlib.metadata import version
-from typing import Dict, Any
+from typing import Dict, Any, List, TypeVar, Generic
 
 from virtaccl.server import Server, not_ctrlc
 from virtaccl.beam_line import BeamLine
@@ -112,7 +112,37 @@ def add_va_arguments(va_parser: VA_Parser) -> VA_Parser:
                               help="Some debug info will be printed.")
     va_parser.add_va_argument('--production', dest='debug', action='store_false',
                               help="DEFAULT: No additional info printed.")
+
+    va_parser.add_server_argument('--print_settings', action='store_true',
+                                  help="Will only print setting keys for the server. Will NOT run the virtual "
+                                       "accelerator.")
+
     return va_parser
+
+
+# Define a TypeVar constrained to Model
+ModelType = TypeVar('ModelType', bound='Model')
+ServerType = TypeVar('ServerType', bound='Server')
+
+
+class VirtualAcceleratorBuilder(Generic[ModelType, ServerType]):
+    def __init__(self, model: ModelType, beam_line: BeamLine, server: ServerType, **kwargs):
+        self.model = model
+        self.beam_line = beam_line
+        self.server = server
+        self.options = kwargs
+
+    def get_model(self) -> Model:
+        return self.model
+
+    def get_beamline(self) -> BeamLine:
+        return self.beam_line
+
+    def get_server(self) -> Server:
+        return self.server
+
+    def build(self) -> 'VirtualAccelerator':
+        return VirtualAccelerator(self.model, self.beam_line, self.server, **self.options)
 
 
 class VirtualAccelerator:
@@ -120,22 +150,27 @@ class VirtualAccelerator:
         if not kwargs:
             kwargs = VA_Parser().initialize_arguments()
 
+        if kwargs['print_settings']:
+            for key in beam_line.get_setting_keys():
+                print(key)
+            sys.exit()
+
         self.debug = kwargs['debug']
         self.sync_time = kwargs['sync_time']
         self.update_period = 1 / kwargs['refresh_rate']
 
-        new_measurements = model.get_measurements()
-        beam_line.update_measurements_from_model(new_measurements)
-        beam_line.update_readbacks()
+        self.model = model
+        self.beam_line = beam_line
+        self.server = server
+
         sever_parameters = beam_line.get_server_parameter_definitions()
         server.add_parameters(sever_parameters)
         beam_line.reset_devices()
 
-        self.model = model
-        self.beam_line = beam_line
         if self.debug:
             print(server)
-        self.server = server
+
+        self.track()
 
     def set_value(self, server_key: str, new_value):
         self.server.set_parameter(server_key, new_value)
@@ -145,11 +180,20 @@ class VirtualAccelerator:
         self.server.set_parameters(new_settings)
         self.track()
 
-    def get_value(self, server_key: str):
-        return self.server.get_parameter(server_key)
+    def get_value(self, *server_key: str):
+        if len(server_key) == 1:
+            return self.server.get_parameter(server_key[0])
+        else:
+            return tuple(self.server.get_parameter(key) for key in server_key)
 
-    def get_values(self) -> Dict[str, Any]:
-        return self.server.get_parameters()
+    def get_values(self, value_keys: List[str] = None) -> Dict[str, Any]:
+        if value_keys is not None:
+            return_dict = {}
+            for key in value_keys:
+                return_dict |= {key: self.server.get_parameter(key)}
+        else:
+            return_dict = self.server.get_parameters()
+        return return_dict
 
     def track(self, timestamp: datetime = None):
         server_parameters = self.server.get_parameters()

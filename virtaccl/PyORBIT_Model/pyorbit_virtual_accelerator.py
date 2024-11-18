@@ -1,4 +1,7 @@
-from virtaccl.virtual_accelerator import VA_Parser
+from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
+from virtaccl.beam_line import BeamLine, PhysicsDevice
+from virtaccl.server import Server
+from virtaccl.virtual_accelerator import VA_Parser, VirtualAcceleratorBuilder
 
 
 def add_pyorbit_arguments(va_parser: VA_Parser) -> VA_Parser:
@@ -8,10 +11,16 @@ def add_pyorbit_arguments(va_parser: VA_Parser) -> VA_Parser:
                                  help='Desired sequence of the lattice to start the model with.')
     va_parser.add_model_argument("end", nargs='?', type=str,
                                  help='Desired sequence of the lattice to end the model with.')
+    va_parser.add_model_argument('--drift_length', default=1.0, type=float,
+                                 help='Maximum length of a drift node in meters. Will determine frequency of Physics '
+                                      'and Space Charge Nodes.')
+
     va_parser.add_model_argument('--space_charge', const=0.01, nargs='?', type=float,
                                  help="Adds Uniform Ellipse Space Charge nodes to the lattice. The minimum distance "
                                       "in meters between nodes can be specified; the default is 0.01m if no minimum "
                                       "is given. If the argument is not used, no space charge nodes are added.")
+    va_parser.add_model_argument('--physics_nodes', dest='physics_nodes', action='store_true',
+                                 help="Adds physics child nodes to each node on the lattice.")
 
     # Desired initial bunch file and the desired number of particles from that file.
     va_parser.add_model_argument('--bunch', type=str, help='Pathname of input bunch file.')
@@ -24,3 +33,19 @@ def add_pyorbit_arguments(va_parser: VA_Parser) -> VA_Parser:
                                       "location. If no location is given, the bunch is saved as 'end_bunch.dat' in "
                                       "the working directory.")
     return va_parser
+
+
+class PyorbitVirtualAcceleratorBuilder(VirtualAcceleratorBuilder[OrbitModel, Server]):
+    def __init__(self, model: OrbitModel, beam_line: BeamLine, server: Server, **kwargs):
+        super().__init__(model, beam_line, server, **kwargs)
+
+        if kwargs['physics_nodes']:
+            self.add_physics_nodes()
+
+    def add_physics_nodes(self):
+        physics_elements = self.model.add_physics_nodes()
+        for physics_name in physics_elements:
+            phys_device = PhysicsDevice(physics_name)
+            self.beam_line.add_device(phys_device)
+
+

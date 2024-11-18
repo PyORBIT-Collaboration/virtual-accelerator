@@ -2,16 +2,17 @@ import json
 import sys
 from pathlib import Path
 
-from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass, ScreenClass
-from virtaccl.PyORBIT_Model.pyorbit_va_arguments import add_pyorbit_arguments
+from virtaccl.PyORBIT_Model.pyorbit_va_nodes import BPMclass, WSclass, ScreenClass
+from virtaccl.PyORBIT_Model.pyorbit_virtual_accelerator import PyorbitVirtualAcceleratorBuilder, add_pyorbit_arguments
+
 from virtaccl.site.SNS_Linac.virtual_devices import (Quadrupole, Corrector, Quadrupole_Power_Supply,
-                                                     Corrector_Power_Supply, WireScanner, BPM, P_BPM, Screen)
+                                                     Corrector_Power_Supply, WireScanner, BPM, Screen)
 from virtaccl.site.SNS_Linac.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Dummy_ICS
 
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 from virtaccl.beam_line import BeamLine
 from virtaccl.EPICS_Server.ca_server import EPICS_Server, add_epics_arguments
-from virtaccl.virtual_accelerator import VirtualAccelerator, VA_Parser
+from virtaccl.virtual_accelerator import VA_Parser
 
 from virtaccl.site.SNS_IDmp.IDmp_maker import get_IDMP_lattice_and_bunch
 
@@ -25,12 +26,11 @@ def idmp_arguments():
     # Set the defaults for the PyORBIT model.
     va_parser.remove_argument('--lattice')
     va_parser.remove_argument('--start')
+    va_parser.remove_argument('--drift_length')
     va_parser.remove_argument('end')
     va_parser.remove_argument('--bunch')
 
     va_parser = add_epics_arguments(va_parser)
-    va_parser.add_server_argument('--print_settings', action='store_true',
-                                  help="Will only print setting PVs. Will NOT run the virtual accelerator.")
 
     # Json file that contains a dictionary connecting EPICS name of devices with their associated element model names.
     va_parser.add_argument('--config_file', '-f', default=loc / 'va_config.json', type=str,
@@ -119,32 +119,21 @@ def build_idmp(**kwargs):
             screen_device = Screen(name, model_name)
             beam_line.add_device(screen_device)
 
-    pbpms = devices_dict["Physics_BPM"]
-    for name, model_name in pbpms.items():
-        if model_name in element_list:
-            pbpm_device = P_BPM(name, model_name)
-            beam_line.add_device(pbpm_device)
-
     dummy_device = SNS_Dummy_BCM("Ring_Diag:BCM_D09", 'HEBT_Diag:BPM11')
     beam_line.add_device(dummy_device)
     dummy_device = SNS_Dummy_ICS("ICS_Tim")
     beam_line.add_device(dummy_device)
 
-    if kwargs['print_settings']:
-        for key in beam_line.get_setting_keys():
-            print(key)
-        sys.exit()
-
     delay = kwargs['ca_proc']
     server = EPICS_Server(process_delay=delay, print_pvs=kwargs['print_pvs'])
 
-    idmp_virac = VirtualAccelerator(model, beam_line, server, **kwargs)
+    idmp_virac = PyorbitVirtualAcceleratorBuilder(model, beam_line, server, **kwargs)
     return idmp_virac
 
 
 def main():
     args = idmp_arguments()
-    idmp = build_idmp(**args)
+    idmp = build_idmp(**args).build()
     idmp.start_server()
 
 

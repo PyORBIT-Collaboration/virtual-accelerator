@@ -11,16 +11,15 @@ from importlib.metadata import version
 
 from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
 
-from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, FCclass, BCMclass
-from virtaccl.PyORBIT_Model.pyorbit_va_arguments import add_pyorbit_arguments
+from virtaccl.PyORBIT_Model.pyorbit_va_nodes import BPMclass, FCclass, BCMclass
+from virtaccl.PyORBIT_Model.pyorbit_virtual_accelerator import add_pyorbit_arguments, PyorbitVirtualAcceleratorBuilder
 from virtaccl.site.BTF.orbit_model.btf_lattice_factory import PyORBIT_Lattice_Factory
 
 from orbit.core.bunch import Bunch
 from orbit.core.linac import BaseRfGap
 
 from virtaccl.beam_line import BeamLine
-from virtaccl.site.SNS_Linac.virtual_devices import BPM, Quadrupole, P_BPM, Quadrupole_Power_Supply, Bend_Power_Supply, \
-    Bend
+from virtaccl.site.SNS_Linac.virtual_devices import BPM, Quadrupole, Quadrupole_Power_Supply, Bend_Power_Supply, Bend
 from virtaccl.site.BTF.orbit_model.virtual_devices_BTF import BTF_FC, BTF_Quadrupole, BTF_Quadrupole_Power_Supply, \
     BTF_BCM, BTF_Actuator, BTF_Corrector, BTF_Corrector_Power_Supply
 from virtaccl.site.BTF.orbit_model.btf_child_nodes import BTF_Screenclass, BTF_Slitclass
@@ -28,14 +27,14 @@ from virtaccl.site.BTF.orbit_model.btf_child_nodes import BTF_Screenclass, BTF_S
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
 from virtaccl.EPICS_Server.ca_server import EPICS_Server, add_epics_arguments
 
-from virtaccl.virtual_accelerator import VirtualAccelerator, VA_Parser
+from virtaccl.virtual_accelerator import VA_Parser
 
 
 def btf_arguments():
     loc = Path(__file__).parent
     va_parser = VA_Parser()
     va_parser.set_description('Run the BTF PyORBIT virtual accelerator server.')
-    va_parser.edit_argument('--sync_time', {'action': 'store_false'})
+    va_parser.remove_argument('--sync_time')
 
     va_parser = add_pyorbit_arguments(va_parser)
     # Set the defaults for the PyORBIT model.
@@ -46,8 +45,6 @@ def btf_arguments():
     va_parser.change_argument_default('--beam_current', 50.0)
 
     va_parser = add_epics_arguments(va_parser)
-    va_parser.add_server_argument('--print_settings', action='store_true',
-                                  help="Will only print setting PVs. Will NOT run the virtual accelerator.")
 
     # Json file that contains a dictionary connecting EPICS name of devices with their associated element model names.
     va_parser.add_argument('--config_file', '-f', default=loc / 'btf_config.json', type=str,
@@ -64,6 +61,7 @@ def btf_arguments():
 def build_btf(**kwargs):
     kwargs = btf_arguments() | kwargs
 
+    kwargs['sync_time'] = True
     debug = kwargs['debug']
     save_bunch = kwargs['save_bunch']
 
@@ -115,18 +113,22 @@ def build_btf(**kwargs):
 
     bunch_file = Path(kwargs['bunch'])
     part_num = kwargs['particle_number']
+    beam_current = kwargs['beam_current'] / 1000  # Set the initial beam current in Amps.
+    bunch_frequency = 402.5e6
+    si_e_charge = 1.6021773e-19
 
     bunch_in = Bunch()
     bunch_in.readBunch(str(bunch_file))
     bunch_orig_num = bunch_in.getSizeGlobal()
+    bunch_macrosize = beam_current * 1.0e-3 / bunch_frequency
+    bunch_macrosize /= math.fabs(bunch_in.charge()) * si_e_charge
+    bunch_in.macroSize(bunch_macrosize / part_num)
+
     if bunch_orig_num < part_num:
         print('Bunch file contains less particles than the desired number of particles.')
     elif part_num <= 0:
         bunch_in.deleteAllParticles()
     else:
-        bunch_macrosize = bunch_in.macroSize()
-        bunch_macrosize *= bunch_orig_num / part_num
-        bunch_in.macroSize(bunch_macrosize)
         for n in range(bunch_orig_num):
             if n + 1 > part_num:
                 bunch_in.deleteParticleFast(n)
@@ -135,7 +137,6 @@ def build_btf(**kwargs):
     # get sync particle momentum for use in corrector current conversion
     syncPart = bunch_in.getSyncParticle()
     momentum = syncPart.momentum()
-    beam_current = kwargs['beam_current'] / 1000  # Set the initial beam current in Amps
 
     model = OrbitModel(debug=debug, save_bunch=save_bunch)
     model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list, diagnostic=True)
@@ -143,7 +144,6 @@ def build_btf(**kwargs):
     model.define_custom_node(BTF_Screenclass.node_type, BTF_Screenclass.parameter_list, optic=True)
     model.define_custom_node(BTF_Slitclass.node_type, BTF_Slitclass.parameter_list, optic=True)
     model.define_custom_node(BCMclass.node_type, BCMclass.parameter_list, diagnostic=True)
-    model.define_custom_node("markerLinacNode")
     model.initialize_lattice(model_lattice)
     model.set_initial_bunch(bunch_in, beam_current)
     element_list = model.get_element_list()
@@ -300,22 +300,16 @@ def build_btf(**kwargs):
             slit_device = BTF_Actuator(name, ele_name, speed=speed, limit=limit)
             beam_line.add_device(slit_device)
 
-    if kwargs['print_settings']:
-        for key in beam_line.get_setting_keys():
-            print(key)
-        sys.exit()
-
     delay = kwargs['ca_proc']
     server = EPICS_Server(process_delay=delay, print_pvs=kwargs['print_pvs'])
 
-    btf_virac = VirtualAccelerator(model, beam_line, server, **kwargs)
-    btf_virac.track()
+    btf_virac = PyorbitVirtualAcceleratorBuilder(model, beam_line, server, **kwargs)
     return btf_virac
 
 
 def main():
     args = btf_arguments()
-    btf = build_btf(**args)
+    btf = build_btf(**args).build()
     btf.start_server()
 
 

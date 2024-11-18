@@ -12,7 +12,7 @@ from orbit.py_linac.lattice.LinacAccLatticeLib import LinacAccLattice, Sequence
 from orbit.py_linac.lattice.LinacAccNodes import Quad, Drift, DCorrectorH, DCorrectorV
 
 
-from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass, ScreenClass
+from virtaccl.PyORBIT_Model.pyorbit_va_nodes import BPMclass, WSclass, ScreenClass
 from virtaccl.PyORBIT_Model.bunch_generator import BunchGenerator
 
 

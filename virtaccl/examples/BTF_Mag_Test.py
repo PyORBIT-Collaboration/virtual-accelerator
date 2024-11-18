@@ -13,7 +13,7 @@ magnet = 'BTF_MEBT_Mag:PS_QV10'
 current_set = f'{magnet}:I_Set'
 current = f'{magnet}:I'
 
-BS = 'ITSF_Diag:BS36:CurrentAvrGt'
+BS = 'ITSF_Diag:BS36_LP:CurrentAvrGt'
 FC = 'ITSF_Diag:FC12:CurrentAvrGt'
 FC_state = 'ITSF_Diag:FC12:State_Set'
 

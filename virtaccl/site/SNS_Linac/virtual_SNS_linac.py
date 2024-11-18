@@ -1,6 +1,5 @@
 import json
 import math
-import sys
 from pathlib import Path
 
 from orbit.lattice import AccNode
@@ -9,20 +8,20 @@ from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, 
 from orbit.core.bunch import Bunch
 from orbit.core.linac import BaseRfGap, RfGapTTF
 
-from virtaccl.server import Server
 from virtaccl.site.SNS_Linac.orbit_model.sns_linac_lattice_factory import PyORBIT_Lattice_Factory
-from virtaccl.site.SNS_Linac.virtual_devices import BPM, Quadrupole, Corrector, P_BPM, \
-    WireScanner, Quadrupole_Power_Supply, Corrector_Power_Supply, Bend_Power_Supply, Bend, Quadrupole_Power_Shunt
+from virtaccl.site.SNS_Linac.virtual_devices import (BPM, Quadrupole, Corrector, WireScanner, Quadrupole_Power_Supply,
+                                                     Corrector_Power_Supply, Bend_Power_Supply, Bend,
+                                                     Quadrupole_Power_Shunt)
 from virtaccl.site.SNS_Linac.virtual_devices_SNS import SNS_Dummy_BCM, SNS_Cavity, SNS_Dummy_ICS
 
+from virtaccl.PyORBIT_Model.pyorbit_virtual_accelerator import PyorbitVirtualAcceleratorBuilder, add_pyorbit_arguments
 from virtaccl.PyORBIT_Model.pyorbit_lattice_controller import OrbitModel
-from virtaccl.PyORBIT_Model.pyorbit_va_arguments import add_pyorbit_arguments
-from virtaccl.PyORBIT_Model.pyorbit_child_nodes import BPMclass, WSclass
+from virtaccl.PyORBIT_Model.pyorbit_va_nodes import BPMclass, WSclass
 
 from virtaccl.EPICS_Server.ca_server import EPICS_Server, add_epics_arguments
 from virtaccl.beam_line import BeamLine
 
-from virtaccl.virtual_accelerator import VirtualAccelerator, VA_Parser
+from virtaccl.virtual_accelerator import VA_Parser
 
 
 def sns_arguments():
@@ -37,8 +36,6 @@ def sns_arguments():
     va_parser.change_argument_default('--bunch', loc / 'orbit_model/MEBT_in.dat')
 
     va_parser = add_epics_arguments(va_parser)
-    va_parser.add_server_argument('--print_settings', action='store_true',
-                                  help="Will only print setting PVs. Will NOT run the virtual accelerator.")
 
     # Json file that contains a dictionary connecting EPICS name of devices with their associated element model names.
     va_parser.add_argument('--config_file', '-f', default=loc / 'va_config.json', type=str,
@@ -57,6 +54,7 @@ def build_sns(**kwargs):
 
     debug = kwargs['debug']
     save_bunch = kwargs['save_bunch']
+    physics_nodes = kwargs['physics_nodes']
 
     config_file = Path(kwargs['config_file'])
     with open(config_file, "r") as json_file:
@@ -65,9 +63,10 @@ def build_sns(**kwargs):
     lattice_file = kwargs['lattice']
     start_sequence = kwargs['start']
     end_sequence = kwargs['end']
+    drift_length = kwargs['drift_length']
 
     lattice_factory = PyORBIT_Lattice_Factory()
-    lattice_factory.setMaxDriftLength(0.01)
+    lattice_factory.setMaxDriftLength(drift_length)
     model_lattice = lattice_factory.getLinacAccLattice_test(lattice_file, end_sequence, start_sequence)
     cppGapModel = BaseRfGap
     rf_gaps = model_lattice.getRF_Gaps()
@@ -80,28 +79,35 @@ def build_sns(**kwargs):
     Add_quad_apertures_to_lattice(model_lattice)
     Add_rfgap_apertures_to_lattice(model_lattice)
 
-    bunch_file = Path(kwargs['bunch'])
     part_num = kwargs['particle_number']
+    beam_current = kwargs['beam_current'] / 1000  # Set the initial beam current in Amps.
+    bunch_frequency = 402.5e6
+    si_e_charge = 1.6021773e-19
 
-    bunch_in = Bunch()
-    bunch_in.readBunch(str(bunch_file))
+    if isinstance(kwargs['bunch'], Bunch):
+        bunch_in = kwargs['bunch']
+    else:
+        bunch_file = Path(kwargs['bunch'])
+        bunch_in = Bunch()
+        bunch_in.readBunch(str(bunch_file))
+
     bunch_orig_num = bunch_in.getSizeGlobal()
+    bunch_macrosize = beam_current * 1.0e-3 / bunch_frequency
+    bunch_macrosize /= math.fabs(bunch_in.charge()) * si_e_charge
+    bunch_in.macroSize(bunch_macrosize / part_num)
+
     if bunch_orig_num < part_num:
         print('Bunch file contains less particles than the desired number of particles.')
     elif part_num <= 0:
         bunch_in.deleteAllParticles()
     else:
-        bunch_macrosize = bunch_in.macroSize()
-        bunch_macrosize *= bunch_orig_num / part_num
-        bunch_in.macroSize(bunch_macrosize)
         for n in range(bunch_orig_num):
             if n + 1 > part_num:
                 bunch_in.deleteParticleFast(n)
         bunch_in.compress()
 
-    beam_current = kwargs['beam_current'] / 1000  # Set the initial beam current in Amps.
     space_charge = kwargs['space_charge']
-    model = OrbitModel(debug=debug, save_bunch=save_bunch)
+    model = OrbitModel(debug=debug, save_bunch=save_bunch, physics_nodes=physics_nodes)
     model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list, diagnostic=True)
     model.define_custom_node(WSclass.node_type, WSclass.parameter_list, diagnostic=True)
     model.initialize_lattice(model_lattice)
@@ -219,32 +225,21 @@ def build_sns(**kwargs):
             bpm_device = BPM(name, ele_name, phase_offset=phase_offset)
             beam_line.add_device(bpm_device)
 
-    pbpms = devices_dict["Physics_BPM"]
-    for name, model_name in pbpms.items():
-        if model_name in element_list:
-            pbpm_device = P_BPM(name, model_name)
-            beam_line.add_device(pbpm_device)
-
     dummy_device = SNS_Dummy_BCM("Ring_Diag:BCM_D09", 'HEBT_Diag:BPM11')
     beam_line.add_device(dummy_device)
     dummy_device = SNS_Dummy_ICS("ICS_Tim")
     beam_line.add_device(dummy_device)
 
-    if kwargs['print_settings']:
-        for key in beam_line.get_setting_keys():
-            print(key)
-        sys.exit()
-
     delay = kwargs['ca_proc']
     server = EPICS_Server(process_delay=delay, print_pvs=kwargs['print_pvs'])
 
-    sns_virac = VirtualAccelerator(model, beam_line, server, **kwargs)
+    sns_virac = PyorbitVirtualAcceleratorBuilder(model, beam_line, server, **kwargs)
     return sns_virac
 
 
 def main():
     args = sns_arguments()
-    sns = build_sns(**args)
+    sns = build_sns(**args).build()
     sns.start_server()
 
 
