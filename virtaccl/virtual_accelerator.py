@@ -141,12 +141,12 @@ class VirtualAcceleratorBuilder(Generic[ModelType, ServerType]):
     def get_server(self) -> ServerType:
         return self.server
 
-    def build(self) -> 'VirtualAccelerator':
+    def build(self) -> 'VirtualAccelerator[ModelType, ServerType]':
         return VirtualAccelerator(self.model, self.beam_line, self.server, **self.options)
 
 
-class VirtualAccelerator:
-    def __init__(self, model: Model, beam_line: BeamLine, server: Server, **kwargs):
+class VirtualAccelerator(Generic[ModelType, ServerType]):
+    def __init__(self, model: ModelType, beam_line: BeamLine, server: ServerType, **kwargs):
         if not kwargs:
             kwargs = VA_Parser().initialize_arguments()
 
