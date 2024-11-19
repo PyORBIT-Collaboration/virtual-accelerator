@@ -217,6 +217,7 @@ class OrbitModel(Model):
             List of the names of all the new physics nodes added to the lattice.
         """
 
+        self.physics_flag = True
         if self.lattice_flag and not self.physics_added_flag:
             physics_node_names = []
             list_of_nodes = self.accLattice.getNodes()
@@ -226,7 +227,7 @@ class OrbitModel(Model):
                 node.addChildNode(physics_node, node.ENTRANCE)
                 self.pyorbit_dictionary[physics_name] = PyorbitChild(physics_node, node)
                 physics_node_names.append(physics_name)
-            self.physics_flag = True
+            self.physics_added_flag = True
 
             if self.bunch_flag:
                 self.accLattice.trackDesignBunch(self.bunch_dict['initial_bunch'])
@@ -235,7 +236,7 @@ class OrbitModel(Model):
         elif self.lattice_flag and self.physics_added_flag:
             print('Physics nodes already added. Nothing to be done.')
         else:
-            print('Error: Initialize a lattice in order to add physics nodes.')
+            print('Warning: Initialize a lattice in order to add physics nodes.')
 
     def set_initial_bunch(self, initial_bunch: Bunch, beam_current: float = 40e-3):
         """Designate an input PyORBIT bunch for the lattice. If a lattice has already been initialized, this bunch is
