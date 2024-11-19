@@ -132,13 +132,13 @@ class VirtualAcceleratorBuilder(Generic[ModelType, ServerType]):
         self.server = server
         self.options = kwargs
 
-    def get_model(self) -> Model:
+    def get_model(self) -> ModelType:
         return self.model
 
     def get_beamline(self) -> BeamLine:
         return self.beam_line
 
-    def get_server(self) -> Server:
+    def get_server(self) -> ServerType:
         return self.server
 
     def build(self) -> 'VirtualAccelerator':
@@ -172,13 +172,13 @@ class VirtualAccelerator:
 
         self.track()
 
-    def get_model(self) -> Model:
+    def get_model(self) -> ModelType:
         return self.model
 
     def get_beamline(self) -> BeamLine:
         return self.beam_line
 
-    def get_server(self) -> Server:
+    def get_server(self) -> ServerType:
         return self.server
 
     def set_value(self, server_key: str, new_value):
