@@ -172,6 +172,15 @@ class VirtualAccelerator:
 
         self.track()
 
+    def get_model(self) -> Model:
+        return self.model
+
+    def get_beamline(self) -> BeamLine:
+        return self.beam_line
+
+    def get_server(self) -> Server:
+        return self.server
+
     def set_value(self, server_key: str, new_value):
         self.server.set_parameter(server_key, new_value)
         self.track()

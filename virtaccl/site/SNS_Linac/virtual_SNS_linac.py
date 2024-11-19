@@ -107,7 +107,7 @@ def build_sns(**kwargs):
         bunch_in.compress()
 
     space_charge = kwargs['space_charge']
-    model = OrbitModel(debug=debug, save_bunch=save_bunch, physics_nodes=physics_nodes)
+    model = OrbitModel(debug=debug, save_bunch=save_bunch)
     model.define_custom_node(BPMclass.node_type, BPMclass.parameter_list, diagnostic=True)
     model.define_custom_node(WSclass.node_type, WSclass.parameter_list, diagnostic=True)
     model.initialize_lattice(model_lattice)
