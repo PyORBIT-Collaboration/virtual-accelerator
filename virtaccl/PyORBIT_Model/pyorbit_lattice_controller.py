@@ -103,7 +103,7 @@ class OrbitModel(Model):
             self.initialize_lattice(input_lattice)
 
         if physics_nodes:
-            self.add_physics_elements()
+            self.add_physics_nodes()
 
         if input_bunch is not None:
             self.set_initial_bunch(input_bunch)
