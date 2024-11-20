@@ -26,7 +26,8 @@ def add_epics_arguments(va_parser: VA_Parser) -> VA_Parser:
                                   help='Number (in seconds) that determine some delay parameter in the server. Not '
                                        'exactly sure how it works, so use at your own risk.')
 
-    va_parser.add_server_argument('--print_pvs', dest='print_pvs', action='store_true',
+    va_parser.remove_argument('--print_server_keys')
+    va_parser.add_va_argument('--print_pvs', dest='print_server_keys', action='store_true',
                                   help="Will print all server PVs. Will NOT run the virtual accelerator.")
     return va_parser
 
@@ -58,12 +59,11 @@ class TDriver(Driver):
 
 
 class EPICS_Server(Server):
-    def __init__(self, prefix='', process_delay=0.1, print_pvs=False):
+    def __init__(self, prefix='', process_delay=0.1):
         super().__init__()
         self.prefix = prefix
         self.driver = None
         self.process_delay = process_delay
-        self.print_pvs = print_pvs
         self.start_flag = False
 
         os.environ['EPICS_CA_MAX_ARRAY_BYTES'] = '10000000'
@@ -71,13 +71,6 @@ class EPICS_Server(Server):
     def _CA_events(self, server):
         while True:
             server.process(self.process_delay)
-
-    def add_parameters(self, new_parameters: Dict[str, Dict[str, Any]]):
-        super().add_parameters(new_parameters)
-        if self.print_pvs:
-            for key in self.get_parameter_keys():
-                print(key)
-            sys.exit()
 
     def set_parameter(self, reason: str, value: Any, timestamp: datetime = None):
         super().set_parameter(reason, value, timestamp)

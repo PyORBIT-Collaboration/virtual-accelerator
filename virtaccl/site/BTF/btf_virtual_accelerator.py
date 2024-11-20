@@ -301,7 +301,7 @@ def build_btf(**kwargs):
             beam_line.add_device(slit_device)
 
     delay = kwargs['ca_proc']
-    server = EPICS_Server(process_delay=delay, print_pvs=kwargs['print_pvs'])
+    server = EPICS_Server(process_delay=delay)
 
     btf_virac = PyorbitVirtualAcceleratorBuilder(model, beam_line, server, **kwargs)
     return btf_virac

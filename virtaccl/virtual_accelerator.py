@@ -113,6 +113,9 @@ def add_va_arguments(va_parser: VA_Parser) -> VA_Parser:
     va_parser.add_va_argument('--production', dest='debug', action='store_false',
                               help="DEFAULT: No additional info printed.")
 
+    va_parser.add_server_argument('--print_server_keys', action='store_true',
+                                  help="Will print all server keys for the server. Will NOT run the virtual "
+                                       "accelerator.")
     va_parser.add_server_argument('--print_settings', action='store_true',
                                   help="Will only print setting keys for the server. Will NOT run the virtual "
                                        "accelerator.")
@@ -152,6 +155,11 @@ class VirtualAccelerator(Generic[ModelType, ServerType]):
 
         if kwargs['print_settings']:
             for key in beam_line.get_setting_keys():
+                print(key)
+            sys.exit()
+
+        if kwargs['print_server_keys']:
+            for key in beam_line.get_all_keys():
                 print(key)
             sys.exit()
 
