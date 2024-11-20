@@ -125,7 +125,7 @@ def build_idmp(**kwargs):
     beam_line.add_device(dummy_device)
 
     delay = kwargs['ca_proc']
-    server = EPICS_Server(process_delay=delay, print_pvs=kwargs['print_pvs'])
+    server = EPICS_Server(process_delay=delay)
 
     idmp_virac = PyorbitVirtualAcceleratorBuilder(model, beam_line, server, **kwargs)
     return idmp_virac
