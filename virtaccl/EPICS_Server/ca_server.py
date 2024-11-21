@@ -3,13 +3,8 @@ import sys
 from threading import Thread
 from datetime import datetime
 from time import sleep
-
 from math import floor
 from typing import Any, Dict
-
-from pcaspy import Driver
-from pcaspy.cas import epicsTimeStamp
-from pcaspy import SimpleServer
 
 from virtaccl.server import Server
 from virtaccl.virtual_accelerator import VA_Parser
@@ -30,31 +25,6 @@ def add_epics_arguments(va_parser: VA_Parser) -> VA_Parser:
                                   help="Will print all server PVs. Will NOT run the virtual accelerator.")
     return va_parser
 
-
-def to_epics_timestamp(t: datetime):
-    if t is None:
-        return None
-
-    epics_tst = t.timestamp() - 631152000.0
-    tst = epicsTimeStamp()
-    tst.secPastEpoch = int(floor(epics_tst))
-    tst.nsec = int((epics_tst % 1) * 1_000_000_000)
-
-    return tst
-
-
-def epics_now(timestamp: datetime):
-    return to_epics_timestamp(timestamp)
-
-
-class TDriver(Driver):
-    def __init__(self):
-        Driver.__init__(self)
-
-    def setParam(self, reason, value, timestamp=None):
-        super().setParam(reason, value)
-        if timestamp is not None:
-            self.pvDB[reason].time = timestamp
 
 
 class EPICS_Server(Server):
@@ -81,9 +51,9 @@ class EPICS_Server(Server):
 
     def set_parameter(self, reason: str, value: Any, timestamp: datetime = None):
         super().set_parameter(reason, value, timestamp)
-        if timestamp is not None:
-            timestamp = epics_now(timestamp)
         if self.start_flag:
+            if timestamp is not None:
+                timestamp = self.driver.to_epics_timestamp(timestamp)
             self.driver.setParam(reason, value, timestamp)
 
     def get_parameter(self, reason: str) -> Any:
@@ -94,19 +64,46 @@ class EPICS_Server(Server):
         return value
 
     def update(self):
-        self.driver.updatePVs()
+        if self.driver is not None:
+            self.driver.updatePVs()
 
     def start(self):
-        server = SimpleServer()
-        server.createPV(self.prefix, self.parameter_db)
-        self.driver = TDriver()
-        tid = Thread(target=self._CA_events, args=(server,))
+        try:
+            from pcaspy import Driver
+            from pcaspy.cas import epicsTimeStamp
+            from pcaspy import SimpleServer
 
-        # So it will die after main thread is gone
-        tid.setDaemon(True)
-        tid.start()
-        self.run()
-        self.start_flag = True
+            class TDriver(Driver):
+                def __init__(self):
+                    Driver.__init__(self)
+
+                def setParam(self, reason, value, timestamp=None):
+                    super().setParam(reason, value)
+                    if timestamp is not None:
+                        self.pvDB[reason].time = timestamp
+
+                def to_epics_timestamp(self, t: datetime):
+                    if t is None:
+                        return None
+                    tst = epicsTimeStamp()
+                    epics_tst = t.timestamp() - 631152000.0
+                    tst.secPastEpoch = int(floor(epics_tst))
+                    tst.nsec = int((epics_tst % 1) * 1_000_000_000)
+                    return tst
+
+            server = SimpleServer()
+            server.createPV(self.prefix, self.parameter_db)
+            self.driver = TDriver()
+            tid = Thread(target=self._CA_events, args=(server,))
+
+            # So it will die after main thread is gone
+            tid.setDaemon(True)
+            tid.start()
+            self.run()
+            self.start_flag = True
+        except Exception as e:
+            print(f'Warning! CA communication is not available because of exception: {e}.')
+            print(f'Check EPICS (pcaspy)  installation.')
 
     def stop(self):
         # it's unclear how to gracefully stop the server
