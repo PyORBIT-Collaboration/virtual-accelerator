@@ -231,7 +231,7 @@ def build_sns(**kwargs):
     beam_line.add_device(dummy_device)
 
     delay = kwargs['ca_proc']
-    server = EPICS_Server(process_delay=delay, print_pvs=kwargs['print_pvs'])
+    server = EPICS_Server(process_delay=delay)
 
     sns_virac = PyorbitVirtualAcceleratorBuilder(model, beam_line, server, **kwargs)
     return sns_virac

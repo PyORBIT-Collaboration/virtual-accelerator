@@ -113,6 +113,9 @@ def add_va_arguments(va_parser: VA_Parser) -> VA_Parser:
     va_parser.add_va_argument('--production', dest='debug', action='store_false',
                               help="DEFAULT: No additional info printed.")
 
+    va_parser.add_server_argument('--print_server_keys', action='store_true',
+                                  help="Will print all server keys for the server. Will NOT run the virtual "
+                                       "accelerator.")
     va_parser.add_server_argument('--print_settings', action='store_true',
                                   help="Will only print setting keys for the server. Will NOT run the virtual "
                                        "accelerator.")
@@ -141,17 +144,22 @@ class VirtualAcceleratorBuilder(Generic[ModelType, ServerType]):
     def get_server(self) -> ServerType:
         return self.server
 
-    def build(self) -> 'VirtualAccelerator':
+    def build(self) -> 'VirtualAccelerator[ModelType, ServerType]':
         return VirtualAccelerator(self.model, self.beam_line, self.server, **self.options)
 
 
-class VirtualAccelerator:
-    def __init__(self, model: Model, beam_line: BeamLine, server: Server, **kwargs):
+class VirtualAccelerator(Generic[ModelType, ServerType]):
+    def __init__(self, model: ModelType, beam_line: BeamLine, server: ServerType, **kwargs):
         if not kwargs:
             kwargs = VA_Parser().initialize_arguments()
 
         if kwargs['print_settings']:
             for key in beam_line.get_setting_keys():
+                print(key)
+            sys.exit()
+
+        if kwargs['print_server_keys']:
+            for key in beam_line.get_all_keys():
                 print(key)
             sys.exit()
 

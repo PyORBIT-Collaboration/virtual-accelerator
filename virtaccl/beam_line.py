@@ -501,3 +501,7 @@ class BeamLine:
             for reason in device.readbacks:
                 readback_keys.append(device.get_parameter(reason).get_server_key())
         return readback_keys
+
+    def get_all_keys(self) -> List[str]:
+        server_keys = self.get_setting_keys() + self.get_measurement_keys() + self.get_readback_keys()
+        return server_keys
