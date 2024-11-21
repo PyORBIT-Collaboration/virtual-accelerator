@@ -23,9 +23,8 @@ def add_epics_arguments(va_parser: VA_Parser) -> VA_Parser:
 
     va_parser.remove_argument('--print_server_keys')
     va_parser.add_va_argument('--print_pvs', dest='print_server_keys', action='store_true',
-                                  help="Will print all server PVs. Will NOT run the virtual accelerator.")
+                              help="Will print all server PVs. Will NOT run the virtual accelerator.")
     return va_parser
-
 
 
 class EPICS_Server(Server):
