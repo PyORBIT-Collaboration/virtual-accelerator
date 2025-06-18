@@ -9,7 +9,7 @@ import argparse
 from pathlib import Path
 from importlib.metadata import version
 
-from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_rfgap_apertures_to_lattice
+from orbit.py_linac.lattice_modifications import Add_quad_apertures_to_lattice, Add_bend_apertures_to_lattice, Add_drift_apertures_to_lattice
 
 from virtaccl.PyORBIT_Model.pyorbit_va_nodes import BPMclass, FCclass, BCMclass
 from virtaccl.PyORBIT_Model.pyorbit_virtual_accelerator import add_pyorbit_arguments, PyorbitVirtualAcceleratorBuilder
@@ -109,7 +109,8 @@ def build_btf(**kwargs):
     for rf_gap in rf_gaps:
         rf_gap.setCppGapModel(cppGapModel())
     Add_quad_apertures_to_lattice(model_lattice)
-    Add_rfgap_apertures_to_lattice(model_lattice)
+    Add_bend_apertures_to_lattice(model_lattice, step=0.1)
+    Add_drift_apertures_to_lattice(model_lattice, pos_start=0.0, pos_end=model_lattice.getLength(), step=0.1, aperture_d=0.04)
 
     bunch_file = Path(kwargs['bunch'])
     part_num = kwargs['particle_number']
