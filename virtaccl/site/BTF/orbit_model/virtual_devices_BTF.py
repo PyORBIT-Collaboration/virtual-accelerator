@@ -317,14 +317,15 @@ class BTF_Quadrupole(Device):
 class BTF_Quadrupole_Power_Supply(Device):
     current_set_pv = 'I_Set' # [Amps]
     current_readback_pv = 'I' # [Amps]
+    current_noise = 1e-6  # [Amps]
 
     def __init__(self, name: str, init_current=None):
         super().__init__(name)
 
-        field_noise = AbsNoise(noise=1e-6)
+        current_noise = AbsNoise(noise=BTF_Quadrupole_Power_Supply.current_noise)
 
         self.register_setting(BTF_Quadrupole_Power_Supply.current_set_pv, default=init_current)
-        self.register_readback(BTF_Quadrupole_Power_Supply.current_readback_pv, BTF_Quadrupole_Power_Supply.current_set_pv)
+        self.register_readback(BTF_Quadrupole_Power_Supply.current_readback_pv, BTF_Quadrupole_Power_Supply.current_set_pv,noise=current_noise)
 
 class BTF_Corrector(Device):
     # EPICS PV names
