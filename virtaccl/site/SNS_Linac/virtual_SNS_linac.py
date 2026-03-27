@@ -54,7 +54,6 @@ def build_sns(**kwargs):
 
     debug = kwargs['debug']
     save_bunch = kwargs['save_bunch']
-    physics_nodes = kwargs['physics_nodes']
 
     config_file = Path(kwargs['config_file'])
     with open(config_file, "r") as json_file:

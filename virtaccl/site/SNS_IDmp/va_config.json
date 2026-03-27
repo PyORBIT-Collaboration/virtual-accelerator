@@ -15,7 +15,7 @@
         "IDmp_Mag:DCH01": {
             "PyORBIT_Name": "HCorrector1",
             "Power_Supply": "IDmp_Mag:PS_DCH01",
-            "Polarity": 1
+            "Polarity": -1
         },
         "IDmp_Mag:DCV01": {
             "PyORBIT_Name": "VCorrector1",
@@ -25,7 +25,7 @@
         "IDmp_Mag:DCH02": {
             "PyORBIT_Name": "HCorrector2",
             "Power_Supply": "IDmp_Mag:PS_DCH02",
-            "Polarity": 1
+            "Polarity": -1
         },
         "IDmp_Mag:DCV02": {
             "PyORBIT_Name": "VCorrector2",

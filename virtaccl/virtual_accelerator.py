@@ -163,7 +163,6 @@ class VirtualAccelerator(Generic[ModelType, ServerType]):
                 print(key)
             sys.exit()
 
-        self.debug = kwargs['debug']
         self.sync_time = kwargs['sync_time']
         self.update_period = 1 / kwargs['refresh_rate']
 
@@ -175,7 +174,7 @@ class VirtualAccelerator(Generic[ModelType, ServerType]):
         server.add_parameters(sever_parameters)
         beam_line.reset_devices()
 
-        if self.debug:
+        if kwargs['debug']:
             print(server)
 
         self.track()
