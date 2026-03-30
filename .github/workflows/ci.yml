@@ -31,6 +31,10 @@ jobs:
           fetch-depth: 0
           set-safe-directory: ''
 
+      # Force working directory to be safe.
+      - name: Make Workspace Directory Safe
+        run: git config --global --add safe.directory /__w/virtual-accelerator/virtual-accelerator
+
       # Install micromamba
       - name: Install mamba
         uses: mamba-org/setup-micromamba@v1
