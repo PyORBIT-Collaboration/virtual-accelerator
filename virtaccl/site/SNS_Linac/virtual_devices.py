@@ -297,12 +297,16 @@ class WireScanner(Device):
     speed_pv = 'Speed_Set'  # [mm/s]
     x_avg_pv = 'Hor_Mean_gs'  # [mm]
     y_avg_pv = 'Ver_Mean_gs'  # [mm]
+    x_sigma_pv = 'Hor_Sigma_gs'
+    y_sigma_pv = 'Ver_Sigma_gs'
 
     # PyORBIT parameter keys
     x_hist_key = 'x_histogram'  # [arb. units]
     y_hist_key = 'y_histogram'  # [arb. units]
     x_avg_key = 'x_avg'  # [m]
     y_avg_key = 'y_avg'  # [m]
+    x_sigma_key = 'x_sigma'
+    y_sigma_key = 'y_sigma'
 
     # Device keys
     position_key = 'wire_position'  # [m]
@@ -344,6 +348,8 @@ class WireScanner(Device):
         self.register_measurement(WireScanner.y_charge_pv, noise=xy_noise)
         self.register_measurement(WireScanner.x_avg_pv, noise=xy_noise, transform=self.milli_units)
         self.register_measurement(WireScanner.y_avg_pv, noise=xy_noise, transform=self.milli_units)
+        self.register_measurement(WireScanner.x_sigma_pv, transform=self.milli_units)
+        self.register_measurement(WireScanner.y_sigma_pv, transform=self.milli_units)
 
         self.register_setting(WireScanner.speed_pv, default=initial_speed, transform=self.milli_units)
         self.register_setting(WireScanner.position_pv, default=initial_position, transform=self.milli_units)
@@ -401,6 +407,8 @@ class WireScanner(Device):
 
         self.update_measurement(WireScanner.x_avg_pv, ws_params[WireScanner.x_avg_key])
         self.update_measurement(WireScanner.y_avg_pv, ws_params[WireScanner.y_avg_key])
+        self.update_measurement(WireScanner.x_sigma_pv, ws_params[WireScanner.x_sigma_key])
+        self.update_measurement(WireScanner.y_sigma_pv, ws_params[WireScanner.y_sigma_key])
 
 
 class Screen(Device):

@@ -146,11 +146,11 @@ class BPMclass(BaseLinacNode):
 # Class for wire scanners. This class simply returns histograms of the vertical and horizontal positions.
 class WSclass(BaseLinacNode):
     node_type = "WireScanner"
-    parameter_list = ['x_histogram', 'y_histogram', 'x_avg', 'y_avg']
+    parameter_list = ['x_histogram', 'y_histogram', 'x_avg', 'y_avg', 'x_sigma', 'y_sigma']
 
     def __init__(self, node_name: str, bin_number: int = 50):
         parameters = {'x_histogram': np.array([[-10, 0], [10, 0]]), 'y_histogram': np.array([[-10, 0], [10, 0]]),
-                      'x_avg': 0.0, 'y_avg': 0.0}
+                      'x_avg': 0.0, 'y_avg': 0.0, 'x_sigma': 0.0, 'y_sigma': 0.0}
         BaseLinacNode.__init__(self, node_name)
         for key, value in parameters.items():
             self.addParam(key, value)
@@ -193,16 +193,23 @@ class WSclass(BaseLinacNode):
             x_avg /= part_num
             y_avg /= part_num
 
+            x_sigma = np.std(x_array, ddof=0)
+            y_sigma = np.std(y_array, ddof=0)
+
             self.setParam('x_histogram', x_out)
             self.setParam('y_histogram', y_out)
             self.setParam('x_avg', x_avg)
             self.setParam('y_avg', y_avg)
+            self.setParam('x_sigma', x_sigma)
+            self.setParam('y_sigma', y_sigma)
 
         else:
             self.setParam('x_histogram', np.array([[-10, 0], [10, 0]]))
             self.setParam('y_histogram', np.array([[-10, 0], [10, 0]]))
             self.setParam('x_avg', 0)
             self.setParam('y_avg', 0)
+            self.setParam('x_sigma', 0)
+            self.setParam('y_sigma', 0)
 
     def getXHistogram(self):
         return self.getParam('x_histogram')
