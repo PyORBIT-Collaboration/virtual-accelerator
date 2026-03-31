@@ -3,27 +3,35 @@
 ## Installation
 
 ### Prerequisites 
-It's advised to use a virtual environment, either venv or conda. 
-You also need compilers required for [PyORBIT3](https://github.com/PyORBIT-Collaboration/PyORBIT3)
+It's advised to use a virtual environment, either venv or conda. Using conda is advised on the latest Mac architecture. 
+See below for installation with conda.
 
-### Installing with pip 
-You need to have PyORBIT installed in the same virtual environment.
-If you are installing on a macOS, you will need to install EPICS as well: https://epics-controls.org/resources-and-support/documents/getting-started/.
-After following all the instructions, add the following line to your bash_profile:
+### Installing with pip
+
+#### Installing EPICS
+If you are using Linux, skip to the Installing PyORBIT step. If you are installing on a macOS, you will need to install [EPICS](https://epics-controls.org/resources-and-support/documents/getting-started/). After 
+installing EPICS, add the following line to your bash_profile:
+
 ```bash
 export PYEPICS_LIBCA=${EPICS_BASE}/lib/${EPICS_HOST_ARCH}/libca.dylib
 ```
-Using conda is advised on the latest Mac architecture. See below for installation with conda.
 
+#### Installing PyORBIT
+
+You need to have [PyORBIT3](https://github.com/PyORBIT-Collaboration/PyORBIT3) installed in the same virtual environment.
+
+#### Installing Virac
+
+The following will install the virtual accelerator in development mode, so you can edit the code and and immediately see 
+the results without re-installation.
 
 ```bash
 pip install -e .
 pip list
 # virtaccl should be in the list of installed packages
 ```
-This will install VA in development mode, so you can edit the code and and immediately see the results without re-installation.
 
-Alternatively to install in isolated mode (into your site-packages) 
+Alternatively, to install in isolated mode (into your site-packages).
 ```bash
 pip install .
 ```
@@ -34,7 +42,7 @@ pip install git+https://URL_OF_YOUR_REPO/virtual-accelerator.git
 ```
 
 ### Installing with conda
-This will install EPICS, PyORBIT3 and virtual accelerator, also it will define needed environament variables. You will have the standard EPICS command line tools installed as well.
+This will install EPICS, PyORBIT3, the virtual accelerator, and define the needed environment variables. You will have the standard EPICS command line tools installed as well.
 
 ```bash
 conda env create -f virac.yml
@@ -45,8 +53,8 @@ conda activate virac
 ## Run
 
 ### Client environment setup
-Your client environment, the one that connects to virtaul accelerator, should have **localhost**  included in CA search, so some setup may be needed.<br>
-For example following will ensure that the client connects to virtual accelerator only while allowing large array transfers.
+Your client environment, the one that connects to virtual accelerator, should have **localhost**  included in CA search, so some setup may be needed.<br>
+For example, the following will ensure that the client connects to the virtual accelerator only while allowing large array transfers.
 ```bash
 export EPICS_CA_ADDR_LIST=localhost
 export EPICS_CA_AUTO_ADDR_LIST=NO
@@ -67,7 +75,7 @@ sns_va
 
 Run MEBT only (with printing all PVs)
 ```bash
-sns_va --debug --bunch MEBT_in.dat MEBT
+sns_va --debug MEBT
 ```
 
 ### Run standard examples 
@@ -102,7 +110,7 @@ BTF example file:
 python -m virtaccl.examples.BTF_Mag_Test 
 ```
 
-### Hardcoded IDmp+ beamline of SNS accelerator
+### Hardcoded IDmp beamline of the SNS accelerator
 
 To see help:
 ```bash
