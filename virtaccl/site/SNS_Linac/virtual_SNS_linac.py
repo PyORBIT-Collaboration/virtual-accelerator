@@ -209,9 +209,11 @@ def build_sns(**kwargs):
                 beam_line.add_device(bend_device)
 
     wire_scanners = devices_dict["Wire_Scanner"]
+    bin_number = 50
     for name, model_name in wire_scanners.items():
         if model_name in element_list:
-            ws_device = WireScanner(name, model_name)
+            model.get_element_controller(model_name).get_element().setBinNumber(bin_number)
+            ws_device = WireScanner(name, model_name, {'bin_number': bin_number})
             beam_line.add_device(ws_device)
 
     bpms = devices_dict["BPM"]

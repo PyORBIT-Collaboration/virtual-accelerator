@@ -164,6 +164,10 @@ class Cavity(Device):
     phase_key = 'phase'  # [radians]
     amp_key = 'amp'  # [arb. units]
 
+    # Device Defaults
+    default_initial_phase = 0  # [radians]
+    default_initial_amp = 1.0  # [arb. units]
+
     def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None, phase_offset=0,
                  design_amp=15):
         if model_name is None:
@@ -171,14 +175,17 @@ class Cavity(Device):
         else:
             self.model_name = model_name
         super().__init__(name, self.model_name)
+        initial_dict = {} if initial_dict is None else initial_dict
 
         # Sets initial values for parameters.
-        if initial_dict is not None:
+        if Cavity.phase_key in initial_dict:
             initial_phase = initial_dict[Cavity.phase_key]
+        else:
+            initial_phase = Cavity.default_initial_phase
+        if Cavity.amp_key in initial_dict:
             initial_amp = initial_dict[Cavity.amp_key]
         else:
-            initial_phase = 0
-            initial_amp = 1.0
+            initial_amp = Cavity.default_initial_amp
 
         self.design_amp = design_amp  # [MV]
 
@@ -297,24 +304,35 @@ class WireScanner(Device):
     speed_pv = 'Speed_Set'  # [mm/s]
     x_avg_pv = 'Hor_Mean_gs'  # [mm]
     y_avg_pv = 'Ver_Mean_gs'  # [mm]
-    x_sigma_pv = 'Hor_Sigma_gs'
-    y_sigma_pv = 'Ver_Sigma_gs'
+    x_sigma_pv = 'Hor_Sigma_gs'  # [mm]
+    y_sigma_pv = 'Ver_Sigma_gs'  # [mm]
+    x_profile_pv = 'Hor_Profile'  # [arb. units]
+    x_axis_pv = 'Hor_Axis'  # [mm]
+    y_profile_pv = 'Ver_Profile'  # [arb. units]
+    y_axis_pv = 'Ver_Axis'  # [mm]
 
     # PyORBIT parameter keys
-    x_hist_key = 'x_histogram'  # [arb. units]
-    y_hist_key = 'y_histogram'  # [arb. units]
+    x_hist_key = 'x_histogram'  # [m, arb. units]
+    y_hist_key = 'y_histogram'  # [m, arb. units]
     x_avg_key = 'x_avg'  # [m]
     y_avg_key = 'y_avg'  # [m]
-    x_sigma_key = 'x_sigma'
-    y_sigma_key = 'y_sigma'
+    x_sigma_key = 'x_sigma'  # [m]
+    y_sigma_key = 'y_sigma'  # [m]
+    bin_number_key = 'bin_number'  # [number]
 
     # Device keys
     position_key = 'wire_position'  # [m]
-    speed_key = 'wire_speed'  # [m]
+    speed_key = 'wire_speed'  # [m/s]
 
+    # Device Constants
     x_offset = -0.01  # [m]
     y_offset = 0.01  # [m]
     wire_coeff = 1 / math.sqrt(2)
+
+    # Device Defaults
+    default_initial_position = -0.05  # [m]
+    default_initial_speed = 1  # [m/s]
+    default_bin_number = 50  # number
 
     def __init__(self, name: str, model_name: str = None, initial_dict: Dict[str, Any] = None):
         if model_name is None:
@@ -322,17 +340,24 @@ class WireScanner(Device):
         else:
             self.model_name = model_name
         super().__init__(name, self.model_name)
+        initial_dict = {} if initial_dict is None else initial_dict
 
         # Changes the units from meters to millimeters for associated PVs.
         self.milli_units = LinearTInv(scaler=1e3)
 
-        # Sets initial values for parameters.
-        if initial_dict is not None:
+        # Use defaults for any unspecified parameters
+        if WireScanner.position_key in initial_dict:
             initial_position = initial_dict[WireScanner.position_key]
+        else:
+            initial_position = WireScanner.default_initial_position
+        if WireScanner.speed_key in initial_dict:
             initial_speed = initial_dict[WireScanner.speed_key]
         else:
-            initial_position = -0.05  # [mm]
-            initial_speed = 1  # [mm/s]
+            initial_speed = WireScanner.default_initial_speed
+        if WireScanner.bin_number_key in initial_dict:
+            bin_number = initial_dict[WireScanner.bin_number_key]
+        else:
+            bin_number = WireScanner.default_bin_number
 
         # Defines internal parameters to keep track of the wire position.
         self.last_wire_pos = initial_position
@@ -348,8 +373,12 @@ class WireScanner(Device):
         self.register_measurement(WireScanner.y_charge_pv, noise=xy_noise)
         self.register_measurement(WireScanner.x_avg_pv, noise=xy_noise, transform=self.milli_units)
         self.register_measurement(WireScanner.y_avg_pv, noise=xy_noise, transform=self.milli_units)
-        self.register_measurement(WireScanner.x_sigma_pv, transform=self.milli_units)
-        self.register_measurement(WireScanner.y_sigma_pv, transform=self.milli_units)
+        self.register_measurement(WireScanner.x_sigma_pv, noise=xy_noise, transform=self.milli_units)
+        self.register_measurement(WireScanner.y_sigma_pv, noise=xy_noise, transform=self.milli_units)
+        self.register_measurement(WireScanner.x_profile_pv, definition={'count': bin_number})
+        self.register_measurement(WireScanner.x_axis_pv, transform=self.milli_units, definition={'count': bin_number})
+        self.register_measurement(WireScanner.y_profile_pv, definition={'count': bin_number})
+        self.register_measurement(WireScanner.y_axis_pv, transform=self.milli_units, definition={'count': bin_number})
 
         self.register_setting(WireScanner.speed_pv, default=initial_speed, transform=self.milli_units)
         self.register_setting(WireScanner.position_pv, default=initial_position, transform=self.milli_units)
@@ -394,16 +423,25 @@ class WireScanner(Device):
 
         ws_params = new_params[self.model_name]
         x_hist = ws_params[WireScanner.x_hist_key]
+        x_axis = x_hist[:, 0]
+        x_profile = x_hist[:, 1]
         y_hist = ws_params[WireScanner.y_hist_key]
+        y_axis = y_hist[:, 0]
+        y_profile = y_hist[:, 1]
 
         # Find the location of the vertical wire. Then interpolate the histogram from the model at that value.
         x_pos = WireScanner.wire_coeff * wire_pos + WireScanner.x_offset
-        x_value = np.interp(x_pos, x_hist[:, 0], x_hist[:, 1], left=0, right=0)
+        x_value = np.interp(x_pos, x_axis, x_profile, left=0, right=0)
         self.update_measurement(WireScanner.x_charge_pv, x_value)
 
         y_pos = WireScanner.wire_coeff * wire_pos + WireScanner.y_offset
-        y_value = np.interp(y_pos, y_hist[:, 0], y_hist[:, 1], left=0, right=0)
+        y_value = np.interp(y_pos, y_axis, y_profile, left=0, right=0)
         self.update_measurement(WireScanner.y_charge_pv, y_value)
+
+        self.update_measurement(WireScanner.x_profile_pv, x_profile)
+        self.update_measurement(WireScanner.x_axis_pv, x_axis)
+        self.update_measurement(WireScanner.y_profile_pv, y_profile)
+        self.update_measurement(WireScanner.y_axis_pv, y_axis)
 
         self.update_measurement(WireScanner.x_avg_pv, ws_params[WireScanner.x_avg_key])
         self.update_measurement(WireScanner.y_avg_pv, ws_params[WireScanner.y_avg_key])
