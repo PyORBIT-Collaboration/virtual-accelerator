@@ -146,17 +146,17 @@ class BPMclass(BaseLinacNode):
 # Class for wire scanners. This class simply returns histograms of the vertical and horizontal positions.
 class WSclass(BaseLinacNode):
     node_type = "WireScanner"
-    parameter_list = ['x_histogram', 'y_histogram', 'x_avg', 'y_avg', 'x_sigma', 'y_sigma']
+    parameter_list = ['x_histogram', 'y_histogram', 'x_avg', 'y_avg', 'x_sigma', 'y_sigma', 'bin_number']
 
     def __init__(self, node_name: str, bin_number: int = 50):
-        parameters = {'x_histogram': np.array([[-10, 0], [10, 0]]), 'y_histogram': np.array([[-10, 0], [10, 0]]),
-                      'x_avg': 0.0, 'y_avg': 0.0, 'x_sigma': 0.0, 'y_sigma': 0.0}
+        default_histogram = np.column_stack((np.linspace(-10, 10, bin_number), np.zeros(bin_number)))
+        parameters = {'x_histogram': default_histogram, 'y_histogram': default_histogram,
+                      'x_avg': 0.0, 'y_avg': 0.0, 'x_sigma': 0.0, 'y_sigma': 0.0, 'bin_number': bin_number}
         BaseLinacNode.__init__(self, node_name)
         for key, value in parameters.items():
             self.addParam(key, value)
         self.node_name = node_name
         self.setType(WSclass.node_type)
-        self.bin_number = bin_number
 
     def track(self, paramsDict):
         if "bunch" not in paramsDict:
@@ -165,6 +165,7 @@ class WSclass(BaseLinacNode):
         part_num = bunch.getSizeGlobal()
         x_array = np.zeros(part_num)
         y_array = np.zeros(part_num)
+        bin_number = self.getParam('bin_number')
         if part_num > 0:
             sync_part = bunch.getSyncParticle()
             sync_beta = sync_part.beta()
@@ -179,13 +180,13 @@ class WSclass(BaseLinacNode):
                 y_avg += y
 
             x_limits = np.array([np.min(x_array), np.max(x_array)]) * 1.1
-            x_bin_edges = np.linspace(x_limits[0], x_limits[1], self.bin_number + 1)
+            x_bin_edges = np.linspace(x_limits[0], x_limits[1], bin_number + 1)
             x_hist, x_bins = np.histogram(x_array, bins=x_bin_edges)
             x_positions = (x_bins[:-1] + x_bins[1:]) / 2
             x_out = np.column_stack((x_positions, x_hist))
 
             y_limits = np.array([np.min(y_array), np.max(y_array)]) * 1.1
-            y_bin_edges = np.linspace(y_limits[0], y_limits[1], self.bin_number + 1)
+            y_bin_edges = np.linspace(y_limits[0], y_limits[1], bin_number + 1)
             y_hist, y_bins = np.histogram(y_array, bins=y_bin_edges)
             y_positions = (y_bins[:-1] + y_bins[1:]) / 2
             y_out = np.column_stack((y_positions, y_hist))
@@ -204,8 +205,9 @@ class WSclass(BaseLinacNode):
             self.setParam('y_sigma', y_sigma)
 
         else:
-            self.setParam('x_histogram', np.array([[-10, 0], [10, 0]]))
-            self.setParam('y_histogram', np.array([[-10, 0], [10, 0]]))
+            default_histogram = np.column_stack((np.linspace(-10, 10, bin_number), np.zeros(bin_number)))
+            self.setParam('x_histogram', default_histogram)
+            self.setParam('y_histogram', default_histogram)
             self.setParam('x_avg', 0)
             self.setParam('y_avg', 0)
             self.setParam('x_sigma', 0)
@@ -222,6 +224,18 @@ class WSclass(BaseLinacNode):
 
     def getYAvg(self):
         return self.getParam('y_avg')
+
+    def getXSigma(self):
+        return self.getParam('x_sigma')
+
+    def getYSigma(self):
+        return self.getParam('y_sigma')
+
+    def getBinNumber(self):
+        return self.getParam('bin_number')
+
+    def setBinNumber(self, new_bin_number):
+        self.setParam('bin_number', new_bin_number)
 
 
 # Class for wire scanners. This class simply returns histograms of the vertical and horizontal positions.
